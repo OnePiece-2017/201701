@@ -1,0 +1,146 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:s="http://jboss.com/products/seam/taglib"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:a="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich"
+	template="/layout/template_edit.xhtml">
+
+	<ui:define name="head">
+		<link rel="stylesheet" type="text/css" href="#{request.contextPath}/common/css/bootstrap.min.css" />
+		<link rel="stylesheet" type="text/css" href="#{request.contextPath}/common/css/bootstrap-select.min.css" />
+	</ui:define>
+
+	<ui:define name="body">
+		#{processStepInfoHome.wire()}
+		<h:form id="mainForm" styleClass="edit" enctype="multipart/form-data">
+			<div class="pd0-10">
+				<div class="pt30 pb30 fs14">
+					<table width="100%" cellpadding="0" cellspacing="0">
+						<tr>
+							<td colspan="2">
+								<div class="pb20">
+									<table>
+										<tr>
+											<td valign="middle">
+												<span class="field-name mb10">流程名称</span>
+											</td>
+											<td valign="middle">
+												<h:outputText value="#{processStepInfoHome.instance.processInfo.processName}" styleClass="form-control mb10 fix--bc-purple" />
+											</td>
+											<td valign="middle">
+												<font color="red" style="margin-left: 3px;"></font>
+											</td>
+										</tr>
+									</table>
+								</div>
+							</td>
+						</tr>
+						<tr>
+							<td width="50%">
+								<div class="pb20">
+									<table>
+										<tr>
+											<td valign="middle">
+												<span class="field-name mb10">步骤名称</span>
+											</td>
+											<td valign="middle">
+												<h:inputText id="stepName" value="#{processStepInfoHome.instance.stepName}" styleClass="form-control mb10 fix--w220" />
+											</td>
+											<td valign="middle">
+												<font color="red" style="margin-left: 3px;">*</font>
+											</td>
+										</tr>
+									</table>
+								</div>
+							</td>
+							<td width="50%">
+								<div class="pb20">
+									<table>
+										<tr>
+											<td valign="middle">
+												<span class="field-name mb10">员工</span>
+											</td>
+											<td valign="middle">
+												<div class="bs-w440">
+													<select id="stepUserIds" class="selectpicker" data-live-search="true" multiple="multiple">
+														<a:repeat value="#{processStepInfoHome.stepUserList}" var="_department">
+															<optgroup label="#{_department[0]}" data-subtext="科室">
+																<a:repeat value="#{_department[1]}" var="_user">
+																	<option value="#{_user[0]}">#{_user[1]}</option>
+																</a:repeat>
+															</optgroup>
+														</a:repeat>
+													</select>
+												</div>
+												<h:inputHidden id="stepUserIdsHidden" value="#{processStepInfoHome.stepUserIds}" />
+											</td>
+											<td valign="middle">
+												<font color="red" style="margin-left: 3px;">*</font>
+											</td>
+										</tr>
+									</table>
+								</div>
+							</td>
+						</tr>
+					</table>
+				</div>
+				<div class="pt50 pb95">
+					<table class="normal-btn">
+						<tr>
+							<td>
+								<h:commandButton id="persist" value="提交" onclick="return beforeSubmit();" action="#{processStepInfoHome.persist}" disabled="#{!processStepInfoHome.wired}" rendered="#{!processStepInfoHome.managed}" styleClass="btn btn-primary mr15" />
+								<h:commandButton id="update" value="保存" onclick="return beforeSubmit();" action="#{processStepInfoHome.update}" rendered="#{processStepInfoHome.managed}" styleClass="btn btn-primary mr15" />
+								<s:button id="cancel" value="返回" view="/budget/ProcessStepInfoList.seam?processInfoId=#{processStepInfoHome.processInfoId}" propagation="none" styleClass="btn btn-default" />
+							</td>
+						</tr>
+					</table>
+					<br />
+					<br />
+				</div>
+			</div>
+		</h:form>
+		<script type="text/javascript" src="#{request.contextPath}/common/js/bootstrap.min.js" />
+		<script type="text/javascript" src="#{request.contextPath}/common/js/bootstrap-select.min.js" charset="UTF-8" />
+		<script type="text/javascript" src="#{request.contextPath}/common/js/bootstrap-select-defaults-zh_CN.min.js" charset="UTF-8" />
+		<script type="text/javascript" src="#{request.contextPath}/toolkit/utils.js" />
+		<script type="text/javascript">
+		//<![CDATA[
+			jQuery(document).ready(function() {
+			    var message = '#{processStepInfoHome.message}';
+			    if (message != '') {
+					___msg('温馨提示', message);
+			    }
+
+				___textRestrictById('mainForm:stepName', 45);
+
+			    jQuery('#stepUserIds').val(jQuery('#mainForm\\:stepUserIdsHidden').val().split(','));
+			    jQuery('#stepUserIds').selectpicker('render');
+			});
+			
+			//提交表单前
+			function beforeSubmit() {
+				var stepName = jQuery('#mainForm\\:stepName').val();
+				if (stepName == null || stepName == '') {
+				    ___dynamic_function = function() {
+						jQuery('#mainForm\\:stepName').focus();
+					};
+					___msg('温馨提示', '请填写步骤名称！', {closed: ___dynamic_function});
+					return false;
+				}
+
+				var stepUserIds = jQuery('#stepUserIds').val();
+				if (stepUserIds == null || stepUserIds == '') {
+					___msg('温馨提示', '请选择员工！');
+					return false;
+				}
+				jQuery('#mainForm\\:stepUserIdsHidden').val(stepUserIds.join(','));
+			}
+		//]]>
+		</script>
+	</ui:define>
+
+</ui:composition>

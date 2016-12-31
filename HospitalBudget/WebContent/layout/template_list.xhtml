@@ -1,0 +1,64 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<f:view xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:a="http://richfaces.org/a4j"
+	xmlns:s="http://jboss.com/products/seam/taglib" contentType="text/html">
+	<html>
+		<head>
+			<!-- template.list -->
+			<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+			<title>#{configureCache.getSettingsValue('system_alias')}</title>
+			<link rel="shortcut icon" href="#{request.contextPath}/favicon.ico" />
+			<link rel="stylesheet" type="text/css" href="#{request.contextPath}/remodal/css/remodal.css" />
+			<link rel="stylesheet" type="text/css" href="#{request.contextPath}/remodal/css/remodal-default-theme.css" />
+			<link rel="stylesheet" type="text/css" href="#{request.contextPath}/stylesheet/general.css" />
+			<link rel="stylesheet" type="text/css" href="#{request.contextPath}/stylesheet/template_list.css" />
+			<link rel="stylesheet" type="text/css" href="#{request.contextPath}/stylesheet/fix.css" />
+			<script type="text/javascript" src="#{request.contextPath}/common/js/jquery.min.js" charset="UTF-8" />
+			<script type="text/javascript" src="#{request.contextPath}/common/js/jquery.nicescroll.min.js" charset="UTF-8" />
+			<script type="text/javascript" src="#{request.contextPath}/remodal/js/zepto.min.js" charset="UTF-8" />
+			<script type="text/javascript" src="#{request.contextPath}/remodal/js/remodal.min.js" charset="UTF-8" />
+			<script type="text/javascript" src="#{request.contextPath}/javascript/general.js" charset="UTF-8" />
+			<script type="text/javascript" src="#{request.contextPath}/javascript/template_list.js" charset="UTF-8" />
+			<script type="text/javascript">
+				jQuery.noConflict();
+				var ___contextRoot = '#{configureCache.getPathValue("context.root")}';
+			</script>
+			<ui:insert name="head" />
+		</head>
+		<body>
+			<!-- Remodal的额外代码 -->
+			<script type="text/javascript" src="#{request.contextPath}/remodal/js/remodal_extra.js" charset="UTF-8" />
+			<ui:insert name="body" />
+			<script type="text/javascript">
+			//<![CDATA[
+				jQuery(document).ready(function() {
+				    jQuery('body').niceScroll({
+						cursorcolor : '#000000',
+						cursorwidth : 9,
+						cursoropacitymax : 0.8,
+						touchbehavior : false,
+						autohidemode : true
+				    });
+					jQuery(top.window).resize(function() {
+						jQuery('body').getNiceScroll().resize();
+						jQuery('body').getNiceScroll(0).doScrollLeft(0, 0);
+						jQuery('body').getNiceScroll(0).doScrollTop(0, 0);
+					});
+				});
+			//]]>
+			</script>
+		</body>
+	<a:form>
+	<!-- 
+		<a:queue requestDelay="100" ignoreDupResponses="true" />
+		<a:jsFunction name="executeRemove一个通用的ajax标准请求" action="# {removeAjax.execute}" data="# {removeAjax.message}" oncomplete="executeRemoveCompleted(data);">
+			<a:actionparam name="entityHome" assignTo="# {removeAjax.entityHome}"/>
+		</a:jsFunction>
+	 -->
+	</a:form>
+	</html>
+</f:view>

@@ -1,0 +1,15 @@
+.ui-state-highlight,.ui-widget-content .ui-state-highlight,.ui-widget-header .ui-state-highlight
+	{
+	border: 1px solid #dad55e;
+	background: #23cde7;
+	color: #777620;
+}
+
+.ui-draggable,.ui-droppable {
+	background-position: top;
+}
+
+.ui-state-highlight {
+	height: 1.5em;
+	line-height: 1.2em;
+}

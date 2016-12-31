@@ -1,0 +1,161 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:s="http://jboss.com/products/seam/taglib"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:a="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich"
+	template="/layout/template_edit.xhtml">
+
+	<ui:define name="head">
+		<link rel="stylesheet" type="text/css" href="#{request.contextPath}/common/css/bootstrap.min.css" />
+		<link rel="stylesheet" type="text/css" href="#{request.contextPath}/common/css/bootstrap-select.min.css" />
+		<link rel="stylesheet" type="text/css" href="#{request.contextPath}/stylesheet/fix.css" />
+	</ui:define>
+
+	<ui:define name="body">
+		#{ysWorkflowConfigHome.wire()}
+		<h:form id="mainForm" styleClass="edit" enctype="multipart/form-data">
+			<div class="pd0-10">
+				<div class="pt30 pb30 fs14">
+					<table width="100%" cellpadding="0" cellspacing="0">
+						<tr>
+							<td colspan="2">
+								<div class="pb20">
+									<table>
+										<tr>
+											<td valign="middle">
+												<span class="field-name mb10">流程名称</span>
+											</td>
+											<td valign="middle">
+												<h:inputText id="workflowName" value="#{ysWorkflowConfigHome.instance.workflowName}" styleClass="form-control mb10 fix--w220" />
+											</td>
+											<td valign="middle">
+												<font color="red" style="margin-left: 3px;">*</font>
+											</td>
+										</tr>
+									</table>
+								</div>
+							</td>
+						</tr>
+						<tr>
+							<td width="50%">
+								<div class="pb20">
+									<table>
+										<tr>
+											<td valign="middle">
+												<span class="field-name mb10">项目类型</span>
+											</td>
+											<td valign="middle">
+												<select id="projectTypes" class="selectpicker" multiple="multiple" data-live-search="true">
+													<a:repeat value="#{ysWorkflowConfigHome.projectTypesList}" var="_var">
+														<option value="#{_var[0]}">#{_var[1]}</option>
+													</a:repeat>
+												</select>
+												<h:inputHidden id="projectTypesHidden" value="#{ysWorkflowConfigHome.projectTypes}" />
+											</td>
+											<td valign="middle">
+												<font color="red" style="margin-left: 3px;"></font>
+											</td>
+										</tr>
+									</table>
+								</div>
+							</td>
+							<td width="50%">
+								<div class="pb20">
+									<table>
+										<tr>
+											<td valign="middle">
+												<span class="field-name mb10">适用部门</span>
+											</td>
+											<td valign="middle">
+												<select id="applicableDepartment" class="selectpicker" multiple="multiple" data-live-search="true">
+													<a:repeat value="#{ysWorkflowConfigHome.applicableDepartmentList}" var="_var">
+														<option value="#{_var[0]}">#{_var[1]}</option>
+													</a:repeat>
+												</select>
+												<h:inputHidden id="applicableDepartmentHidden" value="#{ysWorkflowConfigHome.applicableDepartment}" />
+											</td>
+											<td valign="middle">
+												<font color="red" style="margin-left: 3px;"></font>
+											</td>
+										</tr>
+									</table>
+								</div>
+							</td>
+						</tr>
+					</table>
+				</div>
+				<div class="pt50 pb95">
+					<table class="normal-btn">
+						<tr>
+							<td>
+								<h:commandButton id="persist" value="提交" onclick="return beforeSubmit();" action="#{ysWorkflowConfigHome.persist}" disabled="#{!ysWorkflowConfigHome.wired}" rendered="#{!ysWorkflowConfigHome.managed}" styleClass="btn btn-primary mr15" />
+								<h:commandButton id="update" value="保存" onclick="return beforeSubmit();" action="#{ysWorkflowConfigHome.update}" rendered="#{ysWorkflowConfigHome.managed}" styleClass="btn btn-primary mr15" />
+								<s:button id="cancel" value="返回" view="/hospital/YsWorkflowConfigList.xhtml" propagation="none" styleClass="btn btn-default" />
+							</td>
+						</tr>
+					</table>
+					<br />
+					<br />
+				</div>
+			</div>
+		</h:form>
+		<script type="text/javascript" src="#{request.contextPath}/common/js/bootstrap.min.js" />
+		<script type="text/javascript" src="#{request.contextPath}/common/js/bootstrap-select.min.js" charset="UTF-8" />
+		<script type="text/javascript" src="#{request.contextPath}/common/js/bootstrap-select-defaults-zh_CN.min.js" charset="UTF-8" />
+		<script type="text/javascript" src="#{request.contextPath}/toolkit/utils.js" charset="UTF-8" />
+		<script type="text/javascript">
+		//<![CDATA[
+			jQuery(document).ready(function() {
+			    
+			    jQuery('.selectpicker').selectpicker();
+			    
+			    jQuery('#projectTypes').selectpicker('val', jQuery('#mainForm\\:projectTypesHidden').val().split(','));
+			    jQuery('#applicableDepartment').selectpicker('val', jQuery('#mainForm\\:applicableDepartmentHidden').val().split(','));
+			    jQuery('#projectTypes').selectpicker('render');
+			    jQuery('#applicableDepartment').selectpicker('render');
+			    
+				___textRestrictById('mainForm:workflowName', 255);
+				
+			    var message = '#{ysWorkflowConfigHome.message}';
+			    ___dynamic_function = function() {
+					jQuery('#mainForm\\:workflowName').focus();
+			    };
+			    if (message != '') {
+					___msg('温馨提示', message, {closed: ___dynamic_function});
+			    }
+			});
+			
+			//提交表单前
+			function beforeSubmit() {
+				var workflowName = jQuery('#mainForm\\:workflowName').val();
+				if (workflowName == null || workflowName == '') {
+				    ___dynamic_function = function() {
+						jQuery('#mainForm\\:workflowName').focus();
+					};
+					___msg('温馨提示', '请填写流程名称！', {closed: ___dynamic_function});
+					return false;
+				}
+				
+				var projectTypes = jQuery('#projectTypes').val();
+				if (projectTypes != null && projectTypes != '') {
+					jQuery('#mainForm\\:projectTypesHidden').val(projectTypes.join(','));
+				} else {
+					jQuery('#mainForm\\:projectTypesHidden').val('');
+				}
+				
+				var applicableDepartment = jQuery('#applicableDepartment').val();
+				if (applicableDepartment != null && applicableDepartment != '') {
+					jQuery('#mainForm\\:applicableDepartmentHidden').val(applicableDepartment.join(','));
+				} else {
+					jQuery('#mainForm\\:applicableDepartmentHidden').val('');
+				}
+			}
+		//]]>
+		</script>
+	</ui:define>
+
+</ui:composition>

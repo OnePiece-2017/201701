@@ -1,0 +1,148 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:s="http://jboss.com/products/seam/taglib"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:a="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich"
+	template="/layout/template_edit.xhtml">
+
+	<ui:define name="head">
+		<link rel="stylesheet" type="text/css" href="#{request.contextPath}/common/css/bootstrap.min.css" />
+		<link rel="stylesheet" type="text/css" href="#{request.contextPath}/icheck/skins/square/blue.css" />
+		<style>
+			.node-banner span {
+				cursor: pointer;
+			}
+			
+			.part-left {
+				float: left;
+				width: 200px;
+				height: auto;
+				text-align: left;
+				margin-bottom: 10px;
+				background-color: #eabdbd;
+				cursor: pointer;
+			}
+			
+			.part-right {
+				height: auto;
+				margin-left: 190px;
+			}
+			
+			.part-right ul {
+				height: auto;
+			}
+			
+			.part-right ul li {
+				float: left;
+				width: auto;
+				height: 28px;
+				text-align: right;
+				margin-right: 10px;
+				margin-bottom: 10px;
+				list-style: none;
+			}
+		</style>
+		<script type="text/javascript" src="#{request.contextPath}/common/js/bootstrap.min.js" />
+		<script type="text/javascript" src="#{request.contextPath}/icheck/js/icheck.min.js" />
+	</ui:define>
+
+	<ui:define name="body">
+		#{grantPrivilegesHome.wire()}
+		<h:form id="mainForm" styleClass="edit" enctype="multipart/form-data">
+			<div class="pd0-10">
+				<div class="node-banner pt30 fs14" style="overflow: hidden;">
+					<h:outputText id="roleName" value="#{grantPrivilegesHome.instance.roleName}" styleClass="form-control mb10 fix--bc-purple" />
+				</div>
+			</div>
+			<a:repeat value="#{grantPrivilegesHome.permissionAssignmentColligateList}" var="_pac">
+				<div class="pd0-10">
+					<div class="pt30 fs14" style="overflow: hidden;">
+						<div style="height: auto;">
+							<div class="part-left">
+						    	<strong style="font-size: 15px; font-style: italic;">#{_pac[0]}</strong>
+						    </div>
+						    <div class="part-right">
+						    	<ul>
+							    	<a:repeat value="#{_pac[1]}" var="_pa">
+							    		<li>
+								    		<font>#{_pa[1]}</font>
+								    		<input type="checkbox" value="#{_pa[0]}" class="icheck" />
+							    		</li>
+							    	</a:repeat>
+					    		</ul>
+						    </div>
+						</div>
+					</div>
+				</div>
+			</a:repeat>
+			
+			<div class="pd0-10">
+				<div class="pt50 pb95">
+					<table class="normal-btn">
+						<tr>
+							<td>
+								<h:inputHidden id="privilegesHidden" value="#{grantPrivilegesHome.privileges}" />
+								<h:commandButton id="persist" value="提交" onclick="return beforeSubmit();" action="#{grantPrivilegesHome.persist}" disabled="#{!grantPrivilegesHome.wired}" rendered="#{!grantPrivilegesHome.managed}" styleClass="btn btn-primary mr15" />
+								<h:commandButton id="update" value="保存" onclick="return beforeSubmit();" action="#{grantPrivilegesHome.update}" rendered="#{grantPrivilegesHome.managed}" styleClass="btn btn-primary mr15" />
+								<s:button id="cancel" value="返回" view="/admin/RoleInfoList.xhtml" propagation="none" styleClass="btn btn-default" />
+							</td>
+						</tr>
+					</table>
+					<br />
+					<br />
+				</div>
+			</div>
+		</h:form>
+		
+		<script type="text/javascript">
+		//<![CDATA[
+			jQuery(document).ready(function() {
+				var message = '#{grantPrivilegesHome.message}';
+				if (message != '') {
+					___msg('温馨提示', message);
+				}
+				
+				jQuery('.icheck').iCheck({
+					checkboxClass: 'icheckbox_square-blue',
+					increaseArea: '20%'
+				});
+
+				jQuery('#mainForm\\:roleName').hide();
+				jQuery('#mainForm\\:roleName').slideDown();
+			
+				var privileges = '#{grantPrivilegesHome.privileges}';
+				if (privileges != null && privileges != '') {
+					var privilegesArr = privileges.split(',');
+					for (var i in privilegesArr) {
+						jQuery('.part-right input[type="checkbox"]input[value="' + privilegesArr[i] + '"]').iCheck('check');
+					}
+				}
+				jQuery('.node-banner span, .part-left').attr('title', '单击鼠标左键进行全选/不全选');
+				jQuery('.node-banner span').bind('click', function(){
+					jQuery('.part-right').find('.icheck').iCheck(jQuery('.part-right').find('.icheck').length != jQuery('.part-right').find('.icheck:checked').length ? 'check' : 'uncheck');
+				});
+				jQuery('.part-left').bind('click', function(){
+					jQuery(this).next('.part-right').find('.icheck').iCheck(jQuery(this).next('.part-right').find('.icheck').length != jQuery(this).next('.part-right').find('.icheck:checked').length ? 'check' : 'uncheck');
+				});
+			});
+			
+			//提交表单前
+			function beforeSubmit() {
+				var privileges = '';
+				jQuery('.part-right input[type="checkbox"]:checked').each(function() {
+					privileges += this.value + ','
+				});
+				if (privileges != '') {
+					privileges = privileges.substring(0, privileges.length - 1);
+				}
+				jQuery('#mainForm\\:privilegesHidden').val(privileges);
+			}
+		//]]>
+		</script>
+	</ui:define>
+
+</ui:composition>

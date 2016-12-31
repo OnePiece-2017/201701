@@ -1,0 +1,162 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:s="http://jboss.com/products/seam/taglib"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:a="http://richfaces.org/a4j"
+	template="/layout/template_list.xhtml">
+
+	<ui:define name="head">
+		<link rel="stylesheet" type="text/css" href="#{request.contextPath}/common/css/bootstrap.min.css" />
+		<script type="text/javascript" src="#{request.contextPath}/common/js/bootstrap.min.js" />
+	</ui:define>
+	<ui:define name="body">
+		<div class="g-data-list-condition">
+			<h:form id="mainForm">
+				<input type="hidden" name="page" value="1" />
+				<div class="fl w300">
+					<h:inputText id="keyword" value="#{dictionaryList.keyword}" styleClass="form-control mt10 ml10" />
+				</div>
+				<div class="fl">
+					<h:commandButton styleClass="btn btn-primary mt10 ml20" action="/admin/DictionaryList.xhtml" value="搜索" />
+				</div>
+				<s:fragment rendered="#{s:hasRole('dictionary_management/create')}">
+					<div class="fr">
+						<s:link value="添加" view="/admin/DictionaryEdit.xhtml" styleClass="btn btn-success fr mt10 mr10">
+							<f:param name="dictionaryTheId" />
+						</s:link>
+					</div>
+				</s:fragment>
+				<s:fragment rendered="#{s:hasRole('dictionary_management/issue')}">
+					<div class="fr">
+						<a href="javascript:void(0);" onclick="callIssue();" class="btn btn-success fr mt10 mr10">发布</a>
+					</div>
+				</s:fragment>
+			</h:form>
+		</div>
+		<div class="g-data-list-table">
+		    <table class="record" width="100%" cellpadding="0" cellspacing="0">
+		        <tr>
+		            <th width="20%">ID</th>
+		            <th width="30%">名称</th>
+		            <th width="40%">父级</th>
+		            <th width="10%">操作</th>
+		        </tr>
+		        <a:repeat value="#{dictionaryList.resultList}" var="_result" rowKeyVar="_row">
+		        	<tr class="node-record #{_row % 2 eq 0 ? 'odd' : 'even'}">
+			        	<td>
+			        		<h:outputText value="#{_result.theId}" />
+			        	</td>
+			        	<td>
+			        		<a style="color: #333333; text-decoration: none; cursor: default; outline: none;" href="javascript:void(0);" title="#{_result.theValue}">#{commonTool.abbr(_result.theValue, 19)}</a>
+			        	</td>
+			        	<td>
+			        		<a style="color: #333333; text-decoration: none; cursor: default; outline: none;" href="javascript:void(0);" title="#{_result.dictionary.theValue != null ? _result.dictionary.theValue : '无'}">#{commonTool.abbr(_result.dictionary.theValue != null ? _result.dictionary.theValue : '无', 19)}</a>
+			        	</td>
+			        	<td>
+			        		<s:link title="查看" view="/admin/Dictionary.xhtml" style="text-decoration: none;" rendered="#{s:hasRole('dictionary_management/retrieve')}">
+			        			<f:param name="dictionaryTheId" value="#{_result.theId}" />
+			        			<img src="../images/icon_view_16x16.png" />
+			        		</s:link>
+			        		<s:link title="编辑" view="/admin/DictionaryEdit.xhtml" style="text-decoration: none;" rendered="#{s:hasRole('dictionary_management/update')}">
+			        			<f:param name="dictionaryTheId" value="#{_result.theId}" />
+			        			<img src="../images/icon_edit_16x16.png" />
+			        		</s:link>
+			        		<s:link title="删除（含子级）" view="/admin/DictionaryEdit.xhtml" onclick="return confirm('是否删除（含子级）？');" action="#{dictionaryHome.removeIncludeLeaf}" style="text-decoration: none;" rendered="#{s:hasRole('dictionary_management/delete')}">
+			        			<f:param name="dictionaryTheId" value="#{_result.theId}" />
+			        			<img src="../images/icon_trash_96x96.png" />
+			        		</s:link>
+			        		<s:link title="删除" view="/admin/DictionaryEdit.xhtml" onclick="return confirm('是否删除？');" action="#{dictionaryHome.remove}" style="text-decoration: none;" rendered="#{s:hasRole('dictionary_management/delete')}">
+			        			<f:param name="dictionaryTheId" value="#{_result.theId}" />
+			        			<img src="../images/icon_delete_16x16.png" />
+			        		</s:link>
+			        	</td>
+		        	</tr>
+		        </a:repeat>
+		    </table>
+		    #{paginationModel.init(dictionaryList)}
+		    <s:fragment rendered="#{paginationModel.query != null}">
+				<table class="pagination-model" style="width: auto; margin: 40px auto;" cellpadding="0" cellspacing="0">
+					<tr>
+						<td>
+							<s:span rendered="#{paginationModel.previousPageExist}">
+								<s:link view="#{servletContexts.request.servletPath}" value="首页">
+									<f:param name="page" value="1" />
+								</s:link>
+							</s:span>
+							<s:span rendered="#{paginationModel.previousPageExist}">
+								<s:link view="#{servletContexts.request.servletPath}" value="&lt;&lt;">
+									<f:param name="page" value="#{paginationModel.previousPage}" />
+								</s:link>
+							</s:span>
+							<a:repeat value="#{paginationModel.pageNoList}" var="_pageNo">
+								<span class="#{paginationModel.page == _pageNo ? 'page-current' : ''}">
+									<s:link view="#{servletContexts.request.servletPath}" value="#{_pageNo}">
+										<f:param name="page" value="#{_pageNo}" />
+									</s:link>
+								</span>
+							</a:repeat>
+							<s:span rendered="#{paginationModel.nextPageExist}">
+								<s:link view="#{servletContexts.request.servletPath}" value="&gt;&gt;">
+									<f:param name="page" value="#{paginationModel.nextPage}" />
+								</s:link>
+							</s:span>
+							<s:span rendered="#{paginationModel.nextPageExist}">
+								<s:link view="#{servletContexts.request.servletPath}" value="尾页">
+									<f:param name="page" value="#{paginationModel.lastPage}" />
+								</s:link>
+							</s:span>
+							<s:span rendered="#{paginationModel.lastPage > 0}">
+								<a>共#{paginationModel.lastPage}页</a>
+							</s:span>
+							<s:fragment rendered="#{paginationModel.lastPage > 1}">
+								<span>
+									<a>转至</a>
+								</span>
+								<span class="page-index">
+									<input type="text" id="pageIndex" />
+								</span>
+								<span class="page-goto">
+									<s:link value="确定" id="gotoPageLink" styleClass="page-determine" view="#{servletContexts.request.servletPath}" onclick="return gotoPage(#{paginationModel.lastPage});" />
+								</span>
+							</s:fragment>
+						</td>
+					</tr>
+				</table>
+		    </s:fragment>
+		</div>
+		<a:form>
+			<a:queue requestDelay="100" ignoreDupResponses="true" />
+			<a:jsFunction name="invokeIssue" action="#{dictionaryHome.invokeIssue}" data="#{dictionaryHome.dataIssue}" oncomplete="completedIssue(data);">
+			</a:jsFunction>
+		</a:form>
+		<script type="text/javascript" src="#{request.contextPath}/toolkit/utils.js" />
+		<script type="text/javascript">
+		//<![CDATA[
+			jQuery(document).ready(function() {
+			    var message = '#{dictionaryHome.message}';
+			    if (message != '') {
+					___msg('温馨提示', message);
+			    }
+			    ___textRestrictById('mainForm:keyword', 1024);
+			});
+
+			function callIssue() {
+			    ___dynamic_function = function() {
+			    	invokeIssue();
+				};
+				___ask('温馨提示', '是否发布？', {confirmation: ___dynamic_function});
+			}
+
+			function completedIssue(data) {
+				if (data != null) {
+					___msg('温馨提示', data.message);
+				}
+			}
+		//]]>
+		</script>
+	</ui:define>
+</ui:composition>

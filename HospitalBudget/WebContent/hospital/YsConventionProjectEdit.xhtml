@@ -1,0 +1,470 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:s="http://jboss.com/products/seam/taglib"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:a="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich"
+	template="/layout/template_edit.xhtml">
+
+	<ui:define name="head">
+		<link rel="stylesheet" type="text/css" href="#{request.contextPath}/common/css/bootstrap-datetimepicker.min.css" />
+		<link rel="stylesheet" type="text/css" href="#{request.contextPath}/common/css/bootstrap.min.css" />
+		<link rel="stylesheet" type="text/css" href="#{request.contextPath}/common/css/bootstrap-select.min.css" />
+		<link rel="stylesheet" type="text/css" href="#{request.contextPath}/icheck/skins/square/blue.css" />
+		<link rel="stylesheet" type="text/css" href="#{request.contextPath}/stylesheet/fix.css" />
+		<style type="text/css">
+			.bs-w440 .bootstrap-select:not([class*="span"]):not([class*="col-"]):not([class*="form-control"]):not(.input-group-btn) {
+			    width: 440px;
+			}
+		</style>
+	</ui:define>
+
+	<ui:define name="body">
+		#{ysConventionProjectHome.wire()}
+		<h:form id="mainForm" styleClass="edit" enctype="multipart/form-data">
+			<div class="pd0-10">
+				<div class="pt30 pb30 fs14">
+					<table width="100%" cellpadding="0" cellspacing="0">
+						<tr>
+							<td width="50%">
+								<div class="pb20">
+									<table>
+										<tr>
+											<td valign="middle">
+												<span class="field-name mb10">项目名称</span>
+											</td>
+											<td valign="middle">
+												<h:inputText id="theValue" value="#{ysConventionProjectHome.instance.theValue}" styleClass="form-control mb10 fix--w440" />
+											</td>
+											<td valign="middle">
+												<font color="red" style="margin-left: 3px;">*</font>
+											</td>
+										</tr>
+									</table>
+								</div>
+							</td>
+							<td width="50%">
+								<div class="pb20">
+									<table>
+										<tr>
+											<td valign="middle">
+												<span class="field-name mb10">多级项目</span>
+											</td>
+											<td valign="top">
+												<input type="checkbox" class="icheck" id="multilevel" />
+												<h:inputHidden id="multilevelHidden" value="#{ysConventionProjectHome.instance.multilevel}" />
+											</td>
+											<td valign="middle">
+												<font color="red" style="margin-left: 3px;"></font>
+											</td>
+										</tr>
+									</table>
+								</div>
+							</td>
+						</tr>
+						<tr>
+							<td width="50%">
+								<div class="pb20">
+									<table>
+										<tr>
+											<td valign="middle">
+												<span class="field-name mb10">项目类型</span>
+											</td>
+											<td valign="middle">
+												<select id="theType" class="selectpicker">
+													<option value="#{''}">请选择</option>
+													<option value="1">收入预算</option>
+													<option value="2">支出预算</option>
+												</select>
+												<h:inputHidden id="theTypeHidden" value="#{ysConventionProjectHome.instance.theType}" />
+											</td>
+											<td valign="middle">
+												<font color="red" style="margin-left: 3px;">*</font>
+											</td>
+										</tr>
+									</table>
+								</div>
+							</td>
+							<td width="50%">
+								<div class="pb20">
+									<table>
+										<tr>
+											<td valign="middle">
+												<span class="field-name mb10">主管科室</span>
+											</td>
+											<td valign="middle">
+												<select id="departmentInfoId" class="selectpicker" data-live-search="true">
+													<a:repeat value="#{ysConventionProjectHome.departmentInfoList}" var="_var">
+														<option value="#{_var[0]}">#{_var[1]}</option>
+													</a:repeat>
+												</select>
+												<h:inputHidden id="departmentInfoIdHidden" value="#{ysConventionProjectHome.departmentInfoId}" />
+											</td>
+											<td valign="middle">
+												<font color="red" style="margin-left: 3px;">*</font>
+											</td>
+										</tr>
+									</table>
+								</div>
+							</td>
+						</tr>
+						<tr>
+							<td colspan="2">
+								<div class="pb20">
+									<table>
+										<tr>
+											<td valign="middle">
+												<span class="field-name mb10">预算相关人员</span>
+											</td>
+											<td valign="middle">
+												<div class="bs-w440">
+													<select id="budgetPersonIds" class="selectpicker" data-live-search="true" multiple="multiple">
+														<a:repeat value="#{ysConventionProjectHome.budgetPersonList}" var="_department">
+															<optgroup label="#{_department[0]}" data-subtext="科室">
+																<a:repeat value="#{_department[1]}" var="_user">
+																	<option value="#{_user[0]}">#{_user[1]}</option>
+																</a:repeat>
+															</optgroup>
+														</a:repeat>
+													</select>
+												</div>
+												<h:inputHidden id="budgetPersonIdsHidden" value="#{ysConventionProjectHome.budgetPersonIds}" />
+											</td>
+											<td valign="middle">
+												<font color="red" style="margin-left: 3px;">*</font>
+											</td>
+										</tr>
+									</table>
+								</div>
+							</td>
+						</tr>
+						<tr class="node-multilevel-false">
+							<td width="50%">
+								<div class="pb20">
+									<table>
+										<tr>
+											<td valign="middle">
+												<span class="field-name mb10">项目总金额(元)</span>
+											</td>
+											<td valign="middle">
+												<h:inputText id="totalAmount" value="#{ysConventionProjectHome.instance.totalAmount}" styleClass="form-control mb10 fix--w220" />
+											</td>
+											<td valign="middle">
+												<font color="red" style="margin-left: 3px;">*</font>
+											</td>
+										</tr>
+									</table>
+								</div>
+							</td>
+						</tr>
+						<tr>
+							<td colspan="2">
+								<div class="pb20">
+									<table>
+										<tr>
+											<td valign="middle">
+												<span class="field-name mb10">描述</span>
+											</td>
+											<td valign="middle">
+												<h:inputTextarea id="theDescription" value="#{ysConventionProjectHome.instance.theDescription}" styleClass="form-control mb10 fix--textarea-wh-c2" />
+											</td>
+											<td valign="middle">
+												<font color="red" style="margin-left: 3px;"></font>
+											</td>
+										</tr>
+									</table>
+								</div>
+							</td>
+						</tr>
+					</table>
+				</div>
+				<strong class="node-multilevel-true" style="width: 100%;text-align: left;float: left;margin-top: -30px;">以下内容为子项目</strong>
+				<div id="sub-item-div" class="node-multilevel-true pb30 fs14" style="height: 332px; border-style: solid; border-width: 2px; border-color: #bd2c2c; border-radius: 20px;">
+					<table width="100%" class="mt10 sub-item-clone-source" cellpadding="0" cellspacing="0">
+						<tr>
+							<td width="50%">
+								<div class="pb20">
+									<table>
+										<tr>
+											<td valign="middle">
+												<span class="field-name mb10">项目名称</span>
+											</td>
+											<td valign="middle">
+												<input name="theValue" class="form-control mb10 fix--w440" type="text" />
+											</td>
+											<td valign="middle">
+												<font color="red" style="margin-left: 3px;">*</font>
+											</td>
+										</tr>
+									</table>
+								</div>
+							</td>
+							<td width="50%">
+								<div class="pb20">
+									<table>
+										<tr>
+											<td colspan="3">
+												<span class="field-name mb10">
+													<a class="btn btn-success add" name="sub-item-btn">添加</a>
+												</span>
+											</td>
+										</tr>
+									</table>
+								</div>
+							</td>
+						</tr>
+						<tr>
+							<td width="50%">
+								<div class="pb20">
+									<table>
+										<tr>
+											<td valign="middle">
+												<span class="field-name mb10">项目总金额(元)</span>
+											</td>
+											<td valign="middle">
+												<input name="totalAmount" class="form-control mb10 fix--w220" type="text" />
+											</td>
+											<td valign="middle">
+												<font color="red" style="margin-left: 3px;">*</font>
+											</td>
+										</tr>
+									</table>
+								</div>
+							</td>
+						</tr>
+						<tr>
+							<td colspan="2">
+								<div class="pb20">
+									<table>
+										<tr>
+											<td valign="middle">
+												<span class="field-name mb10">描述</span>
+											</td>
+											<td valign="middle">
+												<textarea name="theDescription" class="form-control mb10 fix--textarea-wh-c2" />
+											</td>
+											<td valign="middle">
+												<font color="red" style="margin-left: 3px;"></font>
+											</td>
+										</tr>
+									</table>
+								</div>
+							</td>
+						</tr>
+					</table>
+				</div>
+				<div class="pt50 pb95">
+					<table class="normal-btn">
+						<tr>
+							<td>
+								<h:inputHidden id="subItemDataHidden" value="#{ysConventionProjectHome.subItemData}" />
+								<h:commandButton id="persist" value="提交" onclick="return beforeSubmit();" action="#{ysConventionProjectHome.persist}" disabled="#{!ysConventionProjectHome.wired}" rendered="#{!ysConventionProjectHome.managed}" styleClass="btn btn-primary mr15" />
+								<h:commandButton id="update" value="保存" onclick="return beforeSubmit();" action="#{ysConventionProjectHome.update}" rendered="#{ysConventionProjectHome.managed}" styleClass="btn btn-primary mr15" />
+								<s:button id="cancel" value="返回" view="/hospital/YsConventionProjectList.xhtml" propagation="none" styleClass="btn btn-default" />
+							</td>
+						</tr>
+					</table>
+					<br />
+					<br />
+				</div>
+			</div>
+		</h:form>
+		<script type="text/javascript" src="#{request.contextPath}/common/js/bootstrap.min.js" />
+		<script type="text/javascript" src="#{request.contextPath}/common/js/bootstrap-select.min.js" charset="UTF-8" />
+		<script type="text/javascript" src="#{request.contextPath}/common/js/bootstrap-select-defaults-zh_CN.min.js" charset="UTF-8" />
+		<script type="text/javascript" src="#{request.contextPath}/icheck/js/icheck.min.js" charset="UTF-8" />
+		<script type="text/javascript" src="#{request.contextPath}/toolkit/utils.js" />
+		<script type="text/javascript">
+		//<![CDATA[
+			jQuery(document).ready(function() {
+				
+			    var message = '#{ysConventionProjectHome.message}';
+			    if (message != '') {
+					___msg('温馨提示', message);
+			    }
+
+				___textRestrictById('mainForm:theValue', 255);
+				___textRestrictById('mainForm:totalAmount', 66);
+				___textRestrictById('mainForm:theDescription', 255);
+
+			    jQuery('.selectpicker').selectpicker();
+				
+				jQuery('.icheck').iCheck({
+					checkboxClass: 'icheckbox_square-blue',
+					radioClass: 'iradio_square-blue',
+					increaseArea: '20%'
+				});
+
+				jQuery('.node-multilevel-false, .node-multilevel-true').hide();
+				var multilevelToggle = function() {
+				    if (jQuery('#multilevel:checked').length > 0) {
+					    jQuery('.node-multilevel-false').hide();
+					    jQuery('.node-multilevel-true').fadeIn();
+					} else {
+					    jQuery('.node-multilevel-true').hide();
+					    jQuery('.node-multilevel-false').fadeIn();
+					}
+				}
+			    jQuery('#multilevel').iCheck(jQuery('#mainForm\\:multilevelHidden').val() != 'true' ? 'uncheck' : 'check');
+			    multilevelToggle();
+			    jQuery('#multilevel').on('ifChecked ifUnchecked', function(event){
+			    	multilevelToggle();
+				});
+				jQuery('.sub-item-clone-source input[name="theValue"]').each(function(){
+					___textRestrict(this, 255);
+				});
+				jQuery('.sub-item-clone-source input[name="totalAmount"]').each(function(){
+					___textRestrict(this, 66);
+				});
+				jQuery('.sub-item-clone-source textarea[name="theDescription"]').each(function(){
+					___textRestrict(this, 255);
+				});
+			    jQuery('#sub-item-div').niceScroll({
+					cursorcolor : '#5cb85c',
+					cursorwidth : 9,
+					cursoropacitymax : 0.8,
+					touchbehavior : false,
+					autohidemode : false
+			    });
+			    jQuery('a[name="sub-item-btn"]').click(function(){
+					if (jQuery(this).hasClass('add')) {
+						jQuery('#sub-item-div').append(jQuery(this).parents('.sub-item-clone-source').clone(true));
+						jQuery(this).removeClass('add');
+						jQuery(this).removeClass('btn-success');
+						jQuery(this).addClass('btn-danger');
+						jQuery(this).html('删除');
+						jQuery('a[name="sub-item-btn"]:last').addClass('add');
+						jQuery('.sub-item-clone-source:last').find('input[name="theValue"], input[name="totalAmount"], textarea[name="theDescription"]').val('');
+						jQuery('#sub-item-div').getNiceScroll().resize();
+						jQuery('#sub-item-div').getNiceScroll(0).doScrollTop(document.getElementById('sub-item-div').scrollHeight, 0);
+					} else {
+						jQuery(this).parents('.sub-item-clone-source').remove();
+					}
+				});
+
+				// 多级项目数据回显
+			    if (jQuery('#multilevel:checked').length > 0) {
+			    	var subItemData = jQuery('#mainForm\\:subItemDataHidden').val();
+			    	try {
+			    		subItemData = JSON.parse(subItemData);
+			    		for (var i = 0; i < subItemData.length; i++) {
+			    			if (i > 0)
+			    				jQuery('a[name="sub-item-btn"]:last').click();
+			    			jQuery('.sub-item-clone-source:eq(' + i + ') input[name="theValue"]').val(subItemData[i]['theValue']);
+			    			jQuery('.sub-item-clone-source:eq(' + i + ') input[name="totalAmount"]').val(subItemData[i]['totalAmount']);
+			    			jQuery('.sub-item-clone-source:eq(' + i + ') textarea[name="theDescription"]').val(subItemData[i]['theDescription']);
+				    	}
+			    	} catch(err) {
+				    	alert(err);// string --> object
+			    	}
+			    }
+				
+				jQuery('#theType').val(jQuery('#mainForm\\:theTypeHidden').val());
+			    jQuery('#theType').selectpicker('render');
+
+				jQuery('#departmentInfoId').val(jQuery('#mainForm\\:departmentInfoIdHidden').val());
+			    jQuery('#departmentInfoId').selectpicker('render');
+
+			    jQuery('#budgetPersonIds').val(jQuery('#mainForm\\:budgetPersonIdsHidden').val().split(','));
+			    jQuery('#budgetPersonIds').selectpicker('render');
+			});
+			
+			//提交表单前
+			function beforeSubmit() {
+				var theValue = jQuery('#mainForm\\:theValue').val();
+				if (theValue == null || theValue == '') {
+				    ___dynamic_function = function() {
+						jQuery('#mainForm\\:theValue').focus();
+					};
+					___msg('温馨提示', '请填写项目名称！', {closed: ___dynamic_function});
+					return false;
+				}
+
+				var theType = jQuery('#theType').val();
+				if (theType == null || theType == '') {
+					___msg('温馨提示', '请选择项目类型！');
+					return false;
+				}
+				jQuery('#mainForm\\:theTypeHidden').val(theType);
+
+				var departmentInfoId = jQuery('#departmentInfoId').val();
+				if (departmentInfoId == null || departmentInfoId == '') {
+					___msg('温馨提示', '请选择主管科室！');
+					return false;
+				}
+				jQuery('#mainForm\\:departmentInfoIdHidden').val(departmentInfoId);
+
+				var budgetPersonIds = jQuery('#budgetPersonIds').val();
+				if (budgetPersonIds == null || budgetPersonIds == '') {
+					___msg('温馨提示', '请选择预算相关人员！');
+					return false;
+				}
+				jQuery('#mainForm\\:budgetPersonIdsHidden').val(budgetPersonIds.join(','));
+				
+				var totalAmount = jQuery('#mainForm\\:totalAmount').val();
+			    ___dynamic_function = function() {
+					jQuery('#mainForm\\:totalAmount').focus();
+				};
+
+			    if (jQuery('#multilevel:checked').length > 0) {
+			    	var dataItemArr = [];
+					var verifyResult = true;
+					var tmpValue = null;
+				    jQuery('.sub-item-clone-source').each(function(index){
+						var dataItem = {};
+						tmpValue = jQuery(this).find('input[name="theValue"]')[0].value;
+						if (tmpValue == null || tmpValue == '') {
+						    ___dynamic_function = function() {
+						    	jQuery('.sub-item-clone-source:eq(' + index + ') input[name="theValue"]').focus();
+							};
+							___msg('温馨提示', '请填写项目名称！', {closed: ___dynamic_function});
+							return verifyResult = false;
+						}
+						dataItem['theValue'] = tmpValue;
+						if (!verifyResult) {
+							return false;
+						}
+						tmpValue = jQuery(this).find('input[name="totalAmount"]')[0].value;
+					    ___dynamic_function = function() {
+					    	jQuery('.sub-item-clone-source:eq(' + index + ') input[name="totalAmount"]').focus();
+						};
+						if (tmpValue == null || tmpValue == '') {
+							___msg('温馨提示', '请填写项目总金额！', {closed: ___dynamic_function});
+							return verifyResult = false;
+						} else if (isNaN(tmpValue)) {
+							___msg('温馨提示', '项目总金额必须是合法的数字！', {closed: ___dynamic_function});
+							return verifyResult = false;
+						}
+						dataItem['totalAmount'] = tmpValue;
+						if (!verifyResult) {
+							return false;
+						}
+						tmpValue = jQuery(this).find('textarea[name="theDescription"]')[0].value;
+						dataItem['theDescription'] = tmpValue;
+						dataItemArr.push(dataItem);
+					});
+					if (!verifyResult) {
+						return false;
+					}
+					jQuery('#mainForm\\:subItemDataHidden').val(JSON.stringify(dataItemArr));
+				} else {
+					if (totalAmount == null || totalAmount == '') {
+						___msg('温馨提示', '请填写项目总金额！', {closed: ___dynamic_function});
+						return false;
+					} else if (isNaN(totalAmount)) {
+						___msg('温馨提示', '项目总金额必须是合法的数字！', {closed: ___dynamic_function});
+						return false;
+					}
+				}
+
+				jQuery('#mainForm\\:multilevelHidden').val(jQuery('#multilevel:checked').length > 0);
+				
+			}
+		//]]>
+		</script>
+	</ui:define>
+
+</ui:composition>

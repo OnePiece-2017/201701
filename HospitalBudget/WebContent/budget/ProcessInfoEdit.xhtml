@@ -1,0 +1,166 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:s="http://jboss.com/products/seam/taglib"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:a="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich"
+	template="/layout/template_edit.xhtml">
+
+	<ui:define name="head">
+		<link rel="stylesheet" type="text/css" href="#{request.contextPath}/common/css/bootstrap.min.css" />
+		<link rel="stylesheet" type="text/css" href="#{request.contextPath}/common/css/bootstrap-select.min.css" />
+		<link rel="stylesheet" type="text/css" href="#{request.contextPath}/stylesheet/fix.css" />
+		<style type="text/css">
+			.bs-w440 .bootstrap-select:not([class*="span"]):not([class*="col-"]):not([class*="form-control"]):not(.input-group-btn) {
+			    width: 440px;
+			}
+		</style>
+	</ui:define>
+
+	<ui:define name="body">
+		#{processInfoHome.wire()}
+		<h:form id="mainForm" styleClass="edit" enctype="multipart/form-data">
+			<div class="pd0-10">
+				<div class="pt30 pb30 fs14">
+					<table width="100%" cellpadding="0" cellspacing="0">
+						<tr>
+							<td colspan="2">
+								<div class="pb20">
+									<table>
+										<tr>
+											<td valign="middle">
+												<span class="field-name mb10">流程名称</span>
+											</td>
+											<td valign="middle">
+												<h:inputText id="processName" value="#{processInfoHome.instance.processName}" styleClass="form-control mb10 fix--w440" />
+											</td>
+											<td valign="middle">
+												<font color="red" style="margin-left: 3px;">*</font>
+											</td>
+										</tr>
+									</table>
+								</div>
+							</td>
+						</tr>
+						<tr>
+							<td width="50%">
+								<div class="pb20">
+									<table>
+										<tr>
+											<td valign="middle">
+												<span class="field-name mb10">流程类型</span>
+											</td>
+											<td valign="middle">
+												<select id="processType" class="selectpicker">
+													<option value="#{''}">请选择</option>
+													<option value="1">常规项目流程</option>
+													<option value="2">项目流程</option>
+												</select>
+												<h:inputHidden id="processTypeHidden" value="#{processInfoHome.instance.processType}" />
+											</td>
+											<td valign="middle">
+												<font color="red" style="margin-left: 3px;">*</font>
+											</td>
+										</tr>
+									</table>
+								</div>
+							</td>
+							<td width="50%">
+								<div class="pb20">
+									<table>
+										<tr>
+											<td valign="middle">
+												<span class="field-name mb10">流程归属科室</span>
+											</td>
+											<td valign="middle">
+												<select id="departmentInfoId" class="selectpicker" data-live-search="true">
+													<a:repeat value="#{processInfoHome.departmentInfoList}" var="_var">
+														<option value="#{_var[0]}">#{_var[1]}</option>
+													</a:repeat>
+												</select>
+												<h:inputHidden id="departmentInfoIdHidden" value="#{processInfoHome.departmentInfoId}" />
+											</td>
+											<td valign="middle">
+												<font color="red" style="margin-left: 3px;">*</font>
+											</td>
+										</tr>
+									</table>
+								</div>
+							</td>
+						</tr>
+					</table>
+				</div>
+				<div class="pt50 pb95">
+					<table class="normal-btn">
+						<tr>
+							<td>
+								<h:commandButton id="persist" value="提交" onclick="return beforeSubmit();" action="#{processInfoHome.persist}" disabled="#{!processInfoHome.wired}" rendered="#{!processInfoHome.managed}" styleClass="btn btn-primary mr15" />
+								<h:commandButton id="update" value="保存" onclick="return beforeSubmit();" action="#{processInfoHome.update}" rendered="#{processInfoHome.managed}" styleClass="btn btn-primary mr15" />
+								<s:button id="cancel" value="返回" view="/budget/ProcessInfoList.xhtml" propagation="none" styleClass="btn btn-default" />
+							</td>
+						</tr>
+					</table>
+					<br />
+					<br />
+				</div>
+			</div>
+		</h:form>
+		<script type="text/javascript" src="#{request.contextPath}/common/js/bootstrap.min.js" />
+		<script type="text/javascript" src="#{request.contextPath}/common/js/bootstrap-select.min.js" charset="UTF-8" />
+		<script type="text/javascript" src="#{request.contextPath}/common/js/bootstrap-select-defaults-zh_CN.min.js" charset="UTF-8" />
+		<script type="text/javascript" src="#{request.contextPath}/toolkit/utils.js" />
+		<script type="text/javascript">
+		//<![CDATA[
+			jQuery(document).ready(function() {
+				
+			    var message = '#{processInfoHome.message}';
+			    if (message != '') {
+					___msg('温馨提示', message);
+			    }
+
+			    jQuery('.selectpicker').selectpicker();
+
+				___textRestrictById('mainForm:processName', 50);
+
+				jQuery('#processType').val(jQuery('#mainForm\\:processTypeHidden').val());
+			    jQuery('#processType').selectpicker('render');
+
+				jQuery('#departmentInfoId').val(jQuery('#mainForm\\:departmentInfoIdHidden').val());
+			    jQuery('#departmentInfoId').selectpicker('render');
+				
+			});
+			
+			//提交表单前
+			function beforeSubmit() {
+				var processName = jQuery('#mainForm\\:processName').val();
+				if (processName == null || processName == '') {
+				    ___dynamic_function = function() {
+						jQuery('#mainForm\\:processName').focus();
+					};
+					___msg('温馨提示', '请填写流程名称！', {closed: ___dynamic_function});
+					return false;
+				}
+
+				var processType = jQuery('#processType').val();
+				if (processType == null || processType == '') {
+					___msg('温馨提示', '请选择流程类型！');
+					return false;
+				}
+				jQuery('#mainForm\\:processTypeHidden').val(processType);
+
+				var departmentInfoId = jQuery('#departmentInfoId').val();
+				if (departmentInfoId == null || departmentInfoId == '') {
+					___msg('温馨提示', '请选择流程归属科室！');
+					return false;
+				}
+				jQuery('#mainForm\\:departmentInfoIdHidden').val(departmentInfoId);
+				
+			}
+		//]]>
+		</script>
+	</ui:define>
+
+</ui:composition>

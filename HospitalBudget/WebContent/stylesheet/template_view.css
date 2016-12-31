@@ -1,0 +1,36 @@
+body {
+	min-width: 800px;
+	min-height: 600px;
+}
+
+.table-grid {
+	border-left: 1px solid #e1e1e1;
+	border-top: 1px solid #e1e1e1;
+	font-size: 14px;
+	color: #2e2e2c;
+}
+
+.table-grid td {
+	height: 40px;
+	line-height: 40px;
+	border-right: 1px solid #e1e1e1;
+	border-bottom: 1px solid #e1e1e1;
+}
+
+.table-grid .field-name {
+	text-align: center;
+}
+
+.table-grid .field-value {
+	padding: 0 10px;
+	text-align: left;
+	color: #6c6a6a;
+}
+
+.table-grid .odd {
+	background: #F7F7F7;
+}
+
+.table-grid .even {
+	background: #F5FFFA;
+}

@@ -1,0 +1,183 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:s="http://jboss.com/products/seam/taglib"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:a="http://richfaces.org/a4j"
+	template="/layout/template_list.xhtml">
+
+	<ui:define name="head">
+		<link rel="stylesheet" type="text/css" href="#{request.contextPath}/common/css/bootstrap.min.css" />
+		<script type="text/javascript" src="#{request.contextPath}/common/js/bootstrap.min.js" />
+	</ui:define>
+	<ui:define name="body">
+		<div class="g-data-list-condition">
+			<h:form id="mainForm">
+				<input type="hidden" name="page" value="1" />
+				<div class="fl w300">
+					<h:inputText id="keyword" value="#{ysConventionProjectList.keyword}" styleClass="form-control mt10 ml10" />
+				</div>
+				<div class="fl">
+					<h:commandButton styleClass="btn btn-primary mt10 ml20" action="/hospital/YsConventionProjectList.xhtml" value="搜索" />
+				</div>
+				<s:fragment rendered="#{s:hasRole('convention_project_management/create')}">
+					<div class="fr">
+						<s:link value="添加" view="/hospital/YsConventionProjectEdit.xhtml" styleClass="btn btn-success fr mt10 mr10">
+							<f:param name="ysConventionProjectTheId" />
+						</s:link>
+					</div>
+				</s:fragment>
+			</h:form>
+		</div>
+		<div class="g-data-list-table">
+		    <table class="record" width="100%" cellpadding="0" cellspacing="0">
+		        <tr>
+		            <th width="5%">ID</th>
+		            <th width="25%">项目名称</th>
+		            <th width="10%">项目类型</th>
+		            <th width="10%">主管科室</th>
+		            <th width="10%">多级项目</th>
+		            <th width="20%">项目<br />总金额(元)</th>
+		            <th width="10%">状态</th>
+		            <th width="10%">操作</th>
+		        </tr>
+		        <a:repeat value="#{ysConventionProjectList.resultList}" var="_result" rowKeyVar="_row">
+		        	<tr class="node-record #{_row % 2 eq 0 ? 'odd' : 'even'}">
+			        	<td>
+			        		<h:outputText value="#{_result.theId}" />
+			        	</td>
+			        	<td>
+			        		<a style="color: #333333; text-decoration: none; cursor: default; outline: none;" href="javascript:void(0);" title="#{_result.theValue}">#{commonTool.abbr(_result.theValue, 19)}</a>
+			        	</td>
+			        	<td>#{_result.theType == 1 ? '收入预算' : (_result.theType == 2 ? '支出预算' : '')}</td>
+			        	<td>
+			        		<a style="color: #333333; text-decoration: none; cursor: default; outline: none;" href="javascript:void(0);" title="#{_result.ysDepartmentInfo.theValue}">#{commonTool.abbr(_result.ysDepartmentInfo.theValue, 19)}</a>
+			        	</td>
+			        	<td><h:outputText value="#{_result.multilevel ? '是' : '否'}" /></td>
+			        	<td>
+			        		<a style="color: #333333; text-decoration: none; cursor: default; outline: none;" href="javascript:void(0);" title="#{ysConventionProjectHome.pullTotalAmount(_result.theId)}">#{commonTool.abbr(ysConventionProjectHome.pullTotalAmount(_result.theId), 19)}</a>
+			        	</td>
+			        	<td>
+			        		<h:outputText value="#{1 == _result.theState ? '已打开' : '已关闭'}" />
+			        	</td>
+			        	<td>
+			        		<s:link title="查看" view="/hospital/YsConventionProject.xhtml" style="text-decoration: none;" rendered="#{s:hasRole('convention_project_management/retrieve')}">
+			        			<f:param name="ysConventionProjectTheId" value="#{_result.theId}" />
+			        			<img src="../images/icon_view_16x16.png" />
+			        		</s:link>
+			        		<s:link title="编辑" view="/hospital/YsConventionProjectEdit.xhtml" style="text-decoration: none;" rendered="#{s:hasRole('convention_project_management/update')}">
+			        			<f:param name="ysConventionProjectTheId" value="#{_result.theId}" />
+			        			<img src="../images/icon_edit_16x16.png" />
+		        			</s:link>
+			        		<s:fragment rendered="#{s:hasRole('convention_project_management/switch')}">
+			        			<s:fragment rendered="#{_result.theState == 1}">
+			        				<a title="关闭" onclick="call_invoke4setState(#{_result.theId}, #{_result.theState});" style="text-decoration: none; cursor: pointer;"><img src="../images/icon_stop_16x16.png" /></a>
+			        			</s:fragment>
+			        			<s:fragment rendered="#{_result.theState == 2}">
+			        				<a title="打开" onclick="call_invoke4setState(#{_result.theId}, #{_result.theState});" style="text-decoration: none; cursor: pointer;"><img src="../images/icon_play_16x16.png" /></a>
+			        			</s:fragment>
+			        		</s:fragment>
+			        		<s:link title="删除" view="/hospital/YsConventionProjectEdit.xhtml" onclick="return confirm('是否删除？');" action="#{ysConventionProjectHome.remove}" style="text-decoration: none;" rendered="#{s:hasRole('convention_project_management/delete')}">
+			        			<f:param name="ysConventionProjectTheId" value="#{_result.theId}" />
+			        			<img src="../images/icon_delete_16x16.png" />
+			        		</s:link>
+			        	</td>
+		        	</tr>
+		        </a:repeat>
+		    </table>
+		    #{paginationModel.init(ysConventionProjectList)}
+		    <s:fragment rendered="#{paginationModel.query != null}">
+				<table class="pagination-model" style="width: auto; margin: 40px auto;" cellpadding="0" cellspacing="0">
+					<tr>
+						<td>
+							<s:span rendered="#{paginationModel.previousPageExist}">
+								<s:link view="#{servletContexts.request.servletPath}" value="首页">
+									<f:param name="page" value="1" />
+								</s:link>
+							</s:span>
+							<s:span rendered="#{paginationModel.previousPageExist}">
+								<s:link view="#{servletContexts.request.servletPath}" value="&lt;&lt;">
+									<f:param name="page" value="#{paginationModel.previousPage}" />
+								</s:link>
+							</s:span>
+							<a:repeat value="#{paginationModel.pageNoList}" var="_pageNo">
+								<span class="#{paginationModel.page == _pageNo ? 'page-current' : ''}">
+									<s:link view="#{servletContexts.request.servletPath}" value="#{_pageNo}">
+										<f:param name="page" value="#{_pageNo}" />
+									</s:link>
+								</span>
+							</a:repeat>
+							<s:span rendered="#{paginationModel.nextPageExist}">
+								<s:link view="#{servletContexts.request.servletPath}" value="&gt;&gt;">
+									<f:param name="page" value="#{paginationModel.nextPage}" />
+								</s:link>
+							</s:span>
+							<s:span rendered="#{paginationModel.nextPageExist}">
+								<s:link view="#{servletContexts.request.servletPath}" value="尾页">
+									<f:param name="page" value="#{paginationModel.lastPage}" />
+								</s:link>
+							</s:span>
+							<s:span rendered="#{paginationModel.lastPage > 0}">
+								<a>共#{paginationModel.lastPage}页</a>
+							</s:span>
+							<s:fragment rendered="#{paginationModel.lastPage > 1}">
+								<span>
+									<a>转至</a>
+								</span>
+								<span class="page-index">
+									<input type="text" id="pageIndex" />
+								</span>
+								<span class="page-goto">
+									<s:link value="确定" id="gotoPageLink" styleClass="page-determine" view="#{servletContexts.request.servletPath}" onclick="return gotoPage(#{paginationModel.lastPage});" />
+								</span>
+							</s:fragment>
+						</td>
+					</tr>
+				</table>
+		    </s:fragment>
+		</div>
+		<a:form>
+			<a:queue requestDelay="100" ignoreDupResponses="true" />
+			<a:jsFunction name="invoke4setState" action="#{ysConventionProjectList.invoke4setState}" data="#{ysConventionProjectList.invokeData4setState}" oncomplete="invokeCompleted4setState(data);">
+				<a:actionparam name="invokeArgs4setState" assignTo="#{ysConventionProjectList.invokeArgs4setState}" />
+			</a:jsFunction>
+		</a:form>
+		<script type="text/javascript" src="#{request.contextPath}/toolkit/utils.js" />
+		<script type="text/javascript">
+		//<![CDATA[
+			jQuery(document).ready(function() {
+			    var message = '#{ysConventionProjectHome.message}';
+			    if (message != '') {
+					___msg('温馨提示', message);
+			    }
+			    ___textRestrictById('mainForm:keyword', 1024);
+			});
+
+			// show layer
+			function call_invoke4setState(theId, theState) {
+				if (confirm('是否' + (1 == theState ? '关闭' : '打开') + '？')) {
+					var invokeArgs4setState = {};
+					invokeArgs4setState['theId'] = theId;
+					invokeArgs4setState['theState'] = theState;
+					invoke4setState(JSON.stringify(invokeArgs4setState));
+				}
+			}
+
+			// hide layer
+			function invokeCompleted4setState(data) {
+				if (data != null && data.message != null && data.message != '') {
+				    ___dynamic_function = function() {
+				    	window.location.reload();
+					};
+					___msg('温馨提示', data.message, {closed: ___dynamic_function});
+				} else {
+					___msg('温馨提示', '请求服务端失败！');
+				}
+			}
+		//]]>
+		</script>
+	</ui:define>
+</ui:composition>

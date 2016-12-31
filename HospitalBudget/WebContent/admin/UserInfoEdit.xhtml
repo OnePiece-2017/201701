@@ -1,0 +1,494 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:s="http://jboss.com/products/seam/taglib"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:a="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich"
+	template="/layout/template_edit.xhtml">
+
+	<ui:define name="head">
+		<link rel="stylesheet" type="text/css" href="#{request.contextPath}/common/css/bootstrap-datetimepicker.min.css" />
+		<link rel="stylesheet" type="text/css" href="#{request.contextPath}/common/css/bootstrap.min.css" />
+		<link rel="stylesheet" type="text/css" href="#{request.contextPath}/common/css/bootstrap-select.min.css" />
+		<link rel="stylesheet" type="text/css" href="#{request.contextPath}/icheck/skins/square/blue.css" />
+		<link rel="stylesheet" type="text/css" href="#{request.contextPath}/stylesheet/fix.css" />
+	</ui:define>
+
+	<ui:define name="body">
+		#{userInfoHome.wire()}
+		<h:form id="mainForm" styleClass="edit" enctype="multipart/form-data">
+			<div class="pd0-10">
+				<div class="pt30 pb30 fs14">
+					<table width="100%" cellpadding="0" cellspacing="0">
+						<tr>
+							<td width="50%">
+								<div class="pb20">
+									<table>
+										<tr>
+											<td valign="middle">
+												<span class="field-name mb10">用户名</span>
+											</td>
+											<td valign="middle">
+												<h:inputText id="username" value="#{userInfoHome.instance.username}" styleClass="form-control mb10 fix--w220" />
+											</td>
+											<td valign="middle">
+												<font color="red" style="margin-left: 3px;">区分大小写*</font>
+											</td>
+										</tr>
+									</table>
+								</div>
+							</td>
+							<td width="50%">
+								<div class="pb20">
+									<table>
+										<tr>
+											<td valign="middle">
+												<span class="field-name mb10">昵称</span>
+											</td>
+											<td valign="middle">
+												<h:inputText id="nickname" value="#{userInfoHome.userInfoExtend.nickname}" styleClass="form-control mb10 fix--w220" />
+											</td>
+											<td valign="middle">
+												<font color="red" style="margin-left: 3px;">*</font>
+											</td>
+										</tr>
+									</table>
+								</div>
+							</td>
+						</tr>
+						<s:fragment rendered="#{!userInfoHome.managed}">
+							<tr>
+								<td width="50%">
+									<div class="pb20">
+										<table>
+											<tr>
+												<td valign="middle">
+													<span class="field-name mb10">密码</span>
+												</td>
+												<td valign="middle">
+													<h:inputSecret id="password" value="#{userInfoHome.password}" styleClass="form-control mb10 fix--w220" />
+												</td>
+												<td valign="middle">
+													<font color="red" style="margin-left: 3px;">*</font>
+												</td>
+											</tr>
+										</table>
+									</div>
+								</td>
+								<td width="50%">
+									<div class="pb20">
+										<table>
+											<tr>
+												<td valign="middle">
+													<span class="field-name mb10">确认密码</span>
+												</td>
+												<td valign="middle">
+													<h:inputSecret id="passwordConfirm" value="" styleClass="form-control mb10 fix--w220" />
+												</td>
+												<td valign="middle">
+													<font color="red" style="margin-left: 3px;">*</font>
+												</td>
+											</tr>
+										</table>
+									</div>
+								</td>
+							</tr>
+						</s:fragment>
+						<tr>
+							<td width="50%">
+								<div class="pb20">
+									<table>
+										<tr>
+											<td valign="middle">
+												<span class="field-name mb10">角色</span>
+											</td>
+											<td valign="middle">
+												<select id="roleInfoId" class="selectpicker">
+													<a:repeat value="#{userInfoHome.roleInfoList}" var="_var">
+														<option value="#{_var[0]}">#{_var[1]}</option>
+													</a:repeat>
+												</select>
+												<h:inputHidden id="roleInfoIdHidden" value="#{userInfoHome.roleInfoId}" />
+											</td>
+											<td valign="middle">
+												<font color="red" style="margin-left: 3px;">*</font>
+											</td>
+										</tr>
+									</table>
+								</div>
+							</td>
+							<td width="50%">
+								<div class="pb20">
+									<table>
+										<tr>
+											<td valign="middle">
+												<span class="field-name mb10">科室</span>
+											</td>
+											<td valign="middle">
+												<select id="departmentInfoId" class="selectpicker" data-live-search="true">
+													<a:repeat value="#{userInfoHome.departmentInfoList}" var="_var">
+														<option value="#{_var[0]}">#{_var[1]}</option>
+													</a:repeat>
+												</select>
+												<h:inputHidden id="departmentInfoIdHidden" value="#{userInfoHome.departmentInfoId}" />
+											</td>
+											<td valign="middle">
+												<font color="red" style="margin-left: 3px;">*</font>
+											</td>
+										</tr>
+									</table>
+								</div>
+							</td>
+						</tr>
+						<tr>
+							<td width="50%">
+								<div class="pb20">
+									<table>
+										<tr>
+											<td valign="middle">
+												<span class="field-name mb10">姓名</span>
+											</td>
+											<td valign="middle">
+												<h:inputText id="fullname" value="#{userInfoHome.userInfoExtend.fullname}" styleClass="form-control mb10 fix--w220" />
+											</td>
+											<td valign="middle">
+												<font color="red" style="margin-left: 3px;">*</font>
+											</td>
+										</tr>
+									</table>
+								</div>
+							</td>
+							<td width="50%">
+								<div class="pb20">
+									<table>
+										<tr>
+											<td valign="middle">
+												<span class="field-name mb10">性别</span>
+											</td>
+											<td valign="top">
+												<input type="radio" class="icheck" name="sex_radio" value="1" id="sex_radio__male" />
+												<label for="sex_radio__male"><span>男</span></label>
+												<input type="radio" class="icheck" name="sex_radio" value="2" id="sex_radio__female" />
+												<label for="sex_radio__female"><span>女</span></label>
+												<h:inputHidden id="sexHidden" value="#{userInfoHome.userInfoExtend.sex}" />
+											</td>
+											<td valign="middle">
+												<font color="red" style="margin-left: 3px;"></font>
+											</td>
+										</tr>
+									</table>
+								</div>
+							</td>
+						</tr>
+						<tr>
+							<td width="50%">
+								<div class="pb20">
+									<table>
+										<tr>
+											<td valign="middle">
+												<span class="field-name mb10">手机</span>
+											</td>
+											<td valign="middle">
+												<h:inputText id="cellphone" value="#{userInfoHome.userInfoExtend.cellphone}" styleClass="form-control mb10 fix--w220" />
+											</td>
+											<td valign="middle">
+												<font color="red" style="margin-left: 3px;"></font>
+											</td>
+										</tr>
+									</table>
+								</div>
+							</td>
+							<td width="50%">
+								<div class="pb20">
+									<table>
+										<tr>
+											<td valign="middle">
+												<span class="field-name mb10">电话</span>
+											</td>
+											<td valign="middle">
+												<h:inputText id="telephone" value="#{userInfoHome.userInfoExtend.telephone}" styleClass="form-control mb10 fix--w220" />
+											</td>
+											<td valign="middle">
+												<font color="red" style="margin-left: 3px;"></font>
+											</td>
+										</tr>
+									</table>
+								</div>
+							</td>
+						</tr>
+						<tr>
+							<td width="50%">
+								<div class="pb20">
+									<table>
+										<tr>
+											<td valign="middle">
+												<span class="field-name mb10">邮箱</span>
+											</td>
+											<td valign="middle">
+												<h:inputText id="mail" value="#{userInfoHome.userInfoExtend.mail}" styleClass="form-control mb10 fix--w220" />
+											</td>
+											<td valign="middle">
+												<font color="red" style="margin-left: 3px;"></font>
+											</td>
+										</tr>
+									</table>
+								</div>
+							</td>
+							<td width="50%">
+								<div class="pb20">
+									<table>
+										<tr>
+											<td valign="middle">
+												<span class="field-name mb10">地址</span>
+											</td>
+											<td valign="middle">
+												<h:inputText id="address" value="#{userInfoHome.userInfoExtend.address}" styleClass="form-control mb10 fix--w220" />
+											</td>
+											<td valign="middle">
+												<font color="red" style="margin-left: 3px;"></font>
+											</td>
+										</tr>
+									</table>
+								</div>
+							</td>
+						</tr>
+						<tr>
+							<td width="50%">
+								<div class="pb20">
+									<table>
+										<tr>
+											<td valign="middle">
+												<span class="field-name mb10">生日</span>
+											</td>
+											<td valign="middle">
+												<div class="form-group">
+													<div class="input-group date form_date col-md-5">
+														<h:inputText id="birthday" value="#{userInfoHome.birthday}" styleClass="form-control mb10 fix--w141" readonly="true" />
+														<h:inputHidden id="birthdayHidden" value="#{userInfoHome.birthday}" />
+														<span class="input-group-addon"><span class="glyphicon glyphicon-remove"></span></span>
+														<span class="input-group-addon"><span class="glyphicon glyphicon-calendar"></span></span>
+													</div>
+												</div>
+											</td>
+											<td valign="middle">
+												<font color="red" style="margin-left: 3px;"></font>
+											</td>
+										</tr>
+									</table>
+								</div>
+							</td>
+							<td width="50%">
+								<div class="pb20">
+									<table>
+										<tr>
+											<td valign="middle">
+												<span class="field-name mb10">兴趣</span>
+											</td>
+											<td valign="middle">
+												<select id="interest" class="selectpicker" multiple="multiple" data-live-search="true">
+													<a:repeat value="#{commonTool.getDictionaryByPid(7)}" var="_var">
+														<option value="#{_var.theId}">#{_var.theValue}</option>
+													</a:repeat>
+												</select>
+												<h:inputHidden id="interestHidden" value="#{userInfoHome.interest}" />
+											</td>
+											<td valign="middle">
+												<font color="red" style="margin-left: 3px;"></font>
+											</td>
+										</tr>
+									</table>
+								</div>
+							</td>
+						</tr>
+						<tr>
+							<td width="50%">
+								<div class="pb20">
+									<table>
+										<tr>
+											<td valign="middle">
+												<span class="field-name mb10">启用</span>
+											</td>
+											<td valign="top">
+												<input type="checkbox" class="icheck" id="enabled" />
+												<h:inputHidden id="enabledHidden" value="#{userInfoHome.instance.enabled}" />
+											</td>
+											<td valign="middle">
+												<font color="red" style="margin-left: 3px;"></font>
+											</td>
+										</tr>
+									</table>
+								</div>
+							</td>
+						</tr>
+					</table>
+				</div>
+				<div class="pt50 pb95">
+					<table class="normal-btn">
+						<tr>
+							<td>
+								<h:commandButton id="persist" value="提交" onclick="return beforeSubmit();" action="#{userInfoHome.persist}" disabled="#{!userInfoHome.wired}" rendered="#{!userInfoHome.managed}" styleClass="btn btn-primary mr15" />
+								<h:commandButton id="update" value="保存" onclick="return beforeSubmit();" action="#{userInfoHome.update}" rendered="#{userInfoHome.managed}" styleClass="btn btn-primary mr15" />
+								<s:button id="cancel" value="返回" view="/admin/UserInfoList.xhtml" propagation="none" styleClass="btn btn-default" />
+							</td>
+						</tr>
+					</table>
+					<br />
+					<br />
+				</div>
+			</div>
+		</h:form>
+		<script type="text/javascript" src="#{request.contextPath}/common/js/bootstrap.min.js" />
+		<script type="text/javascript" src="#{request.contextPath}/common/js/bootstrap-select.min.js" charset="UTF-8" />
+		<script type="text/javascript" src="#{request.contextPath}/common/js/bootstrap-select-defaults-zh_CN.min.js" charset="UTF-8" />
+		<script type="text/javascript" src="#{request.contextPath}/common/js/bootstrap-datetimepicker.min.js" charset="UTF-8" />
+		<script type="text/javascript" src="#{request.contextPath}/common/js/bootstrap-datetimepicker.zh-CN.js" charset="UTF-8" />
+		<script type="text/javascript" src="#{request.contextPath}/icheck/js/icheck.min.js" charset="UTF-8" />
+		<script type="text/javascript" src="#{request.contextPath}/toolkit/utils.js" charset="UTF-8" />
+		<script type="text/javascript">
+		//<![CDATA[
+			jQuery(document).ready(function() {
+				
+			    var message = '#{userInfoHome.message}';
+			    if (message != '') {
+					___msg('温馨提示', message);
+			    }
+
+				jQuery('.form_date').datetimepicker({
+					language: 'zh-CN',
+					format: "yyyy-mm-dd",
+					pickerPosition: "bottom-left",
+					weekStart: 1,
+					todayBtn: 1,
+					autoclose: 1,
+					todayHighlight: 1,
+					startView: 2,
+					minView: 2,
+					forceParse: 0
+				});
+				
+			    jQuery('.selectpicker').selectpicker();
+				
+				___textRestrictById('mainForm:username', 14);
+				___textRestrictById('mainForm:nickname', 24);
+				if (#{!userInfoHome.managed}) {
+					___textRestrictById('mainForm:password', 14);
+					___textRestrictById('mainForm:passwordConfirm', 14);
+				}
+				___textRestrictById('mainForm:fullname', 24);
+				___textRestrictById('mainForm:cellphone', 12);
+				___textRestrictById('mainForm:telephone', 20);
+				___textRestrictById('mainForm:mail', 30);
+				___textRestrictById('mainForm:address', 48);
+				
+				jQuery('.icheck').iCheck({
+					checkboxClass: 'icheckbox_square-blue',
+					radioClass: 'iradio_square-blue',
+					increaseArea: '20%'
+				});
+				
+			    jQuery('#roleInfoId').val(jQuery('#mainForm\\:roleInfoIdHidden').val());
+			    jQuery('#roleInfoId').selectpicker('render');
+
+				jQuery('#departmentInfoId').val(jQuery('#mainForm\\:departmentInfoIdHidden').val());
+			    jQuery('#departmentInfoId').selectpicker('render');
+
+				var sexHidden = jQuery('#mainForm\\:sexHidden').val();
+				jQuery('input[name="sex_radio"][value="' + sexHidden + '"]').iCheck('check');
+			    
+			    jQuery('#interest').val(jQuery('#mainForm\\:interestHidden').val().split(','));
+			    jQuery('#interest').selectpicker('render');
+
+			    jQuery('#enabled').iCheck(jQuery('#mainForm\\:enabledHidden').val() != 'true' ? 'uncheck' : 'check');
+
+			});
+			
+			//提交表单前
+			function beforeSubmit() {
+				var username = jQuery('#mainForm\\:username').val();
+				if (username == null || username == '') {
+				    ___dynamic_function = function() {
+						jQuery('#mainForm\\:username').focus();
+					};
+					___msg('温馨提示', '请填写用户名！', {closed: ___dynamic_function});
+					return false;
+				}
+				
+				var nickname = jQuery('#mainForm\\:nickname').val();
+				if (nickname == null || nickname == '') {
+				    ___dynamic_function = function() {
+						jQuery('#mainForm\\:nickname').focus();
+					};
+					___msg('温馨提示', '请填写昵称！', {closed: ___dynamic_function});
+					return false;
+				}
+
+				if (#{!userInfoHome.managed}) {
+					var password = jQuery('#mainForm\\:password').val();
+					var passwordConfirm = jQuery('#mainForm\\:passwordConfirm').val();
+					if (password == null || password == '') {
+					    ___dynamic_function = function() {
+							jQuery('#mainForm\\:password').focus();
+						};
+						___msg('温馨提示', '请填写密码！', {closed: ___dynamic_function});
+						return false;
+					} else if (password.length < 6 || password.length > 14) {
+					    ___dynamic_function = function() {
+							jQuery('#mainForm\\:password').focus();
+						};
+						___msg('温馨提示', '密码长度为6~14个字符！', {closed: ___dynamic_function});
+						return false;
+					} else if (password != passwordConfirm) {
+					    ___dynamic_function = function() {
+							jQuery('#mainForm\\:passwordConfirm').focus();
+						};
+						___msg('温馨提示', '两处密码不一致！', {closed: ___dynamic_function});
+						return false;
+					}
+				}
+
+				var roleInfoId = jQuery('#roleInfoId').val();
+				if (roleInfoId == null || roleInfoId == '') {
+					___msg('温馨提示', '请选择角色！');
+					return false;
+				}
+				jQuery('#mainForm\\:roleInfoIdHidden').val(roleInfoId);
+
+				var departmentInfoId = jQuery('#departmentInfoId').val();
+				if (departmentInfoId == null || departmentInfoId == '') {
+					___msg('温馨提示', '请选择科室！');
+					return false;
+				}
+				jQuery('#mainForm\\:departmentInfoIdHidden').val(departmentInfoId);
+				
+				var fullname = jQuery('#mainForm\\:fullname').val();
+				if (fullname == null || fullname == '') {
+				    ___dynamic_function = function() {
+						jQuery('#mainForm\\:fullname').focus();
+					};
+					___msg('温馨提示', '请填写姓名！', {closed: ___dynamic_function});
+					return false;
+				}
+
+				var sex = jQuery('input[name="sex_radio"]:checked').val();
+				jQuery('#mainForm\\:sexHidden').val(sex);
+				
+				jQuery('#mainForm\\:birthdayHidden').val(jQuery('#mainForm\\:birthday').val());
+				
+				var interest = jQuery('#interest').val();
+				if (interest != null && interest != '') {
+					jQuery('#mainForm\\:interestHidden').val(interest.join(','));
+				} else {
+					jQuery('#mainForm\\:interestHidden').val('');
+				}
+				
+				jQuery('#mainForm\\:enabledHidden').val(jQuery('#enabled:checked').length > 0);
+				
+			}
+		//]]>
+		</script>
+	</ui:define>
+
+</ui:composition>

@@ -1,0 +1,290 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:s="http://jboss.com/products/seam/taglib"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:a="http://richfaces.org/a4j"
+	template="/layout/template_list.xhtml">
+
+	<ui:define name="head">
+		<link rel="stylesheet" type="text/css" href="#{request.contextPath}/common/css/bootstrap.min.css" />
+		<link rel="stylesheet" type="text/css" href="#{request.contextPath}/common/css/bootstrap-select.min.css" />
+		<link rel="stylesheet" type="text/css" href="#{request.contextPath}/reveal/css/reveal.css" />
+		<link rel="stylesheet" type="text/css" href="#{request.contextPath}/jqueryui/css/jquery-ui.css" />
+		<link rel="stylesheet" type="text/css" href="#{request.contextPath}/jqueryui/css/fix.css" />
+		<style>
+			.reveal-modal {
+				top: 10px !important;
+				margin-left: -260px;
+				height: 500px;
+			}
+			
+			.reveal-modal-ul {
+				list-style-type: none;
+				margin: 0;
+				padding: 0;
+				width: 100%;
+				height: 288px;
+			}
+			
+			.reveal-modal-ul li {
+				margin: 0 5px -1px 5px;
+				padding: 5px;
+				font-size: 1.2em;
+				height: 2.5em;
+				line-height: 2.0em;
+			}
+		</style>
+	</ui:define>
+	<ui:define name="body">
+		<!-- sortable回显数据初始化 -->
+		#{menuInfoList.sortableInit4displayOrder()}
+		<div class="g-data-list-condition">
+			<h:form id="mainForm">
+				<input type="hidden" name="page" value="1" />
+				<div class="fl w300">
+					<h:inputText id="keyword" value="#{menuInfoList.keyword}" styleClass="form-control mt10 ml10" />
+				</div>
+				<div class="fl">
+					<h:commandButton styleClass="btn btn-primary mt10 ml20" action="/admin/MenuInfoList.xhtml" value="搜索" />
+				</div>
+				<div class="fl">
+					<a href="#" class="btn btn-success mt10 ml10" data-reveal-id="revealModal4displayOrder" data-animation="fade">排序</a>
+				</div>
+				<div class="fr">
+					<s:link value="添加" view="/admin/MenuInfoEdit.xhtml" styleClass="btn btn-success fr mt10 mr10">
+						<f:param name="menuInfoTheId" />
+					</s:link>
+				</div>
+			</h:form>
+		</div>
+		<div class="g-data-list-table">
+		    <table class="record" width="100%" cellpadding="0" cellspacing="0">
+		        <tr>
+		            <th width="5%">ID</th>
+		            <th width="15%">菜单名称</th>
+		            <th width="15%">上级菜单</th>
+		            <th width="15%">选项卡标题</th>
+		            <th width="10%">选项卡链接</th>
+		            <th width="10%">功能图标</th>
+		            <th width="10%">权限</th>
+		            <th width="10%">操作</th>
+		        </tr>
+		        <a:repeat value="#{menuInfoList.resultList}" var="_result" rowKeyVar="_row">
+		        	<tr class="node-record #{_row % 2 eq 0 ? 'odd' : 'even'}">
+			        	<td>
+			        		<h:outputText value="#{_result.theId}" />
+			        	</td>
+			        	<td>
+			        		<a style="color: #333333; text-decoration: none; cursor: default; outline: none;" href="javascript:void(0);" title="#{_result.theValue}">#{commonTool.abbr(_result.theValue, 19)}</a>
+			        	</td>
+			        	<td>
+			        		<a style="color: #333333; text-decoration: none; cursor: default; outline: none;" href="javascript:void(0);" title="#{_result.menuInfo.theValue != null ? _result.menuInfo.theValue : '无'}">#{commonTool.abbr(_result.menuInfo.theValue != null ? _result.menuInfo.theValue : '无', 19)}</a>
+			        	</td>
+			        	<td>
+			        		<a style="color: #333333; text-decoration: none; cursor: default; outline: none;" href="javascript:void(0);" title="#{_result.tabTitle}">#{commonTool.abbr(_result.tabTitle, 19)}</a>
+			        	</td>
+			        	<td>
+			        		<a style="color: #333333; text-decoration: none; cursor: default; outline: none;" href="javascript:void(0);" title="#{_result.tabUrl}">#{commonTool.abbr(_result.tabUrl, 19)}</a>
+			        	</td>
+			        	<td>
+			        		<a style="color: #333333; text-decoration: none; cursor: default; outline: none;" href="javascript:void(0);" title="#{_result.iconSrc}">#{commonTool.abbr(_result.iconSrc, 19)}</a>
+			        	</td>
+			        	<td>
+			        		<a style="color: #333333; text-decoration: none; cursor: default; outline: none;" href="javascript:void(0);" title="#{_result.permissionKey}">#{commonTool.abbr(_result.permissionKey, 19)}</a>
+			        	</td>
+			        	<td>
+			        		<s:link title="编辑" view="/admin/MenuInfoEdit.xhtml" style="text-decoration: none;">
+			        			<f:param name="menuInfoTheId" value="#{_result.theId}" />
+			        			<img src="../images/icon_edit_16x16.png" />
+			        		</s:link>
+			        		<s:link title="删除（含子级）" view="/admin/MenuInfoEdit.xhtml" onclick="return confirm('是否删除（含子级）？');" action="#{menuInfoHome.removeIncludeLeaf}" style="text-decoration: none;">
+			        			<f:param name="menuInfoTheId" value="#{_result.theId}" />
+			        			<img src="../images/icon_trash_96x96.png" />
+			        		</s:link>
+			        		<s:link title="删除" view="/admin/MenuInfoEdit.xhtml" onclick="return confirm('是否删除？');" action="#{menuInfoHome.remove}" style="text-decoration: none;">
+			        			<f:param name="menuInfoTheId" value="#{_result.theId}" />
+			        			<img src="../images/icon_delete_16x16.png" />
+			        		</s:link>
+			        	</td>
+		        	</tr>
+		        </a:repeat>
+		    </table>
+		    #{paginationModel.init(menuInfoList)}
+		    <s:fragment rendered="#{paginationModel.query != null}">
+				<table class="pagination-model" style="width: auto; margin: 40px auto;" cellpadding="0" cellspacing="0">
+					<tr>
+						<td>
+							<s:span rendered="#{paginationModel.previousPageExist}">
+								<s:link view="#{servletContexts.request.servletPath}" value="首页">
+									<f:param name="page" value="1" />
+								</s:link>
+							</s:span>
+							<s:span rendered="#{paginationModel.previousPageExist}">
+								<s:link view="#{servletContexts.request.servletPath}" value="&lt;&lt;">
+									<f:param name="page" value="#{paginationModel.previousPage}" />
+								</s:link>
+							</s:span>
+							<a:repeat value="#{paginationModel.pageNoList}" var="_pageNo">
+								<span class="#{paginationModel.page == _pageNo ? 'page-current' : ''}">
+									<s:link view="#{servletContexts.request.servletPath}" value="#{_pageNo}">
+										<f:param name="page" value="#{_pageNo}" />
+									</s:link>
+								</span>
+							</a:repeat>
+							<s:span rendered="#{paginationModel.nextPageExist}">
+								<s:link view="#{servletContexts.request.servletPath}" value="&gt;&gt;">
+									<f:param name="page" value="#{paginationModel.nextPage}" />
+								</s:link>
+							</s:span>
+							<s:span rendered="#{paginationModel.nextPageExist}">
+								<s:link view="#{servletContexts.request.servletPath}" value="尾页">
+									<f:param name="page" value="#{paginationModel.lastPage}" />
+								</s:link>
+							</s:span>
+							<s:span rendered="#{paginationModel.lastPage > 0}">
+								<a>共#{paginationModel.lastPage}页</a>
+							</s:span>
+							<s:fragment rendered="#{paginationModel.lastPage > 1}">
+								<span>
+									<a>转至</a>
+								</span>
+								<span class="page-index">
+									<input type="text" id="pageIndex" />
+								</span>
+								<span class="page-goto">
+									<s:link value="确定" id="gotoPageLink" styleClass="page-determine" view="#{servletContexts.request.servletPath}" onclick="return gotoPage(#{paginationModel.lastPage});" />
+								</span>
+							</s:fragment>
+						</td>
+					</tr>
+				</table>
+		    </s:fragment>
+		</div>
+		<div id="revealModal4displayOrder" class="reveal-modal">
+			<a class="close-reveal-modal" style="text-decoration: none;">x</a>
+			<span style="width: 100%; text-align: center; float: left; margin-bottom: 10px;">请您使用鼠标拖拽进行排序</span>
+			<table width="100%" cellpadding="0" cellspacing="0">
+				<tr>
+					<td colspan="2">
+						<div class="pb20">
+							<select id="theParentValue" class="selectpicker" data-live-search="true" onchange="sortablePull4displayOrder(this.value);">
+								<a:repeat value="#{menuInfoList.theParentList}" var="_var">
+									<option value="#{_var[0]}">#{_var[1]}</option>
+								</a:repeat>
+							</select>
+							<h:inputHidden id="theParentValueHidden" value="#{menuInfoList.theParentValue}" />
+						</div>
+					</td>
+				</tr>
+				<tr>
+					<td colspan="2">
+						<div class="pb20">
+							<ul id="sortable4displayOrder" class="reveal-modal-ul">
+							</ul>
+						</div>
+					</td>
+				</tr>
+			</table>
+			<table class="normal-btn">
+				<tr>
+					<td>
+						<a class="btn btn-default" style="margin-top: 10px;" onclick="sortableApply4displayOrder();">确定</a>
+					</td>
+				</tr>
+			</table>
+		</div>
+		<a:form>
+			<a:queue requestDelay="100" ignoreDupResponses="true" />
+			<a:jsFunction name="sortableInvoke4displayOrder" action="#{menuInfoList.sortableInvoke4displayOrder}" data="#{menuInfoList.sortableResult4displayOrder}" oncomplete="sortableCompleted4displayOrder(data);">
+				<a:actionparam name="sortableArgs4displayOrder" assignTo="#{menuInfoList.sortableArgs4displayOrder}" />
+			</a:jsFunction>
+			<a:jsFunction name="sortablePull4displayOrder" action="#{menuInfoList.sortablePull4displayOrder}" data="#{menuInfoList.sortableEcho4displayOrder}" oncomplete="sortablePullCompleted4displayOrder(data);">
+				<a:actionparam name="theParentValue" assignTo="#{menuInfoList.theParentValue}" />
+			</a:jsFunction>
+		</a:form>
+		<script type="text/javascript" src="#{request.contextPath}/common/js/bootstrap.min.js" />
+		<script type="text/javascript" src="#{request.contextPath}/common/js/bootstrap-select.min.js" charset="UTF-8" />
+		<script type="text/javascript" src="#{request.contextPath}/reveal/js/jquery.reveal.js" />
+		<script type="text/javascript" src="#{request.contextPath}/jqueryui/js/jquery-ui.js" />
+		<script type="text/javascript" src="#{request.contextPath}/toolkit/utils.js" />
+		<script type="text/javascript">
+		//<![CDATA[
+			jQuery(document).ready(function() {
+				jQuery('.reveal-modal-ul').niceScroll({
+					cursorcolor: '#b0a8a8',
+					cursorwidth: 8,
+					cursoropacitymax: 0.8,
+					touchbehavior: false,
+					autohidemode: false
+				});
+				
+			    jQuery('.selectpicker').selectpicker({size: 10});
+			    jQuery('#theParentValue').val(jQuery('#mainForm\\:theParentValueHidden').val());
+			    jQuery('#theParentValue').selectpicker('render');
+
+				var sortableEcho4displayOrder = #{menuInfoList.sortableEcho4displayOrder};
+				var sortableEcho4displayOrder_html = '';
+				for (var i in sortableEcho4displayOrder) {
+					sortableEcho4displayOrder_html += '<li class="ui-state-default" value="' + sortableEcho4displayOrder[i]['value'] + '">' + sortableEcho4displayOrder[i]['label'] + '</li>';
+				}
+				jQuery('#sortable4displayOrder').html(sortableEcho4displayOrder_html);
+				jQuery('#sortable4displayOrder').sortable({
+					placeholder: 'ui-state-highlight'
+				});
+				jQuery('#sortable4displayOrder').disableSelection();
+				
+			    ___textRestrictById('mainForm:keyword', 1024);
+			    
+			    var message = '#{menuInfoHome.message}';
+			    if (message != '') {
+					___msg('温馨提示', message);
+			    }
+			});
+
+			function sortableApply4displayOrder() {
+				var sortableArgs4displayOrder = '';
+				jQuery('#sortable4displayOrder li').each(function() {
+					sortableArgs4displayOrder += this.value + ',';
+				});
+				if (sortableArgs4displayOrder != '') {
+					sortableArgs4displayOrder = sortableArgs4displayOrder.substring(0, sortableArgs4displayOrder.length - 1);
+				}
+				if (sortableArgs4displayOrder != '') {
+					sortableInvoke4displayOrder(sortableArgs4displayOrder);
+				} else {
+					___msg('温馨提示', '未发现可排序条目！');
+				}
+			}
+
+			function sortableCompleted4displayOrder(data) {
+				jQuery('#revealModal4displayOrder').trigger('reveal:close');
+				if (data != null && data.message != null && data.message != '') {
+				    ___dynamic_function = function() {
+				    	window.location.reload();
+					};
+					___msg('温馨提示', data.message, {closed: ___dynamic_function});
+				} else {
+					___msg('温馨提示', '排序失败！');
+				}
+			}
+
+			function sortablePullCompleted4displayOrder(data) {
+				var sortableEcho4displayOrder = data;
+				var sortableEcho4displayOrder_html = '';
+				for (var i in sortableEcho4displayOrder) {
+					sortableEcho4displayOrder_html += '<li class="ui-state-default" value="' + sortableEcho4displayOrder[i]['value'] + '">' + sortableEcho4displayOrder[i]['label'] + '</li>';
+				}
+				jQuery('#sortable4displayOrder').html(sortableEcho4displayOrder_html);
+				jQuery('#sortable4displayOrder').sortable({
+					placeholder: 'ui-state-highlight'
+				});
+				jQuery('#sortable4displayOrder').disableSelection();
+			}
+		//]]>
+		</script>
+	</ui:define>
+</ui:composition>

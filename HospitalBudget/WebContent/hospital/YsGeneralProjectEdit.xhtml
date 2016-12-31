@@ -1,0 +1,350 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:s="http://jboss.com/products/seam/taglib"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:a="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich"
+	template="/layout/template_edit.xhtml">
+
+	<ui:define name="head">
+		<link rel="stylesheet" type="text/css" href="#{request.contextPath}/common/css/bootstrap-datetimepicker.min.css" />
+		<link rel="stylesheet" type="text/css" href="#{request.contextPath}/common/css/bootstrap.min.css" />
+		<link rel="stylesheet" type="text/css" href="#{request.contextPath}/common/css/bootstrap-select.min.css" />
+		<link rel="stylesheet" type="text/css" href="#{request.contextPath}/stylesheet/fix.css" />
+		<style type="text/css">
+			.bs-w440 .bootstrap-select:not([class*="span"]):not([class*="col-"]):not([class*="form-control"]):not(.input-group-btn) {
+			    width: 440px;
+			}
+		</style>
+	</ui:define>
+
+	<ui:define name="body">
+		#{ysGeneralProjectHome.wire()}
+		<h:form id="mainForm" styleClass="edit" enctype="multipart/form-data">
+			<div class="pd0-10">
+				<div class="pt30 pb30 fs14">
+					<table width="100%" cellpadding="0" cellspacing="0">
+						<tr>
+							<td colspan="2">
+								<div class="pb20">
+									<table>
+										<tr>
+											<td valign="middle">
+												<span class="field-name mb10">项目名称</span>
+											</td>
+											<td valign="middle">
+												<h:inputText id="theValue" value="#{ysGeneralProjectHome.instance.theValue}" styleClass="form-control mb10 fix--w440" />
+											</td>
+											<td valign="middle">
+												<font color="red" style="margin-left: 3px;">*</font>
+											</td>
+										</tr>
+									</table>
+								</div>
+							</td>
+						</tr>
+						<tr>
+							<td width="50%">
+								<div class="pb20">
+									<table>
+										<tr>
+											<td valign="middle">
+												<span class="field-name mb10">项目类型</span>
+											</td>
+											<td valign="middle">
+												<select id="theType" class="selectpicker">
+													<option value="#{''}">请选择</option>
+													<option value="1">收入预算</option>
+													<option value="2">支出预算</option>
+												</select>
+												<h:inputHidden id="theTypeHidden" value="#{ysGeneralProjectHome.instance.theType}" />
+											</td>
+											<td valign="middle">
+												<font color="red" style="margin-left: 3px;">*</font>
+											</td>
+										</tr>
+									</table>
+								</div>
+							</td>
+							<td width="50%">
+								<div class="pb20">
+									<table>
+										<tr>
+											<td valign="middle">
+												<span class="field-name mb10">主管科室</span>
+											</td>
+											<td valign="middle">
+												<select id="departmentInfoId" class="selectpicker" data-live-search="true">
+													<a:repeat value="#{ysGeneralProjectHome.departmentInfoList}" var="_var">
+														<option value="#{_var[0]}">#{_var[1]}</option>
+													</a:repeat>
+												</select>
+												<h:inputHidden id="departmentInfoIdHidden" value="#{ysGeneralProjectHome.departmentInfoId}" />
+											</td>
+											<td valign="middle">
+												<font color="red" style="margin-left: 3px;">*</font>
+											</td>
+										</tr>
+									</table>
+								</div>
+							</td>
+						</tr>
+						<tr>
+							<td colspan="2">
+								<div class="pb20">
+									<table>
+										<tr>
+											<td valign="middle">
+												<span class="field-name mb10">预算相关人员</span>
+											</td>
+											<td valign="middle">
+												<div class="bs-w440">
+													<select id="budgetPersonIds" class="selectpicker" data-live-search="true" multiple="multiple">
+														<a:repeat value="#{ysGeneralProjectHome.budgetPersonList}" var="_department">
+															<optgroup label="#{_department[0]}" data-subtext="科室">
+																<a:repeat value="#{_department[1]}" var="_user">
+																	<option value="#{_user[0]}">#{_user[1]}</option>
+																</a:repeat>
+															</optgroup>
+														</a:repeat>
+													</select>
+												</div>
+												<h:inputHidden id="budgetPersonIdsHidden" value="#{ysGeneralProjectHome.budgetPersonIds}" />
+											</td>
+											<td valign="middle">
+												<font color="red" style="margin-left: 3px;">*</font>
+											</td>
+										</tr>
+									</table>
+								</div>
+							</td>
+						</tr>
+						<tr>
+							<td width="50%">
+								<div class="pb20">
+									<table>
+										<tr>
+											<td valign="middle">
+												<span class="field-name mb10">开始预算年份</span>
+											</td>
+											<td valign="middle">
+												<div class="form-group">
+													<div class="input-group date form_year col-md-5">
+														<h:inputText id="beginBudgetYear" value="#{ysGeneralProjectHome.instance.beginBudgetYear}" styleClass="form-control mb10 fix--w141" readonly="true" />
+														<h:inputHidden id="beginBudgetYearHidden" value="#{ysGeneralProjectHome.instance.beginBudgetYear}" />
+														<span class="input-group-addon"><span class="glyphicon glyphicon-remove"></span></span>
+														<span class="input-group-addon"><span class="glyphicon glyphicon-calendar"></span></span>
+													</div>
+												</div>
+											</td>
+											<td valign="middle">
+												<font color="red" style="margin-left: 3px;">*</font>
+											</td>
+										</tr>
+									</table>
+								</div>
+							</td>
+							<td width="50%">
+								<div class="pb20">
+									<table>
+										<tr>
+											<td valign="middle">
+												<span class="field-name mb10">关闭项目支出时间</span>
+											</td>
+											<td valign="middle">
+												<div class="form-group">
+													<div class="input-group date form_date col-md-5">
+														<h:inputText id="closeExpendDate" value="#{ysGeneralProjectHome.closeExpendDate}" styleClass="form-control mb10 fix--w141" readonly="true" />
+														<h:inputHidden id="closeExpendDateHidden" value="#{ysGeneralProjectHome.closeExpendDate}" />
+														<span class="input-group-addon"><span class="glyphicon glyphicon-remove"></span></span>
+														<span class="input-group-addon"><span class="glyphicon glyphicon-calendar"></span></span>
+													</div>
+												</div>
+											</td>
+											<td valign="middle">
+												<font color="red" style="margin-left: 3px;">*</font>
+											</td>
+										</tr>
+									</table>
+								</div>
+							</td>
+						</tr>
+						<tr>
+							<td width="50%">
+								<div class="pb20">
+									<table>
+										<tr>
+											<td valign="middle">
+												<span class="field-name mb10">项目总金额(元)</span>
+											</td>
+											<td valign="middle">
+												<h:inputText id="totalAmount" value="#{ysGeneralProjectHome.instance.totalAmount}" styleClass="form-control mb10 fix--w220" />
+											</td>
+											<td valign="middle">
+												<font color="red" style="margin-left: 3px;">*</font>
+											</td>
+										</tr>
+									</table>
+								</div>
+							</td>
+						</tr>
+						<tr>
+							<td colspan="2">
+								<div class="pb20">
+									<table>
+										<tr>
+											<td valign="middle">
+												<span class="field-name mb10">描述</span>
+											</td>
+											<td valign="middle">
+												<h:inputTextarea id="theDescription" value="#{ysGeneralProjectHome.instance.theDescription}" styleClass="form-control mb10 fix--textarea-wh-c2" />
+											</td>
+											<td valign="middle">
+												<font color="red" style="margin-left: 3px;"></font>
+											</td>
+										</tr>
+									</table>
+								</div>
+							</td>
+						</tr>
+					</table>
+				</div>
+				<div class="pt50 pb95">
+					<table class="normal-btn">
+						<tr>
+							<td>
+								<h:commandButton id="persist" value="提交" onclick="return beforeSubmit();" action="#{ysGeneralProjectHome.persist}" disabled="#{!ysGeneralProjectHome.wired}" rendered="#{!ysGeneralProjectHome.managed}" styleClass="btn btn-primary mr15" />
+								<h:commandButton id="update" value="保存" onclick="return beforeSubmit();" action="#{ysGeneralProjectHome.update}" rendered="#{ysGeneralProjectHome.managed}" styleClass="btn btn-primary mr15" />
+								<s:button id="cancel" value="返回" view="/hospital/YsGeneralProjectList.xhtml" propagation="none" styleClass="btn btn-default" />
+							</td>
+						</tr>
+					</table>
+					<br />
+					<br />
+				</div>
+			</div>
+		</h:form>
+		<script type="text/javascript" src="#{request.contextPath}/common/js/bootstrap.min.js" />
+		<script type="text/javascript" src="#{request.contextPath}/common/js/bootstrap-select.min.js" charset="UTF-8" />
+		<script type="text/javascript" src="#{request.contextPath}/common/js/bootstrap-select-defaults-zh_CN.min.js" charset="UTF-8" />
+		<script type="text/javascript" src="#{request.contextPath}/common/js/bootstrap-datetimepicker.min.js" charset="UTF-8" />
+		<script type="text/javascript" src="#{request.contextPath}/common/js/bootstrap-datetimepicker.zh-CN.js" charset="UTF-8" />
+		<script type="text/javascript" src="#{request.contextPath}/toolkit/utils.js" />
+		<script type="text/javascript">
+		//<![CDATA[
+			jQuery(document).ready(function() {
+				
+			    var message = '#{ysGeneralProjectHome.message}';
+			    if (message != '') {
+					___msg('温馨提示', message);
+			    }
+
+				jQuery('.form_year').datetimepicker({
+					language: 'zh-CN',
+					format: "yyyy",
+					startDate: "1949",
+					endDate: "2048",
+					pickerPosition: "bottom-left",
+					weekStart: 1,
+					todayBtn: 1,
+					autoclose: 1,
+					startView: 4,
+					minView: 4,
+					maxView: 4
+				});
+
+				jQuery('.form_date').datetimepicker({
+					language: 'zh-CN',
+					format: "yyyy-mm-dd",
+					pickerPosition: "bottom-left",
+					weekStart: 1,
+					todayBtn: 1,
+					autoclose: 1,
+					todayHighlight: 1,
+					startView: 2,
+					minView: 2,
+					forceParse: 0
+				});
+
+			    jQuery('.selectpicker').selectpicker();
+
+				___textRestrictById('mainForm:theValue', 255);
+				___textRestrictById('mainForm:totalAmount', 66);
+				___textRestrictById('mainForm:theDescription', 255);
+
+				jQuery('#theType').val(jQuery('#mainForm\\:theTypeHidden').val());
+			    jQuery('#theType').selectpicker('render');
+
+				jQuery('#departmentInfoId').val(jQuery('#mainForm\\:departmentInfoIdHidden').val());
+			    jQuery('#departmentInfoId').selectpicker('render');
+
+			    jQuery('#budgetPersonIds').val(jQuery('#mainForm\\:budgetPersonIdsHidden').val().split(','));
+			    jQuery('#budgetPersonIds').selectpicker('render');
+				
+			});
+			
+			//提交表单前
+			function beforeSubmit() {
+				var theValue = jQuery('#mainForm\\:theValue').val();
+				if (theValue == null || theValue == '') {
+				    ___dynamic_function = function() {
+						jQuery('#mainForm\\:theValue').focus();
+					};
+					___msg('温馨提示', '请填写项目名称！', {closed: ___dynamic_function});
+					return false;
+				}
+
+				var theType = jQuery('#theType').val();
+				if (theType == null || theType == '') {
+					___msg('温馨提示', '请选择项目类型！');
+					return false;
+				}
+				jQuery('#mainForm\\:theTypeHidden').val(theType);
+
+				var departmentInfoId = jQuery('#departmentInfoId').val();
+				if (departmentInfoId == null || departmentInfoId == '') {
+					___msg('温馨提示', '请选择主管科室！');
+					return false;
+				}
+				jQuery('#mainForm\\:departmentInfoIdHidden').val(departmentInfoId);
+
+				var budgetPersonIds = jQuery('#budgetPersonIds').val();
+				if (budgetPersonIds == null || budgetPersonIds == '') {
+					___msg('温馨提示', '请选择预算相关人员！');
+					return false;
+				}
+				jQuery('#mainForm\\:budgetPersonIdsHidden').val(budgetPersonIds.join(','));
+
+				var beginBudgetYear = jQuery('#mainForm\\:beginBudgetYear').val();
+				if (beginBudgetYear == null || beginBudgetYear == '') {
+					___msg('温馨提示', '请选择开始预算年份！');
+					return false;
+				}
+
+				var closeExpendDate = jQuery('#mainForm\\:closeExpendDate').val();
+				if (closeExpendDate == null || closeExpendDate == '') {
+					___msg('温馨提示', '请选择关闭项目支出时间！');
+					return false;
+				}
+				
+				var totalAmount = jQuery('#mainForm\\:totalAmount').val();
+			    ___dynamic_function = function() {
+					jQuery('#mainForm\\:totalAmount').focus();
+				};
+				if (totalAmount == null || totalAmount == '') {
+					___msg('温馨提示', '请填写项目总金额！', {closed: ___dynamic_function});
+					return false;
+				} else if (isNaN(totalAmount)) {
+					___msg('温馨提示', '项目总金额必须是合法的数字！', {closed: ___dynamic_function});
+					return false;
+				}
+				
+			}
+		//]]>
+		</script>
+	</ui:define>
+
+</ui:composition>

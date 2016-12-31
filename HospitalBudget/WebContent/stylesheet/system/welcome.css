@@ -1,0 +1,17 @@
+/*
+欢迎页
+*/
+body {
+	background: url(../../images/img_welcome_1920x664.jpg) no-repeat;
+	background-color: whitesmoke;
+}
+
+.welcome-div {
+	width: 100%;
+	height: 100%;
+}
+
+.user-avatar {
+	width: 128px;
+	height: 128px;
+}

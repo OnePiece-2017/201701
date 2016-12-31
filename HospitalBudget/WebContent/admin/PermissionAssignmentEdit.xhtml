@@ -1,0 +1,200 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:s="http://jboss.com/products/seam/taglib"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:a="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich"
+	template="/layout/template_edit.xhtml">
+
+	<ui:define name="head">
+		<link rel="stylesheet" type="text/css" href="#{request.contextPath}/common/css/bootstrap.min.css" />
+		<link rel="stylesheet" type="text/css" href="#{request.contextPath}/picklist/css/jquery-picklist.css" />
+		<link rel="stylesheet" type="text/css" href="#{request.contextPath}/jqueryui/css/jquery-ui.css" />
+		<link rel="stylesheet" type="text/css" href="#{request.contextPath}/jqueryui/css/fix.css" />
+		<style>
+			#sortable__permission {
+				list-style-type: none;
+				margin: 0;
+				padding: 0;
+				width: 100%;
+			}
+			
+			#sortable__permission li {
+				margin: 0 5px 5px 5px;
+				padding: 5px;
+				font-size: 1.2em;
+				height: 2.5em;
+				line-height: 2.0em;
+			}
+		</style>
+		<script type="text/javascript" src="#{request.contextPath}/common/js/bootstrap.min.js" />
+		<script type="text/javascript" src="#{request.contextPath}/picklist/js/jquery.ui.widget.js" />
+		<script type="text/javascript" src="#{request.contextPath}/picklist/js/jquery-picklist.js" />
+		<script type="text/javascript" src="#{request.contextPath}/jqueryui/js/jquery-ui.js" />
+	</ui:define>
+
+	<ui:define name="body">
+		#{permissionAssignmentHome.wire()}
+		<h:form id="mainForm" styleClass="edit" enctype="multipart/form-data">
+			<div class="pd0-10">
+				<div class="pt30 pb30 fs14">
+					<table width="100%" cellpadding="0" cellspacing="0">
+						<tr>
+							<td width="50%">
+								<div class="pb20">
+									<table>
+										<tr>
+											<td valign="middle">
+												<span class="field-name mb10">名称</span>
+											</td>
+											<td valign="middle">
+												<h:inputText id="moduleName" value="#{permissionAssignmentHome.instance.moduleName}" styleClass="form-control mb10 fix--w220" />
+											</td>
+											<td valign="middle">
+												<font color="red" style="margin-left: 3px;">*</font>
+											</td>
+										</tr>
+									</table>
+								</div>
+							</td>
+						</tr>
+						<tr>
+							<td width="50%">
+								<div class="pb20">
+									<table>
+										<tr>
+											<td valign="middle">
+												<span class="field-name mb10">描述</span>
+											</td>
+											<td valign="middle">
+												<h:inputTextarea id="description" value="#{permissionAssignmentHome.instance.description}" styleClass="form-control mb10 fix--textarea-wh" />
+											</td>
+											<td valign="middle">
+												<font color="red" style="margin-left: 3px;"></font>
+											</td>
+										</tr>
+									</table>
+								</div>
+							</td>
+						</tr>
+						<tr>
+							<td colspan="2">
+								<div class="pb20">
+									<table>
+										<tr>
+											<td valign="middle">
+												<span class="field-name mb10"></span>
+											</td>
+											<td valign="middle">
+												<select id="picklist__permission" multiple="multiple" />
+											</td>
+											<td valign="middle">
+												<font color="red" style="margin-left: 3px;"></font>
+											</td>
+										</tr>
+									</table>
+								</div>
+							</td>
+						</tr>
+						<tr>
+							<td colspan="2">
+								<div class="pb20">
+									<ul id="sortable__permission">
+									</ul>
+								</div>
+							</td>
+						</tr>
+					</table>
+				</div>
+				<div class="pt50 pb95">
+					<table class="normal-btn">
+						<tr>
+							<td>
+								<h:inputHidden id="permissionInfoIdsHidden" value="#{permissionAssignmentHome.permissionInfoIds}" />
+								<h:commandButton id="persist" value="提交" onclick="return beforeSubmit();" action="#{permissionAssignmentHome.persist}" disabled="#{!permissionAssignmentHome.wired}" rendered="#{!permissionAssignmentHome.managed}" styleClass="btn btn-primary mr15" />
+								<h:commandButton id="update" value="保存" onclick="return beforeSubmit();" action="#{permissionAssignmentHome.update}" rendered="#{permissionAssignmentHome.managed}" styleClass="btn btn-primary mr15" />
+								<s:button id="cancel" value="返回" view="/admin/PermissionAssignmentList.xhtml" propagation="none" styleClass="btn btn-default" />
+							</td>
+						</tr>
+					</table>
+					<br />
+					<br />
+				</div>
+			</div>
+		</h:form>
+		<script type="text/javascript" src="#{request.contextPath}/toolkit/utils.js" />
+		<script type="text/javascript">
+		//<![CDATA[
+			jQuery(document).ready(function() {
+				
+				___textRestrictById('mainForm:moduleName', 255);
+				___textRestrictById('mainForm:description', 255);
+				
+				var message = '#{permissionAssignmentHome.message}';
+				if (message != '') {
+					___msg('温馨提示', message);
+				}
+			
+				jQuery('#picklist__permission').pickList({
+					sourceListLabel: '可选条目',
+					targetListLabel: '已选条目',
+					addAllLabel: '>>',
+					addLabel: '>',
+					removeAllLabel: '<<',
+					removeLabel: '<',
+					sortAttribute: 'value',
+					items: #{permissionAssignmentHome.permissionPickListItems}
+				});
+				jQuery('#picklist__permission').bind('picklist_onchange', permissionChangeHandler);
+			
+				var permissionSortableItems = #{permissionAssignmentHome.permissionSortableItems};
+				var sortable_items__permission = '';
+				for (var i in permissionSortableItems) {
+					sortable_items__permission += '<li class="ui-state-default" value="' + permissionSortableItems[i]['value'] + '">' + permissionSortableItems[i]['label'] + '</li>';
+				}
+				jQuery('#sortable__permission').html(sortable_items__permission);
+				jQuery('#sortable__permission').sortable({
+					placeholder: 'ui-state-highlight'
+				});
+				jQuery('#sortable__permission').disableSelection();
+			});
+			
+			function permissionChangeHandler(event, obj) {
+				obj.items.each(function() {
+					if ('add' == obj.type || 'addAll' == obj.type) {
+						jQuery('#sortable__permission').append('<li class="ui-state-default" value="' + jQuery(this).attr('data-value') + '">' + jQuery(this).attr('label') + '</li>');
+					} else if ('remove' == obj.type || 'removeAll' == obj.type) {
+						jQuery('#sortable__permission li[value="' + jQuery(this).attr('data-value') + '"]').remove();
+					}
+				});
+			}
+			
+			//提交表单前
+			function beforeSubmit() {
+				var moduleName = jQuery('#mainForm\\:moduleName').val();
+				if (moduleName == null || moduleName == '') {
+					___dynamic_function = function() {
+						jQuery('#mainForm\\:moduleName').focus();
+					};
+					___msg('温馨提示', '请填写名称！', {closed: ___dynamic_function});
+					return false;
+				}
+				
+				var permissionInfoIds = '';
+				jQuery('#sortable__permission li').each(function() {
+					permissionInfoIds += this.value + ',';
+				});
+				if (permissionInfoIds != '') {
+					permissionInfoIds = permissionInfoIds.substring(0, permissionInfoIds.length - 1);
+				}
+				jQuery('#mainForm\\:permissionInfoIdsHidden').val(permissionInfoIds);
+				
+			}
+		//]]>
+		</script>
+	</ui:define>
+
+</ui:composition>

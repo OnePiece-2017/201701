@@ -1,0 +1,9 @@
+body {
+	background: url(../images/img_logout_bg_1920x413.jpg) no-repeat center center;
+	background-color: whitesmoke;
+}
+
+.logout-area {
+	min-width: 1920px;
+	min-height: 415px;
+}

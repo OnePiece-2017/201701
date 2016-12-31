@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<page xmlns="http://jboss.com/products/seam/pages" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://jboss.com/products/seam/pages http://jboss.com/products/seam/pages-2.2.xsd"
+	login-required="true">
+
+	<restrict>#{s:hasRole('department_management/create') or s:hasRole('department_management/delete') or s:hasRole('department_management/update')}</restrict>
+	<begin-conversation join="true" flush-mode="MANUAL" />
+
+	<param name="ysDepartmentInfoFrom" />
+	<param name="ysDepartmentInfoTheId" value="#{ysDepartmentInfoHome.ysDepartmentInfoTheId}" />
+
+	<navigation from-action="#{ysDepartmentInfoHome.persist}">
+		<rule if-outcome="persisted">
+			<end-conversation />
+			<redirect view-id="/hospital/YsDepartmentInfoList.xhtml" />
+		</rule>
+	</navigation>
+
+	<navigation from-action="#{ysDepartmentInfoHome.update}">
+		<rule if-outcome="updated">
+			<end-conversation />
+			<redirect view-id="/hospital/YsDepartmentInfoList.xhtml" />
+		</rule>
+	</navigation>
+
+	<navigation from-action="#{ysDepartmentInfoHome.remove}">
+		<rule if-outcome="removed">
+			<end-conversation />
+			<redirect view-id="/hospital/YsDepartmentInfoList.xhtml" />
+		</rule>
+		<rule if-outcome="failure">
+			<end-conversation />
+			<redirect view-id="/hospital/YsDepartmentInfoList.xhtml" />
+		</rule>
+	</navigation>
+
+	<navigation from-action="#{ysDepartmentInfoHome.removeIncludeLeaf}">
+		<rule if-outcome="removed">
+			<end-conversation />
+			<redirect view-id="/hospital/YsDepartmentInfoList.xhtml" />
+		</rule>
+		<rule if-outcome="failure">
+			<end-conversation />
+			<redirect view-id="/hospital/YsDepartmentInfoList.xhtml" />
+		</rule>
+	</navigation>
+
+</page>

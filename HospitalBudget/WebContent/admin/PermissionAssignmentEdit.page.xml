@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<page xmlns="http://jboss.com/products/seam/pages" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://jboss.com/products/seam/pages http://jboss.com/products/seam/pages-2.2.xsd"
+	login-required="true">
+
+	<restrict>#{s:hasRole('permission_assignment/create') or s:hasRole('permission_assignment/delete') or s:hasRole('permission_assignment/update')}</restrict>
+	<begin-conversation join="true" flush-mode="MANUAL" />
+
+	<param name="permissionAssignmentFrom" />
+	<param name="permissionAssignmentPermissionAssignmentId" value="#{permissionAssignmentHome.permissionAssignmentPermissionAssignmentId}" />
+
+	<navigation from-action="#{permissionAssignmentHome.persist}">
+		<rule if-outcome="persisted">
+			<end-conversation />
+			<redirect view-id="/admin/PermissionAssignmentList.xhtml" />
+		</rule>
+	</navigation>
+
+	<navigation from-action="#{permissionAssignmentHome.update}">
+		<rule if-outcome="updated">
+			<end-conversation />
+			<redirect view-id="/admin/PermissionAssignmentList.xhtml" />
+		</rule>
+	</navigation>
+
+	<navigation from-action="#{permissionAssignmentHome.remove}">
+		<rule if-outcome="removed">
+			<end-conversation />
+			<redirect view-id="/admin/PermissionAssignmentList.xhtml" />
+		</rule>
+	</navigation>
+
+</page>

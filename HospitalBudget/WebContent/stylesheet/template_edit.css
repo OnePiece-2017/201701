@@ -1,0 +1,12 @@
+body {
+	min-width: 800px;
+	min-height: 600px;
+}
+
+.field-name {
+	float: left;
+	width: 132px;
+	padding-right: 15px;
+	font-family: '微软雅黑';
+	text-align: right;
+}

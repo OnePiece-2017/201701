@@ -1,0 +1,12 @@
+/*
+空白页
+*/
+body {
+	background-color: #5CADAD;
+}
+
+.blank-div {
+	margin-top: 100px;
+	width: 100%;
+	height: 100%;
+}

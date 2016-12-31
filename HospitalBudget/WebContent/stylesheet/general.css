@@ -1,0 +1,80 @@
+/* 公共CSS样式 */
+.fl {
+	float: left;
+}
+
+.fr {
+	float: right;
+}
+
+.pr {
+	position: relative;
+}
+
+.w300 {
+	width: 300px;
+}
+
+.mt10 {
+	margin-top: 10px;
+}
+
+.mt20 {
+	margin-top: 20px;
+}
+
+.ml10 {
+	margin-left: 10px;
+}
+
+.ml20 {
+	margin-left: 20px;
+}
+
+.mr2 {
+	margin-right: 2px;
+}
+
+.mr10 {
+	margin-right: 10px;
+}
+
+.mr15 {
+	margin-right: 15px;
+}
+
+.pd0-10 {
+	padding: 0 10px;
+}
+
+.pb30 {
+	padding-bottom: 30px;
+}
+
+.pb20 {
+	padding-bottom: 20px;
+}
+
+.pt30 {
+	padding-top: 30px;
+}
+
+.pt50 {
+	padding-top: 50px;
+}
+
+.pb95 {
+	padding-bottom: 95px;
+}
+
+.mb10 {
+	margin-bottom: 10px;
+}
+
+.normal-btn {
+	margin: 0 auto;
+}
+
+.fs14 {
+	font-size: 14px;
+}

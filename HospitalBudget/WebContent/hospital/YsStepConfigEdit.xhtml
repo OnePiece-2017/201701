@@ -1,0 +1,464 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:s="http://jboss.com/products/seam/taglib"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:a="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich"
+	template="/layout/template_edit.xhtml">
+
+	<ui:define name="head">
+		<link rel="stylesheet" type="text/css" href="#{request.contextPath}/common/css/bootstrap.min.css" />
+		<link rel="stylesheet" type="text/css" href="#{request.contextPath}/common/css/bootstrap-select.min.css" />
+		<link rel="stylesheet" type="text/css" href="#{request.contextPath}/icheck/skins/square/blue.css" />
+		<link rel="stylesheet" type="text/css" href="#{request.contextPath}/reveal/css/reveal.css" />
+	</ui:define>
+
+	<ui:define name="body">
+		#{ysStepConfigHome.wire()}
+		<h:form id="mainForm" styleClass="edit" enctype="multipart/form-data">
+			<div class="pd0-10">
+				<div class="pt30 pb30 fs14">
+					<table width="100%" cellpadding="0" cellspacing="0">
+						<tr>
+							<td width="50%">
+								<div class="pb20">
+									<table>
+										<tr>
+											<td valign="middle">
+												<span class="field-name mb10">步骤名称</span>
+											</td>
+											<td valign="middle">
+												<h:inputText id="stepName" value="#{ysStepConfigHome.instance.stepName}" styleClass="form-control mb10 fix--w220" />
+											</td>
+											<td valign="middle">
+												<font color="red" style="margin-left: 3px;">*</font>
+											</td>
+										</tr>
+									</table>
+								</div>
+							</td>
+						</tr>
+						<tr class="root-auditor">
+							<td width="50%">
+								<div class="pb20">
+									<table>
+										<tr>
+											<td valign="middle">
+												<span class="field-name mb10">审核人</span>
+											</td>
+											<td valign="middle">
+												<a href="#" class="btn btn-success fr mr10" data-reveal-id="myModal" data-animation="fade" onclick="addPerson(1);">添加</a>
+											</td>
+											<td valign="middle">
+												<font color="red" style="margin-left: 3px;"></font>
+											</td>
+										</tr>
+									</table>
+								</div>
+							</td>
+						</tr>
+						<tr class="root-notifier">
+							<td width="50%">
+								<div class="pb20">
+									<table>
+										<tr>
+											<td valign="middle">
+												<span class="field-name mb10">通知人</span>
+											</td>
+											<td valign="middle">
+												<a href="#" class="btn btn-success fr mr10" data-reveal-id="myModal" data-animation="fade" onclick="addPerson(2);">添加</a>
+											</td>
+											<td valign="middle">
+												<font color="red" style="margin-left: 3px;"></font>
+											</td>
+										</tr>
+									</table>
+								</div>
+							</td>
+						</tr>
+						<tr>
+							<td width="50%">
+								<div class="pb20">
+									<table>
+										<tr>
+											<td valign="middle">
+												<span class="field-name mb10">是否需要<br />全部人审核通过</span>
+											</td>
+											<td valign="middle">
+												<input type="radio" class="icheck" name="need_all_auditor_radio" value="1" id="need_all_auditor_radio__yes" />
+												<label for="need_all_auditor_radio__yes"><span>是</span></label>
+												<input type="radio" class="icheck" name="need_all_auditor_radio" value="0" id="need_all_auditor_radio__no" />
+												<label for="need_all_auditor_radio__no"><span>否</span></label>
+												<h:inputHidden id="needAllAuditorHidden" value="#{ysStepConfigHome.instance.needAllAuditor}" />
+											</td>
+											<td valign="middle">
+												<font color="red" style="margin-left: 3px;"></font>
+											</td>
+										</tr>
+									</table>
+								</div>
+							</td>
+						</tr>
+					</table>
+				</div>
+				<div class="pt50 pb95">
+					<table class="normal-btn">
+						<tr>
+							<td>
+								<h:inputHidden id="auditorHidden" value="#{ysStepConfigHome.instance.auditor}" />
+								<h:inputHidden id="notifierHidden" value="#{ysStepConfigHome.instance.notifier}" />
+								<h:commandButton id="persist" value="提交" onclick="return beforeSubmit();" action="#{ysStepConfigHome.persist}" disabled="#{!ysStepConfigHome.wired}" rendered="#{!ysStepConfigHome.managed}" styleClass="btn btn-primary mr15" />
+								<h:commandButton id="update" value="保存" onclick="return beforeSubmit();" action="#{ysStepConfigHome.update}" rendered="#{ysStepConfigHome.managed}" styleClass="btn btn-primary mr15" />
+								<s:button id="cancel" value="返回" view="/hospital/YsStepConfigList.seam?workflowId=#{ysStepConfigHome.workflowId}" propagation="none" styleClass="btn btn-default" />
+							</td>
+						</tr>
+					</table>
+					<br />
+					<br />
+				</div>
+				<div id="myModal" class="reveal-modal">
+					<table width="100%" cellpadding="0" cellspacing="0">
+						<tr>
+							<td width="50%">
+								<div class="pb20">
+									<table>
+										<tr>
+											<td valign="middle">
+												<span class="field-name mb10">请选择员工或岗位</span>
+											</td>
+											<td valign="middle">
+												<input type="radio" class="icheck" name="by_person" value="1" id="target_radio__employee" />
+												<label for="target_radio__employee"><span>员工</span></label>
+												<input type="radio" class="icheck" name="by_person" value="2" id="target_radio__station" />
+												<label for="target_radio__station"><span>岗位</span></label>
+											</td>
+											<td valign="middle">
+												<font color="red" style="margin-left: 3px;"></font>
+											</td>
+										</tr>
+									</table>
+								</div>
+							</td>
+						</tr>
+						<tr>
+							<td colspan="2">
+								<div class="pb20">
+									<table>
+										<tr>
+											<td valign="middle">
+												<span class="field-name mr10"></span>
+											</td>
+											<td valign="middle">
+												<select id="selectPerson" class="selectpicker" data-live-search="true">
+												</select>
+											</td>
+											<td valign="middle">
+												<font color="red" style="margin-left: 3px;"></font>
+											</td>
+										</tr>
+									</table>
+								</div>
+							</td>
+						</tr>
+					</table>
+					<a class="close-reveal-modal" style="text-decoration: none;">x</a>
+					<table class="normal-btn">
+						<tr>
+							<td>
+								<a class="btn btn-default" style="margin-top: 100px;" onclick="insertPerson();">确定</a>
+							</td>
+						</tr>
+					</table>
+				</div>
+			</div>
+		</h:form>
+		<script type="text/javascript" src="#{request.contextPath}/common/js/bootstrap.min.js" />
+		<script type="text/javascript" src="#{request.contextPath}/common/js/bootstrap-select.min.js" charset="UTF-8" />
+		<script type="text/javascript" src="#{request.contextPath}/common/js/bootstrap-select-defaults-zh_CN.min.js" charset="UTF-8" />
+		<script type="text/javascript" src="#{request.contextPath}/icheck/js/icheck.min.js" charset="UTF-8" />
+		<script type="text/javascript" src="#{request.contextPath}/reveal/js/jquery.reveal.js" />
+		<script type="text/javascript" src="#{request.contextPath}/toolkit/utils.js" />
+		<script type="text/javascript">
+		//<![CDATA[
+			var byTheWay = null;
+			var existAuditor = {};
+			var existNotifier = {};
+			var selectJson_auditor = #{ysStepConfigHome.selectJson};
+			var selectJson_notifier = #{ysStepConfigHome.selectJson};
+			jQuery(document).ready(function() {
+
+				___textRestrictById('mainForm:stepName', 255);
+				
+				jQuery('.icheck').iCheck({
+					checkboxClass: 'icheckbox_square-blue',
+					radioClass: 'iradio_square-blue',
+					increaseArea: '20%'
+				});
+				
+			    jQuery('.selectpicker').selectpicker();
+
+				jQuery('input[name="by_person"]').on('ifChecked', function(event){
+					if (byTheWay == 1) {
+						if (jQuery(this).val() == 1) {
+							var option = '';
+							for (var key in selectJson_auditor.employee) {
+								if (existAuditor[key] == null || existAuditor[key] == '') {
+									option += '<option value="' + key + '">' + selectJson_auditor.employee[key] + '</option>';
+								}
+							}
+							jQuery('#selectPerson').empty();
+							jQuery('#selectPerson').append(option);
+							jQuery('#selectPerson').selectpicker('refresh');
+						} else {
+							var option = '';
+							for (var key in selectJson_auditor.station) {
+								if (existAuditor[key] == null || existAuditor[key] == '') {
+									option += '<option value="' + key + '">' + selectJson_auditor.station[key] + '</option>';
+								}
+							}
+							jQuery('#selectPerson').empty();
+							jQuery('#selectPerson').append(option);
+							jQuery('#selectPerson').selectpicker('refresh');
+						}
+					} else {
+						if (jQuery(this).val() == 1) {
+							var option = '';
+							for (var key in selectJson_notifier.employee) {
+								if (existNotifier[key] == null || existNotifier[key] == '') {
+									option += '<option value="' + key + '">' + selectJson_notifier.employee[key] + '</option>';
+								}
+							}
+							jQuery('#selectPerson').empty();
+							jQuery('#selectPerson').append(option);
+							jQuery('#selectPerson').selectpicker('refresh');
+						} else {
+							var option = '';
+							for (var key in selectJson_notifier.station) {
+								if (existNotifier[key] == null || existNotifier[key] == '') {
+									option += '<option value="' + key + '">' + selectJson_notifier.station[key] + '</option>';
+								}
+							}
+							jQuery('#selectPerson').empty();
+							jQuery('#selectPerson').append(option);
+							jQuery('#selectPerson').selectpicker('refresh');
+						}
+					}
+				});
+
+				var auditor = '#{ysStepConfigHome.instance.auditor}';
+				if (auditor != null && auditor != '') {
+					var auditorArr = auditor.split(',');
+					if (auditorArr != null && auditorArr.length > 0) {
+						for (var i =  0; i < auditorArr.length; i++) {
+							var html = '';
+							html += '<tr class="child-auditor">';
+							html += '	<td width="50%">';
+							html += '		<div class="">';
+							html += '			<table>';
+							html += '				<tbody>';
+							html += '					<tr>';
+							html += '						<td valign="middle">';
+							html += '							<span class="field-name mb10"></span>';
+							html += '						</td>';
+							html += '						<td valign="middle">';
+							if (selectJson_auditor.employee[auditorArr[i]] != null) {
+								html += '							<span id="value" value="' + auditorArr[i] + '" class="form-control mb10 fix--w220">员工:　' + selectJson_auditor.employee[auditorArr[i]] + '</span>';
+							} else {
+								html += '							<span id="value" value="' + auditorArr[i] + '" class="form-control mb10 fix--w220">岗位:　' + selectJson_auditor.station[auditorArr[i]] + '</span>';
+							}
+							html += '						</td>';
+							html += '						<td valign="middle">';
+							html += '							<a style="color: #333333; text-decoration: none; cursor: pointer; outline: none;" href="javascript:void(0);" title="删除" onclick="idioctonia(this);"><img src="../images/icon_delete_16x16.png" style="margin-left: 3px; margin-top: -7px;" /></a>';
+							html += '						</td>';
+							html += '					</tr>';
+							html += '				</tbody>';
+							html += '			</table>';
+							html += '		</div>';
+							html += '	</td>';
+							html += '</tr>';
+							if (jQuery('.child-auditor:last').length > 0) {
+								jQuery('.child-auditor:last').after(html);
+							} else {
+								jQuery('.root-auditor').after(html);
+							}
+						}
+					}
+				}
+
+				var notifier = '#{ysStepConfigHome.instance.notifier}';
+				if (notifier != null && notifier != '') {
+					var notifierArr = notifier.split(',');
+					if (notifierArr != null && notifierArr.length > 0) {
+						for (var i =  0; i < notifierArr.length; i++) {
+							var html = '';
+							html += '<tr class="child-notifier">';
+							html += '	<td width="50%">';
+							html += '		<div class="">';
+							html += '			<table>';
+							html += '				<tbody>';
+							html += '					<tr>';
+							html += '						<td valign="middle">';
+							html += '							<span class="field-name mb10"></span>';
+							html += '						</td>';
+							html += '						<td valign="middle">';
+							if (selectJson_notifier.employee[notifierArr[i]] != null) {
+								html += '							<span id="value" value="' + notifierArr[i] + '" class="form-control mb10 fix--w220">员工:　' + selectJson_notifier.employee[notifierArr[i]] + '</span>';
+							} else {
+								html += '							<span id="value" value="' + notifierArr[i] + '" class="form-control mb10 fix--w220">岗位:　' + selectJson_notifier.station[notifierArr[i]] + '</span>';
+							}
+							html += '						</td>';
+							html += '						<td valign="middle">';
+							html += '							<a style="color: #333333; text-decoration: none; cursor: pointer; outline: none;" href="javascript:void(0);" title="删除" onclick="idioctonia(this);"><img src="../images/icon_delete_16x16.png" style="margin-left: 3px; margin-top: -7px;" /></a>';
+							html += '						</td>';
+							html += '					</tr>';
+							html += '				</tbody>';
+							html += '			</table>';
+							html += '		</div>';
+							html += '	</td>';
+							html += '</tr>';
+							if (jQuery('.child-notifier:last').length > 0) {
+								jQuery('.child-notifier:last').after(html);
+							} else {
+								jQuery('.root-notifier').after(html);
+							}
+						}
+					}
+				}
+
+				var needAllAuditorHidden = jQuery('#mainForm\\:needAllAuditorHidden').val();
+				if (#{ysStepConfigHome.managed}) {
+					jQuery('input[name="need_all_auditor_radio"][value="' + (needAllAuditorHidden == 'true' ? 1 : 0) + '"]').iCheck('check');
+				} else {
+					jQuery('input[name="need_all_auditor_radio"][value="' + 1 + '"]').iCheck('check');
+				}
+
+			    var message = '#{ysStepConfigHome.message}';
+			    ___dynamic_function = function() {
+					jQuery('#mainForm\\:stepName').focus();
+			    };
+			    if (message != '') {
+					___msg('温馨提示', message, {closed: ___dynamic_function});
+			    }
+			});
+			
+			//提交表单前
+			function beforeSubmit() {
+				var stepName = jQuery('#mainForm\\:stepName').val();
+				if (stepName == null || stepName == '') {
+				    ___dynamic_function = function() {
+						jQuery('#mainForm\\:stepName').focus();
+					};
+					___msg('温馨提示', '请填写步骤名称！', {closed: ___dynamic_function});
+					return false;
+				}
+
+				var auditor = '';
+				jQuery('.child-auditor').each(function(){
+					auditor += jQuery(this).find('#value').attr('value') + ',';
+				});
+				if (auditor != null && auditor != '') {
+					auditor = auditor.substring(0, auditor.length - 1);
+				}
+				jQuery('#mainForm\\:auditorHidden').val(auditor);
+
+				var notifier = '';
+				jQuery('.child-notifier').each(function(){
+					notifier += jQuery(this).find('#value').attr('value') + ',';
+				});
+				if (notifier != null && notifier != '') {
+					notifier = notifier.substring(0, notifier.length - 1);
+				}
+				jQuery('#mainForm\\:notifierHidden').val(notifier);
+				
+				var need_all_auditor_radio = jQuery('input[name="need_all_auditor_radio"]:checked').val();
+				jQuery('#mainForm\\:needAllAuditorHidden').val(need_all_auditor_radio == '1' ? true : false);
+			}
+			
+			function addPerson(way) {
+				byTheWay = way;
+				if (way == 1) {
+					existAuditor = {};
+					jQuery('.child-auditor').each(function(){
+						existAuditor[jQuery(this).find('#value').attr('value')] = 'exist';
+					});
+				} else {
+					existNotifier = {};
+					jQuery('.child-notifier').each(function(){
+						existNotifier[jQuery(this).find('#value').attr('value')] = 'exist';
+					});
+				}
+				jQuery('input[name="by_person"][value="' + 1 + '"]').iCheck('uncheck');
+				jQuery('input[name="by_person"][value="' + 1 + '"]').iCheck('check');
+			}
+			
+			function idioctonia(item) {
+				jQuery(item).parents('[class^=child]').remove();
+			}
+			
+			function insertPerson() {
+				var selectPerson = jQuery('#selectPerson').val();
+				if (selectPerson != null && selectPerson != '') {
+					var html = '';
+					if (byTheWay == 1) {
+						html += '<tr class="child-auditor">';
+					} else {
+						html += '<tr class="child-notifier">';
+					}
+					html += '	<td width="50%">';
+					html += '		<div class="">';
+					html += '			<table>';
+					html += '				<tbody>';
+					html += '					<tr>';
+					html += '						<td valign="middle">';
+					html += '							<span class="field-name mb10"></span>';
+					html += '						</td>';
+					html += '						<td valign="middle">';
+					if (byTheWay == 1) {
+						if (jQuery('#target_radio__employee:checked').length > 0) {
+							html += '							<span id="value" value="' + selectPerson + '" class="form-control mb10 fix--w220">员工:　' + selectJson_auditor.employee[selectPerson] + '</span>';
+						} else {
+							html += '							<span id="value" value="' + selectPerson + '" class="form-control mb10 fix--w220">岗位:　' + selectJson_auditor.station[selectPerson] + '</span>';
+						}
+					} else {
+						if (jQuery('#target_radio__employee:checked').length > 0) {
+							html += '							<span id="value" value="' + selectPerson + '" class="form-control mb10 fix--w220">员工:　' + selectJson_notifier.employee[selectPerson] + '</span>';
+						} else {
+							html += '							<span id="value" value="' + selectPerson + '" class="form-control mb10 fix--w220">岗位:　' + selectJson_notifier.station[selectPerson] + '</span>';
+						}
+					}
+					html += '						</td>';
+					html += '						<td valign="middle">';
+					html += '							<a style="color: #333333; text-decoration: none; cursor: pointer; outline: none;" href="javascript:void(0);" title="删除" onclick="idioctonia(this);"><img src="../images/icon_delete_16x16.png" style="margin-left: 3px; margin-top: -7px;" /></a>';
+					html += '						</td>';
+					html += '					</tr>';
+					html += '				</tbody>';
+					html += '			</table>';
+					html += '		</div>';
+					html += '	</td>';
+					html += '</tr>';
+					if (byTheWay == 1) {
+						if (jQuery('.child-auditor:last').length > 0) {
+							jQuery('.child-auditor:last').after(html);
+						} else {
+							jQuery('.root-auditor').after(html);
+						}
+					} else {
+						if (jQuery('.child-notifier:last').length > 0) {
+							jQuery('.child-notifier:last').after(html);
+						} else {
+							jQuery('.root-notifier').after(html);
+						}
+					}
+					jQuery('#myModal').trigger('reveal:close');
+				} else {
+					alert('请选择员工或岗位');
+				}
+			}
+		//]]>
+		</script>
+	</ui:define>
+
+</ui:composition>

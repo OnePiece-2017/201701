@@ -1,0 +1,83 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:s="http://jboss.com/products/seam/taglib"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:rich="http://richfaces.org/rich"
+	template="layout/template_login.xhtml">
+
+	<ui:define name="body">
+		<div class="login-area">
+			<s:fragment rendered="false">
+				<h:messages id="errorMessage" layout="table" globalOnly="true" styleClass="login-failed" rendered="#{showGlobalMessages != 'false'}" />
+			</s:fragment>
+			<table width="100%" cellpadding="0" cellspacing="0">
+				<tr>
+					<td valign="middle">
+						<h:form id="mainForm" styleClass="login">
+							<h1>#{configureCache.getSettingsValue('system_alias')}</h1>
+							<h:inputText id="username" value="#{credentials.username}" styleClass="login-input" />
+							<h:inputSecret id="password" value="#{credentials.password}" styleClass="login-input" />
+							<h:commandButton id="submit" value="登录" onclick="return beforeSubmit();" action="#{authenticator.login}" styleClass="login-submit" />
+							<p class="login-help">
+								<a href="javascript:void(0);">忘记密码？</a>
+							</p>
+						</h:form>
+						<div class="about">
+							<p class="about-links">
+								<a href="javascript:void(0);" target="_parent">注册</a>
+								<a href="javascript:void(0);" target="_parent">官网</a>
+							</p>
+							<p class="about-links">
+								<a href="./admin/MenuInfoList.seam" target="_blank">菜单管理</a>
+								<a href="javascript:void(0);" target="_parent">注：仅供开发人员使用</a>
+							</p>
+							<p class="about-author">©2016 #{configureCache.getSettingsValue('system_alias')}<br />
+								<a href="javascript:void(0);">使用<font style="color: #f603af;">#{configureCache.getSettingsValue('system_alias')}</font>前必读</a>
+							</p>
+						</div>
+					</td>
+				</tr>
+			</table>
+		</div>
+		<script type="text/javascript" src="#{request.contextPath}/toolkit/utils.js" charset="UTF-8" />
+		<script type="text/javascript">
+		//<![CDATA[
+			jQuery(document).ready(function() {
+			    jQuery('body').niceScroll({
+					cursorcolor : '#404040',
+					cursorwidth : 6,
+					cursoropacitymax : 0.8,
+					touchbehavior : false,
+					autohidemode : true
+			    });
+
+			    ___textRestrictById('mainForm:username', 255);
+			    ___textRestrictById('mainForm:password', 255);
+				
+				var message = '#{sessionToken.message}';
+				___dynamic_function = function() {
+					jQuery('#mainForm\\:password').focus();
+				};
+				if (message != '') {
+					___msg('温馨提示', message, {closed: ___dynamic_function});
+				}
+			});
+			
+			//提交表单前
+			function beforeSubmit() {
+				var username = jQuery('#mainForm\\:username').val();
+				if (username == null || username == '') {
+					___dynamic_function = function() {
+						jQuery('#mainForm\\:username').focus();
+					};
+					___msg('温馨提示', '请输入用户名！', {closed: ___dynamic_function});
+					return false;
+				}
+			}
+		//]]>
+		</script>
+	</ui:define>
+</ui:composition>

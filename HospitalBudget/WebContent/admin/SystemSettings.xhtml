@@ -1,0 +1,44 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:s="http://jboss.com/products/seam/taglib"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:a="http://richfaces.org/a4j"
+	template="/layout/template_view.xhtml">
+
+	<ui:define name="head">
+		<link rel="stylesheet" type="text/css" href="#{request.contextPath}/common/css/bootstrap.min.css" />
+		<script type="text/javascript" src="#{request.contextPath}/common/js/bootstrap.min.js" />
+	</ui:define>
+
+	<ui:define name="body">
+		#{systemSettingsHome.init()}
+		<div class="pd0-10">
+			<table class="mt20 table-grid" width="100%" cellpadding="0" cellspacing="0">
+				<a:repeat value="#{systemSettingsHome.viewData}" var="_result" rowKeyVar="_row">
+					<tr class="#{_row % 2 eq 0 ? 'odd' : 'even'}">
+						<td class="field-name" width="20%">项目</td>
+						<td class="field-value" colspan="3">#{_result[0]}</td>
+					</tr>
+					<tr class="#{_row % 2 eq 0 ? 'odd' : 'even'}">
+						<td class="field-name" width="20%">预设值</td>
+						<td class="field-value" colspan="3">#{_result[1]}</td>
+					</tr>
+				</a:repeat>
+			</table>
+			<table align="center" cellpadding="0" cellspacing="0" style="clear: both; margin: 35px auto 0;">
+				<tr>
+					<td>
+						<s:link value="编辑" view="/admin/SystemSettingsEdit.xhtml" styleClass="btn btn-success" rendered="#{s:hasRole('system_settings')}" />
+					</td>
+				</tr>
+			</table>
+			<br />
+			<br />
+		</div>
+	</ui:define>
+
+</ui:composition>

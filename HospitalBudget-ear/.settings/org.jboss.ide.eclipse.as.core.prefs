@@ -1,0 +1,2 @@
+eclipse.preferences.version=1
+org.jboss.ide.eclipse.as.core.singledeployable.deployableList=resources/seam2testng-ds.xml\nresources/seamgen-ds.xml\nresources/HospitalBudget-ds.xml\nresources/HospitalBudget-project_info.properties\nresources/seamgen-project_info.properties\nresources/seam2entities-ds.xml\nresources/farmeasyadmin-ds.xml\nresources/gov-ds.xml\nresources/nationgov-ds.xml\n

@@ -1,0 +1,33 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:s="http://jboss.com/products/seam/taglib"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:rich="http://richfaces.org/rich"
+	template="/layout/template.xhtml">
+
+	<ui:define name="head">
+		<link rel="stylesheet" type="text/css" href="#{request.contextPath}/stylesheet/fix.css" />
+	</ui:define>
+	<ui:define name="body">
+		<div class="" style="width: 100%; height: 100%;">
+			<img src="../images/img_page_not_found_271x249.png" />
+		</div>
+		<script type="text/javascript">
+		//<![CDATA[
+			jQuery(document).ready(function() {
+			    jQuery('body').niceScroll({
+					cursorcolor : '#4CAE4C',
+					cursorwidth : 6,
+					cursoropacitymax : 0.8,
+					touchbehavior : false,
+					autohidemode : true
+			    });
+
+			});
+		//]]>
+		</script>
+	</ui:define>
+</ui:composition>

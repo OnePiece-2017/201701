@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app id="WebApp_ID" version="2.5"
+	xmlns="http://java.sun.com/xml/ns/javaee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd">
+	<display-name>HospitalBudget</display-name>
+	<context-param>
+		<param-name>facelets.DEVELOPMENT</param-name>
+		<param-value>true</param-value>
+	</context-param>
+	<context-param>
+		<param-name>javax.faces.DEFAULT_SUFFIX</param-name>
+		<param-value>.xhtml</param-value>
+	</context-param>
+	<context-param>
+		<param-name>org.jboss.jbossfaces.JSF_CONFIG_NAME</param-name>
+		<param-value>Mojarra-1.2</param-value>
+	</context-param>
+	<context-param>
+		<param-name>org.richfaces.SKIN</param-name>
+		<param-value>blueSky</param-value>
+	</context-param>
+	<!-- 常规filter -->
+	<filter>
+		<display-name>GeneralFilter</display-name>
+		<filter-name>GeneralFilter</filter-name>
+		<filter-class>cn.dmdl.stl.hospitalbudget.filter.GeneralFilter</filter-class>
+	</filter>
+	<!-- 日志filter -->
+	<filter>
+		<display-name>LogFilter</display-name>
+		<filter-name>LogFilter</filter-name>
+		<filter-class>cn.dmdl.stl.hospitalbudget.filter.LogFilter</filter-class>
+	</filter>
+	<filter>
+		<filter-name>Seam Filter</filter-name>
+		<filter-class>org.jboss.seam.servlet.SeamFilter</filter-class>
+	</filter>
+	<filter-mapping>
+		<filter-name>GeneralFilter</filter-name>
+		<url-pattern>/*</url-pattern>
+	</filter-mapping>
+	<filter-mapping>
+		<filter-name>LogFilter</filter-name>
+		<url-pattern>/*</url-pattern>
+	</filter-mapping>
+	<filter-mapping>
+		<filter-name>Seam Filter</filter-name>
+		<url-pattern>*.seam</url-pattern>
+	</filter-mapping>
+	<listener>
+		<listener-class>org.jboss.seam.servlet.SeamListener</listener-class>
+	</listener>
+	<!-- 调度作业Listener -->
+	<listener>
+		<listener-class>cn.dmdl.stl.hospitalbudget.listener.ScheduleJobHandlerListener</listener-class>
+	</listener>
+	<servlet>
+		<servlet-name>Faces Servlet</servlet-name>
+		<servlet-class>javax.faces.webapp.FacesServlet</servlet-class>
+		<load-on-startup>1</load-on-startup>
+	</servlet>
+	<servlet>
+		<servlet-name>Seam Resource Servlet</servlet-name>
+		<servlet-class>org.jboss.seam.servlet.SeamResourceServlet</servlet-class>
+	</servlet>
+	<!-- 充值servlet -->
+	<servlet>
+		<servlet-name>RechargeServlet</servlet-name>
+		<servlet-class>cn.dmdl.stl.hospitalbudget.servlet.RechargeServlet</servlet-class>
+	</servlet>
+	<!-- 用户追踪servlet -->
+	<servlet>
+		<servlet-name>UserFollowingServlet</servlet-name>
+		<servlet-class>cn.dmdl.stl.hospitalbudget.servlet.UserFollowingServlet</servlet-class>
+	</servlet>
+	<!-- 服務端信息servlet -->
+	<servlet>
+		<servlet-name>ServerInfoServlet</servlet-name>
+		<servlet-class>cn.dmdl.stl.hospitalbudget.servlet.ServerInfoServlet</servlet-class>
+	</servlet>
+	<!-- 文件上傳servlet -->
+	<servlet>
+		<servlet-name>FileUploadServlet</servlet-name>
+		<servlet-class>cn.dmdl.stl.hospitalbudget.servlet.FileUploadServlet</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>Faces Servlet</servlet-name>
+		<url-pattern>*.seam</url-pattern>
+	</servlet-mapping>
+	<servlet-mapping>
+		<servlet-name>Seam Resource Servlet</servlet-name>
+		<url-pattern>/seam/resource/*</url-pattern>
+	</servlet-mapping>
+	<servlet-mapping>
+		<servlet-name>RechargeServlet</servlet-name>
+		<url-pattern>/RechargeServlet</url-pattern>
+	</servlet-mapping>
+	<servlet-mapping>
+		<servlet-name>UserFollowingServlet</servlet-name>
+		<url-pattern>/UserFollowingServlet</url-pattern>
+	</servlet-mapping>
+	<servlet-mapping>
+		<servlet-name>ServerInfoServlet</servlet-name>
+		<url-pattern>/ServerInfoServlet</url-pattern>
+	</servlet-mapping>
+	<servlet-mapping>
+		<servlet-name>FileUploadServlet</servlet-name>
+		<url-pattern>/FileUploadServlet</url-pattern>
+	</servlet-mapping>
+	<session-config>
+		<session-timeout>0</session-timeout>
+	</session-config>
+	<welcome-file-list>
+		<welcome-file>index.html</welcome-file>
+	</welcome-file-list>
+	<error-page>
+		<error-code>503</error-code>
+		<location>/error-page/503.html</location>
+	</error-page>
+	<error-page>
+		<error-code>404</error-code>
+		<location>/error-page/404.seam</location>
+	</error-page>
+	<security-constraint>
+		<display-name>Restrict raw XHTML Documents</display-name>
+		<web-resource-collection>
+			<web-resource-name>XHTML</web-resource-name>
+			<url-pattern>*.xhtml</url-pattern>
+		</web-resource-collection>
+		<auth-constraint />
+	</security-constraint>
+</web-app>

@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<page xmlns="http://jboss.com/products/seam/pages" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://jboss.com/products/seam/pages http://jboss.com/products/seam/pages-2.2.xsd"
+	login-required="true">
+
+	<restrict>#{s:hasRole('user_management/create') or s:hasRole('user_management/delete') or s:hasRole('user_management/update')}</restrict>
+	<begin-conversation join="true" flush-mode="MANUAL" />
+
+	<param name="userInfoFrom" />
+	<param name="userInfoUserInfoId" value="#{userInfoHome.userInfoUserInfoId}" />
+
+	<navigation from-action="#{userInfoHome.persist}">
+		<rule if-outcome="persisted">
+			<end-conversation />
+			<redirect view-id="/admin/UserInfoList.xhtml" />
+		</rule>
+	</navigation>
+
+	<navigation from-action="#{userInfoHome.update}">
+		<rule if-outcome="updated">
+			<end-conversation />
+			<redirect view-id="/admin/UserInfoList.xhtml" />
+		</rule>
+	</navigation>
+
+	<navigation from-action="#{userInfoHome.remove}">
+		<rule if-outcome="removed">
+			<end-conversation />
+			<redirect view-id="/admin/UserInfoList.xhtml" />
+		</rule>
+		<rule if-outcome="failure">
+			<end-conversation />
+			<redirect view-id="/admin/UserInfoList.xhtml" />
+		</rule>
+	</navigation>
+
+</page>

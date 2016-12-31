@@ -1,0 +1,442 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:s="http://jboss.com/products/seam/taglib"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:a="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich"
+	template="/layout/template_edit.xhtml">
+
+	<ui:define name="head">
+		<link rel="stylesheet" type="text/css" href="#{request.contextPath}/common/css/bootstrap.min.css" />
+		<link rel="stylesheet" type="text/css" href="#{request.contextPath}/common/css/bootstrap-select.min.css" />
+		<link rel="stylesheet" type="text/css" href="#{request.contextPath}/icheck/skins/square/blue.css" />
+	</ui:define>
+
+	<ui:define name="body">
+		#{systemSettingsHome.wire()}
+		<h:form id="mainForm" styleClass="edit" enctype="multipart/form-data">
+			<div class="pd0-10">
+				<div class="pt30 pb30 fs14">
+					<table width="100%" cellpadding="0" cellspacing="0">
+						<tr>
+							<td width="50%">
+								<div class="pb20">
+									<table>
+										<tr>
+											<td valign="middle">
+												<span class="field-name mb10">项目</span>
+											</td>
+											<td valign="middle">
+												<h:outputText value="#{systemSettingsHome.modifyData.get('system_alias')[0]}" styleClass="form-control mb10 fix--bc-purple" />
+											</td>
+											<td valign="middle">
+												<font color="red" style="margin-left: 3px;"></font>
+											</td>
+										</tr>
+									</table>
+								</div>
+							</td>
+						</tr>
+						<tr>
+							<td width="50%">
+								<div class="pb20">
+									<table>
+										<tr>
+											<td valign="middle">
+												<span class="field-name mb10">预设值</span>
+											</td>
+											<td valign="middle">
+												<h:inputText id="system_alias" value="#{systemSettingsHome.modifyData.get('system_alias')[1]}" styleClass="form-control mb10 fix--w220" />
+											</td>
+											<td valign="middle">
+												<font color="red" style="margin-left: 3px;">*</font>
+											</td>
+										</tr>
+									</table>
+								</div>
+							</td>
+						</tr>
+						<tr>
+							<td width="50%">
+								<div class="pb20">
+									<table>
+										<tr>
+											<td valign="middle">
+												<span class="field-name mb10">项目</span>
+											</td>
+											<td valign="middle">
+												<h:outputText value="#{systemSettingsHome.modifyData.get('system_skin')[0]}" styleClass="form-control mb10 fix--bc-purple" />
+											</td>
+											<td valign="middle">
+												<font color="red" style="margin-left: 3px;"></font>
+											</td>
+										</tr>
+									</table>
+								</div>
+							</td>
+						</tr>
+						<tr>
+							<td width="50%">
+								<div class="pb20">
+									<table>
+										<tr>
+											<td valign="middle">
+												<span class="field-name mb10">预设值</span>
+											</td>
+											<td valign="middle">
+												<select id="system_skin" class="selectpicker" data-live-search="true">
+													<option value="normal">常规</option>
+													<option value="luxury_gold">奢华金</option>
+													<option value="hacker">黑客</option>
+												</select>
+												<h:inputHidden id="system_skinHidden" value="#{systemSettingsHome.modifyData.get('system_skin')[1]}" />
+											</td>
+											<td valign="middle">
+												<font color="red" style="margin-left: 3px;"></font>
+											</td>
+										</tr>
+									</table>
+								</div>
+							</td>
+						</tr>
+						<tr>
+							<td width="50%">
+								<div class="pb20">
+									<table>
+										<tr>
+											<td valign="middle">
+												<span class="field-name mb10">项目</span>
+											</td>
+											<td valign="middle">
+												<h:outputText value="#{systemSettingsHome.modifyData.get('ask_on_logout')[0]}" styleClass="form-control mb10 fix--bc-purple" />
+											</td>
+											<td valign="middle">
+												<font color="red" style="margin-left: 3px;"></font>
+											</td>
+										</tr>
+									</table>
+								</div>
+							</td>
+						</tr>
+						<tr>
+							<td width="50%">
+								<div class="pb20">
+									<table>
+										<tr>
+											<td valign="middle">
+												<span class="field-name mb10">预设值</span>
+											</td>
+											<td valign="top">
+												<input type="radio" class="icheck" name="ask_on_logout_radio" value="true" id="ask_on_logout_radio__true" />
+												<label for="ask_on_logout_radio__true"><span>是</span></label>
+												<input type="radio" class="icheck" name="ask_on_logout_radio" value="false" id="ask_on_logout_radio__false" />
+												<label for="ask_on_logout_radio__false"><span>否</span></label>
+												<h:inputHidden id="ask_on_logoutHidden" value="#{systemSettingsHome.modifyData.get('ask_on_logout')[1]}" />
+											</td>
+											<td valign="middle">
+												<font color="red" style="margin-left: 3px;"></font>
+											</td>
+										</tr>
+									</table>
+								</div>
+							</td>
+						</tr>
+						<tr>
+							<td width="50%">
+								<div class="pb20">
+									<table>
+										<tr>
+											<td valign="middle">
+												<span class="field-name mb10">项目</span>
+											</td>
+											<td valign="middle">
+												<h:outputText value="#{systemSettingsHome.modifyData.get('ask_on_close_label')[0]}" styleClass="form-control mb10 fix--bc-purple" />
+											</td>
+											<td valign="middle">
+												<font color="red" style="margin-left: 3px;"></font>
+											</td>
+										</tr>
+									</table>
+								</div>
+							</td>
+						</tr>
+						<tr>
+							<td width="50%">
+								<div class="pb20">
+									<table>
+										<tr>
+											<td valign="middle">
+												<span class="field-name mb10">预设值</span>
+											</td>
+											<td valign="top">
+												<input type="radio" class="icheck" name="ask_on_close_label_radio" value="true" id="ask_on_close_label_radio__true" />
+												<label for="ask_on_close_label_radio__true"><span>是</span></label>
+												<input type="radio" class="icheck" name="ask_on_close_label_radio" value="false" id="ask_on_close_label_radio__false" />
+												<label for="ask_on_close_label_radio__false"><span>否</span></label>
+												<h:inputHidden id="ask_on_close_labelHidden" value="#{systemSettingsHome.modifyData.get('ask_on_close_label')[1]}" />
+											</td>
+											<td valign="middle">
+												<font color="red" style="margin-left: 3px;"></font>
+											</td>
+										</tr>
+									</table>
+								</div>
+							</td>
+						</tr>
+						<tr>
+							<td width="50%">
+								<div class="pb20">
+									<table>
+										<tr>
+											<td valign="middle">
+												<span class="field-name mb10">项目</span>
+											</td>
+											<td valign="middle">
+												<h:outputText value="#{systemSettingsHome.modifyData.get('reload_page_on_exist')[0]}" styleClass="form-control mb10 fix--bc-purple" />
+											</td>
+											<td valign="middle">
+												<font color="red" style="margin-left: 3px;"></font>
+											</td>
+										</tr>
+									</table>
+								</div>
+							</td>
+						</tr>
+						<tr>
+							<td width="50%">
+								<div class="pb20">
+									<table>
+										<tr>
+											<td valign="middle">
+												<span class="field-name mb10">预设值</span>
+											</td>
+											<td valign="top">
+												<input type="radio" class="icheck" name="reload_page_on_exist_radio" value="true" id="reload_page_on_exist_radio__true" />
+												<label for="reload_page_on_exist_radio__true"><span>是</span></label>
+												<input type="radio" class="icheck" name="reload_page_on_exist_radio" value="false" id="reload_page_on_exist_radio__false" />
+												<label for="reload_page_on_exist_radio__false"><span>否</span></label>
+												<h:inputHidden id="reload_page_on_existHidden" value="#{systemSettingsHome.modifyData.get('reload_page_on_exist')[1]}" />
+											</td>
+											<td valign="middle">
+												<font color="red" style="margin-left: 3px;"></font>
+											</td>
+										</tr>
+									</table>
+								</div>
+							</td>
+						</tr>
+						<tr>
+							<td width="50%">
+								<div class="pb20">
+									<table>
+										<tr>
+											<td valign="middle">
+												<span class="field-name mb10">项目</span>
+											</td>
+											<td valign="middle">
+												<h:outputText value="#{systemSettingsHome.modifyData.get('query_max_results')[0]}" styleClass="form-control mb10 fix--bc-purple" />
+											</td>
+											<td valign="middle">
+												<font color="red" style="margin-left: 3px;"></font>
+											</td>
+										</tr>
+									</table>
+								</div>
+							</td>
+						</tr>
+						<tr>
+							<td width="50%">
+								<div class="pb20">
+									<table>
+										<tr>
+											<td valign="middle">
+												<span class="field-name mb10">预设值</span>
+											</td>
+											<td valign="middle">
+												<h:inputText id="query_max_results" value="#{systemSettingsHome.modifyData.get('query_max_results')[1]}" styleClass="form-control mb10" />
+											</td>
+											<td valign="middle">
+												<font color="red" style="margin-left: 3px;">*</font>
+											</td>
+										</tr>
+									</table>
+								</div>
+							</td>
+						</tr>
+						<tr>
+							<td width="50%">
+								<div class="pb20">
+									<table>
+										<tr>
+											<td valign="middle">
+												<span class="field-name mb10">项目</span>
+											</td>
+											<td valign="middle">
+												<h:outputText value="#{systemSettingsHome.modifyData.get('query_order_direction')[0]}" styleClass="form-control mb10 fix--bc-purple" />
+											</td>
+											<td valign="middle">
+												<font color="red" style="margin-left: 3px;"></font>
+											</td>
+										</tr>
+									</table>
+								</div>
+							</td>
+						</tr>
+						<tr>
+							<td width="50%">
+								<div class="pb20">
+									<table>
+										<tr>
+											<td valign="middle">
+												<span class="field-name mb10">预设值</span>
+											</td>
+											<td valign="top">
+												<input type="radio" class="icheck" name="query_order_direction_radio" value="asc" id="query_order_direction_radio__asc" />
+												<label for="query_order_direction_radio__asc"><span>升序</span></label>
+												<input type="radio" class="icheck" name="query_order_direction_radio" value="desc" id="query_order_direction_radio__desc" />
+												<label for="query_order_direction_radio__desc"><span>降序</span></label>
+												<h:inputHidden id="query_order_directionHidden" value="#{systemSettingsHome.modifyData.get('query_order_direction')[1]}" />
+											</td>
+											<td valign="middle">
+												<font color="red" style="margin-left: 3px;"></font>
+											</td>
+										</tr>
+									</table>
+								</div>
+							</td>
+						</tr>
+					</table>
+				</div>
+				<div class="pt50 pb95">
+					<table class="normal-btn">
+						<tr>
+							<td>
+								<a class="btn btn-primary mr15" onclick="return beforeInvoke();">保存</a>
+								<s:button id="cancel" value="返回" view="/admin/SystemSettings.xhtml" propagation="none" styleClass="btn btn-default" />
+							</td>
+						</tr>
+					</table>
+					<br />
+					<br />
+				</div>
+			</div>
+		</h:form>
+		<a:form>
+			<a:queue requestDelay="100" ignoreDupResponses="true" />
+			<a:jsFunction name="invokeUpdate" action="#{systemSettingsHome.invokeUpdate}" data="#{systemSettingsHome.message}" oncomplete="completedUpdate(data);">
+				<a:actionparam name="args" assignTo="#{systemSettingsHome.args}" />
+			</a:jsFunction>
+		</a:form>
+		<script type="text/javascript" src="#{request.contextPath}/common/js/bootstrap.min.js" />
+		<script type="text/javascript" src="#{request.contextPath}/common/js/bootstrap-select.min.js" charset="UTF-8" />
+		<script type="text/javascript" src="#{request.contextPath}/common/js/bootstrap-select-defaults-zh_CN.min.js" charset="UTF-8" />
+		<script type="text/javascript" src="#{request.contextPath}/icheck/js/icheck.min.js" charset="UTF-8" />
+		<script type="text/javascript" src="#{request.contextPath}/toolkit/utils.js" charset="UTF-8" />
+		<script type="text/javascript">
+		//<![CDATA[
+			jQuery(document).ready(function() {
+				
+				jQuery('.icheck').iCheck({
+					checkboxClass: 'icheckbox_square-blue',
+					radioClass: 'iradio_square-blue',
+					increaseArea: '20%'
+				});
+
+				jQuery('span.fix--bc-purple').hide();
+				jQuery('span.fix--bc-purple').slideDown();
+
+				___textRestrictById('mainForm:system_alias', 12);
+				___textRestrictById('mainForm:query_max_results', 10);
+
+			    jQuery('.selectpicker').selectpicker();
+			    jQuery('#system_skin').val(jQuery('#mainForm\\:system_skinHidden').val());
+			    jQuery('#system_skin').selectpicker('render');
+
+				var query_order_directionHidden = jQuery('#mainForm\\:query_order_directionHidden').val();
+				jQuery('input[name="query_order_direction_radio"][value="' + query_order_directionHidden + '"]').iCheck('check');
+
+				var ask_on_logoutHidden = jQuery('#mainForm\\:ask_on_logoutHidden').val();
+				jQuery('input[name="ask_on_logout_radio"][value="' + ask_on_logoutHidden + '"]').iCheck('check');
+
+				var ask_on_close_labelHidden = jQuery('#mainForm\\:ask_on_close_labelHidden').val();
+				jQuery('input[name="ask_on_close_label_radio"][value="' + ask_on_close_labelHidden + '"]').iCheck('check');
+
+				var reload_page_on_existHidden = jQuery('#mainForm\\:reload_page_on_existHidden').val();
+				jQuery('input[name="reload_page_on_exist_radio"][value="' + reload_page_on_existHidden + '"]').iCheck('check');
+			    
+			    var message = '#{systemSettingsHome.message}';
+			    if (message != null && message != '') {
+					___msg('温馨提示', message);
+			    }
+			});
+			
+			//请求a4j前
+			function beforeInvoke() {
+				
+				var system_alias = jQuery('#mainForm\\:system_alias').val();
+			    ___dynamic_function = function() {
+					jQuery('#mainForm\\:system_alias').focus();
+				};
+				if (system_alias == null || system_alias == '') {
+					___msg('温馨提示', '请填写预设值！', {closed: ___dynamic_function});
+					return false;
+				}
+
+				var system_skin = jQuery('#system_skin').val();
+
+				var ask_on_logout = jQuery('input[name="ask_on_logout_radio"]:checked').val();
+
+				var ask_on_close_label = jQuery('input[name="ask_on_close_label_radio"]:checked').val();
+
+				var reload_page_on_exist = jQuery('input[name="reload_page_on_exist_radio"]:checked').val();
+				
+				var query_max_results = jQuery('#mainForm\\:query_max_results').val();
+			    ___dynamic_function = function() {
+					jQuery('#mainForm\\:query_max_results').focus();
+				};
+				if (query_max_results == null || query_max_results == '') {
+					___msg('温馨提示', '请填写预设值！', {closed: ___dynamic_function});
+					return false;
+				} else if (isNaN(query_max_results)) {
+					___msg('温馨提示', '该预设值必须是合法的数字！', {closed: ___dynamic_function});
+					return false;
+				} else if (query_max_results != new String(parseInt(query_max_results))) {
+					___msg('温馨提示', '该预设值必须是整数！', {closed: ___dynamic_function});
+					return false;
+				} else if (parseInt(query_max_results) < 1 || parseInt(query_max_results) > 2147483646) {
+					___msg('温馨提示', '该预设限于1~2147483646！', {closed: ___dynamic_function});
+					return false;
+				}
+
+				var query_order_direction = jQuery('input[name="query_order_direction_radio"]:checked').val();
+				
+				var argsJson = {};
+				argsJson['system_alias'] = system_alias;
+				argsJson['system_skin'] = system_skin;
+				argsJson['ask_on_logout'] = ask_on_logout;
+				argsJson['ask_on_close_label'] = ask_on_close_label;
+				argsJson['reload_page_on_exist'] = reload_page_on_exist;
+				argsJson['query_max_results'] = query_max_results;
+				argsJson['query_order_direction'] = query_order_direction;
+				
+				invokeUpdate(JSON.stringify(argsJson));
+			}
+
+			function completedUpdate(data) {
+				if (data != null && data != '') {
+					___msg('温馨提示', data);
+				} else {
+				    ___dynamic_function = function() {
+				    	window.location.href = './SystemSettings.seam';
+					};
+					___msg('温馨提示', '保存成功！', {closed: ___dynamic_function});
+				}
+			}
+		//]]>
+		</script>
+	</ui:define>
+
+</ui:composition>

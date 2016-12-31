@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schedule_job>
+
+	<!-- 登陸統計分析作業 -->
+	<quartz for="1" enabled="!true">
+		<job_detail>
+			<name>LoginStatisticsJob</name>
+			<group>BusinessProcessing</group>
+			<job_class>cn.dmdl.stl.hospitalbudget.quartz.LoginStatisticsJob</job_class>
+		</job_detail>
+		<cron_trigger>
+			<name>LoginStatisticsJob</name>
+			<group>BusinessProcessing</group>
+			<cron_expression>0 0 0 * * ?</cron_expression>
+		</cron_trigger>
+	</quartz>
+
+	<!-- 用戶追蹤作業 -->
+	<quartz for="1" enabled="!true">
+		<job_detail>
+			<name>UserFollowingJob</name>
+			<group>BusinessProcessing</group>
+			<job_class>cn.dmdl.stl.hospitalbudget.quartz.UserFollowingJob</job_class>
+		</job_detail>
+		<cron_trigger>
+			<name>UserFollowingJob</name>
+			<group>BusinessProcessing</group>
+			<cron_expression>0 0/1 * * * ?</cron_expression>
+		</cron_trigger>
+	</quartz>
+	<quartz for="3" enabled="!true">
+		<job_detail>
+			<name>UserFollowingJob</name>
+			<group>BusinessProcessing</group>
+			<job_class>cn.dmdl.stl.hospitalbudget.quartz.UserFollowingJob</job_class>
+		</job_detail>
+		<cron_trigger>
+			<name>UserFollowingJob</name>
+			<group>BusinessProcessing</group>
+			<cron_expression>0 0/10 * * * ?</cron_expression>
+		</cron_trigger>
+	</quartz>
+
+	<!-- 其它作業 -->
+	<quartz for="1" enabled="!true">
+		<job_detail>
+			<name>OthersJob</name>
+			<group>Other</group>
+			<job_class>cn.dmdl.stl.hospitalbudget.quartz.OthersJob</job_class>
+		</job_detail>
+		<cron_trigger>
+			<name>OthersJob</name>
+			<group>Other</group>
+			<cron_expression>0 0 1 * * ?</cron_expression>
+		</cron_trigger>
+	</quartz>
+
+</schedule_job>

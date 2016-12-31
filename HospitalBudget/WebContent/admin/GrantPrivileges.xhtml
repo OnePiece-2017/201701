@@ -1,0 +1,121 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:s="http://jboss.com/products/seam/taglib"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:a="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich"
+	template="/layout/template_edit.xhtml">
+
+	<ui:define name="head">
+		<link rel="stylesheet" type="text/css" href="#{request.contextPath}/common/css/bootstrap.min.css" />
+		<link rel="stylesheet" type="text/css" href="#{request.contextPath}/icheck/skins/square/blue.css" />
+		<style>
+			.part-left {
+				float: left;
+				width: 200px;
+				height: auto;
+				text-align: left;
+				margin-bottom: 10px;
+				background-color: #a3ece9;
+			}
+			
+			.part-right {
+				height: auto;
+				margin-left: 190px;
+			}
+			
+			.part-right ul {
+				height: auto;
+			}
+			
+			.part-right ul li {
+				float: left;
+				width: auto;
+				height: 28px;
+				text-align: right;
+				margin-right: 10px;
+				margin-bottom: 10px;
+				list-style: none;
+			}
+		</style>
+		<script type="text/javascript" src="#{request.contextPath}/common/js/bootstrap.min.js" />
+		<script type="text/javascript" src="#{request.contextPath}/icheck/js/icheck.min.js" />
+	</ui:define>
+
+	<ui:define name="body">
+		#{grantPrivilegesHome.wire()}
+		<h:form id="mainForm" styleClass="edit" enctype="multipart/form-data">
+			<div class="pd0-10">
+				<div class="pt30 fs14" style="overflow: hidden;">
+					<h:outputText id="roleName" value="#{grantPrivilegesHome.instance.roleName}" styleClass="form-control mb10 fix--bc-darkturquoise" />
+				</div>
+			</div>
+			<a:repeat value="#{grantPrivilegesHome.permissionAssignmentColligateList}" var="_pac">
+				<div class="pd0-10">
+					<div class="pt30 fs14" style="overflow: hidden;">
+						<div style="height: auto;">
+							<div class="part-left">
+						    	<strong style="font-size: 15px; font-style: italic;">#{_pac[0]}</strong>
+						    </div>
+						    <div class="part-right">
+						    	<ul>
+							    	<a:repeat value="#{_pac[1]}" var="_pa">
+							    		<li>
+								    		<font>#{_pa[1]}</font>
+								    		<input type="checkbox" value="#{_pa[0]}" class="icheck" />
+							    		</li>
+							    	</a:repeat>
+					    		</ul>
+						    </div>
+						</div>
+					</div>
+				</div>
+			</a:repeat>
+			
+			<div class="pd0-10">
+				<div class="pt50 pb95">
+					<table class="normal-btn">
+						<tr>
+							<td>
+								<s:button value="授予权限" view="/admin/GrantPrivilegesEdit.xhtml" styleClass="btn btn-success mr15" rendered="#{s:hasRole('role_management/grant_privileges')}">
+				        			<f:param name="roleInfoRoleInfoId" value="#{grantPrivilegesHome.instance.roleInfoId}" />
+								</s:button>
+								<s:button id="cancel" value="返回" view="/admin/RoleInfoList.xhtml" propagation="none" styleClass="btn btn-default mr15" />
+							</td>
+						</tr>
+					</table>
+					<br />
+					<br />
+				</div>
+			</div>
+		</h:form>
+		
+		<script type="text/javascript">
+		//<![CDATA[
+			jQuery(document).ready(function() {
+				jQuery('.icheck').iCheck({
+					checkboxClass: 'icheckbox_square-blue',
+					increaseArea: '20%'
+				});
+
+				jQuery('#mainForm\\:roleName').hide();
+				jQuery('#mainForm\\:roleName').slideDown();
+
+				var privileges = '#{grantPrivilegesHome.privileges}';
+				if (privileges != null && privileges != '') {
+					var privilegesArr = privileges.split(',');
+					for (var i in privilegesArr) {
+						jQuery('.part-right input[type="checkbox"]input[value="' + privilegesArr[i] + '"]').iCheck('check');
+					}
+				}
+
+				jQuery('.icheck').iCheck('disable');
+			});
+		//]]>
+		</script>
+	</ui:define>
+
+</ui:composition>

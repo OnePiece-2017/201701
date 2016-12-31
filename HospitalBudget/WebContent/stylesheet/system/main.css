@@ -1,0 +1,96 @@
+/* 建议使用火狐浏览器在全屏模式下浏览 */
+html {
+	width: 100%;
+	height: 100%;
+	min-width: 800px;
+	min-height: 600px;
+}
+
+body {
+	margin: 0 auto;
+	width: 100%;
+	height: 100%;
+	min-width: 800px;
+	min-height: 600px;
+}
+
+.div-main {
+	width: 100%;
+	height: 100%;
+}
+
+.div-main-top {
+	background-color: #86cef0;
+	width: 100%;
+	height: 60px;
+}
+
+.div-main-left {
+	background-color: #8dd5f7;
+	width: 192px;
+	min-width: 192px;
+	min-height: 530px;
+	float: left;
+}
+
+.div-main-left ul {
+	list-style: none;
+	white-space: nowrap;
+}
+
+.div-main-left .node_root {
+	margin: 0;
+	padding: 0;
+}
+
+.div-main-left .function-icon {
+	width: 16px;
+	height: 16px;
+}
+
+.div-main-left .message-icon {
+	width: 16px;
+	height: 16px;
+}
+
+.div-main-left .switch-icon {
+	width: 16px;
+	height: 16px;
+}
+
+.div-main-left .click {
+	cursor: pointer;
+}
+
+.div-main-left .mask-layer {
+	position: fixed;
+	background: rgba(255, 255, 255, 0);
+	min-width: 192px;
+	min-height: 530px;
+	float: left;
+	display: none;
+}
+
+.node_leaf {
+	position: fixed;
+}
+
+.div-main-left .mask-layer img {
+	width: 128px;
+	height: 128px;
+	position: absolute;
+	left: 50%;
+	top: 20%;
+	margin: -84px 0 0 -64px;
+}
+
+.div-main-right {
+	min-width: 598px;
+	min-height: 530px;
+	float: left;
+}
+
+.this-menu-highlight {
+	background-color: #f31ab3;
+	font-weight: bold;
+}

@@ -1,0 +1,43 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:s="http://jboss.com/products/seam/taglib"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:rich="http://richfaces.org/rich"
+	template="/layout/template.xhtml">
+
+	<ui:define name="head">
+		<link rel="stylesheet" type="text/css" href="#{request.contextPath}/stylesheet/system/welcome.css" />
+		<link rel="stylesheet" type="text/css" href="#{request.contextPath}/stylesheet/fix.css" />
+	</ui:define>
+	<ui:define name="body">
+		<div class="welcome-div">
+			<div class="user-avatar" style="display: none;">
+				<img src="../images/img_china_128x128.png" alt="avatar" style="width: 128px; height: 128px; position: absolute;" />
+				<img src="../images/img_avatar_frame_170x170.png" alt="avatar_bg" style="width: 128px; height: 128px; margin-left: -10x; position: absolute;" />
+			</div>
+			
+			<div id="output" style="display: none;">
+			</div>
+			
+		</div>
+		<script type="text/javascript" src="#{request.contextPath}/common/js/jquery.qrcode.min.js" />
+		<script type="text/javascript">
+		//<![CDATA[
+			jQuery(document).ready(function() {
+			    jQuery('body').niceScroll({
+					cursorcolor : '#4CAE4C',
+					cursorwidth : 6,
+					cursoropacitymax : 0.8,
+					touchbehavior : false,
+					autohidemode : true
+			    });
+
+			    jQuery('#output').qrcode("http://www.baidu.com");
+			});
+		//]]>
+		</script>
+	</ui:define>
+</ui:composition>

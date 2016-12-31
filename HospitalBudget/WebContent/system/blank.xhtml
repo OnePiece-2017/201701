@@ -1,0 +1,44 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:s="http://jboss.com/products/seam/taglib"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:rich="http://richfaces.org/rich"
+	template="/layout/template.xhtml">
+
+	<ui:define name="head">
+		<link rel="stylesheet" type="text/css" href="#{request.contextPath}/stylesheet/system/blank.css" />
+		<link rel="stylesheet" type="text/css" href="#{request.contextPath}/stylesheet/fix.css" />
+	</ui:define>
+	<ui:define name="body">
+		<div class="blank-div">
+			<h1 id="title" style="text-align: center;font-size: 35px;color: crimson;display: none;">this is title...</h1>
+			<h1 id="content" style="text-align: center;font-size: 60px;color: midnightblue;display: none;">this is content...</h1>
+		</div>
+		<script type="text/javascript">
+		//<![CDATA[
+			jQuery(document).ready(function() {
+			    jQuery('body').niceScroll({
+					cursorcolor : '#4CAE4C',
+					cursorwidth : 6,
+					cursoropacitymax : 0.8,
+					touchbehavior : false,
+					autohidemode : true
+			    });
+
+			    var args = '#{request.getParameter("args")}';
+			    if (args != null && args != '') {
+				    var argsObj = JSON.parse(args);
+				    jQuery('#title').html(argsObj['title']);
+				    jQuery('#title').fadeIn('slow');
+				    jQuery('#content').html(argsObj['content']);
+				    jQuery('#content').show('slow');
+				}
+			    
+			});
+		//]]>
+		</script>
+	</ui:define>
+</ui:composition>

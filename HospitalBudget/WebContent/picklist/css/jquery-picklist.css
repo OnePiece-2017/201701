@@ -1,0 +1,79 @@
+.pickList_sourceListContainer, .pickList_controlsContainer, .pickList_targetListContainer { float: left; margin: 0.25em; }
+.pickList_controlsContainer { text-align: center; }
+.pickList_controlsContainer button { display: block; width: 100%; text-align: center; }
+.pickList_list { list-style-type: none; margin: 0; padding: 0; float: left; width: 150px; height: 75px; border: 1px inset #eee; overflow-y: auto; cursor: default; }
+.pickList_selectedListItem { background-color: #a3c8f5; }
+.pickList_listLabel { font-size: 0.9em; font-weight: bold; text-align: center; }
+.pickList_clear { clear: both; }
+
+/* 扩展原版样式 */
+.pickList_sourceListContainer,.pickList_targetListContainer {
+	float: left;
+	margin: 0 7px 0 0;
+	width: 200px;
+	border: 1px solid #e4e4e4;
+	border-radius: 5px;
+}
+
+.pickList_targetListContainer {
+	margin: 0 0 0 7px;
+}
+
+.pickList_controlsContainer {
+	float: left;
+	margin: 0;
+	width: 40px;
+}
+
+.pickList_sourceListLabel,.pickList_targetListLabel {
+	padding: 0 10px;
+	height: 30px;
+	line-height: 30px;
+	background: #f9f9f9;
+	border-bottom: 1px solid #e4e4e4;
+	border-radius: 5px 5px 0 0;
+	text-align: center;
+	font-size: 14px;
+	font-weight: normal;
+}
+
+.pickList_sourceList,.pickList_targetList {
+	width: 100%;
+	height: 309px;
+	padding: 10px 0;
+	border: none;
+}
+
+.pickList_sourceList li,.pickList_targetList li {
+	padding: 0 10px;
+	height: 28px;
+	line-height: 28px;
+	font-size: 12px;
+	color: #6d6d6d;
+}
+
+.pickList_controlsContainer {
+	padding-top: 90px;
+}
+
+.pickList_controlsContainer button {
+	display: block;
+	width: 40px;
+	height: 26px;
+	line-height: 24px;
+	border: 1px solid #e4e4e4;
+	text-align: center;
+	color: #b1b1b1;
+	font-size: 12px;
+	white-space: normal;
+	margin-top: 10px;
+	cursor: pointer;
+}
+
+.pickList_targetListLabel em {
+	float: right;
+	font-size: 12px;
+	font-style: normal;
+	color: #7dc196;
+	cursor: pointer;
+}

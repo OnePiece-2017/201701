@@ -1,0 +1,45 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:s="http://jboss.com/products/seam/taglib"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:rich="http://richfaces.org/rich"
+	template="/layout/template.xhtml">
+
+	<ui:define name="head">
+		<link rel="stylesheet" type="text/css" href="#{request.contextPath}/common/css/bootstrap.min.css" />
+		<script type="text/javascript" src="#{request.contextPath}/common/js/bootstrap.min.js" />
+	</ui:define>
+
+	<ui:define name="body">
+		<div class="pd0-10">
+			<div id="container" style="height: 400px"></div>
+		</div>
+		<script type="text/javascript" src="#{request.contextPath}/highcharts/js/highcharts.js" />
+		<script type="text/javascript">
+		//<![CDATA[
+			jQuery(document).ready(function() {
+				jQuery('#container').highcharts({
+					credits: {
+						enabled: false
+					},
+					title: {
+						text: '登录统计饼图'
+					},
+					chart: {
+						type: 'pie'
+					},
+					colors: ['#058DC7', '#50B432', '#ED561B', '#DDDF00', '#24CBE5', '#64E572', '#FF9655', '#FFF263', '#6AF9C4'],
+					series: [{
+						name: '登录次数',
+						data: #{loginStatisticsCharts.gainHighchartsSeries()}
+					}]
+				});
+			});
+		//]]>
+		</script>
+	</ui:define>
+
+</ui:composition>

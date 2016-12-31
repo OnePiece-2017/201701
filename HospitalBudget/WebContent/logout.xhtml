@@ -1,0 +1,32 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:s="http://jboss.com/products/seam/taglib"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:rich="http://richfaces.org/rich"
+	template="/layout/template_logout.xhtml">
+
+	<ui:define name="body">
+		<div class="logout-area">
+			<h:outputText value="正在退出系统..." />
+		</div>
+		#{authenticator.logout()}
+		<script type="text/javascript">
+		//<![CDATA[
+			jQuery(document).ready(function() {
+			    jQuery('body').niceScroll({
+					cursorcolor : '#C0CCD8',
+					cursorwidth : 6,
+					cursoropacitymax : 0.8,
+					touchbehavior : false,
+					autohidemode : true
+			    });
+				// 业务逻辑处理
+			    ___trash = setTimeout('window.location.href = "#{request.contextPath}/login.seam";', 100);
+			});
+		//]]>
+		</script>
+	</ui:define>
+</ui:composition>

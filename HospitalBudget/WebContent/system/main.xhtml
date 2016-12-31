@@ -1,0 +1,79 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:s="http://jboss.com/products/seam/taglib"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:rich="http://richfaces.org/rich"
+	template="/layout/template_other.xhtml">
+
+	<ui:define name="head">
+		<link rel="stylesheet" type="text/css" href="#{request.contextPath}/toastr/toastr.min.css" />
+		<link rel="stylesheet" type="text/css" href="#{request.contextPath}/easyui/css/easyui.css" />
+		<link rel="stylesheet" type="text/css" href="#{request.contextPath}/stylesheet/system/main.css" />
+	</ui:define>
+	<ui:define name="body">
+		<div class="div-main">
+			<div class="div-main-top">
+				<h:outputLabel value="#{sessionToken.nickname}" style="float: left;margin-left: 2px;color: #2F4F4F;" />
+				<s:link value="退出" view="/logout.xhtml" onclick="return beforeLogout();" rendered="#{identity.loggedIn}" propagation="none" styleClass="fr mr10 mt10" style="color: #333333; text-decoration: none; outline: none; font-size: 25px;" />
+				<label id="remoteClock" style="float: right;margin-right: 28px;color: #2F4F4F;margin-top: 19px;">加载中...</label>
+			</div>
+			<div class="div-main-left">
+				<div class="mask-layer">
+					<img src="../images/ani/ajax.gif" />
+				</div>
+				<ul class="node_root">
+					<!-- js自动填充 -->
+				</ul>
+			</div>
+			<div class="div-main-right">
+				<div id="node_crud" class="easyui-tabs" data-options="tabWidth: 150" style="width: 100%; height: 100%; display: none;" />
+				<div id="node_welcome" style="width: 100%; height: 100%; display: none;">
+					<iframe src="welcome.seam" style="width: 100%; height: 100%; border: 0;" />
+				</div>
+			</div>
+		</div>
+		<script type="text/javascript" src="#{request.contextPath}/toastr/toastr.min.js" />
+		<script type="text/javascript" src="#{request.contextPath}/easyui/js/jquery.easyui.min.js" />
+		<script type="text/javascript" src="#{request.contextPath}/js-md5/md5.min.js" />
+		<script type="text/javascript" src="#{request.contextPath}/javascript/system/main.js" />
+		<script type="text/javascript">
+		//<![CDATA[
+			menuInfoJsonArray = #{sessionToken.menuInfoJsonArray};
+			
+		    var urlKeySet = {};// 声明全局url键集合
+		    
+			jQuery(document).ready(function() {
+				initUrlKeySet();// 初始化全局url键集合
+
+				___trash = '#{request.contextPath}';
+				______userInfoId = '#{sessionToken.userInfoId}';
+				______userInfoIdMD5 = '#{sessionToken.userInfoIdMD5}';
+				______reloadPageOnExist = #{configureCache.getSettingsValue('reload_page_on_exist')};
+				______askOnCloseLabel = #{configureCache.getSettingsValue('ask_on_close_label')};
+				
+			});
+
+		    // 添加过渡标签
+		    function addTabPanelExcessive(key, title, urlKey) {
+		   		addTabPanel(key, title, urlKeySet[urlKey]['url'] + '?args=' + JSON.stringify(urlKeySet[urlKey]));
+			}
+
+		    // 初始化全局url键集合
+		    function initUrlKeySet() {
+			    urlKeySet['blank_page'] = {'url': '../system/blank.seam', 'title': '这是标题。。。', 'content': '这是内容。。。'};
+			}
+
+		    // 注销之前
+		    function beforeLogout() {
+			    var ask_on_logout = #{configureCache.getSettingsValue('ask_on_logout')};
+				if (ask_on_logout && !confirm('确定要注销吗？')) {
+					return false;
+				}
+			}
+		//]]>
+		</script>
+	</ui:define>
+</ui:composition>
