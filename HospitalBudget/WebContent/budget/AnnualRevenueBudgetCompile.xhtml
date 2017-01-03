@@ -10,16 +10,51 @@
 	template="/layout/template_edit.xhtml">
 
 	<ui:define name="head">
+		<link rel="stylesheet" type="text/css" href="#{request.contextPath}/stylesheet/template_list.css" />
 		<link rel="stylesheet" type="text/css" href="#{request.contextPath}/common/css/bootstrap.min.css" />
 		<link rel="stylesheet" type="text/css" href="#{request.contextPath}/common/css/bootstrap-select.min.css" />
-		<link rel="stylesheet" type="text/css" href="#{request.contextPath}/icheck/skins/square/blue.css" />
+		<link rel="stylesheet" type="text/css" href="#{request.contextPath}/toastr/toastr.min.css" />
+		<style type="text/css">
+			.row-input {
+				width: 100%;
+				height: 100%;
+				text-align: center;
+				position: relative;
+			}
+			
+			.row-text-simplify {
+				position: absolute;
+				top: 2px;
+				text-align: center;
+			}
+			
+			.w110-center {
+				width: 110px;
+				position: absolute;
+				left: 50%;
+				margin-left: -56px;
+				top: 2px;
+				text-align: center;
+			}
+			
+			.normal-candidateProject .selected {
+				background: #da9a48;
+			}
+			
+			.normal-attendProject .root {
+				background: #add595;
+			}
+			
+			.span-totalAmount {
+				font-weight: bold;
+			}
+		</style>
 	</ui:define>
 
 	<ui:define name="body">
-		#{systemSettingsHome.wire()}
 		<h:form id="mainForm" styleClass="edit" enctype="multipart/form-data">
 			<div class="pd0-10">
-				<div class="pt30 pb30 fs14">
+				<div class="pt30 fs14">
 					<table width="100%" cellpadding="0" cellspacing="0">
 						<tr>
 							<td width="50%">
@@ -27,281 +62,18 @@
 									<table>
 										<tr>
 											<td valign="middle">
-												<span class="field-name mb10">项目</span>
+												<span class="field-name mb10">预算年份</span>
 											</td>
 											<td valign="middle">
-												<h:outputText value="#{systemSettingsHome.modifyData.get('system_alias')[0]}" styleClass="form-control mb10 fix--bc-purple" />
-											</td>
-											<td valign="middle">
-												<font color="red" style="margin-left: 3px;"></font>
-											</td>
-										</tr>
-									</table>
-								</div>
-							</td>
-						</tr>
-						<tr>
-							<td width="50%">
-								<div class="pb20">
-									<table>
-										<tr>
-											<td valign="middle">
-												<span class="field-name mb10">预设值</span>
-											</td>
-											<td valign="middle">
-												<h:inputText id="system_alias" value="#{systemSettingsHome.modifyData.get('system_alias')[1]}" styleClass="form-control mb10 fix--w220" />
-											</td>
-											<td valign="middle">
-												<font color="red" style="margin-left: 3px;">*</font>
-											</td>
-										</tr>
-									</table>
-								</div>
-							</td>
-						</tr>
-						<tr>
-							<td width="50%">
-								<div class="pb20">
-									<table>
-										<tr>
-											<td valign="middle">
-												<span class="field-name mb10">项目</span>
-											</td>
-											<td valign="middle">
-												<h:outputText value="#{systemSettingsHome.modifyData.get('system_skin')[0]}" styleClass="form-control mb10 fix--bc-purple" />
-											</td>
-											<td valign="middle">
-												<font color="red" style="margin-left: 3px;"></font>
-											</td>
-										</tr>
-									</table>
-								</div>
-							</td>
-						</tr>
-						<tr>
-							<td width="50%">
-								<div class="pb20">
-									<table>
-										<tr>
-											<td valign="middle">
-												<span class="field-name mb10">预设值</span>
-											</td>
-											<td valign="middle">
-												<select id="system_skin" class="selectpicker" data-live-search="true">
-													<option value="normal">常规</option>
-													<option value="luxury_gold">奢华金</option>
-													<option value="hacker">黑客</option>
+												<select id="budgetYear" class="selectpicker">
+													<a:repeat value="#{annualRevenueBudgetCompile.budgetYearList}" var="_var">
+														<option value="#{_var[0]}">#{_var[1]}</option>
+													</a:repeat>
 												</select>
-												<h:inputHidden id="system_skinHidden" value="#{systemSettingsHome.modifyData.get('system_skin')[1]}" />
-											</td>
-											<td valign="middle">
-												<font color="red" style="margin-left: 3px;"></font>
-											</td>
-										</tr>
-									</table>
-								</div>
-							</td>
-						</tr>
-						<tr>
-							<td width="50%">
-								<div class="pb20">
-									<table>
-										<tr>
-											<td valign="middle">
-												<span class="field-name mb10">项目</span>
-											</td>
-											<td valign="middle">
-												<h:outputText value="#{systemSettingsHome.modifyData.get('ask_on_logout')[0]}" styleClass="form-control mb10 fix--bc-purple" />
-											</td>
-											<td valign="middle">
-												<font color="red" style="margin-left: 3px;"></font>
-											</td>
-										</tr>
-									</table>
-								</div>
-							</td>
-						</tr>
-						<tr>
-							<td width="50%">
-								<div class="pb20">
-									<table>
-										<tr>
-											<td valign="middle">
-												<span class="field-name mb10">预设值</span>
-											</td>
-											<td valign="top">
-												<input type="radio" class="icheck" name="ask_on_logout_radio" value="true" id="ask_on_logout_radio__true" />
-												<label for="ask_on_logout_radio__true"><span>是</span></label>
-												<input type="radio" class="icheck" name="ask_on_logout_radio" value="false" id="ask_on_logout_radio__false" />
-												<label for="ask_on_logout_radio__false"><span>否</span></label>
-												<h:inputHidden id="ask_on_logoutHidden" value="#{systemSettingsHome.modifyData.get('ask_on_logout')[1]}" />
-											</td>
-											<td valign="middle">
-												<font color="red" style="margin-left: 3px;"></font>
-											</td>
-										</tr>
-									</table>
-								</div>
-							</td>
-						</tr>
-						<tr>
-							<td width="50%">
-								<div class="pb20">
-									<table>
-										<tr>
-											<td valign="middle">
-												<span class="field-name mb10">项目</span>
-											</td>
-											<td valign="middle">
-												<h:outputText value="#{systemSettingsHome.modifyData.get('ask_on_close_label')[0]}" styleClass="form-control mb10 fix--bc-purple" />
-											</td>
-											<td valign="middle">
-												<font color="red" style="margin-left: 3px;"></font>
-											</td>
-										</tr>
-									</table>
-								</div>
-							</td>
-						</tr>
-						<tr>
-							<td width="50%">
-								<div class="pb20">
-									<table>
-										<tr>
-											<td valign="middle">
-												<span class="field-name mb10">预设值</span>
-											</td>
-											<td valign="top">
-												<input type="radio" class="icheck" name="ask_on_close_label_radio" value="true" id="ask_on_close_label_radio__true" />
-												<label for="ask_on_close_label_radio__true"><span>是</span></label>
-												<input type="radio" class="icheck" name="ask_on_close_label_radio" value="false" id="ask_on_close_label_radio__false" />
-												<label for="ask_on_close_label_radio__false"><span>否</span></label>
-												<h:inputHidden id="ask_on_close_labelHidden" value="#{systemSettingsHome.modifyData.get('ask_on_close_label')[1]}" />
-											</td>
-											<td valign="middle">
-												<font color="red" style="margin-left: 3px;"></font>
-											</td>
-										</tr>
-									</table>
-								</div>
-							</td>
-						</tr>
-						<tr>
-							<td width="50%">
-								<div class="pb20">
-									<table>
-										<tr>
-											<td valign="middle">
-												<span class="field-name mb10">项目</span>
-											</td>
-											<td valign="middle">
-												<h:outputText value="#{systemSettingsHome.modifyData.get('reload_page_on_exist')[0]}" styleClass="form-control mb10 fix--bc-purple" />
-											</td>
-											<td valign="middle">
-												<font color="red" style="margin-left: 3px;"></font>
-											</td>
-										</tr>
-									</table>
-								</div>
-							</td>
-						</tr>
-						<tr>
-							<td width="50%">
-								<div class="pb20">
-									<table>
-										<tr>
-											<td valign="middle">
-												<span class="field-name mb10">预设值</span>
-											</td>
-											<td valign="top">
-												<input type="radio" class="icheck" name="reload_page_on_exist_radio" value="true" id="reload_page_on_exist_radio__true" />
-												<label for="reload_page_on_exist_radio__true"><span>是</span></label>
-												<input type="radio" class="icheck" name="reload_page_on_exist_radio" value="false" id="reload_page_on_exist_radio__false" />
-												<label for="reload_page_on_exist_radio__false"><span>否</span></label>
-												<h:inputHidden id="reload_page_on_existHidden" value="#{systemSettingsHome.modifyData.get('reload_page_on_exist')[1]}" />
-											</td>
-											<td valign="middle">
-												<font color="red" style="margin-left: 3px;"></font>
-											</td>
-										</tr>
-									</table>
-								</div>
-							</td>
-						</tr>
-						<tr>
-							<td width="50%">
-								<div class="pb20">
-									<table>
-										<tr>
-											<td valign="middle">
-												<span class="field-name mb10">项目</span>
-											</td>
-											<td valign="middle">
-												<h:outputText value="#{systemSettingsHome.modifyData.get('query_max_results')[0]}" styleClass="form-control mb10 fix--bc-purple" />
-											</td>
-											<td valign="middle">
-												<font color="red" style="margin-left: 3px;"></font>
-											</td>
-										</tr>
-									</table>
-								</div>
-							</td>
-						</tr>
-						<tr>
-							<td width="50%">
-								<div class="pb20">
-									<table>
-										<tr>
-											<td valign="middle">
-												<span class="field-name mb10">预设值</span>
-											</td>
-											<td valign="middle">
-												<h:inputText id="query_max_results" value="#{systemSettingsHome.modifyData.get('query_max_results')[1]}" styleClass="form-control mb10" />
+												<!-- hidden -->
 											</td>
 											<td valign="middle">
 												<font color="red" style="margin-left: 3px;">*</font>
-											</td>
-										</tr>
-									</table>
-								</div>
-							</td>
-						</tr>
-						<tr>
-							<td width="50%">
-								<div class="pb20">
-									<table>
-										<tr>
-											<td valign="middle">
-												<span class="field-name mb10">项目</span>
-											</td>
-											<td valign="middle">
-												<h:outputText value="#{systemSettingsHome.modifyData.get('query_order_direction')[0]}" styleClass="form-control mb10 fix--bc-purple" />
-											</td>
-											<td valign="middle">
-												<font color="red" style="margin-left: 3px;"></font>
-											</td>
-										</tr>
-									</table>
-								</div>
-							</td>
-						</tr>
-						<tr>
-							<td width="50%">
-								<div class="pb20">
-									<table>
-										<tr>
-											<td valign="middle">
-												<span class="field-name mb10">预设值</span>
-											</td>
-											<td valign="top">
-												<input type="radio" class="icheck" name="query_order_direction_radio" value="asc" id="query_order_direction_radio__asc" />
-												<label for="query_order_direction_radio__asc"><span>升序</span></label>
-												<input type="radio" class="icheck" name="query_order_direction_radio" value="desc" id="query_order_direction_radio__desc" />
-												<label for="query_order_direction_radio__desc"><span>降序</span></label>
-												<h:inputHidden id="query_order_directionHidden" value="#{systemSettingsHome.modifyData.get('query_order_direction')[1]}" />
-											</td>
-											<td valign="middle">
-												<font color="red" style="margin-left: 3px;"></font>
 											</td>
 										</tr>
 									</table>
@@ -310,12 +82,52 @@
 						</tr>
 					</table>
 				</div>
+				<strong style="font-size: 20px;">选择项目</strong>
+				<div class="g-data-list-table freeze-candidateProject" style="height: 43px;">
+				    <table class="record" width="100%" cellpadding="0" cellspacing="0">
+				        <tr>
+				            <th width="30%">项目名称</th>
+				            <th width="10%">项目类型</th>
+				            <th width="15%">主管科室</th>
+				            <th width="10%">多级项目</th>
+				            <th width="20%">项目<br />总金额(元)</th>
+				            <th width="10%">状态</th>
+				            <th width="5%">操作</th>
+				        </tr>
+				    </table>
+				</div>
+				<div class="g-data-list-table normal-candidateProject" style="border-radius: 0;height: 229px">
+				    <table class="record" width="100%" cellpadding="0" cellspacing="0">
+				    </table>
+				</div>
+				<br />
+				<br />
+				<strong style="font-size: 20px;">预算编制</strong>
+				<font style="margin-left: 15px;color: #f903ed;">项目金额(合计：<span class="span-totalAmount">--</span>元)</font>
+				<div class="g-data-list-table freeze-attendProject" style="height: 44px;">
+				    <table class="record" width="100%" cellpadding="0" cellspacing="0">
+				        <tr>
+				            <th width="5%">序<br />号</th>
+				            <th width="10%">项目性质</th>
+				            <th width="22%">项目名称</th>
+				            <th width="10%">项目来源</th>
+				            <th width="10%">项目金额(元)</th>
+				            <th width="10%">金额计算依据</th>
+				            <th width="13%">与上一年预算<br />同比增减(万元)</th>
+				            <th width="15%">备注</th>
+				            <th width="5%">操作</th>
+				        </tr>
+				    </table>
+				</div>
+				<div class="g-data-list-table normal-attendProject" style="border-radius: 0;height: 306px;">
+				    <table class="record" width="100%" cellpadding="0" cellspacing="0">
+				    </table>
+				</div>
 				<div class="pt50 pb95">
 					<table class="normal-btn">
 						<tr>
 							<td>
-								<a class="btn btn-primary mr15" onclick="return beforeInvoke();">保存</a>
-								<s:button id="cancel" value="返回" view="/admin/SystemSettings.xhtml" propagation="none" styleClass="btn btn-default" />
+								<a class="btn btn-primary mr15" onclick="return onSave();">保存</a>
 							</td>
 						</tr>
 					</table>
@@ -324,116 +136,247 @@
 				</div>
 			</div>
 		</h:form>
-		<a:form>
-			<a:queue requestDelay="100" ignoreDupResponses="true" />
-			<a:jsFunction name="invokeUpdate" action="#{systemSettingsHome.invokeUpdate}" data="#{systemSettingsHome.message}" oncomplete="completedUpdate(data);">
-				<a:actionparam name="args" assignTo="#{systemSettingsHome.args}" />
-			</a:jsFunction>
-		</a:form>
+		<script type="text/javascript" src="#{request.contextPath}/javascript/template_list.js" charset="UTF-8" />
 		<script type="text/javascript" src="#{request.contextPath}/common/js/bootstrap.min.js" />
 		<script type="text/javascript" src="#{request.contextPath}/common/js/bootstrap-select.min.js" charset="UTF-8" />
 		<script type="text/javascript" src="#{request.contextPath}/common/js/bootstrap-select-defaults-zh_CN.min.js" charset="UTF-8" />
-		<script type="text/javascript" src="#{request.contextPath}/icheck/js/icheck.min.js" charset="UTF-8" />
+		<script type="text/javascript" src="#{request.contextPath}/toastr/toastr.min.js" />
 		<script type="text/javascript" src="#{request.contextPath}/toolkit/utils.js" charset="UTF-8" />
 		<script type="text/javascript">
 		//<![CDATA[
+			var candidateProject = null;// 候选项目列表
 			jQuery(document).ready(function() {
-				
-				jQuery('.icheck').iCheck({
-					checkboxClass: 'icheckbox_square-blue',
-					radioClass: 'iradio_square-blue',
-					increaseArea: '20%'
-				});
-
-				jQuery('span.fix--bc-purple').hide();
-				jQuery('span.fix--bc-purple').slideDown();
-
-				___textRestrictById('mainForm:system_alias', 12);
-				___textRestrictById('mainForm:query_max_results', 10);
-
-			    jQuery('.selectpicker').selectpicker();
-			    jQuery('#system_skin').val(jQuery('#mainForm\\:system_skinHidden').val());
-			    jQuery('#system_skin').selectpicker('render');
-
-				var query_order_directionHidden = jQuery('#mainForm\\:query_order_directionHidden').val();
-				jQuery('input[name="query_order_direction_radio"][value="' + query_order_directionHidden + '"]').iCheck('check');
-
-				var ask_on_logoutHidden = jQuery('#mainForm\\:ask_on_logoutHidden').val();
-				jQuery('input[name="ask_on_logout_radio"][value="' + ask_on_logoutHidden + '"]').iCheck('check');
-
-				var ask_on_close_labelHidden = jQuery('#mainForm\\:ask_on_close_labelHidden').val();
-				jQuery('input[name="ask_on_close_label_radio"][value="' + ask_on_close_labelHidden + '"]').iCheck('check');
-
-				var reload_page_on_existHidden = jQuery('#mainForm\\:reload_page_on_existHidden').val();
-				jQuery('input[name="reload_page_on_exist_radio"][value="' + reload_page_on_existHidden + '"]').iCheck('check');
-			    
-			    var message = '#{systemSettingsHome.message}';
+			    var message = '#{annualRevenueBudgetCompile.message}';
 			    if (message != null && message != '') {
 					___msg('温馨提示', message);
 			    }
+				
+			    jQuery('.selectpicker').selectpicker();
+			    
+			    jQuery('.normal-candidateProject .record').prepend(jQuery('.freeze-candidateProject tbody').html());
+			    jQuery('.normal-candidateProject .record tr:first').find('th').html('').css('height', 0);
+			    candidateProject = #{annualRevenueBudgetCompile.candidateProject};
+				if (candidateProject != null && candidateProject.length > 0) {
+					var html = '';
+					for (var i = 0; i < candidateProject.length; i++) {
+						html += '<tr>';
+						html += '	<td>' + candidateProject[i]['projectName'] + '</td>';
+						html += '	<td>' + candidateProject[i]['projectType'] + '</td>';
+						html += '	<td>' + candidateProject[i]['departmentName'] + '</td>';
+						html += '	<td>' + (candidateProject[i]['multilevel'] ? '是' : '否') + '</td>';
+						html += '	<td>' + candidateProject[i]['totalAmount'] + '</td>';
+						html += '	<td>' + candidateProject[i]['theState'] + '</td>';
+						html += '	<td>';
+						html += '		<a name="switch" data-index="' + i + '" title="加入" style="text-decoration: none; cursor: pointer;">';
+						html += '			<img src="../images/icon_like_outline_16x16.png">';
+						html += '		</a>';
+						html += '	</td>';
+						html += '</tr>';
+					}
+					jQuery('.normal-candidateProject .record').append(html);
+				}
+			    jQuery('.normal-candidateProject a[name="switch"]').click(function(){
+				    var dataIndex = jQuery(this).attr('data-index');
+					if (jQuery(this).parents('tr').hasClass('selected')) {
+						jQuery('.normal-attendProject tr[data-index="' + dataIndex + '"]').remove();
+						jQuery(this).parents('tr').removeClass('selected');
+						jQuery(this).find('img').attr('src', '../images/icon_like_outline_16x16.png');
+						jQuery(this).attr('title', '加入');
+					} else {
+						var multilevel = candidateProject[dataIndex]['multilevel'];
+						var html = '';
+						html += '<tr class="root" data-index="' + dataIndex + '">';
+						html += '	<td>1</td>';
+						html += '	<td>常规</td>';
+						html += '	<td>' + candidateProject[dataIndex]['projectName'] + '</td>';
+						html += '	<td>部门惯例</td>';
+						if (multilevel) {
+							html += '	<td></td>';
+						} else {
+							html += '	<td>';
+							html += '		<div class="row-input">';
+							html += '			<input name="totalAmount" class="form-control row-text-simplify" type="text">';
+							html += '		</div>';
+							html += '	</td>';
+						}
+						if (multilevel) {
+							html += '	<td></td>';
+						} else {
+							html += '	<td>';
+							html += '		<div class="row-input">';
+							html += '			<input name="formula" class="form-control row-text-simplify" type="text">';
+							html += '		</div>';
+							html += '	</td>';
+						}
+						html += '	<td>--</td>';
+						if (multilevel) {
+							html += '	<td></td>';
+						} else {
+							html += '	<td>';
+							html += '		<div class="row-input">';
+							html += '			<input name="remark" class="form-control row-text-simplify" type="text">';
+							html += '		</div>';
+							html += '	</td>';
+						}
+						html += '	<td>';
+						html += '		<a name="delete" title="删除" style="text-decoration: none; cursor: pointer;">';
+						html += '			<img src="../images/icon_delete_16x16.png">';
+						html += '		</a>';
+						html += '	</td>';
+						html += '</tr>';
+						jQuery('.normal-attendProject .record').append(html);
+						if (multilevel) {
+							var subItemArr = candidateProject[dataIndex]['subItemArr'];
+							if (subItemArr != null && subItemArr.length > 0) {
+								var html = '';
+								for (var i = 0; i < subItemArr.length; i++) {
+									html += '<tr data-index="' + dataIndex + '">';
+									html += '	<td>1</td>';
+									html += '	<td>常规</td>';
+									html += '	<td>' + subItemArr[i]['theValue'] + '</td>';
+									html += '	<td>部门惯例</td>';
+									html += '	<td>';
+									html += '		<div class="row-input">';
+									html += '			<input name="totalAmount" class="form-control row-text-simplify" type="text">';
+									html += '		</div>';
+									html += '	</td>';
+									html += '	<td>';
+									html += '		<div class="row-input">';
+									html += '			<input name="formula" class="form-control row-text-simplify" type="text">';
+									html += '		</div>';
+									html += '	</td>';
+									html += '	<td>--</td>';
+									html += '	<td>';
+									html += '		<div class="row-input">';
+									html += '			<input name="remark" class="form-control row-text-simplify" type="text">';
+									html += '		</div>';
+									html += '	</td>';
+									html += '	<td>';
+									html += '		<a name="delete" title="删除" style="text-decoration: none; cursor: pointer;">';
+									html += '			<img src="../images/icon_delete_16x16.png">';
+									html += '		</a>';
+									html += '	</td>';
+									html += '</tr>';
+								}
+								jQuery('.normal-attendProject .record').append(html);
+							}
+						}
+						jQuery('.normal-attendProject tr[data-index="' + dataIndex + '"] input[name="totalAmount"]').each(function(){
+							___textRestrict(this, 66);
+						});
+						jQuery('.normal-attendProject tr[data-index="' + dataIndex + '"] input[name="formula"]').each(function(){
+							___textRestrict(this, 255);
+						});
+						jQuery('.normal-attendProject tr[data-index="' + dataIndex + '"] input[name="remark"]').each(function(){
+							___textRestrict(this, 255);
+						});
+						jQuery('.normal-attendProject tr[data-index="' + dataIndex + '"] input[name="formula"]').blur(function(){
+							var formula = jQuery(this).val();
+							if (formula != null && formula != '') {
+								var totalAmount = null;
+								try {
+									totalAmount = Number(eval(formula));
+								} catch (exception) {
+								}
+								if (totalAmount == null || totalAmount == '' || isNaN(totalAmount)) {
+									jQuery(this).val('');
+									toastr.options = {
+									    'closeButton' : false,
+									    'debug' : false,
+									    'newestOnTop' : false,
+									    'progressBar' : false,
+									    'rtl' : false,
+									    'positionClass' : 'toast-top-center',
+									    'preventDuplicates' : false,
+									    'onclick' : null,
+									    'showDuration' : 300,
+									    'hideDuration' : 1000,
+									    'timeOut' : 3000,
+									    'extendedTimeOut' : 1000,
+									    'showEasing' : 'swing',
+									    'hideEasing' : 'linear',
+									    'showMethod' : 'fadeIn',
+									    'hideMethod' : 'fadeOut'
+									};
+									toastr['error']('温馨提示', '金额计算依据无效！');
+									return false;
+								}
+								jQuery(this).parents('td').prev('td').find('input[name="totalAmount"]').val(totalAmount);
+							}
+						});
+						jQuery('.normal-attendProject tr[data-index="' + dataIndex + '"] a[name="delete"]').click(function(){
+							var dataIndex = jQuery(this).parents('tr').attr('data-index');
+							if (jQuery(this).parents('tr').hasClass('root')) {
+								jQuery('.normal-attendProject tr[data-index="' + dataIndex + '"]').remove();
+								jQuery('.normal-candidateProject a[data-index="' + dataIndex + '"]').parents('tr').removeClass('selected');
+								jQuery('.normal-candidateProject a[data-index="' + dataIndex + '"]').find('img').attr('src', '../images/icon_like_outline_16x16.png');
+								jQuery('.normal-candidateProject a[data-index="' + dataIndex + '"]').attr('title', '加入');
+							} else {
+								jQuery(this).parents('tr').remove();
+								if (1 == jQuery('.normal-attendProject tr[data-index="' + dataIndex + '"]').length) {
+									jQuery('.normal-attendProject tr[data-index="' + dataIndex + '"]').remove();
+									jQuery('.normal-candidateProject a[data-index="' + dataIndex + '"]').parents('tr').removeClass('selected');
+									jQuery('.normal-candidateProject a[data-index="' + dataIndex + '"]').find('img').attr('src', '../images/icon_like_outline_16x16.png');
+									jQuery('.normal-candidateProject a[data-index="' + dataIndex + '"]').attr('title', '加入');
+								}
+							}
+						});
+						jQuery(this).parents('tr').addClass('selected');
+						jQuery(this).find('img').attr('src', '../images/icon_like_16x16.png');
+						jQuery(this).attr('title', '移除');
+					}
+				});
+			    jQuery('.normal-candidateProject').niceScroll({
+					cursorcolor : '#5cb85c',
+					cursorwidth : 9,
+					cursoropacitymax : 0.8,
+					touchbehavior : false,
+					autohidemode : false
+			    });
+
+			    jQuery('.normal-attendProject .record').prepend(jQuery('.freeze-attendProject tbody').html());
+			    jQuery('.normal-attendProject .record tr:first').find('th').html('').css('height', 0);
+			    jQuery('.normal-attendProject').niceScroll({
+					cursorcolor : '#5cb85c',
+					cursorwidth : 9,
+					cursoropacitymax : 0.8,
+					touchbehavior : false,
+					autohidemode : false
+			    });
+
+			    setInterval("updateTotalAmountSpan()", 100);
 			});
 			
-			//请求a4j前
-			function beforeInvoke() {
-				
-				var system_alias = jQuery('#mainForm\\:system_alias').val();
-			    ___dynamic_function = function() {
-					jQuery('#mainForm\\:system_alias').focus();
-				};
-				if (system_alias == null || system_alias == '') {
-					___msg('温馨提示', '请填写预设值！', {closed: ___dynamic_function});
-					return false;
-				}
-
-				var system_skin = jQuery('#system_skin').val();
-
-				var ask_on_logout = jQuery('input[name="ask_on_logout_radio"]:checked').val();
-
-				var ask_on_close_label = jQuery('input[name="ask_on_close_label_radio"]:checked').val();
-
-				var reload_page_on_exist = jQuery('input[name="reload_page_on_exist_radio"]:checked').val();
-				
-				var query_max_results = jQuery('#mainForm\\:query_max_results').val();
-			    ___dynamic_function = function() {
-					jQuery('#mainForm\\:query_max_results').focus();
-				};
-				if (query_max_results == null || query_max_results == '') {
-					___msg('温馨提示', '请填写预设值！', {closed: ___dynamic_function});
-					return false;
-				} else if (isNaN(query_max_results)) {
-					___msg('温馨提示', '该预设值必须是合法的数字！', {closed: ___dynamic_function});
-					return false;
-				} else if (query_max_results != new String(parseInt(query_max_results))) {
-					___msg('温馨提示', '该预设值必须是整数！', {closed: ___dynamic_function});
-					return false;
-				} else if (parseInt(query_max_results) < 1 || parseInt(query_max_results) > 2147483646) {
-					___msg('温馨提示', '该预设限于1~2147483646！', {closed: ___dynamic_function});
-					return false;
-				}
-
-				var query_order_direction = jQuery('input[name="query_order_direction_radio"]:checked').val();
-				
-				var argsJson = {};
-				argsJson['system_alias'] = system_alias;
-				argsJson['system_skin'] = system_skin;
-				argsJson['ask_on_logout'] = ask_on_logout;
-				argsJson['ask_on_close_label'] = ask_on_close_label;
-				argsJson['reload_page_on_exist'] = reload_page_on_exist;
-				argsJson['query_max_results'] = query_max_results;
-				argsJson['query_order_direction'] = query_order_direction;
-				
-				invokeUpdate(JSON.stringify(argsJson));
-			}
-
-			function completedUpdate(data) {
-				if (data != null && data != '') {
-					___msg('温馨提示', data);
+			function updateTotalAmountSpan() {
+				var totalAmount = null;
+				jQuery('.normal-attendProject tr input[name="totalAmount"]').each(function(index){
+					if (0 == index)
+						totalAmount = 0.00;
+					var augend = jQuery(this).val();
+					jQuery('.span-totalAmount').html(totalAmount);
+					try {
+						augend = Number(augend);
+					} catch (exception) {
+					}
+					if (augend == null || augend == '' || isNaN(augend)) {
+						totalAmount = null;
+						return false;
+					}
+					totalAmount += augend;
+				});
+				if (totalAmount != null && totalAmount != '') {
+					jQuery('.span-totalAmount').html(totalAmount);
 				} else {
-				    ___dynamic_function = function() {
-				    	window.location.href = './SystemSettings.seam';
-					};
-					___msg('温馨提示', '保存成功！', {closed: ___dynamic_function});
+					jQuery('.span-totalAmount').html('--');
 				}
+			}
+			
+			//保存前
+			function onSave() {
+				// YsConventionProjectEdit.xhtml
+		    	var dataItemArr = [];
+		    	alert('保存成功！');
+				return false;
 			}
 		//]]>
 		</script>

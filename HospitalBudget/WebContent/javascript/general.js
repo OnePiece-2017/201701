@@ -184,3 +184,11 @@ function ___browserType() {
 		return ___constantValue('BROWSER_UNKNOWN');;
 	}
 }
+
+function ___expression() {
+	try {
+		alert("Result:" + eval(prompt("Enter an expression:", "")));
+	} catch (exception) {
+		alert(exception);
+	}
+}

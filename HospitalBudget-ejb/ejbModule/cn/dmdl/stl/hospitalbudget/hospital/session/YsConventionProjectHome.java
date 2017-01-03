@@ -367,7 +367,7 @@ public class YsConventionProjectHome extends CriterionEntityHome<YsConventionPro
 						for (YsConventionProjectExtend ysConventionProjectExtend : ysConventionProjectExtendList) {
 							JSONObject dataItem = new JSONObject();
 							dataItem.accumulate("theValue", ysConventionProjectExtend.getTheValue());
-							dataItem.accumulate("totalAmount", ysConventionProjectExtend.getTotalAmount());
+							dataItem.accumulate("totalAmount", ysConventionProjectExtend.getTotalAmount().toString());
 							dataItem.accumulate("theDescription", ysConventionProjectExtend.getTheDescription());
 							dataItemArr.add(dataItem);
 						}

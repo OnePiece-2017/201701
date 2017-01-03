@@ -181,9 +181,10 @@
 						</tr>
 					</table>
 				</div>
-				<strong class="node-multilevel-true" style="width: 100%;text-align: left;float: left;margin-top: -30px;">以下内容为子项目</strong>
+				<strong class="node-multilevel-true" style="font-size: 20px;">以下内容为子项目</strong>
+				<a class="node-multilevel-true btn btn-success fr" name="sub-item-btn-add" style="margin-top: -6px;">添加</a>
 				<div id="sub-item-div" class="node-multilevel-true pb30 fs14" style="height: 332px; border-style: solid; border-width: 2px; border-color: #bd2c2c; border-radius: 20px;">
-					<table width="100%" class="mt10 sub-item-clone-source" cellpadding="0" cellspacing="0">
+					<table width="100%" class="mt10 sub-item-table" style="display: none;" cellpadding="0" cellspacing="0">
 						<tr>
 							<td width="50%">
 								<div class="pb20">
@@ -208,7 +209,7 @@
 										<tr>
 											<td colspan="3">
 												<span class="field-name mb10">
-													<a class="btn btn-success add" name="sub-item-btn">添加</a>
+													<a class="btn btn-danger" name="sub-item-btn-del">删除</a>
 												</span>
 											</td>
 										</tr>
@@ -300,12 +301,17 @@
 
 				jQuery('.node-multilevel-false, .node-multilevel-true').hide();
 				var multilevelToggle = function() {
+				    showLayer();
 				    if (jQuery('#multilevel:checked').length > 0) {
 					    jQuery('.node-multilevel-false').hide();
-					    jQuery('.node-multilevel-true').fadeIn();
+					    jQuery('.node-multilevel-true').fadeIn('fast', function(){
+					    	hideLayer();
+						});
 					} else {
 					    jQuery('.node-multilevel-true').hide();
-					    jQuery('.node-multilevel-false').fadeIn();
+					    jQuery('.node-multilevel-false').fadeIn('fast', function(){
+					    	hideLayer();
+						});
 					}
 				}
 			    jQuery('#multilevel').iCheck(jQuery('#mainForm\\:multilevelHidden').val() != 'true' ? 'uncheck' : 'check');
@@ -313,13 +319,13 @@
 			    jQuery('#multilevel').on('ifChecked ifUnchecked', function(event){
 			    	multilevelToggle();
 				});
-				jQuery('.sub-item-clone-source input[name="theValue"]').each(function(){
+				jQuery('.sub-item-table input[name="theValue"]').each(function(){
 					___textRestrict(this, 255);
 				});
-				jQuery('.sub-item-clone-source input[name="totalAmount"]').each(function(){
+				jQuery('.sub-item-table input[name="totalAmount"]').each(function(){
 					___textRestrict(this, 66);
 				});
-				jQuery('.sub-item-clone-source textarea[name="theDescription"]').each(function(){
+				jQuery('.sub-item-table textarea[name="theDescription"]').each(function(){
 					___textRestrict(this, 255);
 				});
 			    jQuery('#sub-item-div').niceScroll({
@@ -329,20 +335,14 @@
 					touchbehavior : false,
 					autohidemode : false
 			    });
-			    jQuery('a[name="sub-item-btn"]').click(function(){
-					if (jQuery(this).hasClass('add')) {
-						jQuery('#sub-item-div').append(jQuery(this).parents('.sub-item-clone-source').clone(true));
-						jQuery(this).removeClass('add');
-						jQuery(this).removeClass('btn-success');
-						jQuery(this).addClass('btn-danger');
-						jQuery(this).html('删除');
-						jQuery('a[name="sub-item-btn"]:last').addClass('add');
-						jQuery('.sub-item-clone-source:last').find('input[name="theValue"], input[name="totalAmount"], textarea[name="theDescription"]').val('');
-						jQuery('#sub-item-div').getNiceScroll().resize();
-						jQuery('#sub-item-div').getNiceScroll(0).doScrollTop(document.getElementById('sub-item-div').scrollHeight, 0);
-					} else {
-						jQuery(this).parents('.sub-item-clone-source').remove();
-					}
+			    jQuery('a[name="sub-item-btn-del"]').click(function(){
+			    	jQuery(this).parents('.sub-item-table').remove();
+				});
+			    jQuery('a[name="sub-item-btn-add"]').click(function(){
+					jQuery('#sub-item-div').append(jQuery('.sub-item-table:first').clone(true));
+					jQuery('.sub-item-table:last').show();
+					jQuery('#sub-item-div').getNiceScroll().resize();
+					jQuery('#sub-item-div').getNiceScroll(0).doScrollTop(document.getElementById('sub-item-div').scrollHeight, 0);
 				});
 
 				// 多级项目数据回显
@@ -351,11 +351,10 @@
 			    	try {
 			    		subItemData = JSON.parse(subItemData);
 			    		for (var i = 0; i < subItemData.length; i++) {
-			    			if (i > 0)
-			    				jQuery('a[name="sub-item-btn"]:last').click();
-			    			jQuery('.sub-item-clone-source:eq(' + i + ') input[name="theValue"]').val(subItemData[i]['theValue']);
-			    			jQuery('.sub-item-clone-source:eq(' + i + ') input[name="totalAmount"]').val(subItemData[i]['totalAmount']);
-			    			jQuery('.sub-item-clone-source:eq(' + i + ') textarea[name="theDescription"]').val(subItemData[i]['theDescription']);
+			    			jQuery('a[name="sub-item-btn-add"]').click();
+			    			jQuery('.sub-item-table:visible:eq(' + i + ') input[name="theValue"]').val(subItemData[i]['theValue']);
+			    			jQuery('.sub-item-table:visible:eq(' + i + ') input[name="totalAmount"]').val(subItemData[i]['totalAmount']);
+			    			jQuery('.sub-item-table:visible:eq(' + i + ') textarea[name="theDescription"]').val(subItemData[i]['theDescription']);
 				    	}
 			    	} catch(err) {
 				    	alert(err);// string --> object
@@ -413,12 +412,12 @@
 			    	var dataItemArr = [];
 					var verifyResult = true;
 					var tmpValue = null;
-				    jQuery('.sub-item-clone-source').each(function(index){
+				    jQuery('.sub-item-table:visible').each(function(index){
 						var dataItem = {};
 						tmpValue = jQuery(this).find('input[name="theValue"]')[0].value;
 						if (tmpValue == null || tmpValue == '') {
 						    ___dynamic_function = function() {
-						    	jQuery('.sub-item-clone-source:eq(' + index + ') input[name="theValue"]').focus();
+						    	jQuery('.sub-item-table:visible:eq(' + index + ') input[name="theValue"]').focus();
 							};
 							___msg('温馨提示', '请填写项目名称！', {closed: ___dynamic_function});
 							return verifyResult = false;
@@ -429,7 +428,7 @@
 						}
 						tmpValue = jQuery(this).find('input[name="totalAmount"]')[0].value;
 					    ___dynamic_function = function() {
-					    	jQuery('.sub-item-clone-source:eq(' + index + ') input[name="totalAmount"]').focus();
+					    	jQuery('.sub-item-table:visible:eq(' + index + ') input[name="totalAmount"]').focus();
 						};
 						if (tmpValue == null || tmpValue == '') {
 							___msg('温馨提示', '请填写项目总金额！', {closed: ___dynamic_function});
@@ -449,6 +448,10 @@
 					if (!verifyResult) {
 						return false;
 					}
+					if (dataItemArr.length == 0) {
+						___msg('温馨提示', '请添加子项目！');
+						return false;
+					}
 					jQuery('#mainForm\\:subItemDataHidden').val(JSON.stringify(dataItemArr));
 				} else {
 					if (totalAmount == null || totalAmount == '') {
@@ -458,10 +461,10 @@
 						___msg('温馨提示', '项目总金额必须是合法的数字！', {closed: ___dynamic_function});
 						return false;
 					}
+					jQuery('#mainForm\\:subItemDataHidden').val('');
 				}
 
 				jQuery('#mainForm\\:multilevelHidden').val(jQuery('#multilevel:checked').length > 0);
-				
 			}
 		//]]>
 		</script>
