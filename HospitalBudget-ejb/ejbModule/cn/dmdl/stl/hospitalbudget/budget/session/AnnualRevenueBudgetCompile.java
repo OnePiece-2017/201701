@@ -1,6 +1,7 @@
 package cn.dmdl.stl.hospitalbudget.budget.session;
 
 import java.math.BigDecimal;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -134,7 +135,7 @@ public class AnnualRevenueBudgetCompile extends CriterionEntityHome<Object> {
 							nboLeaf.setInsertUser(sessionToken.getUserInfoId());
 							getEntityManager().persist(nboLeaf);
 						}
-						nboRoot.setProjectAmount(rootProjectAmount);
+						nboRoot.setProjectAmount(Double.parseDouble(new DecimalFormat("#.##").format(rootProjectAmount)));
 					}
 				}
 				getEntityManager().flush();
