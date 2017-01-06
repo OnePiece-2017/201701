@@ -122,4 +122,23 @@ public class Assit {
 		return null;
 	}
 
+	/** 补齐字符串（自定义空缺） */
+	public static String fillChar(Object source, short width, char c) {
+		StringBuffer result = new StringBuffer("");
+		if (source != null) {
+			if (width > 0) {
+				int vacancy = width - source.toString().length();
+				while (vacancy-- > 0)
+					result.append(String.valueOf(c));
+			}
+			result.append(source.toString());
+		}
+		return result.toString();
+	}
+
+	/** 补齐字符串（空缺0） */
+	public static String fillZero(Object source, short width) {
+		return fillChar(source, width, '0');
+	}
+
 }

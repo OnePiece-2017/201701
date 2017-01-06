@@ -192,3 +192,11 @@ function ___expression() {
 		alert(exception);
 	}
 }
+
+function ___sleep(millis) {
+	if (millis != null && millis > 0) {
+		var start = new Date().getTime();
+		while (new Date().getTime() - start < millis) {
+		}
+	}
+}
