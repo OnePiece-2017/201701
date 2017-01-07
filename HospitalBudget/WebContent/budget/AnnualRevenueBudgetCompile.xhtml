@@ -45,7 +45,7 @@
 				background: #add595;
 			}
 			
-			.span-totalAmount {
+			.node-totalAmount {
 				font-weight: bold;
 			}
 		</style>
@@ -103,7 +103,7 @@
 				<br />
 				<br />
 				<strong style="font-size: 20px;">预算编制</strong>
-				<font style="margin-left: 15px;color: #f903ed;">项目金额(合计：<span class="span-totalAmount">--</span>元)</font>
+				<font style="margin-left: 15px;color: #f903ed;">项目金额(合计：<span class="node-totalAmount">--</span>元)</font>
 				<div class="g-data-list-table freeze-attendProject" style="height: 44px;">
 				    <table class="record" width="100%" cellpadding="0" cellspacing="0">
 				        <tr>
@@ -197,7 +197,7 @@
 						html += '	<td>' + candidateProject[dataIndex]['projectName'] + '</td>';
 						html += '	<td>部门惯例</td>';
 						if (multilevel) {
-							html += '	<td></td>';
+							html += '	<td><strong class="node-multilevelTotalAmount"></strong></td>';
 						} else {
 							html += '	<td>';
 							html += '		<div class="row-input">';
@@ -327,6 +327,19 @@
 								}
 							}
 						});
+						jQuery('.normal-attendProject tr[data-index="' + dataIndex + '"] input[name="totalAmount"]').blur(function(){
+							var formula = jQuery(this).parents('td').next('td').find('input[name="formula"]').val();
+							if (formula != null && formula != '') {
+								var totalAmount = null;
+								try {
+									totalAmount = Number(eval(formula));
+								} catch (exception) {
+								}
+								if (this.value != totalAmount) {
+									jQuery(this).parents('td').next('td').find('input[name="formula"]').val('');
+								}
+							}
+						});
 						jQuery(this).parents('tr').addClass('selected');
 						jQuery(this).find('img').attr('src', '../images/icon_like_16x16.png');
 						jQuery(this).attr('title', '移除');
@@ -350,32 +363,68 @@
 					autohidemode : false
 			    });
 
-			    setInterval("updateTotalAmountSpan()", 100);
+			    setInterval("updateTotalAmount()", 100);
+			    updateMultilevelTotalAmount();
 			    updateSequenceNumber();
 			});
 			
-			function updateTotalAmountSpan() {
-				var totalAmount = null;
+			function updateTotalAmount() {
+				var sum = null;
 				jQuery('.normal-attendProject tr input[name="totalAmount"]').each(function(index){
 					if (0 == index)
-						totalAmount = 0.00;
+						sum = 0.00;
 					var augend = jQuery(this).val();
-					jQuery('.span-totalAmount').html(totalAmount);
 					try {
 						augend = Number(augend);
 					} catch (exception) {
 					}
 					if (augend == null || augend == '' || isNaN(augend)) {
-						totalAmount = null;
+						sum = null;
 						return false;
 					}
-					totalAmount += augend;
+					sum += augend;
 				});
-				if (totalAmount != null && totalAmount != '') {
-					jQuery('.span-totalAmount').html(totalAmount.toFixed(2));
+				if (sum != null && sum != '') {
+					jQuery('.node-totalAmount').html(sum.toFixed(2));
 				} else {
-					jQuery('.span-totalAmount').html('--');
+					jQuery('.node-totalAmount').html('--');
 				}
+			}
+			
+			function updateMultilevelTotalAmount() {
+				var root = {};
+				jQuery('.normal-attendProject tr[data-index][sub-id]').each(function(index){
+					var dataIndex = jQuery(this).attr('data-index');
+					var augend = jQuery(this).find('input[name="totalAmount"]').val();
+					try {
+						augend = Number(augend);
+					} catch (exception) {
+					}
+					if (augend == null || augend == '' || isNaN(augend)) {
+						augend = null;
+					}
+				    if (null == root[dataIndex]) {
+				    	root[dataIndex] = [];
+					}
+				    root[dataIndex].push(augend);
+				});
+				for (var key in root) {
+					var sum = 0.00;
+					for (var i = 0; i < root[key].length; i++) {
+					    if (root[key][i] != null) {
+					    	sum += root[key][i];
+					    } else {
+					    	sum = null;
+					    	break;
+						}
+	                }
+					if (sum != null) {
+						jQuery('.normal-attendProject tr.root[data-index=' + key + '] .node-multilevelTotalAmount').html(sum.toFixed(2));
+					} else {
+						jQuery('.normal-attendProject tr.root[data-index=' + key + '] .node-multilevelTotalAmount').html('--');
+					}
+                }
+				setTimeout("updateMultilevelTotalAmount()", 200);
 			}
 			
 			function updateSequenceNumber() {
