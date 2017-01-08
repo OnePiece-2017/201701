@@ -23,10 +23,16 @@
 					<td class="field-value" width="30%">#{processInfoHome.instance.processName}</td>
 				</tr>
 				<tr class="even">
-					<td class="field-name" width="20%">流程类型</td>
+					<td class="field-name" width="20%">项目类型</td>
 					<td class="field-value" width="30%">#{processInfoHome.instance.processType == 1 ? '常规项目流程' : (processInfoHome.instance.processType == 2 ? '项目流程' : '')}</td>
 					<td class="field-name" width="20%">流程归属科室</td>
 					<td class="field-value" width="30%">#{processInfoHome.instance.ysDepartmentInfo.theValue}</td>
+				</tr>
+				<tr class="even">
+					<td class="field-name" width="20%">流程类型</td>
+					<td class="field-value" width="30%">#{commonTool.getProjectProcessTypeName(processInfoHome.instance.projctProcessType)}</td>
+					<td class="field-name" width="20%"></td>
+					<td class="field-value" width="30%"></td>
 				</tr>
 			</table>
 			<table align="center" cellpadding="0" cellspacing="0" style="clear: both; margin: 35px auto 0;">

@@ -32,13 +32,14 @@ public class ProcessInfo implements java.io.Serializable {
 	private static final long serialVersionUID = 1L;
 	private Integer processInfoId;
 	private String processName;
-	private int processType;
+	private int processType;//项目类型
 	private YsDepartmentInfo ysDepartmentInfo;
 	private Date insertTime;
 	private int insertUser;
 	private Date updateTime;
 	private Integer updateUser;
 	private boolean deleted;
+	private Integer projctProcessType;//流程类型  1:常规收入预算流程  2:常规支出预算流程  3:常规收入执行流程  4:常规支出执行流程
 
 	public ProcessInfo() {
 	}
@@ -130,6 +131,15 @@ public class ProcessInfo implements java.io.Serializable {
 
 	public void setDeleted(boolean deleted) {
 		this.deleted = deleted;
+	}
+	
+	@Column(name = "project_process_type", nullable = false)
+	public Integer getProjctProcessType() {
+		return projctProcessType;
+	}
+
+	public void setProjctProcessType(Integer projctProcessType) {
+		this.projctProcessType = projctProcessType;
 	}
 
 }

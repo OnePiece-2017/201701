@@ -15,5 +15,10 @@ public interface CommonToolLocal {
 	public List<Dictionary> getDictionaryByPid(int pid);
 
 	public String getDictionaryValueByIds(String ids);
-
+	/**
+	 * 获取项目流程类型名称
+	 * @param type
+	 * @return
+	 */
+	public String getProjectProcessTypeName(int type);
 }

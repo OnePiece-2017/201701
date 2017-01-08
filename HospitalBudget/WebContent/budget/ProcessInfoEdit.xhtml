@@ -51,7 +51,7 @@
 									<table>
 										<tr>
 											<td valign="middle">
-												<span class="field-name mb10">流程类型</span>
+												<span class="field-name mb10">项目类型</span>
 											</td>
 											<td valign="middle">
 												<select id="processType" class="selectpicker">
@@ -91,6 +91,32 @@
 								</div>
 							</td>
 						</tr>
+						 <tr>
+							<td width="50%">
+								<div class="pb20">
+									<table>
+										<tr>
+											<td valign="middle">
+												<span class="field-name mb10">流程类型</span>
+											</td>
+											<td valign="middle">
+												<select id="projectProcessType" class="selectpicker">
+													<option value="#{''}">请选择</option>
+													<option value="1">常规收入预算</option>
+													<option value="2">常规支出预算</option>
+													<option value="3">常规收入执行</option>
+													<option value="4">常规支出执行</option>
+												</select>
+												<h:inputHidden id="projectProcessTypeHidden" value="#{processInfoHome.instance.projctProcessType}" />
+											</td>
+											<td valign="middle">
+												<font color="red" style="margin-left: 3px;">*</font>
+											</td>
+										</tr>
+									</table>
+								</div>
+							</td>
+						</tr> 
 					</table>
 				</div>
 				<div class="pt50 pb95">
@@ -130,6 +156,9 @@
 
 				jQuery('#departmentInfoId').val(jQuery('#mainForm\\:departmentInfoIdHidden').val());
 			    jQuery('#departmentInfoId').selectpicker('render');
+				//流程类型初始化赋值
+			    jQuery('#projectProcessType').val(jQuery('#mainForm\\:projectProcessTypeHidden').val());
+			    jQuery('#projectProcessType').selectpicker('render');
 				
 			});
 			
@@ -146,10 +175,17 @@
 
 				var processType = jQuery('#processType').val();
 				if (processType == null || processType == '') {
-					___msg('温馨提示', '请选择流程类型！');
+					___msg('温馨提示', '请选择项目类型！');
 					return false;
 				}
 				jQuery('#mainForm\\:processTypeHidden').val(processType);
+				//流程类型必填校验
+				var projectProcessType = jQuery('#projectProcessType').val();
+				if (projectProcessType == null || projectProcessType == '') {
+					___msg('温馨提示', '请选择流程类型！');
+					return false;
+				}
+				jQuery('#mainForm\\:projectProcessTypeHidden').val(projectProcessType);
 
 				var departmentInfoId = jQuery('#departmentInfoId').val();
 				if (departmentInfoId == null || departmentInfoId == '') {
