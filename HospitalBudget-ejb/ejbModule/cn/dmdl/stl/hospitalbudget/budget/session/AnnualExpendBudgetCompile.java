@@ -60,7 +60,7 @@ public class AnnualExpendBudgetCompile extends CriterionEntityHome<Object> {
 						taskOrder.setOrderStatus(0);
 						taskOrder.setAuditOpinion(null);
 						//查询流程信息
-						String processInfoSql = "select process_info_id from process_info where deleted = 0 and process_type = 1 and dept_id = " + userInfo.getYsDepartmentInfo().getTheId();
+						String processInfoSql = "select process_info_id from process_info where deleted = 0 and process_type = 1 and project_process_type = 2 and dept_id = " + userInfo.getYsDepartmentInfo().getTheId();
 						List<Object> processInfoList = getEntityManager().createNativeQuery(processInfoSql).getResultList();
 						if (processInfoList != null && processInfoList.size() > 0) {
 							String processStepInfoSql = "select process_step_info_id from process_step_info where step_index = 1 and process_info_id = " + processInfoList.get(0).toString();// 忽略更多该部门的流程信息
