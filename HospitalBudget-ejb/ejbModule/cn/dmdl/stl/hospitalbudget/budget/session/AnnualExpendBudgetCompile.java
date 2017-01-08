@@ -54,7 +54,7 @@ public class AnnualExpendBudgetCompile extends CriterionEntityHome<Object> {
 						taskOrder.setTaskName(userInfo.getYsDepartmentInfo().getTheValue() + "科室　" + budgetYear + "年　常规预算");
 						taskOrder.setDeptId(userInfo.getYsDepartmentInfo().getTheId());
 						taskOrder.setEditUserId(sessionToken.getUserInfoId());
-						taskOrder.setTaskType(1);
+						taskOrder.setTaskType(2);
 						taskOrder.setInsertTime(new Date());
 						taskOrder.setInsertUser(sessionToken.getUserInfoId());
 						taskOrder.setOrderStatus(0);
