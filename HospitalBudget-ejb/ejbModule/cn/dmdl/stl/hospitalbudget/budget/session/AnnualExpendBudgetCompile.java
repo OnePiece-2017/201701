@@ -69,7 +69,7 @@ public class AnnualExpendBudgetCompile extends CriterionEntityHome<Object> {
 								taskOrder.setProcessStepInfoId(Integer.parseInt(processStepInfoList.get(0).toString()));
 								taskOrder.setOrderSn("CGYS-" + DateTimeHelper.dateToStr(new Date(), "yyyyMMddHHmmss"));
 								getEntityManager().persist(taskOrder);
-								String orderSn = taskOrder.getOrderSn() + "-" + Assit.fillZero(taskOrder.getTaskOrderId(), (short) 4);
+								String orderSn = taskOrder.getOrderSn() + "-" + Assit.fillZero(taskOrder.getTaskOrderId(), (short) 19);
 								taskOrder.setOrderSn(orderSn);
 								String processStepUserSql = "select IFNULL(GROUP_CONCAT(user_id), '') as result from process_step_user where type = 0 and process_step_info_id = " + processStepInfoList.get(0).toString();// 只取第一步处理人
 								List<Object> processStepUserList = getEntityManager().createNativeQuery(processStepUserSql).getResultList();
