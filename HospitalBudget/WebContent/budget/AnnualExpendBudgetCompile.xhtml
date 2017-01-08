@@ -1,0 +1,518 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:s="http://jboss.com/products/seam/taglib"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:a="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich"
+	template="/layout/template_edit.xhtml">
+
+	<ui:define name="head">
+		<link rel="stylesheet" type="text/css" href="#{request.contextPath}/stylesheet/template_list.css" />
+		<link rel="stylesheet" type="text/css" href="#{request.contextPath}/common/css/bootstrap.min.css" />
+		<link rel="stylesheet" type="text/css" href="#{request.contextPath}/common/css/bootstrap-select.min.css" />
+		<link rel="stylesheet" type="text/css" href="#{request.contextPath}/toastr/toastr.min.css" />
+		<style type="text/css">
+			.row-input {
+				width: 100%;
+				height: 100%;
+				text-align: center;
+				position: relative;
+			}
+			
+			.row-text-simplify {
+				position: absolute;
+				top: 2px;
+				text-align: center;
+			}
+			
+			.w110-center {
+				width: 110px;
+				position: absolute;
+				left: 50%;
+				margin-left: -56px;
+				top: 2px;
+				text-align: center;
+			}
+			
+			.normal-candidateProject .selected {
+				background: #da9a48;
+			}
+			
+			.normal-attendProject .root {
+				background: #add595;
+			}
+			
+			.node-totalAmount {
+				font-weight: bold;
+			}
+		</style>
+	</ui:define>
+
+	<ui:define name="body">
+		<h:form id="mainForm" styleClass="edit" enctype="multipart/form-data">
+			<div class="pd0-10">
+				<div class="pt30 fs14">
+					<table width="100%" cellpadding="0" cellspacing="0">
+						<tr>
+							<td width="50%">
+								<div class="pb20">
+									<table>
+										<tr>
+											<td valign="middle">
+												<span class="field-name mb10">预算年份</span>
+											</td>
+											<td valign="middle">
+												<select id="budgetYear" class="selectpicker">
+													<a:repeat value="#{annualExpendBudgetCompile.budgetYearList}" var="_var">
+														<option value="#{_var[0]}">#{_var[1]}</option>
+													</a:repeat>
+												</select>
+												<!-- hidden -->
+											</td>
+											<td valign="middle">
+												<font color="red" style="margin-left: 3px;">*</font>
+											</td>
+										</tr>
+									</table>
+								</div>
+							</td>
+						</tr>
+					</table>
+				</div>
+				<strong style="font-size: 20px;">选择项目</strong>
+				<div class="g-data-list-table freeze-candidateProject" style="height: 43px;">
+				    <table class="record" width="100%" cellpadding="0" cellspacing="0">
+				        <tr>
+				            <th width="30%">项目名称</th>
+				            <th width="10%">项目类型</th>
+				            <th width="15%">主管科室</th>
+				            <th width="10%">多级项目</th>
+				            <th width="20%">项目<br />总金额(元)</th>
+				            <th width="10%">状态</th>
+				            <th width="5%">操作</th>
+				        </tr>
+				    </table>
+				</div>
+				<div class="g-data-list-table normal-candidateProject" style="border-radius: 0;height: 229px">
+				    <table class="record" width="100%" cellpadding="0" cellspacing="0">
+				    </table>
+				</div>
+				<br />
+				<br />
+				<strong style="font-size: 20px;">预算编制</strong>
+				<font style="margin-left: 15px;color: #f903ed;">项目金额(合计：<span class="node-totalAmount">--</span>元)</font>
+				<div class="g-data-list-table freeze-attendProject" style="height: 44px;">
+				    <table class="record" width="100%" cellpadding="0" cellspacing="0">
+				        <tr>
+				            <th width="5%">序<br />号</th>
+				            <th width="10%">项目性质</th>
+				            <th width="22%">项目名称</th>
+				            <th width="10%">项目来源</th>
+				            <th width="10%">项目金额(元)</th>
+				            <th width="10%">金额计算依据</th>
+				            <th width="13%">与上一年预算<br />同比增减(万元)</th>
+				            <th width="15%">备注</th>
+				            <th width="5%">操作</th>
+				        </tr>
+				    </table>
+				</div>
+				<div class="g-data-list-table normal-attendProject" style="border-radius: 0;height: 306px;">
+				    <table class="record" width="100%" cellpadding="0" cellspacing="0">
+				    </table>
+				</div>
+				<div class="pt50 pb95">
+					<table class="normal-btn">
+						<tr>
+							<td>
+								<a class="btn btn-primary mr15" onclick="return onSave();">提交</a>
+							</td>
+						</tr>
+					</table>
+					<br />
+					<br />
+				</div>
+			</div>
+		</h:form>
+		<a:form>
+			<a:queue requestDelay="100" ignoreDupResponses="true" />
+			<a:jsFunction name="doSave" action="#{annualExpendBudgetCompile.saveAction}" data="#{annualExpendBudgetCompile.saveResult}" oncomplete="saveCompleted(data);">
+				<a:actionparam name="saveArgs" assignTo="#{annualExpendBudgetCompile.saveArgs}" />
+			</a:jsFunction>
+		</a:form>
+		<script type="text/javascript" src="#{request.contextPath}/javascript/template_list.js" charset="UTF-8" />
+		<script type="text/javascript" src="#{request.contextPath}/common/js/bootstrap.min.js" />
+		<script type="text/javascript" src="#{request.contextPath}/common/js/bootstrap-select.min.js" charset="UTF-8" />
+		<script type="text/javascript" src="#{request.contextPath}/common/js/bootstrap-select-defaults-zh_CN.min.js" charset="UTF-8" />
+		<script type="text/javascript" src="#{request.contextPath}/toastr/toastr.min.js" />
+		<script type="text/javascript" src="#{request.contextPath}/toolkit/utils.js" charset="UTF-8" />
+		<script type="text/javascript">
+		//<![CDATA[
+			var candidateProject = null;// 候选项目列表
+			jQuery(document).ready(function() {
+			    var message = '#{annualExpendBudgetCompile.message}';
+			    if (message != null && message != '') {
+					___msg('温馨提示', message);
+			    }
+				
+			    jQuery('.selectpicker').selectpicker();
+			    
+			    jQuery('.normal-candidateProject .record').prepend(jQuery('.freeze-candidateProject tbody').html());
+			    jQuery('.normal-candidateProject .record tr:first').find('th').html('').css('height', 0);
+			    candidateProject = #{annualExpendBudgetCompile.candidateProject};
+				if (candidateProject != null && candidateProject.length > 0) {
+					var html = '';
+					for (var i = 0; i < candidateProject.length; i++) {
+						html += '<tr>';
+						html += '	<td>' + candidateProject[i]['projectName'] + '</td>';
+						html += '	<td>' + candidateProject[i]['projectType'] + '</td>';
+						html += '	<td>' + candidateProject[i]['departmentName'] + '</td>';
+						html += '	<td>' + (candidateProject[i]['multilevel'] ? '是' : '否') + '</td>';
+						html += '	<td>' + candidateProject[i]['totalAmount'] + '</td>';
+						html += '	<td>' + candidateProject[i]['theState'] + '</td>';
+						html += '	<td>';
+						html += '		<a name="switch" data-index="' + i + '" title="加入" style="text-decoration: none; cursor: pointer;">';
+						html += '			<img src="../images/icon_like_outline_16x16.png">';
+						html += '		</a>';
+						html += '	</td>';
+						html += '</tr>';
+					}
+					jQuery('.normal-candidateProject .record').append(html);
+				}
+			    jQuery('.normal-candidateProject a[name="switch"]').click(function(){
+				    var dataIndex = jQuery(this).attr('data-index');
+					if (jQuery(this).parents('tr').hasClass('selected')) {
+						jQuery('.normal-attendProject tr[data-index="' + dataIndex + '"]').remove();
+						jQuery(this).parents('tr').removeClass('selected');
+						jQuery(this).find('img').attr('src', '../images/icon_like_outline_16x16.png');
+						jQuery(this).attr('title', '加入');
+					} else {
+						var multilevel = candidateProject[dataIndex]['multilevel'];
+						var html = '';
+						html += '<tr class="root" data-index="' + dataIndex + '">';
+						html += '	<td class="sequence-number"></td>';
+						html += '	<td>常规</td>';
+						html += '	<td>' + candidateProject[dataIndex]['projectName'] + '</td>';
+						html += '	<td>部门惯例</td>';
+						if (multilevel) {
+							html += '	<td><strong class="node-multilevelTotalAmount"></strong></td>';
+						} else {
+							html += '	<td>';
+							html += '		<div class="row-input">';
+							html += '			<input name="totalAmount" class="form-control row-text-simplify" type="text">';
+							html += '		</div>';
+							html += '	</td>';
+						}
+						if (multilevel) {
+							html += '	<td></td>';
+						} else {
+							html += '	<td>';
+							html += '		<div class="row-input">';
+							html += '			<input name="formula" class="form-control row-text-simplify" type="text">';
+							html += '		</div>';
+							html += '	</td>';
+						}
+						html += '	<td>--</td>';
+						if (multilevel) {
+							html += '	<td></td>';
+						} else {
+							html += '	<td>';
+							html += '		<div class="row-input">';
+							html += '			<input name="remark" class="form-control row-text-simplify" type="text">';
+							html += '		</div>';
+							html += '	</td>';
+						}
+						html += '	<td>';
+						html += '		<a name="delete" title="删除" style="text-decoration: none; cursor: pointer;">';
+						html += '			<img src="../images/icon_delete_16x16.png">';
+						html += '		</a>';
+						html += '	</td>';
+						html += '</tr>';
+						jQuery('.normal-attendProject .record').append(html);
+						if (multilevel) {
+							var subItemArr = candidateProject[dataIndex]['subItemArr'];
+							if (subItemArr != null && subItemArr.length > 0) {
+								var html = '';
+								for (var i = 0; i < subItemArr.length; i++) {
+									html += '<tr data-index="' + dataIndex + '" sub-id="' + subItemArr[i]['theId'] + '">';
+									html += '	<td class="sequence-number"></td>';
+									html += '	<td>常规</td>';
+									html += '	<td>' + subItemArr[i]['theValue'] + '</td>';
+									html += '	<td>部门惯例</td>';
+									html += '	<td>';
+									html += '		<div class="row-input">';
+									html += '			<input name="totalAmount" class="form-control row-text-simplify" type="text">';
+									html += '		</div>';
+									html += '	</td>';
+									html += '	<td>';
+									html += '		<div class="row-input">';
+									html += '			<input name="formula" class="form-control row-text-simplify" type="text">';
+									html += '		</div>';
+									html += '	</td>';
+									html += '	<td>--</td>';
+									html += '	<td>';
+									html += '		<div class="row-input">';
+									html += '			<input name="remark" class="form-control row-text-simplify" type="text">';
+									html += '		</div>';
+									html += '	</td>';
+									html += '	<td>';
+									html += '		<a name="delete" title="删除" style="text-decoration: none; cursor: pointer;">';
+									html += '			<img src="../images/icon_delete_16x16.png">';
+									html += '		</a>';
+									html += '	</td>';
+									html += '</tr>';
+								}
+								jQuery('.normal-attendProject .record').append(html);
+							}
+						}
+						jQuery('.normal-attendProject tr[data-index="' + dataIndex + '"] input[name="totalAmount"]').each(function(){
+							___textRestrict(this, 66);
+						});
+						jQuery('.normal-attendProject tr[data-index="' + dataIndex + '"] input[name="formula"]').each(function(){
+							___textRestrict(this, 255);
+						});
+						jQuery('.normal-attendProject tr[data-index="' + dataIndex + '"] input[name="remark"]').each(function(){
+							___textRestrict(this, 255);
+						});
+						jQuery('.normal-attendProject tr[data-index="' + dataIndex + '"] input[name="formula"]').blur(function(){
+							var formula = jQuery(this).val();
+							if (formula != null && formula != '') {
+								var totalAmount = null;
+								try {
+									totalAmount = Number(eval(formula));
+								} catch (exception) {
+								}
+								if (totalAmount == null || totalAmount == '' || isNaN(totalAmount)) {
+									jQuery(this).val('');
+									toastr.options = {
+									    'closeButton' : false,
+									    'debug' : false,
+									    'newestOnTop' : false,
+									    'progressBar' : false,
+									    'rtl' : false,
+									    'positionClass' : 'toast-top-center',
+									    'preventDuplicates' : false,
+									    'onclick' : null,
+									    'showDuration' : 300,
+									    'hideDuration' : 1000,
+									    'timeOut' : 3000,
+									    'extendedTimeOut' : 1000,
+									    'showEasing' : 'swing',
+									    'hideEasing' : 'linear',
+									    'showMethod' : 'fadeIn',
+									    'hideMethod' : 'fadeOut'
+									};
+									toastr['error']('温馨提示', '金额计算依据无效！');
+									return false;
+								}
+								jQuery(this).parents('td').prev('td').find('input[name="totalAmount"]').val(totalAmount);
+							}
+						});
+						jQuery('.normal-attendProject tr[data-index="' + dataIndex + '"] a[name="delete"]').click(function(){
+							var dataIndex = jQuery(this).parents('tr').attr('data-index');
+							if (jQuery(this).parents('tr').hasClass('root')) {
+								jQuery('.normal-attendProject tr[data-index="' + dataIndex + '"]').remove();
+								jQuery('.normal-candidateProject a[data-index="' + dataIndex + '"]').parents('tr').removeClass('selected');
+								jQuery('.normal-candidateProject a[data-index="' + dataIndex + '"]').find('img').attr('src', '../images/icon_like_outline_16x16.png');
+								jQuery('.normal-candidateProject a[data-index="' + dataIndex + '"]').attr('title', '加入');
+							} else {
+								jQuery(this).parents('tr').remove();
+								if (1 == jQuery('.normal-attendProject tr[data-index="' + dataIndex + '"]').length) {
+									jQuery('.normal-attendProject tr[data-index="' + dataIndex + '"]').remove();
+									jQuery('.normal-candidateProject a[data-index="' + dataIndex + '"]').parents('tr').removeClass('selected');
+									jQuery('.normal-candidateProject a[data-index="' + dataIndex + '"]').find('img').attr('src', '../images/icon_like_outline_16x16.png');
+									jQuery('.normal-candidateProject a[data-index="' + dataIndex + '"]').attr('title', '加入');
+								}
+							}
+						});
+						jQuery('.normal-attendProject tr[data-index="' + dataIndex + '"] input[name="totalAmount"]').blur(function(){
+							var formula = jQuery(this).parents('td').next('td').find('input[name="formula"]').val();
+							if (formula != null && formula != '') {
+								var totalAmount = null;
+								try {
+									totalAmount = Number(eval(formula));
+								} catch (exception) {
+								}
+								if (this.value != totalAmount) {
+									jQuery(this).parents('td').next('td').find('input[name="formula"]').val('');
+								}
+							}
+						});
+						jQuery(this).parents('tr').addClass('selected');
+						jQuery(this).find('img').attr('src', '../images/icon_like_16x16.png');
+						jQuery(this).attr('title', '移除');
+					}
+				});
+			    jQuery('.normal-candidateProject').niceScroll({
+					cursorcolor : '#5cb85c',
+					cursorwidth : 9,
+					cursoropacitymax : 0.8,
+					touchbehavior : false,
+					autohidemode : false
+			    });
+
+			    jQuery('.normal-attendProject .record').prepend(jQuery('.freeze-attendProject tbody').html());
+			    jQuery('.normal-attendProject .record tr:first').find('th').html('').css('height', 0);
+			    jQuery('.normal-attendProject').niceScroll({
+					cursorcolor : '#5cb85c',
+					cursorwidth : 9,
+					cursoropacitymax : 0.8,
+					touchbehavior : false,
+					autohidemode : false
+			    });
+
+			    setInterval("updateTotalAmount()", 100);
+			    updateMultilevelTotalAmount();
+			    updateSequenceNumber();
+			});
+			
+			function updateTotalAmount() {
+				var sum = null;
+				jQuery('.normal-attendProject tr input[name="totalAmount"]').each(function(index){
+					if (0 == index)
+						sum = 0.00;
+					var augend = jQuery(this).val();
+					try {
+						augend = Number(augend);
+					} catch (exception) {
+					}
+					if (augend == null || augend == '' || isNaN(augend)) {
+						sum = null;
+						return false;
+					}
+					sum += augend;
+				});
+				if (sum != null && sum != '') {
+					jQuery('.node-totalAmount').html(sum.toFixed(2));
+				} else {
+					jQuery('.node-totalAmount').html('--');
+				}
+			}
+			
+			function updateMultilevelTotalAmount() {
+				var root = {};
+				jQuery('.normal-attendProject tr[data-index][sub-id]').each(function(index){
+					var dataIndex = jQuery(this).attr('data-index');
+					var augend = jQuery(this).find('input[name="totalAmount"]').val();
+					try {
+						augend = Number(augend);
+					} catch (exception) {
+					}
+					if (augend == null || augend == '' || isNaN(augend)) {
+						augend = null;
+					}
+				    if (null == root[dataIndex]) {
+				    	root[dataIndex] = [];
+					}
+				    root[dataIndex].push(augend);
+				});
+				for (var key in root) {
+					var sum = 0.00;
+					for (var i = 0; i < root[key].length; i++) {
+					    if (root[key][i] != null) {
+					    	sum += root[key][i];
+					    } else {
+					    	sum = null;
+					    	break;
+						}
+	                }
+					if (sum != null) {
+						jQuery('.normal-attendProject tr.root[data-index=' + key + '] .node-multilevelTotalAmount').html(sum.toFixed(2));
+					} else {
+						jQuery('.normal-attendProject tr.root[data-index=' + key + '] .node-multilevelTotalAmount').html('--');
+					}
+                }
+				setTimeout("updateMultilevelTotalAmount()", 200);
+			}
+			
+			function updateSequenceNumber() {
+				jQuery('.normal-attendProject tr[data-index]').each(function(index){
+					if (jQuery(this).find('.sequence-number').html() != index + 1) {
+						jQuery(this).find('.sequence-number').html(index + 1);
+					}
+				});
+				setTimeout("updateSequenceNumber()", 100);
+			}
+			
+			//提交前
+			function onSave() {
+			    if (jQuery('.normal-attendProject .root').length > 0) {
+				    var dataInfo = {};
+				    dataInfo['budgetYear'] = jQuery('#budgetYear').val();
+				    dataInfo['budgetProject'] = null;
+					var verifyResult = true;
+					var tmpValue = null;
+					var tmpNode = null;
+					var nexus = {};
+					var recentValue = null;
+				    jQuery('.normal-attendProject tr[data-index]').each(function(index){
+					    var dataIndex = jQuery(this).attr('data-index');
+					    var multilevel = candidateProject[dataIndex]['multilevel'];
+					    
+					    tmpNode = jQuery(this).find('input[name="totalAmount"]');
+					    if (tmpNode.length > 0) {
+							tmpValue = tmpNode[0].value;
+						    ___dynamic_function = function() {
+						    	tmpNode[0].focus();
+							};
+							if (tmpValue == null || tmpValue == '') {
+								___msg('温馨提示', '请填写项目金额！', {closed: ___dynamic_function});
+								return verifyResult = false;
+							} else if (isNaN(tmpValue)) {
+								___msg('温馨提示', '项目金额必须是合法的数字！', {closed: ___dynamic_function});
+								return verifyResult = false;
+							}
+						}
+
+					    if (recentValue != dataIndex) {
+							var root = {};
+					    	root['projectId'] = candidateProject[dataIndex]['projectId'];
+						    if (multilevel) {
+						    	root['projectAmount'] = null;
+						    	root['formula'] = null;
+						    	root['remark'] = null;
+						    } else {
+						    	root['projectAmount'] = jQuery(this).find('input[name="totalAmount"]')[0].value;
+						    	root['formula'] = jQuery(this).find('input[name="formula"]')[0].value;
+						    	root['remark'] = jQuery(this).find('input[name="remark"]')[0].value;
+							}
+					    	root['subProject'] = [];
+					    	nexus[dataIndex] = root;
+						} else {
+							var leaf = {};
+							leaf['projectId'] = jQuery(this).attr('sub-id');
+							leaf['projectAmount'] = jQuery(this).find('input[name="totalAmount"]')[0].value;
+							leaf['formula'] = jQuery(this).find('input[name="formula"]')[0].value;
+							leaf['remark'] = jQuery(this).find('input[name="remark"]')[0].value;
+							nexus[dataIndex]['subProject'].push(leaf);
+						}
+					    recentValue = dataIndex;
+					});
+					if (!verifyResult) {
+						return false;
+					}
+					dataInfo['budgetProject'] = nexus;
+					doSave(JSON.stringify(dataInfo));
+				} else {
+					___msg('温馨提示', '请先完成预算编制！');
+					return false;
+				}
+			}
+
+			function saveCompleted(data) {
+				if (data != null && 'INVOKE_SUCCESS' == data.invoke_result) {
+				    ___dynamic_function = function() {
+				    	window.location.href = '../budget/AnnualExpendBudgetCompile.seam';
+					};
+					___msg('温馨提示', data.message, {closed: ___dynamic_function});
+				} else {
+					___msg('温馨提示', data.message);
+				}
+			}
+		//]]>
+		</script>
+	</ui:define>
+
+</ui:composition>
