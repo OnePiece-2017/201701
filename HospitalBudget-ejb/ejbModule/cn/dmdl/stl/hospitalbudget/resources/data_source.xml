@@ -4,8 +4,8 @@
 	<!-- hospital_budget -->
 	<connection key="hospital_budget" for="1" enabled="true">
 		<username>root</username>
-		<password>binary</password>
-		<url>jdbc:mysql://127.0.0.1:3306/hospital_budget</url>
+		<password>yangzhiyuan2015</password>
+		<url>jdbc:mysql://115.28.222.156:3306/hospital_budget</url>
 		<parameter>
 			<item>autoReconnect=true</item>
 			<item>useUnicode=true</item>
