@@ -1,0 +1,251 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:s="http://jboss.com/products/seam/taglib"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:a="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich"
+	template="/layout/template_edit.xhtml">
+
+	<ui:define name="head">
+		<link rel="stylesheet" type="text/css" href="#{request.contextPath}/stylesheet/template_list.css" />
+		<link rel="stylesheet" type="text/css" href="#{request.contextPath}/common/css/bootstrap.min.css" />
+		<link rel="stylesheet" type="text/css" href="#{request.contextPath}/common/css/bootstrap-select.min.css" />
+		<link rel="stylesheet" type="text/css" href="#{request.contextPath}/icheck/skins/square/blue.css" />
+		<link rel="stylesheet" type="text/css" href="#{request.contextPath}/toastr/toastr.min.css" />
+		<style type="text/css">
+			.row-input {
+				width: 100%;
+				height: 100%;
+				text-align: center;
+				position: relative;
+			}
+			
+			.row-text-simplify {
+				position: absolute;
+				top: 2px;
+				text-align: center;
+			}
+			
+			.normal-attendProject .root {
+				background: #add595;
+			}
+			
+			.node-totalAmount {
+				font-weight: bold;
+			}
+		</style>
+	</ui:define>
+
+	<ui:define name="body">
+		<h:form id="mainForm" styleClass="edit" enctype="multipart/form-data">
+			<div class="pd0-10 pt30">
+				<strong style="font-size: 20px;">预算编制</strong>
+				<font style="margin-left: 15px;color: #f903ed;">项目金额(合计：<span class="node-totalAmount">--</span>元)</font>
+				<div class="g-data-list-table freeze-attendProject" style="height: 44px;">
+				    <table class="record" width="100%" cellpadding="0" cellspacing="0">
+				        <tr>
+				            <th width="5%">序<br />号</th>
+				            <th width="10%">项目性质</th>
+				            <th width="21%">项目名称</th>
+				            <th width="10%">项目来源</th>
+				            <th width="10%">项目金额(元)</th>
+				            <th width="10%">金额计算依据</th>
+				            <th width="13%">与上一年预算<br />同比增减(万元)</th>
+				            <th width="20%">备注</th>
+				            <th width="1%">　</th>
+				        </tr>
+				    </table>
+				</div>
+				<div class="g-data-list-table normal-attendProject" style="border-radius: 0;height: 306px;">
+				    <table class="record" width="100%" cellpadding="0" cellspacing="0">
+				    </table>
+				</div>
+				<div class="pt30 fs14">
+					<table width="100%" cellpadding="0" cellspacing="0">
+						<tr>
+							<td width="50%">
+								<div class="pb20">
+									<table>
+										<tr>
+											<td valign="middle">
+												<span class="field-name mb10">办理结果</span>
+											</td>
+											<td valign="top">
+												<input type="radio" class="icheck" name="transactResult_radio" value="1" id="transactResult_radio__yes" />
+												<label for="transactResult_radio__yes"><span>通过</span></label>
+												<input type="radio" class="icheck" name="transactResult_radio" value="2" id="transactResult_radio__no" />
+												<label for="transactResult_radio__no"><span>不通过</span></label>
+											</td>
+											<td valign="middle">
+												<font color="red" style="margin-left: 3px;"></font>
+											</td>
+										</tr>
+									</table>
+								</div>
+							</td>
+						</tr>
+						<tr>
+							<td width="50%">
+								<div class="pb20">
+									<table>
+										<tr>
+											<td valign="middle">
+												<span class="field-name mb10">办理意见</span>
+											</td>
+											<td valign="middle">
+												<textarea id="transactOpinion" class="form-control mb10 fix--textarea-wh" />
+											</td>
+											<td valign="middle">
+												<font color="red" style="margin-left: 3px;"></font>
+											</td>
+										</tr>
+									</table>
+								</div>
+							</td>
+						</tr>
+					</table>
+				</div>
+				<div class="pt50 pb95">
+					<table class="normal-btn">
+						<tr>
+							<td>
+								<a class="btn btn-primary mr15" onclick="return onSave();">提交</a>
+								<s:button id="cancel" value="返回" view="/budget/TaskUntreatedList.xhtml" propagation="none" styleClass="btn btn-default" />
+							</td>
+						</tr>
+					</table>
+					<br />
+					<br />
+				</div>
+			</div>
+		</h:form>
+		<a:form>
+			<a:queue requestDelay="100" ignoreDupResponses="true" />
+			<a:jsFunction name="doSave" action="#{taskUntreatedTransactHome.saveAction}" data="#{taskUntreatedTransactHome.saveResult}" oncomplete="saveCompleted(data);">
+				<a:actionparam name="saveArgs" assignTo="#{taskUntreatedTransactHome.saveArgs}" />
+			</a:jsFunction>
+		</a:form>
+		<script type="text/javascript" src="#{request.contextPath}/javascript/template_list.js" charset="UTF-8" />
+		<script type="text/javascript" src="#{request.contextPath}/common/js/bootstrap.min.js" />
+		<script type="text/javascript" src="#{request.contextPath}/common/js/bootstrap-select.min.js" charset="UTF-8" />
+		<script type="text/javascript" src="#{request.contextPath}/common/js/bootstrap-select-defaults-zh_CN.min.js" charset="UTF-8" />
+		<script type="text/javascript" src="#{request.contextPath}/icheck/js/icheck.min.js" charset="UTF-8" />
+		<script type="text/javascript" src="#{request.contextPath}/toastr/toastr.min.js" />
+		<script type="text/javascript" src="#{request.contextPath}/toolkit/utils.js" charset="UTF-8" />
+		<script type="text/javascript">
+		//<![CDATA[
+			var attendProject = #{taskUntreatedTransactHome.attendProject};// 已选项目列表
+			jQuery(document).ready(function() {
+			    var message = '#{taskUntreatedTransactHome.message}';
+			    if (message != null && message != '') {
+					___msg('温馨提示', message);
+			    }
+				
+			    jQuery('.selectpicker').selectpicker();
+				
+				jQuery('.icheck').iCheck({
+					checkboxClass: 'icheckbox_square-blue',
+					radioClass: 'iradio_square-blue',
+					increaseArea: '20%'
+				});
+
+				jQuery('input[name="transactResult_radio"][value="1"]').iCheck('check');
+
+				___textRestrictById('transactOpinion', 100);
+
+			    jQuery('.normal-attendProject .record').prepend(jQuery('.freeze-attendProject tbody').html());
+			    jQuery('.normal-attendProject .record tr:first').find('th').html('').css('height', 0);
+				
+				if (attendProject != null && attendProject.length > 0) {
+					var html = '';
+					for (var i = 0; i < attendProject.length; i++) {
+						var isRoot = attendProject[i]['isRoot'];
+						var multilevel = attendProject[i]['multilevel'];
+						html += '<tr' + (isRoot ? ' class="root"' : '') + '>';
+						html += '	<td class="sequence-number"></td>';
+						html += '	<td>常规</td>';
+						html += '	<td>' + attendProject[i]['projectName'] + '</td>';
+						html += '	<td>部门惯例</td>';
+						if (isRoot && multilevel) {
+							html += '	<td><strong class="node-multilevelTotalAmount">' + attendProject[i]['totalAmount'] + '</strong></td>';
+						} else {
+							html += '	<td name="totalAmount">' + attendProject[i]['totalAmount'] + '</td>';
+						}
+						html += '	<td>' + attendProject[i]['formula'] + '</td>';
+						html += '	<td>--</td>';
+						html += '	<td>' + attendProject[i]['remark'] + '</td>';
+						html += '	<td>　</td>';
+						html += '</tr>';
+					}
+					jQuery('.normal-attendProject .record').append(html);
+				}
+				
+			    jQuery('.normal-attendProject').niceScroll({
+					cursorcolor : '#5cb85c',
+					cursorwidth : 9,
+					cursoropacitymax : 0.8,
+					touchbehavior : false,
+					autohidemode : false
+			    });
+
+			    updateTotalAmount();
+			    updateSequenceNumber();
+			});
+			
+			function updateTotalAmount() {
+				var sum = null;
+				jQuery('.normal-attendProject tr:gt(0) td[name="totalAmount"]').each(function(index){
+					if (0 == index)
+						sum = 0.00;
+					var augend = jQuery(this).html();
+					try {
+						augend = Number(augend);
+					} catch (exception) {
+					}
+					if (augend == null || augend == '' || isNaN(augend)) {
+						sum = null;
+						return false;
+					}
+					sum += augend;
+				});
+				if (sum != null && sum != '') {
+					jQuery('.node-totalAmount').html(sum.toFixed(2));
+				} else {
+					jQuery('.node-totalAmount').html('--');
+				}
+			}
+			
+			function updateSequenceNumber() {
+				jQuery('.normal-attendProject tr:gt(0)').each(function(index){
+					if (jQuery(this).find('.sequence-number').html() != index + 1) {
+						jQuery(this).find('.sequence-number').html(index + 1);
+					}
+				});
+			}
+			
+			//提交前
+			function onSave() {
+			    var dataInfo = {};
+				dataInfo['transactResult'] = jQuery('input[name="transactResult_radio"]:checked').val();
+				dataInfo['transactOpinion'] = jQuery('#transactOpinion').val();
+				doSave(JSON.stringify(dataInfo));
+			}
+
+			function saveCompleted(data) {
+				if (data != null && 'INVOKE_SUCCESS' == data.invoke_result) {
+				    ___dynamic_function = function() {
+				    	window.location.href = '../budget/TaskUntreatedList.seam';
+					};
+					___msg('温馨提示', data.message, {closed: ___dynamic_function});
+				} else {
+					___msg('温馨提示', data.message);
+				}
+			}
+		//]]>
+		</script>
+	</ui:define>
+
+</ui:composition>
