@@ -81,6 +81,7 @@ public class Authenticator implements AuthenticatorLocal {
 				sessionToken.setRoleInfoId(userInfo.getRoleInfo().getRoleInfoId());
 				sessionToken.setUsername(userInfo.getUsername());
 				sessionToken.setNickname(userInfo.getUserInfoExtend().getNickname());
+				sessionToken.setDepartmentInfoId(userInfo.getYsDepartmentInfo() != null ? userInfo.getYsDepartmentInfo().getTheId() : null);
 
 				return true;
 			} else {
@@ -190,6 +191,7 @@ public class Authenticator implements AuthenticatorLocal {
 			sessionToken.setUserInfoIdMD5(null);
 			sessionToken.setNickname(null);
 			sessionToken.setMenuInfoJsonArray(null);
+			sessionToken.setDepartmentInfoId(null);
 		}
 	}
 

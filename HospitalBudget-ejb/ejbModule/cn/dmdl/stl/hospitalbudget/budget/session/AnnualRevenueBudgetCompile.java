@@ -163,7 +163,10 @@ public class AnnualRevenueBudgetCompile extends CriterionEntityHome<Object> {
 	@SuppressWarnings("unchecked")
 	public JSONArray getCandidateProject() {
 		JSONArray resultSet = new JSONArray();
-		String dataSql = "select the_id, the_type, the_state, the_value, multilevel, total_amount, department_info_id from ys_convention_project where deleted = 0 and the_type =1 ";
+		String dataSql = "select the_id, the_type, the_state, the_value, multilevel, total_amount, department_info_id from ys_convention_project where deleted = 0 and the_type = 1";
+		if (sessionToken.getDepartmentInfoId() != null) {
+			dataSql += " and department_info_id = " + sessionToken.getDepartmentInfoId();
+		}
 		dataSql += " and the_id in (select convention_project_id from ys_convention_project_user where user_info_id = " + sessionToken.getUserInfoId() + ")";
 		Map<Object, BigDecimal> multilevelProjectTotalAmountMap = new HashMap<Object, BigDecimal>();
 		Map<Object, JSONArray> subItemArrMap = new HashMap<Object, JSONArray>();

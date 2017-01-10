@@ -30,6 +30,7 @@ public class SessionToken implements Serializable {
 	private String userInfoIdMD5;
 	private String nickname;
 	private JSONArray menuInfoJsonArray;
+	private Integer departmentInfoId;
 
 	public Integer getUserInfoId() {
 		return userInfoId;
@@ -93,6 +94,14 @@ public class SessionToken implements Serializable {
 
 	public void setMenuInfoJsonArray(JSONArray menuInfoJsonArray) {
 		this.menuInfoJsonArray = menuInfoJsonArray;
+	}
+
+	public Integer getDepartmentInfoId() {
+		return departmentInfoId;
+	}
+
+	public void setDepartmentInfoId(Integer departmentInfoId) {
+		this.departmentInfoId = departmentInfoId;
 	}
 
 }

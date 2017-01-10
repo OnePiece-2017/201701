@@ -49,7 +49,7 @@ public class AnnualExpendBudgetCompile extends CriterionEntityHome<Object> {
 				for (Object key : budgetProject.keySet()) {
 					if (!taskOrderFlag) {
 						UserInfo userInfo = getEntityManager().find(UserInfo.class, sessionToken.getUserInfoId());
-						//添加订单任务表
+						// 添加订单任务表
 						taskOrder = new TaskOrder();
 						taskOrder.setTaskName(userInfo.getYsDepartmentInfo().getTheValue() + "科室　" + budgetYear + "年　常规预算");
 						taskOrder.setDeptId(userInfo.getYsDepartmentInfo().getTheId());
@@ -59,7 +59,7 @@ public class AnnualExpendBudgetCompile extends CriterionEntityHome<Object> {
 						taskOrder.setInsertUser(sessionToken.getUserInfoId());
 						taskOrder.setOrderStatus(0);
 						taskOrder.setAuditOpinion(null);
-						//查询流程信息
+						// 查询流程信息
 						String processInfoSql = "select process_info_id from process_info where deleted = 0 and process_type = 1 and project_process_type = 2 and dept_id = " + userInfo.getYsDepartmentInfo().getTheId();
 						List<Object> processInfoList = getEntityManager().createNativeQuery(processInfoSql).getResultList();
 						if (processInfoList != null && processInfoList.size() > 0) {
@@ -76,7 +76,7 @@ public class AnnualExpendBudgetCompile extends CriterionEntityHome<Object> {
 								if (processStepInfoList != null && processStepInfoList.size() > 0) {
 									String[] processStepUserArr = processStepUserList.get(0).toString().split(",");
 									for (String processStepUser : processStepUserArr) {
-										//应该为待办表
+										// 应该为待办表
 										TaskUser taskUser = new TaskUser();
 										taskUser.setTaskOrderId(taskOrder.getTaskOrderId());
 										taskUser.setUserId(Integer.parseInt(processStepUser));
@@ -166,7 +166,10 @@ public class AnnualExpendBudgetCompile extends CriterionEntityHome<Object> {
 	@SuppressWarnings("unchecked")
 	public JSONArray getCandidateProject() {
 		JSONArray resultSet = new JSONArray();
-		String dataSql = "select the_id, the_type, the_state, the_value, multilevel, total_amount, department_info_id from ys_convention_project where deleted = 0 and the_type =2 ";
+		String dataSql = "select the_id, the_type, the_state, the_value, multilevel, total_amount, department_info_id from ys_convention_project where deleted = 0 and the_type = 2";
+		if (sessionToken.getDepartmentInfoId() != null) {
+			dataSql += " and department_info_id = " + sessionToken.getDepartmentInfoId();
+		}
 		dataSql += " and the_id in (select convention_project_id from ys_convention_project_user where user_info_id = " + sessionToken.getUserInfoId() + ")";
 		Map<Object, BigDecimal> multilevelProjectTotalAmountMap = new HashMap<Object, BigDecimal>();
 		Map<Object, JSONArray> subItemArrMap = new HashMap<Object, JSONArray>();
