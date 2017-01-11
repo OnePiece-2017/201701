@@ -49,7 +49,7 @@
 			        	</td>
 			        	<td>#{_result.processType == 1 ? '常规项目流程' : (_result.processType == 2 ? '项目流程' : '')}</td>
 			        	<td>#{_result.ysDepartmentInfo.theValue}</td>
-			        	<td>#{commonTool.getProjectProcessTypeName(_result.projctProcessType)}</td>
+			        	<td>#{commonFinder.gainProjectProcessTypeName(_result.projctProcessType)}</td>
 			        	<td>
 			        		<s:link title="查看" view="/budget/ProcessInfo.xhtml" style="text-decoration: none;" rendered="#{s:hasRole('process_info_management/retrieve')}">
 			        			<f:param name="processInfoProcessInfoId" value="#{_result.processInfoId}" />

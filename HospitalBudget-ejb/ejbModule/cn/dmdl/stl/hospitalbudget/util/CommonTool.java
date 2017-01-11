@@ -96,19 +96,4 @@ public class CommonTool implements CommonToolLocal {
 		return result;
 	}
 
-	public String getProjectProcessTypeName(int type) {
-		String projectProcessTypeName = "";
-		if(type == 1){
-			projectProcessTypeName = "常规收入预算";
-		}else if(type == 2){
-			projectProcessTypeName = "常规支出预算";
-		}else if(type == 3){
-			projectProcessTypeName = "常规收入执行";
-		}else if(type == 4){
-			projectProcessTypeName = "常规支出执行";
-		}
-		return projectProcessTypeName;
-	}
-	
-	
 }
