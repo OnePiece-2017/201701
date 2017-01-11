@@ -15,4 +15,7 @@ public interface CommonFinderLocal {
 	/** 获取任务类型名称 */
 	public String gainTaskTypeName(int type);
 
+	/** 获取订单状态名称 */
+	public String gainOrderStatusName(int type);
+
 }

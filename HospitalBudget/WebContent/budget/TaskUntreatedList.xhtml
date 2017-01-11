@@ -57,7 +57,7 @@
 			        		<h:outputText value="#{commonFinder.gainTaskTypeName(_result[5])}" />
 			        	</td>
 			        	<td>
-			        		<h:outputText value="#{_result[6]}" />
+			        		<h:outputText value="#{commonFinder.gainOrderStatusName(_result[6])}" />
 			        	</td>
 			        	<td>
 			        		<s:link title="办理" view="/budget/TaskUntreatedTransact.xhtml" style="text-decoration: none;" rendered="#{_result[6] == 0}">

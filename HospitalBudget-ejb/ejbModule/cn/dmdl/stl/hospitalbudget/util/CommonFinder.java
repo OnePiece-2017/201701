@@ -76,4 +76,23 @@ public class CommonFinder implements CommonFinderLocal {
 		return result;
 	}
 
+	/** 获取订单状态名称 */
+	public String gainOrderStatusName(int type) {
+		String result = "";
+		if (type == 0) {
+			result = "待处理";
+		} else if (type == 1) {
+			result = "已通过";
+		} else if (type == 2) {
+			result = "已退回";
+		} else if (type == 3) {
+			result = "退单待处理";
+		} else if (type == 4) {
+			result = "退单已处理";
+		} else if (type == 9) {
+			result = "订单已完成";
+		}
+		return result;
+	}
+
 }
