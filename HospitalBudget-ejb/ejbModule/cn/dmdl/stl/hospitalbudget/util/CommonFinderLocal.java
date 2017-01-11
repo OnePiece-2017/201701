@@ -12,4 +12,7 @@ public interface CommonFinderLocal {
 	/** 获取项目流程类型名称 */
 	public String gainProjectProcessTypeName(int type);
 
+	/** 获取任务类型名称 */
+	public String gainTaskTypeName(int type);
+
 }

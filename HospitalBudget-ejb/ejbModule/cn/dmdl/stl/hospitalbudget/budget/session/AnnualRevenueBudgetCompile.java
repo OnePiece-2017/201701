@@ -21,7 +21,6 @@ import cn.dmdl.stl.hospitalbudget.budget.entity.TaskOrder;
 import cn.dmdl.stl.hospitalbudget.budget.entity.TaskUser;
 import cn.dmdl.stl.hospitalbudget.common.session.CriterionEntityHome;
 import cn.dmdl.stl.hospitalbudget.util.Assit;
-import cn.dmdl.stl.hospitalbudget.util.DateTimeHelper;
 
 @Name("annualRevenueBudgetCompile")
 public class AnnualRevenueBudgetCompile extends CriterionEntityHome<Object> {
@@ -65,9 +64,10 @@ public class AnnualRevenueBudgetCompile extends CriterionEntityHome<Object> {
 							List<Object> processStepInfoList = getEntityManager().createNativeQuery(processStepInfoSql).getResultList();
 							if (processStepInfoList != null && processStepInfoList.size() > 0) {
 								taskOrder.setProcessStepInfoId(Integer.parseInt(processStepInfoList.get(0).toString()));
-								taskOrder.setOrderSn("CGYS-" + DateTimeHelper.dateToStr(new Date(), "yyyyMMddHHmmss"));
+								// taskOrder.setOrderSn("CGYS-" + DateTimeHelper.dateToStr(new Date(), "yyyyMMddHHmmss"));
+								taskOrder.setOrderSn("CGYS-" + budgetYear);
 								getEntityManager().persist(taskOrder);
-								String orderSn = taskOrder.getOrderSn() + "-" + Assit.fillZero(taskOrder.getTaskOrderId(), (short) 19);
+								String orderSn = taskOrder.getOrderSn() + "-" + Assit.fillZero(taskOrder.getTaskOrderId(), (short) 9);
 								taskOrder.setOrderSn(orderSn);
 								String processStepUserSql = "select IFNULL(GROUP_CONCAT(user_id), '') as result from process_step_user where type = 0 and process_step_info_id = " + processStepInfoList.get(0).toString();// 只取第一步处理人
 								List<Object> processStepUserList = getEntityManager().createNativeQuery(processStepUserSql).getResultList();

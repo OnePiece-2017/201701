@@ -65,4 +65,15 @@ public class CommonFinder implements CommonFinderLocal {
 		return result;
 	}
 
+	/** 获取任务类型名称 */
+	public String gainTaskTypeName(int type) {
+		String result = "";
+		if (type == 1) {
+			result = "常规预算收入";
+		} else if (type == 2) {
+			result = "常规预算支出";
+		}
+		return result;
+	}
+
 }
