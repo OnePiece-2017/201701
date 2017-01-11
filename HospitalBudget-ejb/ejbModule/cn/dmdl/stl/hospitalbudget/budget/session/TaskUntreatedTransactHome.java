@@ -72,6 +72,7 @@ public class TaskUntreatedTransactHome extends CriterionEntityHome<Object> {
 							getEntityManager().persist(taskUser);
 						}
 					} else {
+						oldTaskOrder.setOrderStatus(9);
 						System.out.println("存档");
 					}
 				}
