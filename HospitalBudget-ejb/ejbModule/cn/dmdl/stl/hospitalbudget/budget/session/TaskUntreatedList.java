@@ -43,7 +43,6 @@ public class TaskUntreatedList extends CriterionNativeQuery<Object[]> {
 		sql.append(" order by task_order.task_order_id desc");
 		sql.insert(0, "select * from (").append(") as recordset");
 		setEjbql(sql.toString());
-		System.out.println(getEjbql());
 		return super.createQuery();
 	}
 
