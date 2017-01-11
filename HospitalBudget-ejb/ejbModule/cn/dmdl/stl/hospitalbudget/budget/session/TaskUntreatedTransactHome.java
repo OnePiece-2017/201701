@@ -1,5 +1,6 @@
 package cn.dmdl.stl.hospitalbudget.budget.session;
 
+import java.text.DecimalFormat;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -12,6 +13,7 @@ import net.sf.json.JSONObject;
 
 import org.jboss.seam.annotations.Name;
 
+import cn.dmdl.stl.hospitalbudget.budget.entity.NormalBudgetCollectionInfo;
 import cn.dmdl.stl.hospitalbudget.budget.entity.ProcessStepInfo;
 import cn.dmdl.stl.hospitalbudget.budget.entity.TaskOrder;
 import cn.dmdl.stl.hospitalbudget.budget.entity.TaskUser;
@@ -73,7 +75,24 @@ public class TaskUntreatedTransactHome extends CriterionEntityHome<Object> {
 						}
 					} else {
 						oldTaskOrder.setOrderStatus(9);
-						System.out.println("存档");
+						NormalBudgetCollectionInfo normalBudgetCollectionInfo = new NormalBudgetCollectionInfo();
+						normalBudgetCollectionInfo.setOrderSn(oldTaskOrder.getOrderSn());
+						normalBudgetCollectionInfo.setDeptId(oldTaskOrder.getDeptId());
+						List<Object[]> summaryList = getEntityManager().createNativeQuery("select `year`, sum(project_amount) as budget_amount from normal_budget_order_info where is_new = 1 and sub_project_id is null and binary order_sn = '" + oldTaskOrder.getOrderSn() + "'").getResultList();
+						if (summaryList != null && summaryList.size() > 0) {
+							Object[] summary = summaryList.get(0);
+							normalBudgetCollectionInfo.setYear(summary[0].toString());
+							normalBudgetCollectionInfo.setBudgetAmount(Double.parseDouble(new DecimalFormat("#.##").format(Double.parseDouble(summary[1].toString()))));
+						}
+						if (oldTaskOrder.getTaskType() == 1) {
+							normalBudgetCollectionInfo.setAmountType(1);
+						} else if (oldTaskOrder.getTaskType() == 2) {
+							normalBudgetCollectionInfo.setAmountType(2);
+						}
+						normalBudgetCollectionInfo.setSubmitFlag(false);
+						normalBudgetCollectionInfo.setInsertTime(new Date());
+						normalBudgetCollectionInfo.setInsertUser(sessionToken.getUserInfoId());
+						getEntityManager().persist(normalBudgetCollectionInfo);
 					}
 				}
 				List<TaskUser> taskUserList = getEntityManager().createQuery("select taskUser from TaskUser taskUser where taskOrderId = " + oldTaskOrder.getTaskOrderId() + " and userId = " + sessionToken.getUserInfoId()).getResultList();
