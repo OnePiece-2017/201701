@@ -26,6 +26,7 @@ public class NormalExpendBudgetOrderInfo implements java.io.Serializable {
 
 	private static final long serialVersionUID = 1L;
 	private Integer normalExpendBudgetOrderId;
+	private int taskOrderId;// 订单id
 	private String orderSn;
 	private String year;
 	private Integer normalProjectId;
@@ -53,14 +54,22 @@ public class NormalExpendBudgetOrderInfo implements java.io.Serializable {
 	public void setNormalExpendBudgetOrderId(Integer normalExpendBudgetOrderId) {
 		this.normalExpendBudgetOrderId = normalExpendBudgetOrderId;
 	}
-	
+
+	@Column(name = "task_order_id", nullable = false)
+	public int getTaskOrderId() {
+		return taskOrderId;
+	}
+
+	public void setTaskOrderId(int taskOrderId) {
+		this.taskOrderId = taskOrderId;
+	}
+
 	@Column(name = "order_sn", nullable = false, length = 45)
 	@NotNull
 	@Length(max = 45)
 	public String getOrderSn() {
 		return this.orderSn;
 	}
-
 
 	public void setOrderSn(String orderSn) {
 		this.orderSn = orderSn;

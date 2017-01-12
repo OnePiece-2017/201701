@@ -78,8 +78,8 @@
 		</h:form>
 		<a:form>
 			<a:queue requestDelay="100" ignoreDupResponses="true" />
-			<a:jsFunction name="doSave" action="#{taskUntreatedReviseHome.saveAction}" data="#{taskUntreatedReviseHome.saveResult}" oncomplete="saveCompleted(data);">
-				<a:actionparam name="saveArgs" assignTo="#{taskUntreatedReviseHome.saveArgs}" />
+			<a:jsFunction name="doSave" action="#{reviseRevenueHome.saveAction}" data="#{reviseRevenueHome.saveResult}" oncomplete="saveCompleted(data);">
+				<a:actionparam name="saveArgs" assignTo="#{reviseRevenueHome.saveArgs}" />
 			</a:jsFunction>
 		</a:form>
 		<script type="text/javascript" src="#{request.contextPath}/javascript/template_list.js" charset="UTF-8" />
@@ -90,9 +90,9 @@
 		<script type="text/javascript" src="#{request.contextPath}/toolkit/utils.js" charset="UTF-8" />
 		<script type="text/javascript">
 		//<![CDATA[
-			var attendProject = #{taskUntreatedReviseHome.attendProject};// 已选项目列表
+			var attendProject = #{reviseRevenueHome.attendProject};// 已选项目列表
 			jQuery(document).ready(function() {
-			    var message = '#{taskUntreatedReviseHome.message}';
+			    var message = '#{reviseRevenueHome.message}';
 			    if (message != null && message != '') {
 					___msg('温馨提示', message);
 			    }

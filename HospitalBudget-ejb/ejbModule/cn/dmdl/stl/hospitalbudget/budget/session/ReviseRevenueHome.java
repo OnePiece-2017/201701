@@ -2,11 +2,7 @@ package cn.dmdl.stl.hospitalbudget.budget.session;
 
 import java.text.DecimalFormat;
 import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
 
 import net.sf.json.JSONArray;
 import net.sf.json.JSONNull;
@@ -20,8 +16,8 @@ import cn.dmdl.stl.hospitalbudget.budget.entity.TaskOrder;
 import cn.dmdl.stl.hospitalbudget.budget.entity.TaskUser;
 import cn.dmdl.stl.hospitalbudget.common.session.CriterionEntityHome;
 
-@Name("taskUntreatedReviseHome")
-public class TaskUntreatedReviseHome extends CriterionEntityHome<Object> {
+@Name("reviseRevenueHome")
+public class ReviseRevenueHome extends CriterionEntityHome<Object> {
 
 	private static final long serialVersionUID = 1L;
 	private Integer taskOrderId;
@@ -57,7 +53,7 @@ public class TaskUntreatedReviseHome extends CriterionEntityHome<Object> {
 				newTaskOrder.setInsertUser(sessionToken.getUserInfoId());
 				newTaskOrder.setOrderStatus(0);
 				String budgetYear = "";
-				List<NormalBudgetOrderInfo> oldNormalBudgetOrderInfoList = getEntityManager().createQuery("select normalBudgetOrderInfo from NormalBudgetOrderInfo normalBudgetOrderInfo where normalBudgetOrderInfo.orderSn = '" + newTaskOrder.getOrderSn() + "'").getResultList();
+				List<NormalBudgetOrderInfo> oldNormalBudgetOrderInfoList = getEntityManager().createQuery("select normalBudgetOrderInfo from NormalBudgetOrderInfo normalBudgetOrderInfo where normalBudgetOrderInfo.taskOrderId = " + oldTaskOrder.getTaskOrderId()).getResultList();
 				if (oldNormalBudgetOrderInfoList != null && oldNormalBudgetOrderInfoList.size() > 0) {
 					budgetYear = oldNormalBudgetOrderInfoList.get(0).getYear();
 					for (NormalBudgetOrderInfo oldNormalBudgetOrderInfo : oldNormalBudgetOrderInfoList) {
@@ -106,6 +102,7 @@ public class TaskUntreatedReviseHome extends CriterionEntityHome<Object> {
 					}
 					JSONObject root = budgetProject.getJSONObject(key.toString());
 					NormalBudgetOrderInfo nboRoot = new NormalBudgetOrderInfo();
+					nboRoot.setTaskOrderId(newTaskOrder.getTaskOrderId());
 					nboRoot.setOrderSn(newTaskOrder.getOrderSn());
 					nboRoot.setYear(String.valueOf(budgetYear));
 					nboRoot.setNormalProjectId(root.getInt("projectId"));
@@ -125,6 +122,7 @@ public class TaskUntreatedReviseHome extends CriterionEntityHome<Object> {
 						for (int i = 0; i < leafArr.size(); i++) {
 							JSONObject leaf = leafArr.getJSONObject(i);
 							NormalBudgetOrderInfo nboLeaf = new NormalBudgetOrderInfo();
+							nboLeaf.setTaskOrderId(newTaskOrder.getTaskOrderId());
 							nboLeaf.setOrderSn(newTaskOrder.getOrderSn());
 							nboLeaf.setYear(String.valueOf(budgetYear));
 							nboLeaf.setNormalProjectId(root.getInt("projectId"));
@@ -160,48 +158,36 @@ public class TaskUntreatedReviseHome extends CriterionEntityHome<Object> {
 	public JSONArray getAttendProject() {
 		JSONArray resultSet = new JSONArray();
 		TaskOrder taskOrder = getEntityManager().find(TaskOrder.class, taskOrderId);
-		String dataSql = "select `year`, normal_project_id, sub_project_id, project_source, project_amount, formula, remark from normal_budget_order_info where is_new = 1 and binary order_sn = '" + taskOrder.getOrderSn() + "'";
-		List<Object[]> dataList = getEntityManager().createNativeQuery(dataSql).getResultList();
+		StringBuffer dataSql = new StringBuffer();
+		dataSql.append(" select");
+		dataSql.append(" normal_budget_order_info.task_order_id,");
+		dataSql.append(" normal_budget_order_info.`year`,");
+		dataSql.append(" ys_convention_project.multilevel,");
+		dataSql.append(" normal_budget_order_info.normal_project_id,");
+		dataSql.append(" normal_budget_order_info.sub_project_id,");
+		dataSql.append(" ys_convention_project.the_value as main_project_name,");
+		dataSql.append(" ys_convention_project_extend.the_value as sub_project_name,");
+		dataSql.append(" normal_budget_order_info.project_amount,");
+		dataSql.append(" normal_budget_order_info.formula,");
+		dataSql.append(" normal_budget_order_info.remark");
+		dataSql.append(" from normal_budget_order_info");
+		dataSql.append(" left join ys_convention_project on ys_convention_project.the_id = normal_budget_order_info.normal_project_id");
+		dataSql.append(" left join ys_convention_project_extend on ys_convention_project_extend.the_id = normal_budget_order_info.sub_project_id");
+		dataSql.append(" where normal_budget_order_info.is_new = 1 and normal_budget_order_info.task_order_id = ").append(taskOrder.getTaskOrderId());
+		dataSql.insert(0, "select * from (").append(") as recordset");// 解决找不到列
+		List<Object[]> dataList = getEntityManager().createNativeQuery(dataSql.toString()).getResultList();
 		if (dataList != null && dataList.size() > 0) {
-			Map<Object, Object> normalProjectNameMap = new HashMap<Object, Object>(), subProjectNameMap = new HashMap<Object, Object>();
-			Map<Object, Object> multilevelMap = new HashMap<Object, Object>();
-			String normalProjectIds = null, subProjectIds = null;
-			Set<Object> normalProjectIdSet = new HashSet<Object>(), subProjectIdSet = new HashSet<Object>();
-			for (Object[] data : dataList) {
-				normalProjectIdSet.add(data[1]);
-				subProjectIdSet.add(data[2]);
-			}
-			subProjectIdSet.remove(null);
-			normalProjectIds = normalProjectIdSet.toString().substring(1, normalProjectIdSet.toString().length() - 1);
-			subProjectIds = subProjectIdSet.toString().substring(1, subProjectIdSet.toString().length() - 1);
-			if (normalProjectIds != null && !"".equals(normalProjectIds)) {
-				List<Object[]> objList = getEntityManager().createNativeQuery("select the_id, the_value, multilevel from ys_convention_project where the_id in (" + normalProjectIds + ")").getResultList();
-				if (objList != null && objList.size() > 0) {
-					for (Object[] obj : objList) {
-						normalProjectNameMap.put(obj[0], obj[1]);
-						multilevelMap.put(obj[0], obj[2]);
-					}
-				}
-			}
-			if (subProjectIds != null && !"".equals(subProjectIds)) {
-				List<Object[]> objList = getEntityManager().createNativeQuery("select the_id, the_value from ys_convention_project_extend where the_id in (" + subProjectIds + ")").getResultList();
-				if (objList != null && objList.size() > 0) {
-					for (Object[] obj : objList) {
-						subProjectNameMap.put(obj[0], obj[1]);
-					}
-				}
-			}
 			for (Object[] data : dataList) {
 				JSONObject row = new JSONObject();
-				boolean isRoot = null == data[2];
+				boolean isRoot = null == data[4];
 				row.accumulate("isRoot", isRoot);
-				row.accumulate("multilevel", multilevelMap.get(data[1]));
-				row.accumulate("projectId", data[1]);
-				row.accumulate("subId", data[2]);
-				row.accumulate("projectName", isRoot ? normalProjectNameMap.get(data[1]) : subProjectNameMap.get(data[2]));
-				row.accumulate("totalAmount", data[4]);
-				row.accumulate("formula", data[5]);
-				row.accumulate("remark", data[6]);
+				row.accumulate("multilevel", data[2]);
+				row.accumulate("projectId", data[3]);
+				row.accumulate("subId", data[4]);
+				row.accumulate("projectName", isRoot ? data[5] : data[6]);
+				row.accumulate("totalAmount", data[7]);
+				row.accumulate("formula", data[8]);
+				row.accumulate("remark", data[9]);
 				resultSet.add(row);
 			}
 		}

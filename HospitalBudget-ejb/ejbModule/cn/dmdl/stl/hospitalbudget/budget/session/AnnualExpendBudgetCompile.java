@@ -102,6 +102,7 @@ public class AnnualExpendBudgetCompile extends CriterionEntityHome<Object> {
 					}
 					JSONObject root = budgetProject.getJSONObject(key.toString());
 					NormalExpendBudgetOrderInfo nboRoot = new NormalExpendBudgetOrderInfo();
+					nboRoot.setTaskOrderId(taskOrder.getTaskOrderId());
 					nboRoot.setOrderSn(taskOrder.getOrderSn());
 					nboRoot.setYear(String.valueOf(budgetYear));
 					nboRoot.setNormalProjectId(root.getInt("projectId"));
@@ -121,6 +122,7 @@ public class AnnualExpendBudgetCompile extends CriterionEntityHome<Object> {
 						for (int i = 0; i < leafArr.size(); i++) {
 							JSONObject leaf = leafArr.getJSONObject(i);
 							NormalExpendBudgetOrderInfo nboLeaf = new NormalExpendBudgetOrderInfo();
+							nboLeaf.setTaskOrderId(taskOrder.getTaskOrderId());
 							nboLeaf.setOrderSn(taskOrder.getOrderSn());
 							nboLeaf.setYear(String.valueOf(budgetYear));
 							nboLeaf.setNormalProjectId(root.getInt("projectId"));
