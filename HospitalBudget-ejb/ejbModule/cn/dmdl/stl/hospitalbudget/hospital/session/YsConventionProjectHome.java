@@ -182,11 +182,6 @@ public class YsConventionProjectHome extends CriterionEntityHome<YsConventionPro
 
 		getInstance();
 
-		if (Assit.getResultSetSize("select the_id from ys_convention_project where deleted = 0 and the_pid = " + instance.getTheId()) > 0) {
-			setMessage("该项已被使用，操作被取消");
-			return "failure";
-		}
-
 		// 清理中间表
 		getEntityManager().createNativeQuery("delete from ys_convention_project_user where convention_project_id = " + instance.getTheId()).executeUpdate();
 		getEntityManager().createNativeQuery("delete from ys_convention_project_extend where convention_project_id = " + instance.getTheId()).executeUpdate();
