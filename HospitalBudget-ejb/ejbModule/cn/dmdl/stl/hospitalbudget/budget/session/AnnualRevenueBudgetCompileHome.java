@@ -49,7 +49,7 @@ public class AnnualRevenueBudgetCompileHome extends CriterionEntityHome<Object> 
 					if (!taskOrderFlag) {// 写入订单信息
 						UserInfo userInfo = getEntityManager().find(UserInfo.class, sessionToken.getUserInfoId());
 						taskOrder = new TaskOrder();
-						taskOrder.setTaskName(userInfo.getYsDepartmentInfo().getTheValue() + "〔" + budgetYear + "年〕常规预算");
+						taskOrder.setTaskName(userInfo.getYsDepartmentInfo().getTheValue() + "〔" + budgetYear + "〕常规预算收入");
 						taskOrder.setDeptId(userInfo.getYsDepartmentInfo().getTheId());
 						taskOrder.setEditUserId(sessionToken.getUserInfoId());
 						taskOrder.setTaskType(1);// 常规预算收入
