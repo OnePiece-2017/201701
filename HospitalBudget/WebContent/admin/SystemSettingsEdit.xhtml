@@ -421,11 +421,13 @@
 				argsJson['reload_page_on_exist'] = reload_page_on_exist;
 				argsJson['query_max_results'] = query_max_results;
 				argsJson['query_order_direction'] = query_order_direction;
-				
+
+				showLayer();
 				invokeUpdate(JSON.stringify(argsJson));
 			}
 
 			function completedUpdate(data) {
+				hideLayer();
 				if (data != null && data != '') {
 					___msg('温馨提示', data);
 				} else {
