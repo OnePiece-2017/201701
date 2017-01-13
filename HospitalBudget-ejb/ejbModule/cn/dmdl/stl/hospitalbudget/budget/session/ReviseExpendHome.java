@@ -173,7 +173,6 @@ public class ReviseExpendHome extends CriterionEntityHome<Object> {
 		dataSql.append(" where normal_expend_budget_order_info.is_new = 1 and normal_expend_budget_order_info.task_order_id = ").append(taskOrder.getTaskOrderId());
 		dataSql.insert(0, "select * from (").append(") as recordset");// 解决找不到列
 		List<Object[]> dataList = getEntityManager().createNativeQuery(dataSql.toString()).getResultList();
-		System.out.println(dataSql.toString());
 		if (dataList != null && dataList.size() > 0) {
 			for (Object[] data : dataList) {
 				JSONObject row = new JSONObject();
@@ -189,7 +188,6 @@ public class ReviseExpendHome extends CriterionEntityHome<Object> {
 				resultSet.add(row);
 			}
 		}
-		System.out.println(resultSet);
 		return resultSet;
 	}
 
