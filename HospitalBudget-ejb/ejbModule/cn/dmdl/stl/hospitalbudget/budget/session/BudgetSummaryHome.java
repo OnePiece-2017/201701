@@ -47,6 +47,7 @@ public class BudgetSummaryHome extends CriterionEntityHome<Object> {
 		dataSql.append(" select");
 		dataSql.append(" normal_budget_collection_info.normal_budget_collection_id,");
 		dataSql.append(" normal_budget_collection_info.`year`,");
+		dataSql.append(" ys_department_info.the_id as department_id,");
 		dataSql.append(" ys_department_info.the_value as department_name,");
 		dataSql.append(" normal_budget_collection_info.order_sn,");
 		dataSql.append(" normal_budget_collection_info.amount_type,");
@@ -61,15 +62,16 @@ public class BudgetSummaryHome extends CriterionEntityHome<Object> {
 				JSONObject row = new JSONObject();
 				row.accumulate("normalBudgetCollectionId", data[0]);
 				row.accumulate("year", data[1]);
-				row.accumulate("departmentName", data[2]);
-				row.accumulate("orderSn", data[3]);
-				int amountType = (Integer) data[4];
+				row.accumulate("departmentId", data[2]);
+				row.accumulate("departmentName", data[3]);
+				row.accumulate("orderSn", data[4]);
+				int amountType = (Integer) data[5];
 				if (amountType == 1) {
 					row.accumulate("amountType", "收入预算");
 				} else if (amountType == 2) {
 					row.accumulate("amountType", "支出预算");
 				}
-				row.accumulate("budgetAmount", data[5]);
+				row.accumulate("budgetAmount", data[6]);
 				resultSet.add(row);
 			}
 		}

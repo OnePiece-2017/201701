@@ -20,7 +20,7 @@
 				background: #add595;
 			}
 			
-			.node-totalAmount {
+			.node-summaryInfo {
 				font-weight: bold;
 			}
 		</style>
@@ -54,6 +54,7 @@
 					</div>
 				</div>
 				<strong style="font-size: 20px;">预算汇总</strong>
+				<font style="margin-left: 15px;color: #f903ed;">(共<span class="node-summaryInfo">0</span>行)</font>
 				<div class="g-data-list-table freeze-attendProject" style="height: 42px;">
 				    <table class="record" width="100%" cellpadding="0" cellspacing="0">
 				        <tr>
@@ -105,38 +106,12 @@
 			    if (message != null && message != '') {
 					___msg('温馨提示', message);
 			    }
-				
+			    
+				jQuery('#budgetYear').val(new Date().getFullYear());
 			    jQuery('.selectpicker').selectpicker();
 
 			    jQuery('.normal-attendProject .record').prepend(jQuery('.freeze-attendProject tbody').html());
 			    jQuery('.normal-attendProject .record tr:first').find('th').html('').css('height', 0);
-				
-				if (attendProject != null && attendProject.length > 0) {
-					var html = '';
-					//<input type="checkbox" class="icheck" id="enabled" />
-			    	//jQuery('#enabled').iCheck(jQuery('#mainForm\\:enabledHidden').val() != 'true' ? 'uncheck' : 'check');
-			    	//jQuery('#mainForm\\:enabledHidden').val(jQuery('#enabled:checked').length > 0);
-					for (var i = 0; i < attendProject.length; i++) {
-						html += '<tr>';
-						html += '	<td>' + attendProject[i]['normalBudgetCollectionId'] + '</td>';
-						html += '	<td>' + attendProject[i]['year'] + '</td>';
-						html += '	<td>' + attendProject[i]['departmentName'] + '</td>';
-						html += '	<td>' + attendProject[i]['orderSn'] + '</td>';
-						html += '	<td>' + attendProject[i]['amountType'] + '</td>';
-						html += '	<td>' + attendProject[i]['budgetAmount'] + '</td>';
-						html += '	<td><input type="checkbox" class="icheck"></td>';
-						html += '	<td>　</td>';
-						html += '</tr>';
-					}
-					jQuery('.normal-attendProject .record').append(html);
-					
-					jQuery('.icheck').iCheck({
-						checkboxClass: 'icheckbox_square-blue',
-						radioClass: 'iradio_square-blue',
-						increaseArea: '20%'
-					});
-				}
-				
 			    jQuery('.normal-attendProject').niceScroll({
 					cursorcolor : '#5cb85c',
 					cursorwidth : 9,
@@ -144,7 +119,57 @@
 					touchbehavior : false,
 					autohidemode : false
 			    });
+
+			    jQuery('#budgetYear, #departmentIds').change(renewTable);
+			    renewTable();
+
+			    updateSummaryInfo();
 			});
+			
+			function renewTable() {
+				jQuery('.normal-attendProject .data-row').remove();
+				var html = '';
+				if (attendProject != null && attendProject.length > 0) {
+					var budgetYear = jQuery('#budgetYear').val();
+					var departmentSet = {};
+					var departmentIds = jQuery('#departmentIds').val();
+					if (departmentIds != null && departmentIds.length) {
+						for (var i = 0; i < departmentIds.length; i++) {
+							departmentSet[departmentIds[i]] = true;
+						}
+					}
+					for (var i = 0; i < attendProject.length; i++) {
+						if (budgetYear == attendProject[i]['year'] && departmentSet[attendProject[i]['departmentId']] != null) {
+							html += '<tr class="data-row">';
+							html += '	<td>' + attendProject[i]['normalBudgetCollectionId'] + '</td>';
+							html += '	<td>' + attendProject[i]['year'] + '</td>';
+							html += '	<td>' + attendProject[i]['departmentName'] + '</td>';
+							html += '	<td>' + attendProject[i]['orderSn'] + '</td>';
+							html += '	<td>' + attendProject[i]['amountType'] + '</td>';
+							html += '	<td>' + attendProject[i]['budgetAmount'] + '</td>';
+							html += '	<td><input type="checkbox" class="icheck"></td>';
+							html += '	<td>　</td>';
+							html += '</tr>';
+						}
+					}
+				}
+				jQuery('.normal-attendProject .record').append(html);
+				jQuery('.normal-attendProject .icheck').iCheck({
+					checkboxClass: 'icheckbox_square-blue',
+					radioClass: 'iradio_square-blue',
+					increaseArea: '20%'
+				});
+				jQuery('.normal-attendProject').getNiceScroll().resize();
+				jQuery('.normal-attendProject').getNiceScroll(0).doScrollTop(jQuery('.normal-attendProject')[0].scrollHeight, 0);
+			}
+			
+			function updateSummaryInfo() {
+				var rows = jQuery('.normal-attendProject tr.data-row').length;
+				if (jQuery('.node-summaryInfo').html() != rows) {
+					jQuery('.node-summaryInfo').html(rows);
+				}
+				setTimeout("updateSummaryInfo()", 100);
+			}
 			
 			//提交前
 			function onSave() {
