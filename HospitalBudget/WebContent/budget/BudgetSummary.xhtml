@@ -1,0 +1,171 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:s="http://jboss.com/products/seam/taglib"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:a="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich"
+	template="/layout/template_edit.xhtml">
+
+	<ui:define name="head">
+		<link rel="stylesheet" type="text/css" href="#{request.contextPath}/stylesheet/template_list.css" />
+		<link rel="stylesheet" type="text/css" href="#{request.contextPath}/common/css/bootstrap.min.css" />
+		<link rel="stylesheet" type="text/css" href="#{request.contextPath}/common/css/bootstrap-select.min.css" />
+		<link rel="stylesheet" type="text/css" href="#{request.contextPath}/icheck/skins/square/blue.css" />
+		<style type="text/css">
+			
+			.normal-attendProject .root {
+				background: #add595;
+			}
+			
+			.node-totalAmount {
+				font-weight: bold;
+			}
+		</style>
+	</ui:define>
+
+	<ui:define name="body">
+		<h:form id="mainForm" styleClass="edit" enctype="multipart/form-data">
+			<div class="pd0-10 pt30">
+				<div class="g-data-list-condition">
+					<div class="fl">
+						<div style="float: left; text-align: center; line-height: 36px; width: 70px;">
+							<span>年份</span>
+						</div>
+						<div class="fl">
+							<select id="budgetYear" class="selectpicker">
+								<a:repeat value="#{budgetSummaryHome.budgetYearList}" var="_var">
+									<option value="#{_var[0]}">#{_var[1]}</option>
+								</a:repeat>
+							</select>
+						</div>
+						<div style="float: left; text-align: center; line-height: 36px; width: 70px;">
+							<span>科室</span>
+						</div>
+						<div class="fl">
+							<select id="departmentIds" class="selectpicker" multiple="multiple" data-live-search="true">
+								<a:repeat value="#{budgetSummaryHome.departmentInfoList}" var="_var">
+									<option value="#{_var[0]}">#{_var[1]}</option>
+								</a:repeat>
+							</select>
+						</div>
+					</div>
+				</div>
+				<strong style="font-size: 20px;">预算汇总</strong>
+				<div class="g-data-list-table freeze-attendProject" style="height: 42px;">
+				    <table class="record" width="100%" cellpadding="0" cellspacing="0">
+				        <tr>
+				            <th width="5%">ID</th>
+				            <th width="10%">年份</th>
+				            <th width="15%">科室</th>
+				            <th width="25%">订单号</th>
+				            <th width="20%">预算类型</th>
+				            <th width="20%">预算金额(元)</th>
+				            <th width="4%">选择</th>
+				            <th width="1%">　</th>
+				        </tr>
+				    </table>
+				</div>
+				<div class="g-data-list-table normal-attendProject" style="border-radius: 0;height: 306px;">
+				    <table class="record" width="100%" cellpadding="0" cellspacing="0">
+				    </table>
+				</div>
+				<div class="pt50 pb95">
+					<table class="normal-btn">
+						<tr>
+							<td>
+								<a class="btn btn-primary mr15" onclick="return onSave();">提交</a>
+							</td>
+						</tr>
+					</table>
+					<br />
+					<br />
+				</div>
+			</div>
+		</h:form>
+		<a:form>
+			<a:queue requestDelay="100" ignoreDupResponses="true" />
+			<a:jsFunction name="doSave" action="#{budgetSummaryHome.saveAction}" data="#{budgetSummaryHome.saveResult}" oncomplete="saveCompleted(data);">
+				<a:actionparam name="saveArgs" assignTo="#{budgetSummaryHome.saveArgs}" />
+			</a:jsFunction>
+		</a:form>
+		<script type="text/javascript" src="#{request.contextPath}/javascript/template_list.js" charset="UTF-8" />
+		<script type="text/javascript" src="#{request.contextPath}/common/js/bootstrap.min.js" />
+		<script type="text/javascript" src="#{request.contextPath}/common/js/bootstrap-select.min.js" charset="UTF-8" />
+		<script type="text/javascript" src="#{request.contextPath}/common/js/bootstrap-select-defaults-zh_CN.min.js" charset="UTF-8" />
+		<script type="text/javascript" src="#{request.contextPath}/icheck/js/icheck.min.js" charset="UTF-8" />
+		<script type="text/javascript" src="#{request.contextPath}/toolkit/utils.js" charset="UTF-8" />
+		<script type="text/javascript">
+		//<![CDATA[
+			var attendProject = #{budgetSummaryHome.attendProject};// 已选项目列表
+			jQuery(document).ready(function() {
+			    var message = '#{budgetSummaryHome.message}';
+			    if (message != null && message != '') {
+					___msg('温馨提示', message);
+			    }
+				
+			    jQuery('.selectpicker').selectpicker();
+
+			    jQuery('.normal-attendProject .record').prepend(jQuery('.freeze-attendProject tbody').html());
+			    jQuery('.normal-attendProject .record tr:first').find('th').html('').css('height', 0);
+				
+				if (attendProject != null && attendProject.length > 0) {
+					var html = '';
+					//<input type="checkbox" class="icheck" id="enabled" />
+			    	//jQuery('#enabled').iCheck(jQuery('#mainForm\\:enabledHidden').val() != 'true' ? 'uncheck' : 'check');
+			    	//jQuery('#mainForm\\:enabledHidden').val(jQuery('#enabled:checked').length > 0);
+					for (var i = 0; i < attendProject.length; i++) {
+						html += '<tr>';
+						html += '	<td>' + attendProject[i]['normalBudgetCollectionId'] + '</td>';
+						html += '	<td>' + attendProject[i]['year'] + '</td>';
+						html += '	<td>' + attendProject[i]['departmentName'] + '</td>';
+						html += '	<td>' + attendProject[i]['orderSn'] + '</td>';
+						html += '	<td>' + attendProject[i]['amountType'] + '</td>';
+						html += '	<td>' + attendProject[i]['budgetAmount'] + '</td>';
+						html += '	<td><input type="checkbox" class="icheck"></td>';
+						html += '	<td>　</td>';
+						html += '</tr>';
+					}
+					jQuery('.normal-attendProject .record').append(html);
+					
+					jQuery('.icheck').iCheck({
+						checkboxClass: 'icheckbox_square-blue',
+						radioClass: 'iradio_square-blue',
+						increaseArea: '20%'
+					});
+				}
+				
+			    jQuery('.normal-attendProject').niceScroll({
+					cursorcolor : '#5cb85c',
+					cursorwidth : 9,
+					cursoropacitymax : 0.8,
+					touchbehavior : false,
+					autohidemode : false
+			    });
+			});
+			
+			//提交前
+			function onSave() {
+				showLayer();
+			    var dataInfo = {};
+				doSave(JSON.stringify(dataInfo));
+			}
+
+			function saveCompleted(data) {
+				hideLayer();
+				if (data != null && 'INVOKE_SUCCESS' == data.invoke_result) {
+				    ___dynamic_function = function() {
+				    	window.location.href = '../budget/BudgetSummary.seam';
+					};
+					___msg('温馨提示', data.message, {closed: ___dynamic_function});
+				} else {
+					___msg('温馨提示', data.message);
+				}
+			}
+		//]]>
+		</script>
+	</ui:define>
+
+</ui:composition>
