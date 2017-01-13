@@ -6,6 +6,6 @@
 	<restrict>#{true or s:hasRole('*/*/annual_revenue_budget_compile')}</restrict>
 	<begin-conversation join="true" flush-mode="MANUAL" />
 
-	<param name="annualRevenueBudgetCompileFrom" />
+	<param name="annualExpendBudgetCompileFrom" />
 
 </page>
