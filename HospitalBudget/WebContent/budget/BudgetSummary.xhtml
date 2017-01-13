@@ -141,7 +141,7 @@
 					for (var i = 0; i < attendProject.length; i++) {
 						if (budgetYear == attendProject[i]['year'] && departmentSet[attendProject[i]['departmentId']] != null) {
 							html += '<tr class="data-row">';
-							html += '	<td>' + attendProject[i]['normalBudgetCollectionId'] + '</td>';
+							html += '	<td class="primary-key">' + attendProject[i]['normalBudgetCollectionId'] + '</td>';
 							html += '	<td>' + attendProject[i]['year'] + '</td>';
 							html += '	<td>' + attendProject[i]['departmentName'] + '</td>';
 							html += '	<td>' + attendProject[i]['orderSn'] + '</td>';
@@ -175,6 +175,11 @@
 			function onSave() {
 				showLayer();
 			    var dataInfo = {};
+			    jQuery('.normal-attendProject tr.data-row').each(function(){
+				    var primaryKey = jQuery(this).find('.primary-key').html();
+			    	dataInfo[primaryKey] = jQuery(this).find('.icheck:checked').length > 0;
+				});
+				alert(JSON.stringify(dataInfo));
 				doSave(JSON.stringify(dataInfo));
 			}
 

@@ -30,6 +30,8 @@ public class BudgetSummaryHome extends CriterionEntityHome<Object> {
 		saveResult.accumulate("message", "提交成功！");
 		if (saveArgs != null && !"".equals(saveArgs)) {
 			try {
+				JSONObject dataInfo = JSONObject.fromObject(saveArgs);
+				System.out.println(dataInfo);
 			} catch (Exception e) {
 				saveResult.element("invoke_result", "INVOKE_FAILURE");
 				saveResult.element("message", "操作失败！" + e.getMessage());
