@@ -69,3 +69,11 @@ function trimValObj(object) {
 	object.val(jQuery.trim(object.val()));
 	return object.val();
 }
+
+function showLayer() {
+	jQuery('.body-mask-layer').show();
+}
+
+function hideLayer() {
+	jQuery('.body-mask-layer').hide();
+}
