@@ -66,7 +66,7 @@
 											</td>
 											<td valign="middle">
 												<select id="budgetYear" class="selectpicker">
-													<a:repeat value="#{annualExpendBudgetCompile.budgetYearList}" var="_var">
+													<a:repeat value="#{annualExpendBudgetCompileHome.budgetYearList}" var="_var">
 														<option value="#{_var[0]}">#{_var[1]}</option>
 													</a:repeat>
 												</select>
@@ -137,8 +137,8 @@
 		</h:form>
 		<a:form>
 			<a:queue requestDelay="100" ignoreDupResponses="true" />
-			<a:jsFunction name="doSave" action="#{annualExpendBudgetCompile.saveAction}" data="#{annualExpendBudgetCompile.saveResult}" oncomplete="saveCompleted(data);">
-				<a:actionparam name="saveArgs" assignTo="#{annualExpendBudgetCompile.saveArgs}" />
+			<a:jsFunction name="doSave" action="#{annualExpendBudgetCompileHome.saveAction}" data="#{annualExpendBudgetCompileHome.saveResult}" oncomplete="saveCompleted(data);">
+				<a:actionparam name="saveArgs" assignTo="#{annualExpendBudgetCompileHome.saveArgs}" />
 			</a:jsFunction>
 		</a:form>
 		<script type="text/javascript" src="#{request.contextPath}/javascript/template_list.js" charset="UTF-8" />
@@ -151,7 +151,7 @@
 		//<![CDATA[
 			var candidateProject = null;// 候选项目列表
 			jQuery(document).ready(function() {
-			    var message = '#{annualExpendBudgetCompile.message}';
+			    var message = '#{annualExpendBudgetCompileHome.message}';
 			    if (message != null && message != '') {
 					___msg('温馨提示', message);
 			    }
@@ -160,13 +160,13 @@
 			    
 			    jQuery('.normal-candidateProject .record').prepend(jQuery('.freeze-candidateProject tbody').html());
 			    jQuery('.normal-candidateProject .record tr:first').find('th').html('').css('height', 0);
-			    candidateProject = #{annualExpendBudgetCompile.candidateProject};
+			    candidateProject = #{annualExpendBudgetCompileHome.candidateProject};
 				if (candidateProject != null && candidateProject.length > 0) {
 					var html = '';
 					for (var i = 0; i < candidateProject.length; i++) {
 						html += '<tr>';
 						html += '	<td>' + candidateProject[i]['projectName'] + '</td>';
-						html += '	<td>' + candidateProject[i]['projectType'] + '</td>';
+						html += '	<td>支出预算</td>';
 						html += '	<td>' + candidateProject[i]['departmentName'] + '</td>';
 						html += '	<td>' + (candidateProject[i]['multilevel'] ? '是' : '否') + '</td>';
 						html += '	<td>' + candidateProject[i]['totalAmount'] + '</td>';
@@ -438,6 +438,7 @@
 			//提交前
 			function onSave() {
 			    if (jQuery('.normal-attendProject .root').length > 0) {
+			    	showLayer();
 				    var dataInfo = {};
 				    dataInfo['budgetYear'] = jQuery('#budgetYear').val();
 				    dataInfo['budgetProject'] = null;
@@ -490,6 +491,7 @@
 					    recentValue = dataIndex;
 					});
 					if (!verifyResult) {
+						hideLayer();
 						return false;
 					}
 					dataInfo['budgetProject'] = nexus;
@@ -501,6 +503,7 @@
 			}
 
 			function saveCompleted(data) {
+				hideLayer();
 				if (data != null && 'INVOKE_SUCCESS' == data.invoke_result) {
 				    ___dynamic_function = function() {
 				    	window.location.href = '../budget/AnnualExpendBudgetCompile.seam';

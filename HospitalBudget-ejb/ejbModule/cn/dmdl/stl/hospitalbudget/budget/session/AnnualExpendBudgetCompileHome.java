@@ -22,8 +22,8 @@ import cn.dmdl.stl.hospitalbudget.budget.entity.TaskUser;
 import cn.dmdl.stl.hospitalbudget.common.session.CriterionEntityHome;
 import cn.dmdl.stl.hospitalbudget.util.Assit;
 
-@Name("annualExpendBudgetCompile")
-public class AnnualExpendBudgetCompile extends CriterionEntityHome<Object> {
+@Name("annualExpendBudgetCompileHome")
+public class AnnualExpendBudgetCompileHome extends CriterionEntityHome<Object> {
 	private static final long serialVersionUID = 1L;
 	private String saveArgs;
 	private JSONObject saveResult;
@@ -46,41 +46,33 @@ public class AnnualExpendBudgetCompile extends CriterionEntityHome<Object> {
 				boolean taskOrderFlag = false;
 				TaskOrder taskOrder = null;
 				for (Object key : budgetProject.keySet()) {
-					if (!taskOrderFlag) {
+					if (!taskOrderFlag) {// 写入订单信息
 						UserInfo userInfo = getEntityManager().find(UserInfo.class, sessionToken.getUserInfoId());
-						// 添加订单任务表
 						taskOrder = new TaskOrder();
-						taskOrder.setTaskName(userInfo.getYsDepartmentInfo().getTheValue() + "科室　" + budgetYear + "年　常规预算");
+						taskOrder.setTaskName(userInfo.getYsDepartmentInfo().getTheValue() + "〔" + budgetYear + "年〕常规预算");
 						taskOrder.setDeptId(userInfo.getYsDepartmentInfo().getTheId());
 						taskOrder.setEditUserId(sessionToken.getUserInfoId());
-						taskOrder.setTaskType(2);
+						taskOrder.setTaskType(2);// 常规预算支出
 						taskOrder.setInsertTime(new Date());
 						taskOrder.setInsertUser(sessionToken.getUserInfoId());
-						taskOrder.setOrderStatus(0);
+						taskOrder.setOrderStatus(0);// 待处理
 						taskOrder.setAuditOpinion(null);
-						// 查询流程信息
-						String processInfoSql = "select process_info_id from process_info where deleted = 0 and process_type = 1 and project_process_type = 2 and dept_id = " + userInfo.getYsDepartmentInfo().getTheId();
-						List<Object> processInfoList = getEntityManager().createNativeQuery(processInfoSql).getResultList();
-						if (processInfoList != null && processInfoList.size() > 0) {
-							String processStepInfoSql = "select process_step_info_id from process_step_info where step_index = 1 and process_info_id = " + processInfoList.get(0).toString();// 忽略更多该部门的流程信息
-							List<Object> processStepInfoList = getEntityManager().createNativeQuery(processStepInfoSql).getResultList();
-							if (processStepInfoList != null && processStepInfoList.size() > 0) {
-								taskOrder.setProcessStepInfoId(Integer.parseInt(processStepInfoList.get(0).toString()));
-								// taskOrder.setOrderSn("CGYS-" + DateTimeHelper.dateToStr(new Date(), "yyyyMMddHHmmss"));
-								taskOrder.setOrderSn("CGYS-" + budgetYear);
-								getEntityManager().persist(taskOrder);
-								String orderSn = taskOrder.getOrderSn() + "-" + Assit.fillZero(taskOrder.getTaskOrderId(), (short) 9);
-								taskOrder.setOrderSn(orderSn);
-								String processStepUserSql = "select IFNULL(GROUP_CONCAT(user_id), '') as result from process_step_user where type = 0 and process_step_info_id = " + processStepInfoList.get(0).toString();// 只取第一步处理人
-								List<Object> processStepUserList = getEntityManager().createNativeQuery(processStepUserSql).getResultList();
-								if (processStepInfoList != null && processStepInfoList.size() > 0) {
-									String[] processStepUserArr = processStepUserList.get(0).toString().split(",");
-									for (String processStepUser : processStepUserArr) {
-										// 应该为待办表
+						List<Object> processInfoList = getEntityManager().createNativeQuery("select process_info_id from process_info where deleted = 0 and process_type = 1 and project_process_type = 1 and dept_id = " + userInfo.getYsDepartmentInfo().getTheId()).getResultList();// 获取当前登录人所属部门的常规项目流程的常规收入预算流程
+						if (processInfoList != null && processInfoList.size() > 0) {// 有流程信息
+							List<Object> processStepInfoList = getEntityManager().createNativeQuery("select process_step_info_id from process_step_info where step_index = 1 and process_info_id = " + processInfoList.get(0).toString()).getResultList();// 获取流程配置中的第一步
+							if (processStepInfoList != null && processStepInfoList.size() > 0) {// 有步骤配置
+								int processStepInfoId = Integer.parseInt(processStepInfoList.get(0).toString());
+								taskOrder.setProcessStepInfoId(processStepInfoId);
+								taskOrder.setOrderSn("");// 准备持久化（必填字段）
+								getEntityManager().persist(taskOrder);// 执行持久化
+								taskOrder.setOrderSn("CGYS-" + budgetYear + "-" + Assit.fillZero(taskOrder.getTaskOrderId(), (short) 9));// 生成订单号
+								List<Object> processStepUserList = getEntityManager().createNativeQuery("select user_id from process_step_user where type = 0 and process_step_info_id = " + processStepInfoId).getResultList();// 获取流程配置中的第一步的处理人
+								if (processStepInfoList != null && processStepInfoList.size() > 0) {// 步骤配置中有用户
+									for (Object processStepUser : processStepUserList) {
 										TaskUser taskUser = new TaskUser();
 										taskUser.setTaskOrderId(taskOrder.getTaskOrderId());
-										taskUser.setUserId(Integer.parseInt(processStepUser));
-										taskUser.setHandleFlg(false);
+										taskUser.setUserId((Integer) processStepUser);
+										taskUser.setHandleFlg(false);// 未处理
 										getEntityManager().persist(taskUser);
 									}
 								} else {
@@ -100,6 +92,7 @@ public class AnnualExpendBudgetCompile extends CriterionEntityHome<Object> {
 						}
 						taskOrderFlag = true;
 					}
+					// 写入项目数据
 					JSONObject root = budgetProject.getJSONObject(key.toString());
 					NormalExpendBudgetOrderInfo nboRoot = new NormalExpendBudgetOrderInfo();
 					nboRoot.setTaskOrderId(taskOrder.getTaskOrderId());
@@ -168,7 +161,7 @@ public class AnnualExpendBudgetCompile extends CriterionEntityHome<Object> {
 	@SuppressWarnings("unchecked")
 	public JSONArray getCandidateProject() {
 		JSONArray resultSet = new JSONArray();
-		String dataSql = "select the_id, the_type, the_state, the_value, multilevel, total_amount, department_info_id from ys_convention_project where deleted = 0 and the_type = 2";
+		String dataSql = "select the_id, the_type, the_state, the_value, multilevel, total_amount, department_info_id from ys_convention_project where deleted = 0 and the_type = 2";// 支出预算
 		if (sessionToken.getDepartmentInfoId() != null) {
 			dataSql += " and department_info_id = " + sessionToken.getDepartmentInfoId();
 		}
@@ -209,7 +202,6 @@ public class AnnualExpendBudgetCompile extends CriterionEntityHome<Object> {
 				}
 			}
 		}
-
 		if (dataList != null && dataList.size() > 0) {
 			List<Object[]> departmentList = getEntityManager().createNativeQuery("select the_id, the_value from ys_department_info where deleted = 0").getResultList();
 			Map<Object, Object> departmentMap = new HashMap<Object, Object>();
@@ -222,12 +214,11 @@ public class AnnualExpendBudgetCompile extends CriterionEntityHome<Object> {
 				JSONObject row = new JSONObject();
 				row.accumulate("projectId", data[0]);
 				row.accumulate("projectName", data[3]);
-				row.accumulate("projectType", Integer.parseInt(data[1].toString()) == 1 ? "收入预算" : "支出预算");
 				row.accumulate("departmentName", departmentMap.get(data[6]));
 				boolean multilevel = (Boolean) data[4];
 				row.accumulate("multilevel", multilevel);
 				if (multilevel) {
-					row.accumulate("totalAmount", multilevelProjectTotalAmountMap.get(data[0]).toString());// 显示完整的数据，而不是科学记数法
+					row.accumulate("totalAmount", multilevelProjectTotalAmountMap.get(data[0]).toString());// 让BigDecimal显示完整数据，而非科学记数法
 					row.accumulate("subItemArr", subItemArrMap.get(data[0]));
 				} else {
 					row.accumulate("totalAmount", data[5]);

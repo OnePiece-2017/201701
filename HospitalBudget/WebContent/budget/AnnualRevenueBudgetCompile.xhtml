@@ -66,7 +66,7 @@
 											</td>
 											<td valign="middle">
 												<select id="budgetYear" class="selectpicker">
-													<a:repeat value="#{annualRevenueBudgetCompile.budgetYearList}" var="_var">
+													<a:repeat value="#{annualRevenueBudgetCompileHome.budgetYearList}" var="_var">
 														<option value="#{_var[0]}">#{_var[1]}</option>
 													</a:repeat>
 												</select>
@@ -137,8 +137,8 @@
 		</h:form>
 		<a:form>
 			<a:queue requestDelay="100" ignoreDupResponses="true" />
-			<a:jsFunction name="doSave" action="#{annualRevenueBudgetCompile.saveAction}" data="#{annualRevenueBudgetCompile.saveResult}" oncomplete="saveCompleted(data);">
-				<a:actionparam name="saveArgs" assignTo="#{annualRevenueBudgetCompile.saveArgs}" />
+			<a:jsFunction name="doSave" action="#{annualRevenueBudgetCompileHome.saveAction}" data="#{annualRevenueBudgetCompileHome.saveResult}" oncomplete="saveCompleted(data);">
+				<a:actionparam name="saveArgs" assignTo="#{annualRevenueBudgetCompileHome.saveArgs}" />
 			</a:jsFunction>
 		</a:form>
 		<script type="text/javascript" src="#{request.contextPath}/javascript/template_list.js" charset="UTF-8" />
@@ -151,7 +151,7 @@
 		//<![CDATA[
 			var candidateProject = null;// 候选项目列表
 			jQuery(document).ready(function() {
-			    var message = '#{annualRevenueBudgetCompile.message}';
+			    var message = '#{annualRevenueBudgetCompileHome.message}';
 			    if (message != null && message != '') {
 					___msg('温馨提示', message);
 			    }
@@ -160,13 +160,13 @@
 			    
 			    jQuery('.normal-candidateProject .record').prepend(jQuery('.freeze-candidateProject tbody').html());
 			    jQuery('.normal-candidateProject .record tr:first').find('th').html('').css('height', 0);
-			    candidateProject = #{annualRevenueBudgetCompile.candidateProject};
+			    candidateProject = #{annualRevenueBudgetCompileHome.candidateProject};
 				if (candidateProject != null && candidateProject.length > 0) {
 					var html = '';
 					for (var i = 0; i < candidateProject.length; i++) {
 						html += '<tr>';
 						html += '	<td>' + candidateProject[i]['projectName'] + '</td>';
-						html += '	<td>' + candidateProject[i]['projectType'] + '</td>';
+						html += '	<td>收入预算</td>';
 						html += '	<td>' + candidateProject[i]['departmentName'] + '</td>';
 						html += '	<td>' + (candidateProject[i]['multilevel'] ? '是' : '否') + '</td>';
 						html += '	<td>' + candidateProject[i]['totalAmount'] + '</td>';
