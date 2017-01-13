@@ -60,11 +60,19 @@
 			        		<h:outputText value="#{commonFinder.gainOrderStatusName(_result[6])}" />
 			        	</td>
 			        	<td>
-			        		<s:link title="办理" view="/budget/TransactRevenue.xhtml" style="text-decoration: none;" rendered="#{_result[6] == 0}">
+			        		<s:link title="办理" view="/budget/TransactRevenue.xhtml" style="text-decoration: none;" rendered="#{_result[5] == 1 and _result[6] == 0}">
 			        			<f:param name="taskOrderId" value="#{_result[0]}" />
 			        			<img src="../images/icon_law_16x16.png" />
 			        		</s:link>
-			        		<s:link title="修正" view="/budget/ReviseRevenue.xhtml" style="text-decoration: none;" rendered="#{_result[6] == 3}">
+			        		<s:link title="办理" view="/budget/TransactExpend.xhtml" style="text-decoration: none;" rendered="#{_result[5] == 2 and _result[6] == 0}">
+			        			<f:param name="taskOrderId" value="#{_result[0]}" />
+			        			<img src="../images/icon_law_16x16.png" />
+			        		</s:link>
+			        		<s:link title="修正" view="/budget/ReviseRevenue.xhtml" style="text-decoration: none;" rendered="#{_result[5] == 1 and _result[6] == 3}">
+			        			<f:param name="taskOrderId" value="#{_result[0]}" />
+			        			<img src="../images/icon_pen_16x16.png" />
+			        		</s:link>
+			        		<s:link title="修正" view="/budget/ReviseExpend.xhtml" style="text-decoration: none;" rendered="#{_result[5] == 2 and _result[6] == 3}">
 			        			<f:param name="taskOrderId" value="#{_result[0]}" />
 			        			<img src="../images/icon_pen_16x16.png" />
 			        		</s:link>
