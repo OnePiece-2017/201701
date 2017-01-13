@@ -246,6 +246,7 @@
 			});
 
 			function sortableApply4displayOrder() {
+				showLayer();
 				var sortableArgs4displayOrder = '';
 				jQuery('#sortable4displayOrder li').each(function() {
 					sortableArgs4displayOrder += this.value + ',';
@@ -256,11 +257,13 @@
 				if (sortableArgs4displayOrder != '') {
 					sortableInvoke4displayOrder(sortableArgs4displayOrder);
 				} else {
+					hideLayer();
 					___msg('温馨提示', '未发现可排序条目！');
 				}
 			}
 
 			function sortableCompleted4displayOrder(data) {
+				hideLayer();
 				jQuery('#revealModal4displayOrder').trigger('reveal:close');
 				if (data != null && data.message != null && data.message != '') {
 				    ___dynamic_function = function() {

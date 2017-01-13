@@ -228,6 +228,7 @@
 			
 			//提交前
 			function onSave() {
+				showLayer();
 			    var dataInfo = {};
 				dataInfo['transactResult'] = jQuery('input[name="transactResult_radio"]:checked').val();
 				dataInfo['transactOpinion'] = jQuery('#transactOpinion').val();
@@ -235,6 +236,7 @@
 			}
 
 			function saveCompleted(data) {
+				hideLayer();
 				if (data != null && 'INVOKE_SUCCESS' == data.invoke_result) {
 				    ___dynamic_function = function() {
 				    	window.location.href = '../budget/TaskUntreatedList.seam';

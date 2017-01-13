@@ -438,6 +438,7 @@
 			//提交前
 			function onSave() {
 			    if (jQuery('.normal-attendProject .root').length > 0) {
+			    	showLayer();
 				    var dataInfo = {};
 				    dataInfo['budgetYear'] = jQuery('#budgetYear').val();
 				    dataInfo['budgetProject'] = null;
@@ -490,6 +491,7 @@
 					    recentValue = dataIndex;
 					});
 					if (!verifyResult) {
+						hideLayer();
 						return false;
 					}
 					dataInfo['budgetProject'] = nexus;
@@ -501,6 +503,7 @@
 			}
 
 			function saveCompleted(data) {
+				hideLayer();
 				if (data != null && 'INVOKE_SUCCESS' == data.invoke_result) {
 				    ___dynamic_function = function() {
 				    	window.location.href = '../budget/AnnualRevenueBudgetCompile.seam';
