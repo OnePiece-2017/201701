@@ -234,6 +234,7 @@
 					sortableArgs4displayOrder = sortableArgs4displayOrder.substring(0, sortableArgs4displayOrder.length - 1);
 				}
 				if (sortableArgs4displayOrder != '') {
+					showLayer();
 					sortableInvoke4displayOrder(sortableArgs4displayOrder);
 				} else {
 					___msg('温馨提示', '未发现可排序条目！');
@@ -241,6 +242,7 @@
 			}
 
 			function sortableCompleted4displayOrder(data) {
+				hideLayer();
 				jQuery('#revealModal4displayOrder').trigger('reveal:close');
 				if (data != null && data.message != null && data.message != '') {
 				    ___dynamic_function = function() {
