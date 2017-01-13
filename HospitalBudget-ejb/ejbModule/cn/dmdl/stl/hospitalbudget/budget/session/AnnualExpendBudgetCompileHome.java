@@ -57,7 +57,7 @@ public class AnnualExpendBudgetCompileHome extends CriterionEntityHome<Object> {
 						taskOrder.setInsertUser(sessionToken.getUserInfoId());
 						taskOrder.setOrderStatus(0);// 待处理
 						taskOrder.setAuditOpinion(null);
-						List<Object> processInfoList = getEntityManager().createNativeQuery("select process_info_id from process_info where deleted = 0 and process_type = 1 and project_process_type = 1 and dept_id = " + userInfo.getYsDepartmentInfo().getTheId()).getResultList();// 获取当前登录人所属部门的常规项目流程的常规收入预算流程
+						List<Object> processInfoList = getEntityManager().createNativeQuery("select process_info_id from process_info where deleted = 0 and process_type = 1 and project_process_type = 2 and dept_id = " + userInfo.getYsDepartmentInfo().getTheId()).getResultList();// 获取当前登录人所属部门的常规项目流程的常规支出预算流程
 						if (processInfoList != null && processInfoList.size() > 0) {// 有流程信息
 							List<Object> processStepInfoList = getEntityManager().createNativeQuery("select process_step_info_id from process_step_info where step_index = 1 and process_info_id = " + processInfoList.get(0).toString()).getResultList();// 获取流程配置中的第一步
 							if (processStepInfoList != null && processStepInfoList.size() > 0) {// 有步骤配置

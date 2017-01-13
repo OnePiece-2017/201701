@@ -64,23 +64,20 @@ public class ReviseExpendHome extends CriterionEntityHome<Object> {
 				for (Object key : budgetProject.keySet()) {
 					if (!taskOrderFlag) {
 						UserInfo userInfo = getEntityManager().find(UserInfo.class, sessionToken.getUserInfoId());
-						String processInfoSql = "select process_info_id from process_info where deleted = 0 and process_type = 1 and project_process_type = 1 and dept_id = " + userInfo.getYsDepartmentInfo().getTheId();
-						List<Object> processInfoList = getEntityManager().createNativeQuery(processInfoSql).getResultList();
+						List<Object> processInfoList = getEntityManager().createNativeQuery("select process_info_id from process_info where deleted = 0 and process_type = 1 and project_process_type = 2 and dept_id = " + userInfo.getYsDepartmentInfo().getTheId()).getResultList();// 获取当前登录人所属部门的常规项目流程的常规支出预算流程
 						if (processInfoList != null && processInfoList.size() > 0) {
-							String processStepInfoSql = "select process_step_info_id from process_step_info where step_index = 1 and process_info_id = " + processInfoList.get(0).toString();// 忽略更多该部门的流程信息
-							List<Object> processStepInfoList = getEntityManager().createNativeQuery(processStepInfoSql).getResultList();
+							List<Object> processStepInfoList = getEntityManager().createNativeQuery("select process_step_info_id from process_step_info where step_index = 1 and process_info_id = " + processInfoList.get(0).toString()).getResultList();// 获取流程配置中的第一步
 							if (processStepInfoList != null && processStepInfoList.size() > 0) {
-								newTaskOrder.setProcessStepInfoId(Integer.parseInt(processStepInfoList.get(0).toString()));
+								int processStepInfoId = Integer.parseInt(processStepInfoList.get(0).toString());
+								newTaskOrder.setProcessStepInfoId(processStepInfoId);
 								getEntityManager().persist(newTaskOrder);// 提前缓存对象
-								String processStepUserSql = "select IFNULL(GROUP_CONCAT(user_id), '') as result from process_step_user where type = 0 and process_step_info_id = " + processStepInfoList.get(0).toString();// 只取第一步处理人
-								List<Object> processStepUserList = getEntityManager().createNativeQuery(processStepUserSql).getResultList();
-								if (processStepInfoList != null && processStepInfoList.size() > 0) {
-									String[] processStepUserArr = processStepUserList.get(0).toString().split(",");
-									for (String processStepUser : processStepUserArr) {
+								List<Object> processStepUserList = getEntityManager().createNativeQuery("select user_id from process_step_user where type = 0 and process_step_info_id = " + processStepInfoId).getResultList();// 获取流程配置中的第一步的处理人
+								if (processStepInfoList != null && processStepInfoList.size() > 0) {// 步骤配置中有用户
+									for (Object processStepUser : processStepUserList) {
 										TaskUser taskUser = new TaskUser();
 										taskUser.setTaskOrderId(newTaskOrder.getTaskOrderId());
-										taskUser.setUserId(Integer.parseInt(processStepUser));
-										taskUser.setHandleFlg(false);
+										taskUser.setUserId((Integer) processStepUser);
+										taskUser.setHandleFlg(false);// 未处理
 										getEntityManager().persist(taskUser);
 									}
 								} else {
@@ -160,22 +157,23 @@ public class ReviseExpendHome extends CriterionEntityHome<Object> {
 		TaskOrder taskOrder = getEntityManager().find(TaskOrder.class, taskOrderId);
 		StringBuffer dataSql = new StringBuffer();
 		dataSql.append(" select");
-		dataSql.append(" normal_budget_order_info.task_order_id,");
-		dataSql.append(" normal_budget_order_info.`year`,");
+		dataSql.append(" normal_expend_budget_order_info.task_order_id,");
+		dataSql.append(" normal_expend_budget_order_info.`year`,");
 		dataSql.append(" ys_convention_project.multilevel,");
-		dataSql.append(" normal_budget_order_info.normal_project_id,");
-		dataSql.append(" normal_budget_order_info.sub_project_id,");
+		dataSql.append(" normal_expend_budget_order_info.normal_project_id,");
+		dataSql.append(" normal_expend_budget_order_info.sub_project_id,");
 		dataSql.append(" ys_convention_project.the_value as main_project_name,");
 		dataSql.append(" ys_convention_project_extend.the_value as sub_project_name,");
-		dataSql.append(" normal_budget_order_info.project_amount,");
-		dataSql.append(" normal_budget_order_info.formula,");
-		dataSql.append(" normal_budget_order_info.remark");
-		dataSql.append(" from normal_budget_order_info");
-		dataSql.append(" left join ys_convention_project on ys_convention_project.the_id = normal_budget_order_info.normal_project_id");
-		dataSql.append(" left join ys_convention_project_extend on ys_convention_project_extend.the_id = normal_budget_order_info.sub_project_id");
-		dataSql.append(" where normal_budget_order_info.is_new = 1 and normal_budget_order_info.task_order_id = ").append(taskOrder.getTaskOrderId());
+		dataSql.append(" normal_expend_budget_order_info.project_amount,");
+		dataSql.append(" normal_expend_budget_order_info.formula,");
+		dataSql.append(" normal_expend_budget_order_info.remark");
+		dataSql.append(" from normal_expend_budget_order_info");
+		dataSql.append(" left join ys_convention_project on ys_convention_project.the_id = normal_expend_budget_order_info.normal_project_id");
+		dataSql.append(" left join ys_convention_project_extend on ys_convention_project_extend.the_id = normal_expend_budget_order_info.sub_project_id");
+		dataSql.append(" where normal_expend_budget_order_info.is_new = 1 and normal_expend_budget_order_info.task_order_id = ").append(taskOrder.getTaskOrderId());
 		dataSql.insert(0, "select * from (").append(") as recordset");// 解决找不到列
 		List<Object[]> dataList = getEntityManager().createNativeQuery(dataSql.toString()).getResultList();
+		System.out.println(dataSql.toString());
 		if (dataList != null && dataList.size() > 0) {
 			for (Object[] data : dataList) {
 				JSONObject row = new JSONObject();
@@ -191,6 +189,7 @@ public class ReviseExpendHome extends CriterionEntityHome<Object> {
 				resultSet.add(row);
 			}
 		}
+		System.out.println(resultSet);
 		return resultSet;
 	}
 

@@ -90,7 +90,7 @@ public class TransactExpendHome extends CriterionEntityHome<Object> {
 						NormalBudgetCollectionInfo normalBudgetCollectionInfo = new NormalBudgetCollectionInfo();
 						normalBudgetCollectionInfo.setOrderSn(oldTaskOrder.getOrderSn());
 						normalBudgetCollectionInfo.setDeptId(oldTaskOrder.getDeptId());
-						List<Object[]> summaryList = getEntityManager().createNativeQuery("select `year`, sum(project_amount) as budget_amount from normal_budget_order_info where is_new = 1 and sub_project_id is null and task_order_id = " + oldTaskOrder.getTaskOrderId()).getResultList();
+						List<Object[]> summaryList = getEntityManager().createNativeQuery("select `year`, sum(project_amount) as budget_amount from normal_expend_budget_order_info where is_new = 1 and sub_project_id is null and task_order_id = " + oldTaskOrder.getTaskOrderId()).getResultList();
 						if (summaryList != null && summaryList.size() > 0) {
 							Object[] summary = summaryList.get(0);
 							normalBudgetCollectionInfo.setYear(summary[0].toString());
@@ -132,20 +132,20 @@ public class TransactExpendHome extends CriterionEntityHome<Object> {
 		TaskOrder taskOrder = getEntityManager().find(TaskOrder.class, taskOrderId);
 		StringBuffer dataSql = new StringBuffer();
 		dataSql.append(" select");
-		dataSql.append(" normal_budget_order_info.task_order_id,");
-		dataSql.append(" normal_budget_order_info.`year`,");
+		dataSql.append(" normal_expend_budget_order_info.task_order_id,");
+		dataSql.append(" normal_expend_budget_order_info.`year`,");
 		dataSql.append(" ys_convention_project.multilevel,");
-		dataSql.append(" normal_budget_order_info.normal_project_id,");
-		dataSql.append(" normal_budget_order_info.sub_project_id,");
+		dataSql.append(" normal_expend_budget_order_info.normal_project_id,");
+		dataSql.append(" normal_expend_budget_order_info.sub_project_id,");
 		dataSql.append(" ys_convention_project.the_value as main_project_name,");
 		dataSql.append(" ys_convention_project_extend.the_value as sub_project_name,");
-		dataSql.append(" normal_budget_order_info.project_amount,");
-		dataSql.append(" normal_budget_order_info.formula,");
-		dataSql.append(" normal_budget_order_info.remark");
-		dataSql.append(" from normal_budget_order_info");
-		dataSql.append(" left join ys_convention_project on ys_convention_project.the_id = normal_budget_order_info.normal_project_id");
-		dataSql.append(" left join ys_convention_project_extend on ys_convention_project_extend.the_id = normal_budget_order_info.sub_project_id");
-		dataSql.append(" where normal_budget_order_info.is_new = 1 and normal_budget_order_info.task_order_id = ").append(taskOrder.getTaskOrderId());
+		dataSql.append(" normal_expend_budget_order_info.project_amount,");
+		dataSql.append(" normal_expend_budget_order_info.formula,");
+		dataSql.append(" normal_expend_budget_order_info.remark");
+		dataSql.append(" from normal_expend_budget_order_info");
+		dataSql.append(" left join ys_convention_project on ys_convention_project.the_id = normal_expend_budget_order_info.normal_project_id");
+		dataSql.append(" left join ys_convention_project_extend on ys_convention_project_extend.the_id = normal_expend_budget_order_info.sub_project_id");
+		dataSql.append(" where normal_expend_budget_order_info.is_new = 1 and normal_expend_budget_order_info.task_order_id = ").append(taskOrder.getTaskOrderId());
 		dataSql.insert(0, "select * from (").append(") as recordset");// 解决找不到列
 		List<Object[]> dataList = getEntityManager().createNativeQuery(dataSql.toString()).getResultList();
 		if (dataList != null && dataList.size() > 0) {
