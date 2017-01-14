@@ -2,6 +2,7 @@ package cn.dmdl.stl.hospitalbudget.budget.session;
 
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -11,6 +12,9 @@ import net.sf.json.JSONObject;
 
 import org.jboss.seam.annotations.Name;
 
+import cn.dmdl.stl.hospitalbudget.budget.entity.NormalBudgetCollectionInfo;
+import cn.dmdl.stl.hospitalbudget.budget.entity.NormalBudgetIncomeInfo;
+import cn.dmdl.stl.hospitalbudget.budget.entity.NormalBudgetOrderInfo;
 import cn.dmdl.stl.hospitalbudget.common.session.CriterionEntityHome;
 
 @Name("budgetSummaryHome")
@@ -20,6 +24,7 @@ public class BudgetSummaryHome extends CriterionEntityHome<Object> {
 	private String saveArgs;
 	private JSONObject saveResult;
 
+	@SuppressWarnings("unchecked")
 	public void saveAction() {
 		if (saveResult != null) {
 			saveResult.clear();
@@ -29,9 +34,42 @@ public class BudgetSummaryHome extends CriterionEntityHome<Object> {
 		saveResult.accumulate("invoke_result", "INVOKE_SUCCESS");
 		saveResult.accumulate("message", "提交成功！");
 		if (saveArgs != null && !"".equals(saveArgs)) {
-			try {
+			try {// TODO: 代码需优化
+				joinTransaction();
 				JSONObject dataInfo = JSONObject.fromObject(saveArgs);
-				System.out.println(dataInfo);
+				JSONArray submitArr = dataInfo.getJSONArray("submit");
+				String submitIds = submitArr.toString().substring(1, submitArr.toString().length() - 1);
+				if (submitIds != null && !"".equals(submitIds)) {
+					List<NormalBudgetCollectionInfo> normalBudgetCollectionInfoList = getEntityManager().createQuery("select normalBudgetCollectionInfo from NormalBudgetCollectionInfo normalBudgetCollectionInfo where normalBudgetCollectionId in (" + submitIds + ")").getResultList();
+					if (normalBudgetCollectionInfoList != null && normalBudgetCollectionInfoList.size() > 0) {
+						for (NormalBudgetCollectionInfo normalBudgetCollectionInfo : normalBudgetCollectionInfoList) {
+							if (normalBudgetCollectionInfo.getAmountType() == 1) {// 收入预算
+								System.out.println("*************************");
+								System.out.println(normalBudgetCollectionInfo.getNormalBudgetCollectionId());
+								normalBudgetCollectionInfo.setSubmitFlag(true);
+								getEntityManager().merge(normalBudgetCollectionInfo);
+								List<NormalBudgetOrderInfo> normalBudgetOrderInfoList = getEntityManager().createQuery("select normalBudgetOrderInfo from NormalBudgetOrderInfo normalBudgetOrderInfo where isNew = 1 and orderSn = '" + normalBudgetCollectionInfo.getOrderSn() + "'").getResultList();
+								if (normalBudgetOrderInfoList != null && normalBudgetOrderInfoList.size() > 0) {
+									for (NormalBudgetOrderInfo normalBudgetOrderInfo : normalBudgetOrderInfoList) {
+										System.out.println(normalBudgetOrderInfo.getNormalBudgetOrderId());
+										NormalBudgetIncomeInfo normalBudgetIncomeInfo = new NormalBudgetIncomeInfo();
+										normalBudgetIncomeInfo.setDeptId(normalBudgetCollectionInfo.getDeptId());
+										normalBudgetIncomeInfo.setYear(normalBudgetOrderInfo.getYear());
+										normalBudgetIncomeInfo.setNormalProjectId(normalBudgetOrderInfo.getNormalProjectId());
+										normalBudgetIncomeInfo.setSubProjectId(normalBudgetOrderInfo.getSubProjectId());
+										normalBudgetIncomeInfo.setProjectSource(normalBudgetOrderInfo.getProjectSource());
+										normalBudgetIncomeInfo.setBudgetAmount(normalBudgetOrderInfo.getProjectAmount());
+										normalBudgetIncomeInfo.setInsertTime(new Date());
+										normalBudgetIncomeInfo.setInsertUser(sessionToken.getUserInfoId());
+										normalBudgetIncomeInfo.setConfirmFlag(0);
+										getEntityManager().persist(normalBudgetIncomeInfo);
+									}
+								}
+							}
+						}
+					}
+				}
+				getEntityManager().flush();
 			} catch (Exception e) {
 				saveResult.element("invoke_result", "INVOKE_FAILURE");
 				saveResult.element("message", "操作失败！" + e.getMessage());
