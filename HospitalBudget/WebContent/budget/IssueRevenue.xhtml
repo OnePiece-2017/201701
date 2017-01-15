@@ -119,10 +119,12 @@
 				var issueArgs = {};
 				issueArgs['type'] = type;
 				issueArgs['primaryKey'] = primaryKey;
+				showLayer();
 				doIssue(JSON.stringify(issueArgs));
 			}
 
 			function issueCompleted(data) {
+				hideLayer();
 				if (data != null && 'INVOKE_SUCCESS' == data.invoke_result) {
 					var confirmFlag = jQuery('.normal-attendProject tr[primary-key="' + data.callback.primaryKey + '"] .confirm-flag');
 					if (data.callback.confirmFlag == 1) {
