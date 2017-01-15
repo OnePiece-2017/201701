@@ -31,8 +31,7 @@ public class ExpendExecutHome extends CriterionEntityHome<Object> {
 	private Object[] expendApplyInfo;
 	private String setpName;//步骤名称
 	
-	@In(create = true)
-	CommonFinder commonFinder;
+	
 	/**
 	 * 初始化
 	 * @param oldTaskOrderId
@@ -144,6 +143,7 @@ public class ExpendExecutHome extends CriterionEntityHome<Object> {
 
 	@SuppressWarnings("unchecked")
 	public List<Object[]> getAttendProject() {
+		CommonFinder commonFinder = new CommonFinder();
 		SimpleDateFormat sdfday = new SimpleDateFormat("yyyy-MM-dd");
 		SimpleDateFormat sdfs = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 		JSONArray resultSet = new JSONArray();

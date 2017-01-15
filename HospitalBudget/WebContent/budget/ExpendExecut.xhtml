@@ -126,7 +126,7 @@
 												<span class="field-name mb10">办理结果</span>
 											</td>
 											<td valign="top">
-												<input type="radio" class="icheck" name="transactResult_radio" value="1" id="transactResult_radio__yes" />
+												<input type="radio" class="icheck" name="transactResult_radio" value="1"  checked="checked"  id="transactResult_radio__yes" />
 												<label for="transactResult_radio__yes"><span>#{expendExecutHome.setpName}通过</span></label>
 												<input type="radio" class="icheck" name="transactResult_radio" value="2" id="transactResult_radio__no" />
 												<label for="transactResult_radio__no"><span>#{expendExecutHome.setpName}不通过</span></label>
@@ -197,6 +197,7 @@
 			function onSave() {
 				showLayer();
 				var result = jQuery('input[name="transactResult_radio"]:checked').val();
+				
 				var handSay = jQuery('#transactOpinion').val();
 				doSave(result,handSay);
 			}
