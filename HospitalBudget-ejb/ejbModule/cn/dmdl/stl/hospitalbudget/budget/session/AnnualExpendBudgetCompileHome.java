@@ -101,7 +101,6 @@ public class AnnualExpendBudgetCompileHome extends CriterionEntityHome<Object> {
 					nboRoot.setNormalProjectId(root.getInt("projectId"));
 					nboRoot.setProjectSource(0);
 					nboRoot.setProjectAmount(JSONNull.getInstance().equals(root.getString("projectAmount")) ? 0 : Double.parseDouble(root.getString("projectAmount")));
-					nboRoot.setNowAmount(JSONNull.getInstance().equals(root.getString("projectAmount")) ? 0 : Double.parseDouble(root.getString("projectAmount")));
 					nboRoot.setFormula(JSONNull.getInstance().equals(root.getString("formula")) ? "" : root.getString("formula"));
 					nboRoot.setRemark(JSONNull.getInstance().equals(root.getString("remark")) ? "" : root.getString("remark"));
 					nboRoot.setWithLastYearNum(null);
@@ -124,6 +123,7 @@ public class AnnualExpendBudgetCompileHome extends CriterionEntityHome<Object> {
 							nboLeaf.setProjectSource(0);
 							double projectAmount = JSONNull.getInstance().equals(leaf.getString("projectAmount")) ? 0 : Double.parseDouble(leaf.getString("projectAmount"));
 							nboLeaf.setProjectAmount(projectAmount);
+							nboLeaf.setNowAmount(projectAmount);
 							rootProjectAmount += projectAmount;
 							nboLeaf.setFormula(JSONNull.getInstance().equals(leaf.getString("formula")) ? "" : leaf.getString("formula"));
 							nboLeaf.setRemark(JSONNull.getInstance().equals(leaf.getString("remark")) ? "" : leaf.getString("remark"));
@@ -135,6 +135,7 @@ public class AnnualExpendBudgetCompileHome extends CriterionEntityHome<Object> {
 							getEntityManager().persist(nboLeaf);
 						}
 						nboRoot.setProjectAmount(Double.parseDouble(new DecimalFormat("#.##").format(rootProjectAmount)));
+						nboRoot.setNowAmount(nboRoot.getProjectAmount());
 					}
 				}
 				getEntityManager().flush();
