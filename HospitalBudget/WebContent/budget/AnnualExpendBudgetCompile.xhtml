@@ -155,7 +155,8 @@
 			    if (message != null && message != '') {
 					___msg('温馨提示', message);
 			    }
-				
+
+			    jQuery('#budgetYear').val(new Date().getFullYear());
 			    jQuery('.selectpicker').selectpicker();
 			    
 			    jQuery('.normal-candidateProject .record').prepend(jQuery('.freeze-candidateProject tbody').html());
