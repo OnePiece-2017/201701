@@ -1,0 +1,215 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:s="http://jboss.com/products/seam/taglib"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:a="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich"
+	template="/layout/template_view.xhtml">
+
+	<ui:define name="head">
+		<link rel="stylesheet" type="text/css" href="#{request.contextPath}/stylesheet/template_list.css" />
+		<link rel="stylesheet" type="text/css" href="#{request.contextPath}/common/css/bootstrap.min.css" />
+		<link rel="stylesheet" type="text/css" href="#{request.contextPath}/icheck/skins/square/blue.css" />
+		<link rel="stylesheet" type="text/css" href="#{request.contextPath}/toastr/toastr.min.css" />
+		<style type="text/css">
+			.row-input {
+				width: 100%;
+				height: 100%;
+				text-align: center;
+				position: relative;
+			}
+			
+			.row-text-simplify {
+				position: absolute;
+				top: 2px;
+				text-align: center;
+			}
+			
+			.normal-attendProject .root {
+				background: #add595;
+			}
+			
+			.node-totalAmount {
+				font-weight: bold;
+			}
+		</style>
+	</ui:define>
+
+	<ui:define name="body">
+	#{expendExecutHome.wire()}
+		<h:form id="mainForm" styleClass="edit" enctype="multipart/form-data">
+		<div class="pd0-10">
+			<strong style="font-size: 20px;">支出预算执行</strong>
+			<table class="mt20 table-grid" width="100%" cellpadding="0" cellspacing="0">
+				<tr class="odd">
+					<td class="field-name" width="20%">单据编号</td>
+					<td class="field-value" width="30%">#{expendExecutHome.expendApplyInfo[0]}</td>
+					<td class="field-name" width="20%">预算年份</td>
+					<td class="field-value" width="30%">#{expendExecutHome.expendApplyInfo[1]}</td>
+				</tr>
+				<tr class="even">
+					<td class="field-name" width="20%">报销部门</td>
+					<td class="field-value" width="30%">#{expendExecutHome.expendApplyInfo[2]}</td>
+					<td class="field-name" width="20%">资金来源</td>
+					<td class="field-value" width="30%">#{expendExecutHome.expendApplyInfo[4]}</td>
+				</tr>
+				<tr class="odd">
+					<td class="field-name" width="20%">报销人</td>
+					<td class="field-value" width="30%">#{expendExecutHome.expendApplyInfo[3]}</td>
+					<td class="field-name" width="20%">发票号</td>
+					<td class="field-value" width="30%">#{expendExecutHome.expendApplyInfo[6]}</td>
+				</tr>
+				<tr class="even">
+					<td class="field-name" width="20%">提交人</td>
+					<td class="field-value" width="30%">#{expendExecutHome.expendApplyInfo[14]}</td>
+					<td class="field-name" width="20%">提交日期</td>
+					<td class="field-value" width="30%">#{expendExecutHome.expendApplyInfo[13]}</td>
+				</tr>
+				<tr class="odd">
+					<td class="field-name" width="20%">收款单位</td>
+					<td class="field-value" width="30%">#{expendExecutHome.expendApplyInfo[5]}</td>
+					<td class="field-name" width="20%"></td>
+					<td class="field-value" width="30%"></td>
+				</tr>
+			</table>
+			<br />
+			<br />
+		</div>
+			<div class="pd0-10 pt30">
+				<div class="g-data-list-table freeze-attendProject" style="height: 44px;">
+				    <table class="record" width="100%" cellpadding="0" cellspacing="0">
+				        <tr>
+				            <th width="5%">序号</th>
+				            <th width="15%">项目名称</th>
+				            <th width="10%">年预算金额</th>
+				            <th width="10%">已支出金额</th>
+				            <th width="10%">可支出金额</th>
+				            <th width="10%">本次支出金额</th>
+				            <th width="10%">支出日期</th>
+				            <th width="15%">备注</th>
+				            <th width="10%">附件</th>
+				        </tr>
+				        <tr class="root" style="font-size: 14px;font-weight: normal;">
+				        	<td width="5%">1</td>
+				            <td width="15%">#{expendExecutHome.expendApplyInfo[7] eq null ? expendExecutHome.expendApplyInfo[8] : expendExecutHome.expendApplyInfo[7]}</td>
+				            <td width="10%">#{expendExecutHome.expendApplyInfo[10]}</td>
+				            <td width="10%">#{expendExecutHome.expendApplyInfo[10] - expendExecutHome.expendApplyInfo[11]}</td>
+				            <td width="10%" >#{expendExecutHome.expendApplyInfo[11]}</td>
+				            <td width="10%">
+				            	#{expendExecutHome.expendApplyInfo[9]}
+				            </td>
+				            <td width="10%">
+				            	#{expendExecutHome.expendApplyInfo[12]}
+							</td>
+				            <td width="15%">
+				            	#{expendExecutHome.expendApplyInfo[15]}
+				            </td>
+				            <td width="10%"></td>
+				       </tr>
+				    </table>
+				</div>
+				<div class="g-data-list-table normal-attendProject" style="border-radius: 0;height:156px;">
+				    <table class="record" width="100%" cellpadding="0" cellspacing="0">
+				    </table>
+				</div>
+				<div class="pt30 fs14">
+					<table width="100%" cellpadding="0" cellspacing="0">
+						<tr>
+							<td width="50%">
+								<div class="pb20">
+									<table>
+										<tr>
+											<td valign="middle">
+												<span class="field-name mb10">办理结果</span>
+											</td>
+											<td valign="top">
+												<input type="radio" class="icheck" name="transactResult_radio" value="1" id="transactResult_radio__yes" />
+												<label for="transactResult_radio__yes"><span>#{expendExecutHome.setpName}通过</span></label>
+												<input type="radio" class="icheck" name="transactResult_radio" value="2" id="transactResult_radio__no" />
+												<label for="transactResult_radio__no"><span>#{expendExecutHome.setpName}不通过</span></label>
+											</td>
+											<td valign="middle">
+												<font color="red" style="margin-left: 3px;"></font>
+											</td>
+										</tr>
+									</table>
+								</div>
+							</td>
+						</tr>
+						<tr>
+							<td width="50%">
+								<div class="pb20">
+									<table>
+										<tr>
+											<td valign="middle">
+												<span class="field-name mb10">办理意见</span>
+											</td>
+											<td valign="middle">
+												<textarea id="transactOpinion" class="form-control mb10 fix--textarea-wh" />
+											</td>
+											<td valign="middle">
+												<font color="red" style="margin-left: 3px;"></font>
+											</td>
+										</tr>
+									</table>
+								</div>
+							</td>
+						</tr>
+					</table>
+				</div>
+				<div class="pt50 pb95">
+					<table class="normal-btn">
+						<tr>
+							<td>
+								<a class="btn btn-primary mr15" onclick="return onSave();">提交</a>
+								<s:button id="cancel" value="返回" view="/budget/TaskUntreatedList.xhtml" propagation="none" styleClass="btn btn-default" />
+							</td>
+						</tr>
+					</table>
+					<br />
+					<br />
+				</div>
+			</div>
+		</h:form>
+		<a:form>
+			<a:queue requestDelay="100" ignoreDupResponses="true" />
+			<a:jsFunction name="doSave" action="#{expendExecutHome.saveAction}" data="#{expendExecutHome.saveResult}" oncomplete="saveCompleted(data);">
+				<a:actionparam name="handResult" assignTo="#{expendExecutHome.handResult}" />
+				<a:actionparam name="handSay" assignTo="#{expendExecutHome.handSay}" />
+			</a:jsFunction>
+		</a:form>
+		<script type="text/javascript" src="#{request.contextPath}/javascript/template_list.js" charset="UTF-8" />
+		<script type="text/javascript" src="#{request.contextPath}/common/js/bootstrap.min.js" />
+		<script type="text/javascript" src="#{request.contextPath}/common/js/bootstrap-select.min.js" charset="UTF-8" />
+		<script type="text/javascript" src="#{request.contextPath}/common/js/bootstrap-select-defaults-zh_CN.min.js" charset="UTF-8" />
+		<script type="text/javascript" src="#{request.contextPath}/icheck/js/icheck.min.js" charset="UTF-8" />
+		<script type="text/javascript" src="#{request.contextPath}/toastr/toastr.min.js" />
+		<script type="text/javascript" src="#{request.contextPath}/toolkit/utils.js" charset="UTF-8" />
+		<script type="text/javascript">
+		//<![CDATA[
+			jQuery(document).ready(function() {
+			});
+			
+			//提交前
+			function onSave() {
+				showLayer();
+				var result = jQuery('input[name="transactResult_radio"]:checked').val();
+				var handSay = jQuery('#transactOpinion').val();
+				doSave(result,handSay);
+			}
+
+			function saveCompleted(data) {
+				if (data != null && 'INVOKE_SUCCESS' == data.invoke_result) {
+				    window.location.href = '../budget/TaskUntreatedList.seam';
+				} else {
+					___msg('温馨提示', data.message);
+				}
+			}
+		//]]>
+		</script>
+	</ui:define>
+
+</ui:composition>

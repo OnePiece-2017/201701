@@ -68,6 +68,10 @@
 			        			<f:param name="taskOrderId" value="#{_result[0]}" />
 			        			<img src="../images/icon_law_16x16.png" />
 			        		</s:link>
+			        		<s:link title="办理" view="/budget/ExpendExecut.xhtml" style="text-decoration: none;" rendered="#{_result[5] == 4}">
+			        			<f:param name="taskOrderId" value="#{_result[0]}" />
+			        			<img src="../images/icon_law_16x16.png" />
+			        		</s:link>
 			        		<s:link title="修正" view="/budget/ReviseRevenue.xhtml" style="text-decoration: none;" rendered="#{_result[5] == 1 and _result[6] == 3}">
 			        			<f:param name="taskOrderId" value="#{_result[0]}" />
 			        			<img src="../images/icon_pen_16x16.png" />

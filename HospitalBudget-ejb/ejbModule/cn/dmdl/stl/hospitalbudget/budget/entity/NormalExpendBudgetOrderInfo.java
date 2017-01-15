@@ -32,6 +32,7 @@ public class NormalExpendBudgetOrderInfo implements java.io.Serializable {
 	private Integer normalProjectId;
 	private Integer subProjectId;
 	private int projectSource;
+	private double nowAmount;
 	private double projectAmount;
 	private String formula;
 	private Double withLastYearNum;
@@ -187,6 +188,14 @@ public class NormalExpendBudgetOrderInfo implements java.io.Serializable {
 
 	public void setInsertUser(Integer insertUser) {
 		this.insertUser = insertUser;
+	}
+	@Column(name = "now_amout", nullable = false, precision = 22, scale = 0)
+	public double getNowAmount() {
+		return nowAmount;
+	}
+
+	public void setNowAmount(double nowAmount) {
+		this.nowAmount = nowAmount;
 	}
 
 }

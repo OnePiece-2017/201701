@@ -101,6 +101,7 @@ public class AnnualExpendBudgetCompileHome extends CriterionEntityHome<Object> {
 					nboRoot.setNormalProjectId(root.getInt("projectId"));
 					nboRoot.setProjectSource(0);
 					nboRoot.setProjectAmount(JSONNull.getInstance().equals(root.getString("projectAmount")) ? 0 : Double.parseDouble(root.getString("projectAmount")));
+					nboRoot.setNowAmount(JSONNull.getInstance().equals(root.getString("projectAmount")) ? 0 : Double.parseDouble(root.getString("projectAmount")));
 					nboRoot.setFormula(JSONNull.getInstance().equals(root.getString("formula")) ? "" : root.getString("formula"));
 					nboRoot.setRemark(JSONNull.getInstance().equals(root.getString("remark")) ? "" : root.getString("remark"));
 					nboRoot.setWithLastYearNum(null);

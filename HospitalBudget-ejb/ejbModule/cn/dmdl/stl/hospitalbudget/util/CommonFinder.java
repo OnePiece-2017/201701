@@ -95,4 +95,12 @@ public class CommonFinder implements CommonFinderLocal {
 		return result;
 	}
 
+	public String getMoneySource(int type) {
+		String result = "";
+		if(type == 1){
+			result = "自有资金";
+		}
+		return result;
+	}
+
 }

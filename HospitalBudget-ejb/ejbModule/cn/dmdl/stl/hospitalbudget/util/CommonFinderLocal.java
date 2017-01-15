@@ -17,5 +17,7 @@ public interface CommonFinderLocal {
 
 	/** 获取订单状态名称 */
 	public String gainOrderStatusName(int type);
-
+	
+	/** 获取资金来源 */
+	public String getMoneySource(int type);
 }
