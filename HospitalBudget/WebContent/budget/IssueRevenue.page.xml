@@ -4,7 +4,6 @@
 	login-required="true">
 
 	<restrict>#{s:hasRole('role_management/retrieve')}</restrict>
-	<param name="reviseRevenueFrom" />
-	<param name="taskOrderId" value="#{reviseRevenueHome.taskOrderId}" />
+	<param name="issueRevenueFrom" />
 
 </page>
