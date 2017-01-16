@@ -16,4 +16,6 @@ public interface CommonToolLocal {
 
 	public String getDictionaryValueByIds(String ids);
 
+	public Object[] genA4jRepeatValue(int length);
+
 }

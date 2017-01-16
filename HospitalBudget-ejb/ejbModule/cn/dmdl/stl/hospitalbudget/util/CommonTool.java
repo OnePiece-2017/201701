@@ -96,4 +96,9 @@ public class CommonTool implements CommonToolLocal {
 		return result;
 	}
 
+	/** generate http://richfaces.org/a4j a:repeat value */
+	public Object[] genA4jRepeatValue(int length) {
+		return new Object[length > 0 ? length : 0];
+	}
+
 }
