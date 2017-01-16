@@ -20,4 +20,9 @@ public interface CommonFinderLocal {
 	
 	/** 获取资金来源 */
 	public String getMoneySource(int type);
+	
+	/**
+	 * 处理时间 yyyy-MM-dd
+	 */
+	public String parseDate(String date);
 }

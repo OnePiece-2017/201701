@@ -1,5 +1,8 @@
 package cn.dmdl.stl.hospitalbudget.util;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+
 import javax.ejb.Remove;
 import javax.ejb.Stateful;
 import javax.persistence.EntityManager;
@@ -99,6 +102,17 @@ public class CommonFinder implements CommonFinderLocal {
 		String result = "";
 		if(type == 1){
 			result = "自有资金";
+		}
+		return result;
+	}
+
+	public String parseDate(String date) {
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+		String result = "";
+		try {
+			result = sdf.format(sdf.parse(date));
+		} catch (ParseException e) {
+			result = date;
 		}
 		return result;
 	}

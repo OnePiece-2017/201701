@@ -1,0 +1,233 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:s="http://jboss.com/products/seam/taglib"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:a="http://richfaces.org/a4j"
+	template="/layout/template_list.xhtml">
+ #{paginationModel.init(expendApplayList)}
+ #{expendApplayList.wire()}
+	<ui:define name="head">
+		<link rel="stylesheet" type="text/css" href="#{request.contextPath}/common/css/bootstrap.min.css" />
+		<link rel="stylesheet" type="text/css" href="#{request.contextPath}/common/css/bootstrap-datetimepicker.min.css" />
+		<link rel="stylesheet" type="text/css" href="#{request.contextPath}/common/css/bootstrap-select2.min.css" />
+	</ui:define>
+	<ui:define name="body">
+		<div class="g-data-list-condition">
+			<h:form id="mainForm">
+				<input type="hidden" name="page" value="1" />
+				<div>
+					<div class="fl" style="width: 200px;margin-top: 8px;margin-left: 30px;">
+						<table>
+							<tr>
+								<td valign="middle">
+									<span class="field-name mb10">科室</span>
+								</td>
+								<td valign="middle">
+									<select id="depart" class="selectpicker">
+										<option value="-1">请选择</option>
+										<a:repeat value="#{expendApplayList.departList}" var="_var">
+											<s:fragment rendered="#{expendApplayList.departId eq _var[0]}">
+												<option value="#{_var[0]}" selected="selected">#{_var[1]}</option>
+											</s:fragment>
+											<s:fragment rendered="#{expendApplayList.departId ne _var[0]}">
+												<option value="#{_var[0]}" >#{_var[1]}</option>
+											</s:fragment>
+										</a:repeat>
+									</select>
+								</td>
+							</tr>
+						</table>
+					</div>
+					<div class="fl" style="width: 240px;margin-top: 8px;margin-left: 30px;">
+					<table>
+						<tr>
+							<td valign="middle">
+								<span class="field-name mb10">资金来源</span>
+							</td>
+							<td valign="middle">
+								<select id="fundsSource" class="selectpicker">
+									<option value="-1">请选择</option>
+									<a:repeat value="#{expendApplayList.fundsSourceList}" var="_var">
+										<s:fragment rendered="#{expendApplayList.fundsSourceId eq _var[0]}">
+											<option value="#{_var[0]}" selected="selected">#{_var[1]}</option>
+										</s:fragment>
+										<s:fragment rendered="#{expendApplayList.fundsSourceId ne _var[0]}">
+											<option value="#{_var[0]}" >#{_var[1]}</option>
+										</s:fragment>
+									</a:repeat>
+								</select>
+							</td>
+						</tr>
+					</table>
+					</div>
+					<div class="fl" style="width: 240px;margin-top: 8px;margin-left: 30px;">
+					<table>
+						<tr>
+							<td valign="middle">
+								<span class="field-name mb10">项目名称</span>
+							</td>
+							<td valign="middle">
+								<select id="project" class="selectpicker">
+									<option value="-1">请选择</option>
+									<a:repeat value="#{expendApplayList.projectList}" var="_var">
+										<s:fragment rendered="#{expendApplayList.projectId eq _var[0]}">
+											<option value="#{_var[0]}" selected="selected">#{_var[1]}</option>
+										</s:fragment>
+										<s:fragment rendered="#{expendApplayList.projectId ne _var[0]}">
+											<option value="#{_var[0]}">#{_var[1]}</option>
+										</s:fragment>
+									</a:repeat>
+								</select>
+							</td>
+						</tr>
+					</table>
+					</div>
+					<div class="fl" style="width: 240px;margin-top: 8px;margin-left: 30px;">
+					<table>
+						<tr>
+							<td valign="middle">
+								<span class="field-name mb10">提交时间</span>
+							</td>
+							<td valign="middle">
+								<div class="input-append date form_datetime_second" style="position:relative;" >
+	                               		<input type="text" value="#{expendApplayList.expendTime}" readonly="readonly" style="border-radius:4px;width:110px;height:34;" name="time"/> 
+	                               		<span class="add-on" style="position:absolute; right:10px; top:3px;"><i class="icon-th" style="margin:0;"></i></span>
+	                            </div>
+							</td>
+						</tr>
+					</table>
+					</div>
+				</div>
+				<div class="fl">
+					<h:inputHidden value="#{expendApplayList.departId}" id="departIdHidden"/>
+					<h:inputHidden value="#{expendApplayList.projectId}" id="projectIdHidden"/>
+					<h:inputHidden value="#{expendApplayList.fundsSourceId}" id="fundsSourceIdHidden"/>
+					<h:commandButton styleClass="btn btn-primary mt10 ml20" action="/budget/ExpendApplayList.xhtml" value="搜索" onclick="searchBefore()"/>
+				</div>
+			</h:form>
+		</div>
+		<div class="g-data-list-table">
+		    <table class="record" width="100%" cellpadding="0" cellspacing="0">
+		        <tr>
+		            <th width="5%">序号</th>
+		            <th width="20%">单据编号</th>
+		            <th width="15%">预算科室</th>
+		            <th width="10%">资金来源</th>
+		            <th width="15%">项目名称</th>
+		            <th width="10%">支出金额</th>
+		            <th width="10%">申请人</th>
+		            <th width="15%">申请提交时间</th>
+		        </tr>
+		        <a:repeat value="#{expendApplayList.resultList}" var="_result" rowKeyVar="_row">
+		        	<tr class="node-record #{_row % 2 eq 0 ? 'odd' : 'even'}">
+			        	<td>#{_row + 1}</td>
+			        	<td>
+			        		<a style="color: #333333; text-decoration: none; cursor: default; outline: none;" href="javascript:void(0);" title="查看详情">#{_result[1]}</a>
+			        	</td>
+			        	<td>#{_result[3]}</td>
+			        	<td>#{commonFinder.getMoneySource(_result[2])}</td>
+			        	<td>#{_result[4] == null ? _result[8] : _result[4]}</td>
+			        	<td>#{_result[5]}</td>
+			        	<td>#{_result[6]}</td>
+			        	<td>#{commonFinder.parseDate(_result[7])}</td>
+		        	</tr>
+		        </a:repeat>
+		    </table>
+		   
+		    <s:fragment rendered="#{paginationModel.query != null}">
+				<table class="pagination-model" style="width: auto; margin: 40px auto;" cellpadding="0" cellspacing="0">
+					<tr>
+						<td>
+							<s:span rendered="#{paginationModel.previousPageExist}">
+								<s:link view="#{servletContexts.request.servletPath}" value="首页">
+									<f:param name="page" value="1" />
+								</s:link>
+							</s:span>
+							<s:span rendered="#{paginationModel.previousPageExist}">
+								<s:link view="#{servletContexts.request.servletPath}" value="&lt;&lt;">
+									<f:param name="page" value="#{paginationModel.previousPage}" />
+								</s:link>
+							</s:span>
+							<a:repeat value="#{paginationModel.pageNoList}" var="_pageNo">
+								<span class="#{paginationModel.page == _pageNo ? 'page-current' : ''}">
+									<s:link view="#{servletContexts.request.servletPath}" value="#{_pageNo}">
+										<f:param name="page" value="#{_pageNo}" />
+									</s:link>
+								</span>
+							</a:repeat>
+							<s:span rendered="#{paginationModel.nextPageExist}">
+								<s:link view="#{servletContexts.request.servletPath}" value="&gt;&gt;">
+									<f:param name="page" value="#{paginationModel.nextPage}" />
+								</s:link>
+							</s:span>
+							<s:span rendered="#{paginationModel.nextPageExist}">
+								<s:link view="#{servletContexts.request.servletPath}" value="尾页">
+									<f:param name="page" value="#{paginationModel.lastPage}" />
+								</s:link>
+							</s:span>
+							<s:span rendered="#{paginationModel.lastPage > 0}">
+								<a>共#{paginationModel.lastPage}页</a>
+							</s:span>
+							<s:fragment rendered="#{paginationModel.lastPage > 1}">
+								<span>
+									<a>转至</a>
+								</span>
+								<span class="page-index">
+									<input type="text" id="pageIndex" />
+								</span>
+								<span class="page-goto">
+									<s:link value="确定" id="gotoPageLink" styleClass="page-determine" view="#{servletContexts.request.servletPath}" onclick="return gotoPage(#{paginationModel.lastPage});" />
+								</span>
+							</s:fragment>
+						</td>
+					</tr>
+				</table>
+		    </s:fragment>
+		</div>
+		<script type="text/javascript" src="#{request.contextPath}/common/js/bootstrap.min.js" />
+		<script type="text/javascript" src="#{request.contextPath}/toolkit/utils.js" />
+		<script type="text/javascript" src="#{request.contextPath}/common/js/bootstrap-datetimepicker.min.js" charset="UTF-8" />
+		<script type="text/javascript" src="#{request.contextPath}/common/js/bootstrap-datetimepicker.zh-CN.js" charset="UTF-8" />
+		<script type="text/javascript" src="#{request.contextPath}/common/js/bootstrap-select-defaults-zh_CN.min.js" charset="UTF-8" />
+		<script type="text/javascript" src="#{request.contextPath}/common/js/bootstrap-select.min.js" charset="UTF-8" />
+		<script type="text/javascript">
+		//<![CDATA[
+			jQuery(document).ready(function() {
+				selectInit();
+				//时间插件
+				jQuery(".form_datetime_second").datetimepicker({
+					format: "yyyy-mm-dd",  
+					autoclose: true,
+					weekStart: 1,
+					language:  'zh-CN',
+					startView: 2,
+					minView: 2,
+					maxView: 2,	
+					forceParse: false, 
+					pickerPosition: "bottom-left"
+				});
+			    var message = '#{processInfoHome.message}';
+			    if (message != '') {
+					___msg('温馨提示', message);
+			    }
+			    ___textRestrictById('mainForm:keyword', 1024);
+			});
+
+			function selectInit(){
+				jQuery('.selectpicker').selectpicker();
+			}
+
+			//搜索
+			function searchBefore(){
+				jQuery("#mainForm\\:departIdHidden").val(jQuery("#depart").val());
+				jQuery("#mainForm\\:fundsSourceIdHidden").val(jQuery("#fundsSource").val());
+				jQuery("#mainForm\\:projectIdHidden").val(jQuery("#project").val());
+			}
+		//]]>
+		</script>
+	</ui:define>
+</ui:composition>
