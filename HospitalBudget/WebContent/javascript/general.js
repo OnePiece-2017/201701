@@ -200,3 +200,7 @@ function ___sleep(millis) {
 		}
 	}
 }
+
+function ___isNumber(arg) {
+	return arg != null && arg !== '' && Number(arg).toString() === arg.toString();
+}
