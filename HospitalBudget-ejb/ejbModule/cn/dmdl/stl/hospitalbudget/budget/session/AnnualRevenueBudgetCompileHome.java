@@ -214,6 +214,7 @@ public class AnnualRevenueBudgetCompileHome extends CriterionEntityHome<Object> 
 				JSONObject row = new JSONObject();
 				row.accumulate("projectId", data[0]);
 				row.accumulate("projectName", data[3]);
+				row.accumulate("departmentId", data[6]);
 				row.accumulate("departmentName", departmentMap.get(data[6]));
 				boolean multilevel = (Boolean) data[4];
 				row.accumulate("multilevel", multilevel);
@@ -229,6 +230,25 @@ public class AnnualRevenueBudgetCompileHome extends CriterionEntityHome<Object> 
 			}
 		}
 		return resultSet;
+	}
+
+	@SuppressWarnings("unchecked")
+	public JSONObject getYearOnYearData() {
+		JSONObject result = new JSONObject();
+		StringBuffer dataSql = new StringBuffer();
+		dataSql.append("select dept_id, `year`, normal_project_id, sub_project_id, budget_amount from normal_budget_income_info where confirm_flag = 1");
+		List<Object[]> dataList = getEntityManager().createNativeQuery(dataSql.toString()).getResultList();
+		if (dataList != null && dataList.size() > 0) {
+			for (Object[] data : dataList) {
+				String key = Assit.wrapStr(data[0], data[1], data[2], data[3]);
+				if (result.get(key) != null) {
+					result.element(key, (Double) result.get(key) + (Double) data[4]);
+				} else {
+					result.accumulate(key, (Double) data[4]);
+				}
+			}
+		}
+		return result;
 	}
 
 	public JSONObject getSaveResult() {

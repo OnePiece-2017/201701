@@ -112,7 +112,7 @@
 				            <th width="10%">项目来源</th>
 				            <th width="10%">项目金额(元)</th>
 				            <th width="10%">金额计算依据</th>
-				            <th width="13%">与上一年预算<br />同比增减(万元)</th>
+				            <th width="13%">与上一年预算<br />同比增减(元)</th>
 				            <th width="15%">备注</th>
 				            <th width="5%">操作</th>
 				        </tr>
@@ -150,6 +150,7 @@
 		<script type="text/javascript">
 		//<![CDATA[
 			var candidateProject = null;// 候选项目列表
+			var yearOnYearData = #{annualRevenueBudgetCompileHome.yearOnYearData};// 同比数据
 			jQuery(document).ready(function() {
 			    var message = '#{annualRevenueBudgetCompileHome.message}';
 			    if (message != null && message != '') {
@@ -214,7 +215,7 @@
 							html += '		</div>';
 							html += '	</td>';
 						}
-						html += '	<td>--</td>';
+						html += '	<td class="year-on-year">--</td>';
 						if (multilevel) {
 							html += '	<td></td>';
 						} else {
@@ -251,7 +252,7 @@
 									html += '			<input name="formula" class="form-control row-text-simplify" type="text">';
 									html += '		</div>';
 									html += '	</td>';
-									html += '	<td>--</td>';
+									html += '	<td class="year-on-year">--</td>';
 									html += '	<td>';
 									html += '		<div class="row-input">';
 									html += '			<input name="remark" class="form-control row-text-simplify" type="text">';
@@ -363,68 +364,57 @@
 					autohidemode : false
 			    });
 
-			    setInterval("updateTotalAmount()", 100);
+			    updateTotalAmount();
 			    updateMultilevelTotalAmount();
 			    updateSequenceNumber();
+			    updateYearOnYear();
 			});
 			
 			function updateTotalAmount() {
 				var sum = null;
-				jQuery('.normal-attendProject tr input[name="totalAmount"]').each(function(index){
+				jQuery('.normal-attendProject tr input[name="totalAmount"]').each(function(index) {
 					if (0 == index)
 						sum = 0.00;
 					var augend = jQuery(this).val();
-					try {
-						augend = Number(augend);
-					} catch (exception) {
-					}
-					if (augend == null || augend == '' || isNaN(augend)) {
+					if (!___isNumber(augend)) {
 						sum = null;
 						return false;
 					}
-					sum += augend;
+					sum += Number(augend);
 				});
-				if (sum != null && sum != '') {
+				if (sum != null)
 					jQuery('.node-totalAmount').html(sum.toFixed(2));
-				} else {
+				else
 					jQuery('.node-totalAmount').html('--');
-				}
+				setTimeout("updateTotalAmount()", 100);
 			}
 			
 			function updateMultilevelTotalAmount() {
 				var root = {};
-				jQuery('.normal-attendProject tr[data-index][sub-id]').each(function(index){
+				jQuery('.normal-attendProject tr[data-index][sub-id]').each(function(index) {
 					var dataIndex = jQuery(this).attr('data-index');
 					var augend = jQuery(this).find('input[name="totalAmount"]').val();
-					try {
-						augend = Number(augend);
-					} catch (exception) {
-					}
-					if (augend == null || augend == '' || isNaN(augend)) {
+					if (!___isNumber(augend))
 						augend = null;
-					}
-				    if (null == root[dataIndex]) {
-				    	root[dataIndex] = [];
-					}
-				    root[dataIndex].push(augend);
+					if (null == root[dataIndex])
+						root[dataIndex] = [];
+					root[dataIndex].push(augend);
 				});
-				for (var key in root) {
+				for ( var key in root) {
 					var sum = 0.00;
-					for (var i = 0; i < root[key].length; i++) {
-					    if (root[key][i] != null) {
-					    	sum += root[key][i];
-					    } else {
-					    	sum = null;
-					    	break;
+					for (var i = 0; i < root[key].length; i++)
+						if (root[key][i] != null)
+							sum += Number(root[key][i]);
+						else {
+							sum = null;
+							break;
 						}
-	                }
-					if (sum != null) {
+					if (sum != null)
 						jQuery('.normal-attendProject tr.root[data-index=' + key + '] .node-multilevelTotalAmount').html(sum.toFixed(2));
-					} else {
+					else
 						jQuery('.normal-attendProject tr.root[data-index=' + key + '] .node-multilevelTotalAmount').html('--');
-					}
-                }
-				setTimeout("updateMultilevelTotalAmount()", 200);
+				}
+				setTimeout("updateMultilevelTotalAmount()", 100);
 			}
 			
 			function updateSequenceNumber() {
@@ -434,6 +424,31 @@
 					}
 				});
 				setTimeout("updateSequenceNumber()", 100);
+			}
+			
+			function updateYearOnYear() {
+				jQuery('.normal-attendProject tr input[name="totalAmount"]').each(function(index) {
+					var dataIndex = jQuery(this).parents('tr').attr('data-index');
+					var subId = jQuery(this).parents('tr').attr('sub-id');
+					subId = undefined != subId ? subId : null;
+					var key = ___wrapStr(candidateProject[dataIndex]['departmentId'], Number(jQuery('#budgetYear').val()) - 1, candidateProject[dataIndex]['projectId'], subId);
+					var value = jQuery(this).val();
+					var lastYearAmount = yearOnYearData[key];
+					if (!___isNumber(value) || null == yearOnYearData[key])
+						jQuery(this).parents('tr').find('.year-on-year').html('--');
+					else {
+						var label = '';
+						var diff = Number(value) - lastYearAmount;
+						if (diff > 0)
+							label = '增加' + diff.toFixed(2);
+						else if (diff < 0)
+							label = '减少' + Math.abs(diff.toFixed(2));
+						else
+							label = '保持一致';
+						jQuery(this).parents('tr').find('.year-on-year').html(label);
+					}
+				});
+				setTimeout("updateYearOnYear()", 100);
 			}
 			
 			//提交前
