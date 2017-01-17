@@ -44,14 +44,11 @@ public class BudgetSummaryHome extends CriterionEntityHome<Object> {
 					if (normalBudgetCollectionInfoList != null && normalBudgetCollectionInfoList.size() > 0) {
 						for (NormalBudgetCollectionInfo normalBudgetCollectionInfo : normalBudgetCollectionInfoList) {
 							if (normalBudgetCollectionInfo.getAmountType() == 1) {// 收入预算
-								System.out.println("*************************");
-								System.out.println(normalBudgetCollectionInfo.getNormalBudgetCollectionId());
 								normalBudgetCollectionInfo.setSubmitFlag(true);
 								getEntityManager().merge(normalBudgetCollectionInfo);
 								List<NormalBudgetOrderInfo> normalBudgetOrderInfoList = getEntityManager().createQuery("select normalBudgetOrderInfo from NormalBudgetOrderInfo normalBudgetOrderInfo where isNew = 1 and orderSn = '" + normalBudgetCollectionInfo.getOrderSn() + "'").getResultList();
 								if (normalBudgetOrderInfoList != null && normalBudgetOrderInfoList.size() > 0) {
 									for (NormalBudgetOrderInfo normalBudgetOrderInfo : normalBudgetOrderInfoList) {
-										System.out.println(normalBudgetOrderInfo.getNormalBudgetOrderId());
 										NormalBudgetIncomeInfo normalBudgetIncomeInfo = new NormalBudgetIncomeInfo();
 										normalBudgetIncomeInfo.setDeptId(normalBudgetCollectionInfo.getDeptId());
 										normalBudgetIncomeInfo.setYear(normalBudgetOrderInfo.getYear());
