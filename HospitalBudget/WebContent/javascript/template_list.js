@@ -77,3 +77,23 @@ function showLayer() {
 function hideLayer() {
 	jQuery('.body-mask-layer').hide();
 }
+
+function wrapQueryResults() {
+	if (jQuery('.g-data-list-table').length > 0) {
+		if (0 == jQuery('.g-data-list-table .empty-record').length) {
+			var html = '';
+			html += '<div class="empty-record">';
+			html += '	<img class="icon" src="../images/icon_info_32x32.png">';
+			html += '	<strong class="message">暂无数据！</strong>';
+			html += '</div>';
+			jQuery('.g-data-list-table').prepend(html);
+		}
+		if (jQuery('.g-data-list-table .node-record').length > 0) {
+			jQuery('.g-data-list-table .empty-record').hide();
+			jQuery('.g-data-list-table .record, .g-data-list-table .pagination-model').show();
+		} else {
+			jQuery('.g-data-list-table .record, .g-data-list-table .pagination-model').hide();
+			jQuery('.g-data-list-table .empty-record').show();
+		}
+	}
+}

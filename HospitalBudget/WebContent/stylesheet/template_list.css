@@ -128,3 +128,23 @@ body {
 .body-mask-layer img {
 	margin: 10% 35%;
 }
+
+.g-data-list-table .empty-record {
+	width: 100%;
+	height: 100%;
+	display: none;
+}
+
+.g-data-list-table .empty-record .icon {
+	float: left;
+	width: 32px;
+	height: 32px;
+	margin: 169px 42%;
+	opacity: 0.3;
+}
+
+.g-data-list-table .empty-record .message {
+	float: left;
+	margin: 174px -41%;
+	opacity: 0.6;
+}
