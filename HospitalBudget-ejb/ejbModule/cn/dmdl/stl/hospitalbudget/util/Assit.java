@@ -94,16 +94,14 @@ public class Assit {
 	 * @return 包裹后的字符串
 	 */
 	public static String wrapStr(Object... contents) {
-		String result = "";
-		if (contents != null && contents.length > 0) {
+		StringBuffer result = new StringBuffer();
+		if (contents != null && contents.length > 0)
 			for (int i = 0; i < contents.length; i++) {
-				result += "[" + (contents[i] != null ? contents[i].toString() : null) + "]";
-				if (i < contents.length - 1) {
-					result += ",";
-				}
+				result.append("[").append(contents[i]).append("]");
+				if (i < contents.length - 1)
+					result.append(",");
 			}
-		}
-		return result;
+		return result.toString();
 	}
 
 	/** 获取预处理前sql */
