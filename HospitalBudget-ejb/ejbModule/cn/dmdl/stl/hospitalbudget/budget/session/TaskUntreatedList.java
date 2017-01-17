@@ -34,12 +34,19 @@ public class TaskUntreatedList extends CriterionNativeQuery<Object[]> {
 		sql.append(" left join user_info on user_info.user_info_id = task_order.edit_user_id");
 		sql.append(" left join user_info_extend on user_info_extend.user_info_extend_id = user_info.user_info_extend_id");
 		sql.append(" where task_order.task_order_id in (select task_order_id from task_user where handle_flg = 0 and user_id = " + sessionToken.getUserInfoId() + " and task_order_id not in (select task_order_id from task_user where handle_flg = 1))");
-		sql.append(" or (task_order.edit_user_id = " + sessionToken.getUserInfoId() + " and task_order.order_status = 3)");
 		if (keyword != null && !"".equals(keyword)) {
 			sql.append(" and (task_order.order_sn like '%" + keyword + "%'");
 			sql.append(" or task_order.task_name like '%" + keyword + "%'");
 			sql.append(" )");
 		}
+		sql.append(" or (");
+		sql.append(" task_order.edit_user_id = " + sessionToken.getUserInfoId() + " and task_order.order_status = 3");
+		if (keyword != null && !"".equals(keyword)) {
+			sql.append(" and (task_order.order_sn like '%" + keyword + "%'");
+			sql.append(" or task_order.task_name like '%" + keyword + "%'");
+			sql.append(" )");
+		}
+		sql.append(" )");
 		sql.append(" order by task_order.task_order_id desc");
 		sql.insert(0, "select * from (").append(") as recordset");
 		setEjbql(sql.toString());
