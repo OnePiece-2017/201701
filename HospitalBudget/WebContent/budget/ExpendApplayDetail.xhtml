@@ -1,0 +1,158 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:s="http://jboss.com/products/seam/taglib"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:a="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich"
+	template="/layout/template_view.xhtml">
+
+	<ui:define name="head">
+		<link rel="stylesheet" type="text/css" href="#{request.contextPath}/stylesheet/template_list.css" />
+		<link rel="stylesheet" type="text/css" href="#{request.contextPath}/common/css/bootstrap.min.css" />
+		<link rel="stylesheet" type="text/css" href="#{request.contextPath}/icheck/skins/square/blue.css" />
+		<link rel="stylesheet" type="text/css" href="#{request.contextPath}/toastr/toastr.min.css" />
+		<style type="text/css">
+			.row-input {
+				width: 100%;
+				height: 100%;
+				text-align: center;
+				position: relative;
+			}
+			
+			.row-text-simplify {
+				position: absolute;
+				top: 2px;
+				text-align: center;
+			}
+			
+			.normal-attendProject .root {
+				background: #add595;
+			}
+			
+			.node-totalAmount {
+				font-weight: bold;
+			}
+		</style>
+	</ui:define>
+
+	<ui:define name="body">
+	#{expendApplayDetailHome.wire()}
+		<h:form id="mainForm" styleClass="edit" enctype="multipart/form-data">
+		<div class="pd0-10">
+			<strong style="font-size: 20px;">支出预算执行</strong>
+			<table class="mt20 table-grid" width="100%" cellpadding="0" cellspacing="0">
+				<tr class="odd">
+					<td class="field-name" width="20%">单据编号</td>
+					<td class="field-value" width="30%">#{expendApplayDetailHome.expendApplyInfo[0]}</td>
+					<td class="field-name" width="20%">预算年份</td>
+					<td class="field-value" width="30%">#{expendApplayDetailHome.expendApplyInfo[1]}</td>
+				</tr>
+				<tr class="even">
+					<td class="field-name" width="20%">报销部门</td>
+					<td class="field-value" width="30%">#{expendApplayDetailHome.expendApplyInfo[2]}</td>
+					<td class="field-name" width="20%">资金来源</td>
+					<td class="field-value" width="30%">#{expendApplayDetailHome.expendApplyInfo[4]}</td>
+				</tr>
+				<tr class="odd">
+					<td class="field-name" width="20%">报销人</td>
+					<td class="field-value" width="30%">#{expendApplayDetailHome.expendApplyInfo[3]}</td>
+					<td class="field-name" width="20%">发票号</td>
+					<td class="field-value" width="30%">#{expendApplayDetailHome.expendApplyInfo[6]}</td>
+				</tr>
+				<tr class="even">
+					<td class="field-name" width="20%">提交人</td>
+					<td class="field-value" width="30%">#{expendApplayDetailHome.expendApplyInfo[14]}</td>
+					<td class="field-name" width="20%">提交日期</td>
+					<td class="field-value" width="30%">#{expendApplayDetailHome.expendApplyInfo[13]}</td>
+				</tr>
+				<tr class="odd">
+					<td class="field-name" width="20%">收款单位</td>
+					<td class="field-value" width="30%">#{expendApplayDetailHome.expendApplyInfo[5]}</td>
+					<td class="field-name" width="20%"></td>
+					<td class="field-value" width="30%"></td>
+				</tr>
+			</table>
+			<br />
+			<br />
+		
+				<div class="g-data-list-table freeze-attendProject" style="height: 44px;">
+				    <table class="record" width="100%" cellpadding="0" cellspacing="0">
+				        <tr>
+				            <th width="5%">序号</th>
+				            <th width="15%">项目名称</th>
+				            <th width="10%">年预算金额</th>
+				            <th width="10%">已支出金额</th>
+				            <th width="10%">可支出金额</th>
+				            <th width="10%">本次支出金额</th>
+				            <th width="10%">支出日期</th>
+				            <th width="15%">备注</th>
+				            <th width="10%">附件</th>
+				        </tr>
+				        <tr class="root" style="font-size: 14px;font-weight: normal;">
+				        	<td width="5%">1</td>
+				            <td width="15%">#{expendApplayDetailHome.expendApplyInfo[7] eq null ? expendApplayDetailHome.expendApplyInfo[8] : expendApplayDetailHome.expendApplyInfo[7]}</td>
+				            <td width="10%">#{expendApplayDetailHome.expendApplyInfo[10]}</td>
+				            <td width="10%">#{expendApplayDetailHome.expendApplyInfo[10] - expendApplayDetailHome.expendApplyInfo[11]}</td>
+				            <td width="10%" >#{expendApplayDetailHome.expendApplyInfo[11]}</td>
+				            <td width="10%">
+				            	#{expendApplayDetailHome.expendApplyInfo[9]}
+				            </td>
+				            <td width="10%">
+				            	#{expendApplayDetailHome.expendApplyInfo[12]}
+							</td>
+				            <td width="15%">
+				            	#{expendApplayDetailHome.expendApplyInfo[15]}
+				            </td>
+				            <td width="10%"></td>
+				       </tr>
+				    </table>
+				<div class="g-data-list-table normal-attendProject" style="border-radius: 0;height:156px;">
+				    <table class="record" width="100%" cellpadding="0" cellspacing="0">
+				    </table>
+				</div>
+				<strong style="font-size: 20px;">申请流程</strong>
+				<div class="g-data-list-table freeze-attendProject" style="height: 44px;">
+					 <table class="mt20 table-grid" width="100%" cellpadding="0" cellspacing="0">
+						<a:repeat value="#{expendApplayDetailHome.executeList}" var="_result" rowKeyVar="_row">
+							<tr class="even">
+								<td class="field-name" width="3%">#{_row + 1}</td>
+								<td class="field-name" width="10%">
+									#{_result[0]}
+								</td>
+								<td class="field-value" width="30%">
+									#{_result[1]}#{_result[2]}#{_result[3]}
+								</td>
+							</tr>
+						</a:repeat>
+						
+					</table>
+					<div style="text-align: center;">
+								<s:button value="返回" view="/budget/ExpendApplayList.seam" styleClass="btn btn-default" propagation="end" />
+					</div>
+				</div>
+			</div>
+			
+			</div>
+		</h:form>
+		<a:form>
+		</a:form>
+		<script type="text/javascript" src="#{request.contextPath}/javascript/template_list.js" charset="UTF-8" />
+		<script type="text/javascript" src="#{request.contextPath}/common/js/bootstrap.min.js" />
+		<script type="text/javascript" src="#{request.contextPath}/common/js/bootstrap-select.min.js" charset="UTF-8" />
+		<script type="text/javascript" src="#{request.contextPath}/common/js/bootstrap-select-defaults-zh_CN.min.js" charset="UTF-8" />
+		<script type="text/javascript" src="#{request.contextPath}/icheck/js/icheck.min.js" charset="UTF-8" />
+		<script type="text/javascript" src="#{request.contextPath}/toastr/toastr.min.js" />
+		<script type="text/javascript" src="#{request.contextPath}/toolkit/utils.js" charset="UTF-8" />
+		<script type="text/javascript">
+		//<![CDATA[
+			jQuery(document).ready(function() {
+			});
+			
+		//]]>
+		</script>
+	</ui:define>
+
+</ui:composition>

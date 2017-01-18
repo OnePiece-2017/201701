@@ -14,6 +14,7 @@ import org.jboss.seam.annotations.Name;
 
 import cn.dmdl.stl.hospitalbudget.budget.entity.ExpendApplyInfo;
 import cn.dmdl.stl.hospitalbudget.budget.entity.NormalBudgetCollectionInfo;
+import cn.dmdl.stl.hospitalbudget.budget.entity.NormalExpendBudgetOrderInfo;
 import cn.dmdl.stl.hospitalbudget.budget.entity.ProcessStepInfo;
 import cn.dmdl.stl.hospitalbudget.budget.entity.TaskOrder;
 import cn.dmdl.stl.hospitalbudget.budget.entity.TaskUser;
@@ -52,7 +53,30 @@ public class ExpendExecutHome extends CriterionEntityHome<Object> {
 			joinTransaction();
 			for (ExpendApplyInfo expendApplyInfo : oldExpendApplyInfoList) {
 				expendApplyInfo.setTaskOrderId(newTaskOrderId);// 跟踪订单信息
+				NormalExpendBudgetOrderInfo neboi = getEntityManager().find(NormalExpendBudgetOrderInfo.class,expendApplyInfo.getNormalExpendBudgetOrderId());
+				/*neboi.setNowAmount(neboi.getNowAmount() + expendApplyInfo.getExpendMoney());
 				getEntityManager().merge(expendApplyInfo);
+				getEntityManager().merge(neboi);*/
+				//不通过加上金额
+				neboi.setNowAmount(neboi.getNowAmount() + expendApplyInfo.getExpendMoney());
+				getEntityManager().merge(neboi);
+				if(null == neboi.getSubProjectId()){
+					
+				}else{
+					String hql = "select normalExpendBudgetOrderInfo from NormalExpendBudgetOrderInfo normalExpendBudgetOrderInfo where normalExpendBudgetOrderInfo.orderSn ='" + neboi.getOrderSn() + "'";
+					List<NormalExpendBudgetOrderInfo> neboiList = getEntityManager().createQuery(hql).getResultList();
+					NormalExpendBudgetOrderInfo parentProject = null;
+					for(NormalExpendBudgetOrderInfo par : neboiList){
+						if(null == par.getSubProjectId()){
+							parentProject = par;
+							break;
+						}
+					}
+					if(null != parentProject){
+						parentProject.setNowAmount(parentProject.getNowAmount() + expendApplyInfo.getExpendMoney());
+						getEntityManager().merge(parentProject);
+					}
+				}
 			}
 			getEntityManager().flush();
 		}

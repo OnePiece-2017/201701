@@ -8,19 +8,19 @@
 	xmlns:rich="http://richfaces.org/rich"
 	xmlns:a="http://richfaces.org/a4j"
 	template="/layout/template_list.xhtml">
- #{paginationModel.init(expendApplayList)}
- #{expendApplayList.wire()}
+
 	<ui:define name="head">
 		<link rel="stylesheet" type="text/css" href="#{request.contextPath}/common/css/bootstrap.min.css" />
 		<link rel="stylesheet" type="text/css" href="#{request.contextPath}/common/css/bootstrap-datetimepicker.min.css" />
 		<link rel="stylesheet" type="text/css" href="#{request.contextPath}/common/css/bootstrap-select2.min.css" />
 	</ui:define>
 	<ui:define name="body">
+	#{expendApplayList.wire()}
 		<div class="g-data-list-condition">
 			<h:form id="mainForm">
 				<input type="hidden" name="page" value="1" />
 				<div>
-					<div class="fl" style="width: 200px;margin-top: 8px;margin-left: 30px;">
+					<div class="fl" style="width: 180px;margin-top: 8px;margin-left:20px;">
 						<table>
 							<tr>
 								<td valign="middle">
@@ -28,7 +28,6 @@
 								</td>
 								<td valign="middle">
 									<select id="depart" class="selectpicker">
-										<option value="-1">请选择</option>
 										<a:repeat value="#{expendApplayList.departList}" var="_var">
 											<s:fragment rendered="#{expendApplayList.departId eq _var[0]}">
 												<option value="#{_var[0]}" selected="selected">#{_var[1]}</option>
@@ -42,7 +41,7 @@
 							</tr>
 						</table>
 					</div>
-					<div class="fl" style="width: 240px;margin-top: 8px;margin-left: 30px;">
+					<div class="fl" style="width: 210px;margin-top: 8px;margin-left: 20px;">
 					<table>
 						<tr>
 							<td valign="middle">
@@ -50,7 +49,6 @@
 							</td>
 							<td valign="middle">
 								<select id="fundsSource" class="selectpicker">
-									<option value="-1">请选择</option>
 									<a:repeat value="#{expendApplayList.fundsSourceList}" var="_var">
 										<s:fragment rendered="#{expendApplayList.fundsSourceId eq _var[0]}">
 											<option value="#{_var[0]}" selected="selected">#{_var[1]}</option>
@@ -64,7 +62,7 @@
 						</tr>
 					</table>
 					</div>
-					<div class="fl" style="width: 240px;margin-top: 8px;margin-left: 30px;">
+					<div class="fl" style="width: 210px;margin-top: 8px;margin-left: 20px;">
 					<table>
 						<tr>
 							<td valign="middle">
@@ -72,7 +70,6 @@
 							</td>
 							<td valign="middle">
 								<select id="project" class="selectpicker">
-									<option value="-1">请选择</option>
 									<a:repeat value="#{expendApplayList.projectList}" var="_var">
 										<s:fragment rendered="#{expendApplayList.projectId eq _var[0]}">
 											<option value="#{_var[0]}" selected="selected">#{_var[1]}</option>
@@ -126,7 +123,7 @@
 		        	<tr class="node-record #{_row % 2 eq 0 ? 'odd' : 'even'}">
 			        	<td>#{_row + 1}</td>
 			        	<td>
-			        		<a style="color: #333333; text-decoration: none; cursor: default; outline: none;" href="javascript:void(0);" title="查看详情">#{_result[1]}</a>
+			        		<a  href="/HospitalBudget/budget/ExpendApplayDetail.seam?expendApplayId=#{_result[0]}"  title="查看详情">#{_result[1]}</a>
 			        	</td>
 			        	<td>#{_result[3]}</td>
 			        	<td>#{commonFinder.getMoneySource(_result[2])}</td>
@@ -137,7 +134,7 @@
 		        	</tr>
 		        </a:repeat>
 		    </table>
-		   
+		    #{paginationModel.init(expendApplayList)}
 		    <s:fragment rendered="#{paginationModel.query != null}">
 				<table class="pagination-model" style="width: auto; margin: 40px auto;" cellpadding="0" cellspacing="0">
 					<tr>

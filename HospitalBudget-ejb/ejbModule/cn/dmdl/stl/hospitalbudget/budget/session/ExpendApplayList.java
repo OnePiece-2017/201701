@@ -32,22 +32,16 @@ public class ExpendApplayList extends CriterionNativeQuery<Object[]> {
 	private static final int FINA_ROLE_ID = 3;//财务人员角色id
 	private static final int DIRECTOR_ROLE_ID = 4;//主任角色id
 	
-	public void wire(){
-		createQuery();
-	}
-	
-	@Override
 	@SuppressWarnings("unchecked")
-	protected Query createQuery(){
+	public void wire(){
 		fundsSourceList = new ArrayList<Object[]>();
 		departList = new ArrayList<Object[]>();
 		projectList = new ArrayList<Object[]>();
 		
 		boolean privateRole = false;//角色不属于财务 和主任（领导的）
-		String roleSql = "select role_info.role_info_id,user_info.department_info_id,ydi.the_value from user_info LEFT JOIN role_info on role_info.role_info_id=user_info.role_info_id LEFT JOIN ys_department_info ydi on "
-				+ "user_info.department_info_id=ydi.the_id where user_info.user_info_id=" + sessionToken.getUserInfoId();
-		
-		List<Object[]> roleList = getEntityManager().createNativeQuery(roleSql).getResultList();
+		String roleSql = "select role_info.role_info_id,user_info.department_info_id,ydi.the_value from user_info LEFT JOIN role_info on role_info.role_info_id=user_info.role_info_id "
+				+ "LEFT JOIN ys_department_info ydi on user_info.department_info_id=ydi.the_id where user_info.user_info_id=" + sessionToken.getUserInfoId();
+		List<Object[]> roleList = getEntityManager().createNativeQuery("select * from (" + roleSql + ") as test").getResultList();
 		int roleId = Integer.parseInt(roleList.get(0)[0].toString());//角色id
 		
 		if(Integer.valueOf(roleId) != 1 && Integer.valueOf(roleId) != FINA_ROLE_ID && Integer.valueOf(roleId) != DIRECTOR_ROLE_ID){
@@ -59,13 +53,15 @@ public class ExpendApplayList extends CriterionNativeQuery<Object[]> {
 		obj[0] = -1;
 		obj[1] = "请选择";
 		fundsSourceList.add(obj);
+		projectList.add(obj);
 		Object[] fundsobj = new Object[2];
 		fundsobj[0] = 1;
 		fundsobj[1] = "自有资金";
 		fundsSourceList.add(fundsobj);
 		StringBuffer projectSql =  new StringBuffer();
 		projectSql.append(" SELECT ");
-		projectSql.append(" eai.expend_apply_info_id,");
+		projectSql.append(" ycp.the_id as project_id,");
+		projectSql.append(" ycpe.the_id as sub_id,");
 		projectSql.append(" ycp.the_value as peoject_name, ");//1项目名字
 		projectSql.append(" ycpe.the_value as sub_project_name ");//2项目名字
 		projectSql.append(" FROM expend_apply_info eai ");
@@ -90,7 +86,34 @@ public class ExpendApplayList extends CriterionNativeQuery<Object[]> {
 		}
 		List<Object[]> proList = getEntityManager().createNativeQuery(projectSql.toString()).getResultList();
 		if(proList.size() > 0){
-			projectList = proList;
+			for(Object[] pro :proList){
+				if(null == pro[0] && null != pro[1] && null == pro[2] && null != pro[3] ){
+					Object[] pronew = new Object[2];
+					pronew[0] = pro[1];
+					pronew[1] = pro[3];
+					projectList.add(pronew);
+				}else if(null != pro[0] && null == pro[1] && null != pro[2] && null == pro[3]){
+					Object[] pronew = new Object[2];
+					pronew[0] = pro[0];
+					pronew[1] = pro[2];
+					projectList.add(pronew);
+				}
+			}
+		}
+	}
+	
+	@Override
+	@SuppressWarnings("unchecked")
+	protected Query createQuery(){
+		boolean privateRole = false;//角色不属于财务 和主任（领导的）
+		String roleSql = "select role_info.role_info_id,user_info.department_info_id,ydi.the_value from user_info LEFT JOIN role_info on role_info.role_info_id=user_info.role_info_id LEFT JOIN ys_department_info ydi on "
+				+ "user_info.department_info_id=ydi.the_id where user_info.user_info_id=" + sessionToken.getUserInfoId();
+		
+		List<Object[]> roleList = getEntityManager().createNativeQuery(roleSql).getResultList();
+		int roleId = Integer.parseInt(roleList.get(0)[0].toString());//角色id
+		
+		if(Integer.valueOf(roleId) != 1 && Integer.valueOf(roleId) != FINA_ROLE_ID && Integer.valueOf(roleId) != DIRECTOR_ROLE_ID){
+			privateRole = true;
 		}
 		StringBuffer sql = new StringBuffer();
 		sql.append(" SELECT ");

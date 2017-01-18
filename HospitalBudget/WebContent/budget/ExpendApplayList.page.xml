@@ -8,4 +8,5 @@
 	<param name="departId" value="#{expendApplayList.departId}" />
 	<param name="projectId" value="#{expendApplayList.projectId}" />
 	<param name="fundsSourceId" value="#{expendApplayList.fundsSourceId}" />
+	<param name="expendTime" value="#{expendApplayList.expendTime}" />
 </page>

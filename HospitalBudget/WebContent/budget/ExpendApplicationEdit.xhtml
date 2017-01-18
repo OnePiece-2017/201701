@@ -1,0 +1,502 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:s="http://jboss.com/products/seam/taglib"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:a="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich"
+	template="/layout/template_edit.xhtml">
+
+	<ui:define name="head">
+		<link rel="stylesheet" type="text/css" href="#{request.contextPath}/common/css/bootstrap-datetimepicker.min.css" />
+		<link rel="stylesheet" type="text/css" href="#{request.contextPath}/common/css/bootstrap.min.css" />
+		<link rel="stylesheet" type="text/css" href="#{request.contextPath}/common/css/bootstrap-select.min.css" />
+		<link rel="stylesheet" type="text/css" href="#{request.contextPath}/icheck/skins/square/blue.css" />
+		<link rel="stylesheet" type="text/css" href="#{request.contextPath}/stylesheet/fix.css" />
+		<link rel="stylesheet" type="text/css" href="#{request.contextPath}/stylesheet/template_list.css" />
+		<style type="text/css">
+			.bs-w440 .bootstrap-select:not([class*="span"]):not([class*="col-"]):not([class*="form-control"]):not(.input-group-btn) {
+			    width: 440px;
+			}
+			.normal-candidateProject .selected {
+				background: #da9a48;
+			}
+			
+			.normal-attendProject .root {
+				background: #add595;
+			}
+			
+			.node-totalAmount {
+				font-weight: bold;
+			}
+		</style>
+	</ui:define>
+	<ui:define name="body">
+	#{expendApplyEditHome.wire()}
+		<h:form id="mainForm" styleClass="edit" enctype="multipart/form-data">
+			<div class="pd0-10">
+				<div class="pt30 pb30 fs14">
+					<table width="100%" cellpadding="0" cellspacing="0">
+						<tr>
+							<td width="50%">
+								<div class="pb20">
+									<table>
+										<tr>
+											<td valign="middle">
+												<span class="field-name mb10">单据编号</span>
+											</td>
+											<td valign="middle">
+												<h:inputText id="formnum" value="#{expendApplyEditHome.applySn}" styleClass="form-control mb10 fix--w220" />
+											</td>
+											<td valign="middle">
+												<font color="red" style="margin-left: 3px;">*</font>
+											</td>
+										</tr>
+									</table>
+								</div>
+							</td>
+							<td width="50%">
+								<div class="pb20">
+									<table>
+										<tr>
+											<td valign="middle">
+												<span class="field-name mb10">预算年份</span>
+											</td>
+											<td valign="middle">
+												<select id="budgetYear" class="selectpicker">
+													<a:repeat value="#{expendApplyEditHome.budgetYearList}" var="_var">
+														<s:fragment rendered="#{expendApplyEditHome.year eq _var[0]}">
+															<option value="#{_var[0]}" selected="selected">#{_var[1]}</option>
+														</s:fragment>
+														<s:fragment rendered="#{expendApplyEditHome.year ne _var[0]}">
+															<option value="#{_var[0]}" >#{_var[1]}</option>
+														</s:fragment>
+													</a:repeat>
+												</select>
+											</td>
+											<td valign="middle">
+												<font color="red" style="margin-left: 3px;">*</font>
+											</td>
+										</tr>
+									</table>
+								</div>
+							</td>
+						</tr>
+						<tr>
+							<td width="50%">
+								<div class="pb20">
+									<table>
+										<tr>
+											<td valign="middle">
+												<span class="field-name mb10">报销部门</span>
+											</td>
+											<td valign="middle">
+											<rich:panel id="departPanl" style="margin:0; border:none; padding: 0;">
+												<select id="depart" class="selectpicker"   disabled="disabled">
+													<option value="#{expendApplyEditHome.departObj[0]}" >#{expendApplyEditHome.departObj[1]}</option>
+												</select>
+											</rich:panel>
+											</td>
+											<td valign="middle">
+												<font color="red" style="margin-left: 3px;">*</font>
+											</td>
+										</tr>
+									</table>
+								</div>
+							</td>
+							<td width="50%">
+								<div class="pb20">
+									<table>
+										<tr>
+											<td valign="middle">
+												<span class="field-name mb10">资金来源</span>
+											</td>
+											<td valign="middle">
+												<select id="fundsSource" class="selectpicker" data-live-search="true">
+													<a:repeat value="#{expendApplyEditHome.fundsSourceList}" var="_fundsSource">
+														<s:fragment rendered="#{expendApplyEditHome.fundsSourceId eq _fundsSource[0]}">
+															<option value="#{_fundsSource[0]}" selected="selected">#{_fundsSource[1]}</option>
+														</s:fragment>
+														<s:fragment rendered="#{expendApplyEditHome.fundsSourceId ne _fundsSource[0]}">
+															<option value="#{_fundsSource[0]}" >#{_fundsSource[1]}</option>
+														</s:fragment>
+													</a:repeat>
+												</select>
+											</td>
+											<td valign="middle">
+												<font color="red" style="margin-left: 3px;">*</font>
+											</td>
+										</tr>
+									</table>
+								</div>
+							</td>
+						</tr>
+						<tr>
+							<td width="50%">
+								<div class="pb20">
+									<table>
+										<tr>
+											<td valign="middle">
+												<span class="field-name mb10">选择项目</span>
+											</td>
+											<td valign="top">
+												<rich:panel id="projectPanl" style="margin:0; border:none; padding: 0;">
+													<select id="projectId" class="selectpicker"   disabled="disabled">
+														<option value="#{expendApplyEditHome.projectObj[0]}">#{expendApplyEditHome.projectObj[1]}</option>
+													</select>
+												</rich:panel>
+											</td>
+											<td valign="middle">
+												<font color="red" style="margin-left: 3px;">*</font>
+											</td>
+										</tr>
+									</table>
+								</div>
+							</td>
+							<td width="50%">
+								<div class="pb20">
+									<table>
+										<tr>
+											<td valign="middle">
+												<span class="field-name mb10">报销人</span>
+											</td>
+											<td valign="middle">
+												<select id="user" class="selectpicker" data-live-search="true">
+													<a:repeat value="#{expendApplyEditHome.applayUserList}" var="_department">
+														<optgroup label="#{_department[0]}" data-subtext="科室">
+															<a:repeat value="#{_department[1]}" var="_user">
+																<s:fragment rendered="#{expendApplyEditHome.applyUser eq _user[0]}">
+																	<option value="#{_user[0]}" selected="selected">#{_user[1]}</option>
+																</s:fragment>
+																<s:fragment rendered="#{expendApplyEditHome.applyUser ne _user[0]}">
+																	<option value="#{_user[0]}" >#{_user[1]}</option>
+																</s:fragment>
+															</a:repeat>
+														</optgroup>
+													</a:repeat>
+												</select>
+											</td>
+											<td valign="middle">
+												<font color="red" style="margin-left: 3px;">*</font>
+											</td>
+										</tr>
+									</table>
+								</div>
+							</td>
+						</tr>
+						<tr>
+							<td width="50%">
+								<div class="pb20">
+									<table>
+										<tr>
+											<td valign="middle">
+												<span class="field-name mb10">收款单位</span>
+											</td>
+											<td valign="middle">
+												<h:inputText id="reciveCompany" value="#{expendApplyEditHome.reciveCompany}" styleClass="form-control mb10 fix--w440" />
+											</td>
+											<td valign="middle">
+												<font color="red" style="margin-left: 3px;">*</font>
+											</td>
+										</tr>
+									</table>
+								</div>
+							</td>
+							<td width="50%">
+								<div class="pb20">
+									<table>
+										<tr>
+											<td valign="middle">
+												<span class="field-name mb10">发票号</span>
+											</td>
+											<td valign="middle">
+												<h:inputText id="invoicenum" value="#{expendApplyEditHome.invoiceSn}" styleClass="form-control mb10 fix--w220" />
+											</td>
+											<td valign="middle">
+												<font color="red" style="margin-left: 3px;">*</font>
+											</td>
+										</tr>
+									</table>
+								</div>
+							</td>
+						</tr>
+					</table>
+				</div>
+				<div class="g-data-list-table freeze-candidateProject" style="height: 43px;">
+				  <rich:panel id="listPanl" style="margin:0; border:none; padding: 0;">
+				    <table class="record" width="100%" cellpadding="0" cellspacing="0">
+				        <tr>
+				        	<th width="5%">序号</th>
+				            <th width="15%">项目名称</th>
+				            <th width="10%">年预算金额</th>
+				            <th width="10%">已支出金额</th>
+				            <th width="10%">可支出金额</th>
+				            <th width="10%">本次支出金额</th>
+				            <th width="10%">支出日期</th>
+				            <th width="15%">备注</th>
+				            <th width="10%">附件</th>
+				            <th style="display:none">id</th>
+				        </tr>
+				    <a:repeat value="#{expendApplyEditHome.expendList}" var="_obj" rowKeyVar="_index">
+				        <tr class="root expendtr" style="font-size: 14px;font-weight: normal;">
+				        	<td width="5%">#{_index + 1}</td>
+				            <td width="15%">#{_obj[0]}</td>
+				            <td width="10%">#{_obj[1]}</td>
+				            <td width="10%">#{_obj[2]}</td>
+				            <td width="10%" name="canUseMoney">#{_obj[3]}</td>
+				            <td width="10%">
+				            	<input id="money_#{_index}" name="money" class="form-control row-text-simplify" value="#{_obj[4]}" type="text"/>
+				            </td>
+				            <td width="10%">
+				            	<div class="input-append date form_datetime_second" style="position:relative;" >
+                               		<input id="time_#{_index}" type="text" value="#{_obj[5]}" readonly="readonly" style="border-radius:4px;width:110px;height:34;" name="time"/> 
+                               		<span class="add-on" style="position:absolute; right:10px; top:3px;"><i class="icon-th" style="margin:0;"></i></span>
+                               	</div>
+							</td>
+				            <td width="15%">
+				            	<input name="comment" id="comment_#{_index}" class="form-control row-text-simplify" value="#{_obj[6]}" type="text"/>
+				            </td>
+				            <td width="10%">#{_obj[7]}</td>
+				            <td style="display:none" id="project_id_#{_index}">#{_obj[8]}</td>
+				        </tr>
+				   	</a:repeat>
+				    </table>
+				  </rich:panel>
+				</div>
+				
+				<div class="pt50 pb95" style="padding-top: 200px;">
+					<h:inputHidden id="projectJson" value="#{expendApplyEditHome.projectJson}" />
+					<table class="normal-btn">
+						<tr>
+							<td>
+								<a class="btn btn-primary mr15" onclick="return checkSub();">提交</a>
+							</td>
+						</tr>
+					</table>
+					<br />
+					<br />
+				</div>
+			</div>
+		</h:form>
+		<a:form>
+			<a:queue requestDelay="100" ignoreDupResponses="true" />
+			<a:jsFunction name="selectProject" action="#{expendApplyEditHome.selectProject}" reRender="listPanl,departPanl" oncomplete="changeProjectComplete()">
+				<a:actionparam name="projectId" assignTo="#{expendApplyEditHome.projectId}" />
+			</a:jsFunction>
+			<a:jsFunction name="save" action="#{expendApplyEditHome.save}" data="#{expendApplyEditHome.saveResult}" oncomplete="saveComplete(data)">
+				<a:actionparam name="applySn" assignTo="#{expendApplyEditHome.applySn}" />
+				<a:actionparam name="year" assignTo="#{expendApplyEditHome.year}" />
+				<a:actionparam name="departmentId" assignTo="#{expendApplyEditHome.departmentId}" />
+				<a:actionparam name="fundsSourceId" assignTo="#{expendApplyEditHome.fundsSourceId}" />
+				<a:actionparam name="projectId" assignTo="#{expendApplyEditHome.projectId}" />
+				<a:actionparam name="applyUser" assignTo="#{expendApplyEditHome.applyUser}" />
+				<a:actionparam name="reciveCompany" assignTo="#{expendApplyEditHome.reciveCompany}" />
+				<a:actionparam name="invoiceSn" assignTo="#{expendApplyEditHome.invoiceSn}" />
+				<a:actionparam name="projectJson" assignTo="#{expendApplyEditHome.projectJson}" />
+			</a:jsFunction>
+			<a:jsFunction name="clearList" action="#{expendApplyEditHome.clearList}" reRender="listPanl" oncomplete="changeProjectComplete()">
+			</a:jsFunction>
+		</a:form>
+		<script type="text/javascript" src="#{request.contextPath}/common/js/bootstrap.min.js" />
+		<script type="text/javascript" src="#{request.contextPath}/common/js/bootstrap-datetimepicker.min.js" charset="UTF-8" />
+		<script type="text/javascript" src="#{request.contextPath}/common/js/bootstrap-datetimepicker.zh-CN.js" charset="UTF-8" />
+		<script type="text/javascript" src="#{request.contextPath}/common/js/bootstrap-select-defaults-zh_CN.min.js" charset="UTF-8" />
+		<script type="text/javascript" src="#{request.contextPath}/common/js/bootstrap-select.min.js" charset="UTF-8" />
+		<script type="text/javascript" src="#{request.contextPath}/icheck/js/icheck.min.js" charset="UTF-8" />
+		<script type="text/javascript" src="#{request.contextPath}/toolkit/utils.js" />
+		<script type="text/javascript">
+		//<![CDATA[
+			jQuery(document).ready(function() {
+				
+				//时间插件
+				jQuery(".form_datetime_second").datetimepicker({
+					format: "yyyy-mm-dd",  
+					autoclose: true,
+					weekStart: 1,
+					language:  'zh-CN',
+					startView: 2,
+					minView: 2,
+					maxView: 2,	
+					forceParse: false, 
+					pickerPosition: "bottom-left"
+				});
+				 jQuery('.selectpicker').selectpicker();
+			});
+			
+			//选择项目
+			function changeProject(){
+				var project = jQuery("#projectId").val();
+				selectProject(project);
+			}
+			//选择项目回调
+			function changeProjectComplete(){
+				jQuery(".form_datetime_second").datetimepicker({
+					format: "yyyy-mm-dd",  
+					autoclose: true,
+					weekStart: 1,
+					language:  'zh-CN',
+					startView: 2,
+					minView: 2,
+					maxView: 2,	
+					forceParse: false, 	
+					pickerPosition: "bottom-left"
+				});
+				huidiao();
+			}
+
+			//提交校验
+			function checkSub(){
+				var applySn = jQuery("#mainForm\\:formnum").val();
+				var year = jQuery("#budgetYear").val();
+				var depart = jQuery("#depart").val();
+				var fundsSource = jQuery("#fundsSource").val();
+				var projectId = jQuery("#projectId").val();
+				var user = jQuery("#user").val();
+				var reciveCompany = jQuery("#mainForm\\:reciveCompany").val();
+				var invoicenum = jQuery("#mainForm\\:invoicenum").val();
+				var flag = true;
+				if(applySn == ""){
+					___msg('温馨提示', "请输入单据编号");
+					flag = false;
+					return ;
+					
+				}
+				if(year == null){
+					___msg('温馨提示', "请选择预算年份");
+					flag = false;
+					return ;
+				}
+				if(depart == null || depart == "" || depart == "-1"){
+					___msg('温馨提示', "请选择部门");
+					flag = false;
+					return;
+				}
+				if(fundsSource == null || fundsSource == "" || fundsSource == "-1"){
+					___msg('温馨提示', "请选择资金来源");
+					flag = false;
+					return;
+				}
+				if(projectId == null || projectId == "" || projectId == "-1"){
+					___msg('温馨提示', "请选择项目");
+					flag = false;
+					return ;
+				}
+				if(user == null || user == "" || projectId == "-1"){
+					___msg('温馨提示', "请选择报销人");
+					flag = false;
+					return ;
+				}
+				if(reciveCompany == ""){
+					___msg('温馨提示', "请输入收款公司");
+					flag = false;
+					return ;
+				}
+				if(invoicenum == ""){
+					___msg('温馨提示', "请输入发票号");
+					flag = false;
+					return ;
+				}
+				if(invoicenum.length > 20){
+					___msg('温馨提示', "发票号不能大于20位");
+					flag = false;
+					return;
+				}
+				jQuery("input[name='money']").each(function(){
+					var price = jQuery(this).val();
+					if(price =="" ||  isNaN(price)){
+						___msg('温馨提示', "请输入支出金额");
+						flag = false;
+						return;
+						if(parseFloat(price) < 0 || parseFloat(price) == 0){
+							___msg('温馨提示', "请输入正确的数字");
+							flag = false;
+							return ;
+						}
+					}else{
+						if(parseFloat(price) > parseFloat(jQuery(this).parent().parent().find("td[name='canUseMoney']").text())){
+							___msg('温馨提示', "支出金额不能大于可支出金额");
+							flag = false;
+							return;
+						}
+					}
+				});
+				jQuery("input[name='time']").each(function(){
+					var time = jQuery(this).val();
+					if(time == null || time == ""){
+						___msg('温馨提示', "请选择日期");
+						flag = false;
+						return;
+					}
+				});
+				jQuery("input[name='comment']").each(function(){
+					var comment = jQuery(this).val();
+					if(comment.length> 50){
+						___msg('温馨提示', "备注不能大于50字");
+						flag = false;
+						return ;
+					}
+				});
+				var json = getJson();
+				if(json == '{"expend_list":[]}'){
+					___msg('温馨提示', "请选择申请内容");
+					flag = false;
+					return;
+				}
+				if(flag){
+					save(applySn,year,depart,fundsSource,projectId,user,reciveCompany,invoicenum,json);
+				}
+				
+			}
+
+			//保存回调
+			function saveComplete(data){
+				if (data != null && 'INVOKE_SUCCESS' == data.invoke_result) {
+				    ___dynamic_function = function() {
+				    	window.location.href = '../budget/TaskUntreatedList.seam';
+					};
+					___msg('温馨提示', data.message, {closed: ___dynamic_function});
+				} else {
+					___msg('温馨提示', data.message);
+				}
+			}
+			//获取列表json
+			function getJson(){
+				var json = '{"expend_list":[';
+				jQuery(".expendtr").each(function(i){
+					var projectId= jQuery("#project_id_" + i).text();
+					var money = jQuery("#money_" + i).val();
+					var time = jQuery("#time_" + i).val();
+					var comment = jQuery("#comment_" + i).val();
+					json += '{"project_id":"' + projectId + '",';
+					json += '"expend_money":"' + money + '",';
+					json += '"expend_time":"' + time + '",';
+					json += '"expend_comment":"' + comment + '"},';
+				});
+				json = json.substring(0,json.length-1);
+				json += "]}"; 
+				return json;
+			}
+
+			//删除列表
+			function deleteList(){
+				clearList();
+			}
+
+			//部门选择事件
+			function departChange(){
+				var depart = jQuery("#depart").val();
+				if(depart != "-1"){
+					selectDepart(depart);
+				}
+			}
+			//回调初始化下拉列表
+			function huidiao(){
+				jQuery('.selectpicker').selectpicker();
+			}
+		//]]>
+		</script>
+	</ui:define>
+
+</ui:composition>
