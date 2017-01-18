@@ -107,13 +107,14 @@
 				    <table class="record" width="100%" cellpadding="0" cellspacing="0">
 				        <tr>
 				            <th width="5%">序<br />号</th>
-				            <th width="10%">项目性质</th>
-				            <th width="22%">项目名称</th>
-				            <th width="10%">项目来源</th>
+				            <th width="8%">项目性质</th>
+				            <th width="20%">项目名称</th>
+				            <th width="8%">项目来源</th>
 				            <th width="10%">项目金额(元)</th>
 				            <th width="10%">金额计算依据</th>
 				            <th width="13%">与上一年预算<br />同比增减(元)</th>
-				            <th width="15%">备注</th>
+				            <th width="13%">与上一年预算<br />同比增减率</th>
+				            <th width="8%">备注</th>
 				            <th width="5%">操作</th>
 				        </tr>
 				    </table>
@@ -216,6 +217,7 @@
 							html += '	</td>';
 						}
 						html += '	<td class="year-on-year">--</td>';
+						html += '	<td class="year-on-year-rate">--</td>';
 						if (multilevel) {
 							html += '	<td></td>';
 						} else {
@@ -253,6 +255,7 @@
 									html += '		</div>';
 									html += '	</td>';
 									html += '	<td class="year-on-year">--</td>';
+									html += '	<td class="year-on-year-rate">--</td>';
 									html += '	<td>';
 									html += '		<div class="row-input">';
 									html += '			<input name="remark" class="form-control row-text-simplify" type="text">';
@@ -434,18 +437,29 @@
 					var key = ___wrapStr(candidateProject[dataIndex]['departmentId'], Number(jQuery('#budgetYear').val()) - 1, candidateProject[dataIndex]['projectId'], subId);
 					var value = jQuery(this).val();
 					var lastYearAmount = yearOnYearData[key];
-					if (!___isNumber(value) || null == yearOnYearData[key])
+					if (!___isNumber(value) || null == yearOnYearData[key]) {
 						jQuery(this).parents('tr').find('.year-on-year').html('--');
-					else {
-						var label = '';
-						var diff = Number(value) - lastYearAmount;
-						if (diff > 0)
-							label = '增加' + diff.toFixed(2);
-						else if (diff < 0)
-							label = '减少' + Math.abs(diff.toFixed(2));
+						jQuery(this).parents('tr').find('.year-on-year-rate').html('--');
+					} else {
+						var diffValue = Number(value) - lastYearAmount;
+						var diffLabel = '';
+						if (diffValue > 0)
+							diffLabel = '增加' + diffValue.toFixed(2);
+						else if (diffValue < 0)
+							diffLabel = '减少' + Math.abs(diffValue.toFixed(2));
 						else
-							label = '保持一致';
-						jQuery(this).parents('tr').find('.year-on-year').html(label);
+							diffLabel = '保持一致';
+						jQuery(this).parents('tr').find('.year-on-year').html(diffLabel);
+
+						var rateValue = ((Number(value) - lastYearAmount) / lastYearAmount) * 100;
+						var rateLabel = '';
+						if (rateValue > 0)
+							rateLabel = '增加' + rateValue.toFixed(2) + '%';
+						else if (rateValue < 0)
+							rateLabel = '减少' + Math.abs(rateValue.toFixed(2)) + '%';
+						else
+							rateLabel = '保持一致';
+						jQuery(this).parents('tr').find('.year-on-year-rate').html(rateLabel);
 					}
 				});
 				setTimeout("updateYearOnYear()", 100);
