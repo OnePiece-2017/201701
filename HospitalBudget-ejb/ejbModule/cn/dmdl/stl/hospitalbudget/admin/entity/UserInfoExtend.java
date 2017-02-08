@@ -35,6 +35,7 @@ public class UserInfoExtend implements java.io.Serializable {
 	private String mail;
 	private String address;
 	private String interest;
+	private String attachment;
 	private Date insertTime;
 	private Integer insertUser;
 	private Date updateTime;
@@ -146,6 +147,16 @@ public class UserInfoExtend implements java.io.Serializable {
 
 	public void setInterest(String interest) {
 		this.interest = interest;
+	}
+
+	@Column(name = "attachment", length = 32)
+	@Length(max = 32)
+	public String getAttachment() {
+		return attachment;
+	}
+
+	public void setAttachment(String attachment) {
+		this.attachment = attachment;
 	}
 
 	@Temporal(TemporalType.TIMESTAMP)
