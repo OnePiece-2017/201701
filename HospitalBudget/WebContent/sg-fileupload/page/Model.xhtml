@@ -1,0 +1,65 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	template="/layout/template.xhtml">
+
+	<ui:define name="head">
+		<link rel="stylesheet" type="text/css" href="#{request.contextPath}/sg-fileupload/css/model.css" />
+	</ui:define>
+
+	<ui:define name="body">
+		<pre style="display: none;">
+			注意：EL表达式在预格式文本中有效果。
+				单独将此页面立项，主要是想实现分层，Model专门负责两模块间的数据交换，View专门负责数据展示，Controller专门负责核心数据处理，这样做使得条例更加清晰。
+		</pre>
+		<div class="div-main">
+			<img class="icon" src="../img/icon_info.png" />
+			<strong class="message">请稍等……</strong>
+		</div>
+		<script type="text/javascript" src="#{request.contextPath}/sg-fileupload/js/model.js" />
+		<script type="text/javascript">
+		//<![CDATA[
+			jQuery(document).ready(function() {
+				jQuery('body').niceScroll({
+				    cursorcolor : '#000000',
+				    cursorwidth : 6,
+				    cursoropacitymax : 0.8,
+				    touchbehavior : false,
+				    autohidemode : false
+				});
+				var invoke_result = '#{request.getParameter("invoke_result")}';
+				var code = '#{request.getParameter("code")}';
+				if ('INVOKE_SUCCESS' == invoke_result) {
+					parent.sgFileupload.hideMaskLayer();
+					var args = {
+					    'assist_key' : 'gain_recently_uploaded',
+					    'assist_value' : code
+					};
+					jQuery.ajax({
+					    type : 'POST',
+					    dataType : 'jsonp',
+					    jsonp : 'callback',
+					    url : (___contextRoot != '/' ? ___contextRoot : '') + '/FileUploadAssistServlet',
+					    data : {
+						    'args' : JSON.stringify(args)
+					    },
+					    success : function(result) {
+						    var callFunc = parent.sgFileupload.updateUploaded;
+						    if (callFunc != null) {
+						    	callFunc(result);
+						    } else {
+							    alert('未绑定callFunc - updateUploaded');
+						    }
+					    },
+					    error : function(err) {
+						    alert('获取最近上传失败！');
+					    }
+					});
+				} else {
+					alert('请求失败！');
+				}
+			});
+		//]]>
+		</script>
+	</ui:define>
+</ui:composition>

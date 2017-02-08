@@ -1,0 +1,73 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	template="/layout/template.xhtml">
+
+	<ui:define name="head">
+		<link rel="stylesheet" type="text/css" href="#{request.contextPath}/sg-fileupload/css/view.css" />
+		<script type="text/javascript">
+		//<![CDATA[
+			// Wait for me! view.js
+		//]]>
+		</script>
+	</ui:define>
+
+	<ui:define name="body">
+		<div class="uploaded-files-table">
+			<table class="record" width="100%" cellspacing="0" cellpadding="0">
+				<tbody>
+					<!-- 默认方案 -->
+			        <tr class="scheme-default">
+			            <th style="width: 20px;"></th>
+			            <th style="width: 35px;"></th>
+			            <th style="width: 100px;"></th>
+			            <th style="width: 200px;"></th>
+			            <th></th>
+			            <th style="width: 80px;"></th>
+			            <th style="width: 20px;"></th>
+			        </tr>
+			        <!-- 自定义方案 -->
+			        <tr class="scheme-defined-1">
+			            <th style="width: 20px;"></th>
+			            <th style="width: 35px;">Icon</th>
+			            <th style="width: 100px;">Type</th>
+			            <th style="width: 200px;">Size</th>
+			            <th>Name</th>
+			            <th style="width: 80px;">Oper</th>
+			            <th style="width: 20px;"></th>
+			        </tr>
+			        <tr class="scheme-defined-2 enable">
+			            <th style="width: 20px;"></th>
+			            <th style="width: 35px;">图标</th>
+			            <th style="width: 100px;">类型</th>
+			            <th style="width: 200px;">尺寸</th>
+			            <th>文件名</th>
+			            <th style="width: 80px;">操作</th>
+			            <th style="width: 20px;"></th>
+			        </tr>
+			        <tr class="data-row-reference-point" style="display: none;">
+			        </tr>
+				</tbody>
+			</table>
+		</div>
+		<div class="uploaded-files-table-none">
+			<img class="icon" src="../img/icon_info.png" />
+			<strong class="message">哎呀，无数据哦！</strong>
+		</div>
+		<script type="text/javascript" src="#{request.contextPath}/sg-fileupload/js/type.js" />
+		<script type="text/javascript" src="#{request.contextPath}/sg-fileupload/js/view.js" />
+		<script type="text/javascript">
+		//<![CDATA[
+			jQuery(document).ready(function() {
+				jQuery('body').niceScroll({
+				    cursorcolor : '#000000',
+				    cursorwidth : 6,
+				    cursoropacitymax : 0.8,
+				    touchbehavior : false,
+				    autohidemode : false
+				});
+			});
+		//]]>
+		</script>
+	</ui:define>
+</ui:composition>

@@ -1,0 +1,137 @@
+.sg-fileupload-attachment {
+	float: left;
+	width: 220px;
+	height: 34px;
+	padding-right: 15px;
+	font-family: '微软雅黑';
+	text-align: right;
+	cursor: pointer;
+	background: #0fb38a;
+}
+
+.sg-fileupload-panel {
+	position: fixed;
+	width: 100%;
+	height: 100%;
+	background: #de2594;
+	z-index: 614616185;
+	display: none;
+}
+
+.sg-fileupload-panel .mask-layer {
+	position: fixed;
+	width: 100%;
+	height: 100%;
+	z-index: 614616186;
+	display: none;
+}
+
+.sg-fileupload-panel .mask-layer img {
+	margin: 10% 35%;
+}
+
+.sg-fileupload-panel .banner {
+	background: #ffffff;
+	height: 80px;
+}
+
+.sg-fileupload-panel .banner .alias {
+	position: absolute;
+	margin: 5px 30px;
+	font-size: 15px;
+	color: #3ab54a;
+	border-style: dotted;
+}
+
+.sg-fileupload-panel .banner .select-file {
+	position: absolute;
+	margin: 40px 30px;
+	cursor: pointer;
+	font-size: 16px;
+	color: #000;
+}
+
+.sg-fileupload-panel .banner .select-file.disabled {
+	position: absolute;
+	margin: 40px 30px;
+	cursor: default;
+	font-size: 16px;
+	color: #e1d6d6;
+}
+
+.sg-fileupload-panel .banner .upload-file {
+	position: absolute;
+	margin: 40px 120px;
+	cursor: pointer;
+	font-size: 16px;
+	color: #000;
+}
+
+.sg-fileupload-panel .banner .upload-file.disabled {
+	position: absolute;
+	margin: 40px 120px;
+	cursor: default;
+	font-size: 16px;
+	color: #e1d6d6;
+}
+
+.sg-fileupload-panel .banner .close-panel {
+	float: right;
+	width: 24px;
+	height: 24px;
+	margin: 20px 20px;
+	opacity: 0.3;
+	cursor: pointer;
+}
+
+.sg-fileupload-panel .banner .close-panel:hover {
+	float: right;
+	width: 32px;
+	height: 32px;
+	margin: 16px 16px;
+	opacity: 1.0;
+	cursor: pointer;
+}
+
+.sg-fileupload-panel .banner .close-panel.disabled {
+	float: right;
+	width: 24px;
+	height: 24px;
+	margin: 20px 20px;
+	opacity: 0.3;
+	cursor: default;
+}
+
+.sg-fileupload-panel .banner .close-panel.disabled:hover {
+	float: right;
+	width: 24px;
+	height: 24px;
+	margin: 20px 20px;
+	opacity: 0.3;
+	cursor: default;
+}
+
+.sg-fileupload-panel .prepared {
+	background: #d3dae3;
+	height: 160px;
+}
+
+.sg-fileupload-panel .centre {
+	background: #ffffff;
+	height: 80px;
+}
+
+.sg-fileupload-panel .uploaded {
+	background: #d3dae3;
+	height: 160px;
+}
+
+.sg-fileupload-panel .download {
+	background: #4cae4c;
+	height: 0px;
+}
+
+.sg-fileupload-panel .bottom {
+	background: #ffffff;
+	height: 100%;
+}
