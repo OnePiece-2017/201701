@@ -72,13 +72,13 @@
 		<value>http://127.0.0.1:8080</value>
 	</item>
 	<item key="domain.root" for="2" enabled="true">
-		<value>http://test.seamgen.cn</value>
+		<value>http://test.hospitalbudget.cn</value>
 	</item>
 	<item key="domain.root" for="3" enabled="false">
-		<value>https://www.seamgen.com</value>
+		<value>https://www.hospitalbudget.com</value>
 	</item>
 	<item key="domain.root" for="3" enabled="true">
-		<value>http://www.seamgen.cn</value>
+		<value>http://www.hospitalbudget.cn</value>
 	</item>
 
 	<!-- 充值url -->
@@ -88,7 +88,7 @@
 
 	<!-- The context-root element specifies the context root of a web application. -->
 	<item key="context.root" for="1" enabled="true">
-		<value>/seamgen</value>
+		<value>/HospitalBudget</value>
 	</item>
 	<item key="context.root" for="3" enabled="true">
 		<value>/</value>
