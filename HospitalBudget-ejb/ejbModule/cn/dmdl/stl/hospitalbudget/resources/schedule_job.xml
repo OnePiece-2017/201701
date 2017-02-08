@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <schedule_job>
 
-	<!-- 登陸統計分析作業 -->
+	<!-- 登陆统计分析作业 -->
 	<quartz for="1" enabled="!true">
 		<job_detail>
 			<name>LoginStatisticsJob</name>
@@ -15,7 +15,7 @@
 		</cron_trigger>
 	</quartz>
 
-	<!-- 用戶追蹤作業 -->
+	<!-- 用户追踪作业 -->
 	<quartz for="1" enabled="!true">
 		<job_detail>
 			<name>UserFollowingJob</name>
@@ -41,7 +41,7 @@
 		</cron_trigger>
 	</quartz>
 
-	<!-- 其它作業 -->
+	<!-- 其它作业 -->
 	<quartz for="1" enabled="!true">
 		<job_detail>
 			<name>OthersJob</name>
