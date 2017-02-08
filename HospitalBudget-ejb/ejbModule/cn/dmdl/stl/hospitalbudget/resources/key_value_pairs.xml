@@ -14,24 +14,24 @@
 
 	<!-- org.apache.commons.fileupload.FileUploadBase.fileSizeMax -->
 	<item key="fileupload.maximum_size_of_a_single_uploaded_file" for="1" enabled="true">
-		<value>536870912</value>
+		<value>134217728</value>
 	</item>
 	<item key="fileupload.maximum_size_of_a_single_uploaded_file" for="2" enabled="true">
-		<value>536870912</value>
+		<value>134217728</value>
 	</item>
 	<item key="fileupload.maximum_size_of_a_single_uploaded_file" for="3" enabled="true">
-		<value>536870912</value>
+		<value>134217728</value>
 	</item>
 
 	<!-- org.apache.commons.fileupload.FileUploadBase.sizeMax -->
 	<item key="fileupload.maximum_allowed_size_of_a_complete_request" for="1" enabled="true">
-		<value>10737418240</value>
+		<value>1073741824</value>
 	</item>
 	<item key="fileupload.maximum_allowed_size_of_a_complete_request" for="2" enabled="true">
-		<value>10737418240</value>
+		<value>1073741824</value>
 	</item>
 	<item key="fileupload.maximum_allowed_size_of_a_complete_request" for="3" enabled="true">
-		<value>10737418240</value>
+		<value>1073741824</value>
 	</item>
 
 	<!-- org.apache.commons.fileupload.disk.DiskFileItemFactory.repository -->
