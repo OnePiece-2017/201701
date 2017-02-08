@@ -10,11 +10,11 @@
 	template="/layout/template_edit.xhtml">
 
 	<ui:define name="head">
-		<link rel="stylesheet" type="text/css" href="#{request.contextPath}/common/css/bootstrap-datetimepicker.min.css" />
 		<link rel="stylesheet" type="text/css" href="#{request.contextPath}/common/css/bootstrap.min.css" />
 		<link rel="stylesheet" type="text/css" href="#{request.contextPath}/common/css/bootstrap-select.min.css" />
+		<link rel="stylesheet" type="text/css" href="#{request.contextPath}/common/css/bootstrap-datetimepicker.min.css" />
 		<link rel="stylesheet" type="text/css" href="#{request.contextPath}/icheck/skins/square/blue.css" />
-		<link rel="stylesheet" type="text/css" href="#{request.contextPath}/stylesheet/fix.css" />
+		<link rel="stylesheet" type="text/css" href="#{request.contextPath}/sg-fileupload/css/kernel.css" />
 	</ui:define>
 
 	<ui:define name="body">
@@ -309,6 +309,24 @@
 									<table>
 										<tr>
 											<td valign="middle">
+												<span class="field-name mb10">附件</span>
+											</td>
+											<td valign="middle">
+												<span id="attachment"></span>
+												<h:inputHidden id="attachmentHidden" value="#{userInfoHome.userInfoExtend.attachment}" />
+											</td>
+											<td valign="middle">
+												<font color="red" style="margin-left: 3px;"></font>
+											</td>
+										</tr>
+									</table>
+								</div>
+							</td>
+							<td width="50%">
+								<div class="pb20">
+									<table>
+										<tr>
+											<td valign="middle">
 												<span class="field-name mb10">启用</span>
 											</td>
 											<td valign="top">
@@ -341,12 +359,13 @@
 			</div>
 		</h:form>
 		<script type="text/javascript" src="#{request.contextPath}/common/js/bootstrap.min.js" />
-		<script type="text/javascript" src="#{request.contextPath}/common/js/bootstrap-select.min.js" charset="UTF-8" />
-		<script type="text/javascript" src="#{request.contextPath}/common/js/bootstrap-select-defaults-zh_CN.min.js" charset="UTF-8" />
-		<script type="text/javascript" src="#{request.contextPath}/common/js/bootstrap-datetimepicker.min.js" charset="UTF-8" />
-		<script type="text/javascript" src="#{request.contextPath}/common/js/bootstrap-datetimepicker.zh-CN.js" charset="UTF-8" />
-		<script type="text/javascript" src="#{request.contextPath}/icheck/js/icheck.min.js" charset="UTF-8" />
-		<script type="text/javascript" src="#{request.contextPath}/toolkit/utils.js" charset="UTF-8" />
+		<script type="text/javascript" src="#{request.contextPath}/common/js/bootstrap-select.min.js" />
+		<script type="text/javascript" src="#{request.contextPath}/common/js/bootstrap-select-defaults-zh_CN.min.js" />
+		<script type="text/javascript" src="#{request.contextPath}/common/js/bootstrap-datetimepicker.min.js" />
+		<script type="text/javascript" src="#{request.contextPath}/common/js/bootstrap-datetimepicker.zh-CN.js" />
+		<script type="text/javascript" src="#{request.contextPath}/icheck/js/icheck.min.js" />
+		<script type="text/javascript" src="#{request.contextPath}/sg-fileupload/js/kernel.js" />
+		<script type="text/javascript" src="#{request.contextPath}/toolkit/utils.js" />
 		<script type="text/javascript">
 		//<![CDATA[
 			jQuery(document).ready(function() {
@@ -403,6 +422,12 @@
 
 			    jQuery('#enabled').iCheck(jQuery('#mainForm\\:enabledHidden').val() != 'true' ? 'uncheck' : 'check');
 
+				sgFileupload['install']({
+				    'target' : 'attachment',
+				    'alias' : '附件',
+				    'source' : jQuery('#mainForm\\:attachmentHidden').val(),
+				    'class' : [ 'mb10', 'text-center' ]
+				});
 			});
 			
 			//提交表单前
@@ -485,7 +510,8 @@
 				}
 				
 				jQuery('#mainForm\\:enabledHidden').val(jQuery('#enabled:checked').length > 0);
-				
+
+				jQuery('#mainForm\\:attachmentHidden').val(sgFileupload['getSource']('attachment'));
 			}
 		//]]>
 		</script>
