@@ -3,13 +3,13 @@
 
 	<!-- org.apache.commons.fileupload.disk.DiskFileItemFactory.sizeThreshold -->
 	<item key="fileupload.size_threshold" for="1" enabled="true">
-		<value>536870912</value>
+		<value>1048576</value>
 	</item>
 	<item key="fileupload.size_threshold" for="2" enabled="true">
-		<value>536870912</value>
+		<value>1048576</value>
 	</item>
 	<item key="fileupload.size_threshold" for="3" enabled="true">
-		<value>536870912</value>
+		<value>1048576</value>
 	</item>
 
 	<!-- org.apache.commons.fileupload.FileUploadBase.fileSizeMax -->
