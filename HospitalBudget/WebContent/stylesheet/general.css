@@ -78,3 +78,10 @@
 .fs14 {
 	font-size: 14px;
 }
+
+.a-abbr {
+	color: #333333;
+	text-decoration: none;
+	cursor: default;
+	outline: none;
+}
