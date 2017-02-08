@@ -19,6 +19,7 @@ public class DateTimeHelper {
 	public static final String PATTERN_DATE_END = "yyyy-MM-dd 23:59:59";
 	public static final String PATTERN_DATE_YW = "yyyy-ww";
 	public static final String PATTERN_CN_DATE_YW = "yyyy年第ww周";
+	public static final String PATTERN_DATE_TIME_FULL = "yyyy-MM-dd HH:mm:ss.SSS";
 
 	public static String dateToStr(Date date, String pattern) {
 		SimpleDateFormat simpleDateFormat = new SimpleDateFormat(pattern);
