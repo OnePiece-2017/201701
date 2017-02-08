@@ -32,7 +32,7 @@ public class ConfigureCache {
 	private static String projectName;// Seam Web Project - Project name
 	private static Map<String, Boolean> executingMap;// 执行中集合
 	public static Map<String, String> projectInfoMap;// 項目信息集合
-	public static Map<String, String> pathInfoMap;// 路徑信息集合
+	public static Map<String, String> keyValuePairsMap;// 键-值对集合
 	public static Map<String, JSONObject> dataSourceMap;// 数据源集合
 	public static Map<String, String> messageInfoMap;// 消息集合
 	public static Map<String, String> systemSettingsMap;// 系统设置集合
@@ -89,9 +89,9 @@ public class ConfigureCache {
 		return projectInfoMap.get(key);
 	}
 
-	/** 获取路徑信息数据 */
-	public static String getPathValue(String key) {
-		return pathInfoMap.get(key);
+	/** 获取值数据 */
+	public static String getValue(String key) {
+		return keyValuePairsMap.get(key);
 	}
 
 	/** 推送数据源 */

@@ -75,7 +75,7 @@ public class DataSourceLoader {
 						}
 						connection.accumulate("url", url);
 						ConfigureCache.pushDataSource(connection.getString("key"), connection);
-						logger.error(Assit.wrapStr(connection.getString("key"), connection));
+						logger.info(Assit.wrapStr(connection.getString("key"), connection));
 					}
 				}
 			}

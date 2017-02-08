@@ -41,7 +41,7 @@ public class ConfigureLoader {
 	@Create
 	public void init() {
 		logger.info("init");
-		initPathInfoMap();
+		initKeyValuePairsMap();
 		initMessageInfoMap();
 		initSystemSettingsMap();
 		initDictionary();
@@ -49,18 +49,18 @@ public class ConfigureLoader {
 		initVersionMap();
 	}
 
-	/** 初始化路徑集合 */
-	private void initPathInfoMap() {
-		logger.info("initPathInfoMap");
-		if (ConfigureCache.pathInfoMap != null) {
-			ConfigureCache.pathInfoMap.clear();
+	/** 初始化键-值对集合 */
+	private void initKeyValuePairsMap() {
+		logger.info("initKeyValuePairsMap");
+		if (ConfigureCache.keyValuePairsMap != null) {
+			ConfigureCache.keyValuePairsMap.clear();
 		} else {
-			ConfigureCache.pathInfoMap = new HashMap<String, String>();
+			ConfigureCache.keyValuePairsMap = new HashMap<String, String>();
 		}
 		try {
 			String path = getClass().getResource(".").getPath();
 			logger.info("path-->" + path);
-			String pathname = path + "../resources/" + "path_info.xml";
+			String pathname = path + "../resources/" + "key_value_pairs.xml";
 			logger.info("pathname-->" + pathname);
 			File xmlfile = new File(pathname);
 			SAXReader reader = new SAXReader();
@@ -71,13 +71,13 @@ public class ConfigureLoader {
 				for (Object leaf : leafList) {
 					Element leafElement = (Element) leaf;
 					if ("true".equals(leafElement.attribute("enabled").getText()) && leafElement.attribute("for").getText().equals(ConfigureCache.getProjectValue(leafElement.attribute("key").getText()))) {
-						ConfigureCache.pathInfoMap.put(leafElement.attribute("key").getText(), leafElement.element("value").getText());
+						ConfigureCache.keyValuePairsMap.put(leafElement.attribute("key").getText(), leafElement.element("value").getText());
 						logger.info(Assit.wrapStr(leafElement.attribute("key").getText(), leafElement.element("value").getText()));
 					}
 				}
 			}
 		} catch (Exception e) {
-			logger.error("initPathInfoMap", e);
+			logger.error("initKeyValuePairsMap", e);
 		}
 	}
 
