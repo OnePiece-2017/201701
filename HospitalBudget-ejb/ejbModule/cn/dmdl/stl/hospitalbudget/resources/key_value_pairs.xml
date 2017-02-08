@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<key_value_pairs>
+
+	<!-- org.apache.commons.fileupload.disk.DiskFileItemFactory.sizeThreshold -->
+	<item key="fileupload.size_threshold" for="1" enabled="true">
+		<value>536870912</value>
+	</item>
+	<item key="fileupload.size_threshold" for="2" enabled="true">
+		<value>536870912</value>
+	</item>
+	<item key="fileupload.size_threshold" for="3" enabled="true">
+		<value>536870912</value>
+	</item>
+
+	<!-- org.apache.commons.fileupload.FileUploadBase.fileSizeMax -->
+	<item key="fileupload.maximum_size_of_a_single_uploaded_file" for="1" enabled="true">
+		<value>536870912</value>
+	</item>
+	<item key="fileupload.maximum_size_of_a_single_uploaded_file" for="2" enabled="true">
+		<value>536870912</value>
+	</item>
+	<item key="fileupload.maximum_size_of_a_single_uploaded_file" for="3" enabled="true">
+		<value>536870912</value>
+	</item>
+
+	<!-- org.apache.commons.fileupload.FileUploadBase.sizeMax -->
+	<item key="fileupload.maximum_allowed_size_of_a_complete_request" for="1" enabled="true">
+		<value>10737418240</value>
+	</item>
+	<item key="fileupload.maximum_allowed_size_of_a_complete_request" for="2" enabled="true">
+		<value>10737418240</value>
+	</item>
+	<item key="fileupload.maximum_allowed_size_of_a_complete_request" for="3" enabled="true">
+		<value>10737418240</value>
+	</item>
+
+	<!-- org.apache.commons.fileupload.disk.DiskFileItemFactory.repository -->
+	<item key="fileupload.repository" for="1" enabled="true">
+		<value>D:/.temp/</value>
+	</item>
+	<item key="fileupload.repository" for="2" enabled="true">
+		<value>D:/.temp/</value>
+	</item>
+	<item key="fileupload.repository" for="3" enabled="true">
+		<value>D:/.temp/</value>
+	</item>
+
+	<!-- 根存储路径 -->
+	<item key="storage.path.root" for="1" enabled="true">
+		<value>D:/.webroot/upload/</value>
+	</item>
+	<item key="storage.path.root" for="2" enabled="true">
+		<value>D:/.webroot/upload/</value>
+	</item>
+	<item key="storage.path.root" for="3" enabled="true">
+		<value>D:/.webroot/upload/</value>
+	</item>
+
+	<!-- 根存储网址 -->
+	<item key="storage.url.root" for="1" enabled="true">
+		<value>http://127.0.0.1/upload/</value>
+	</item>
+	<item key="storage.url.root" for="2" enabled="true">
+		<value>http://127.0.0.1/upload/</value>
+	</item>
+	<item key="storage.url.root" for="3" enabled="true">
+		<value>http://127.0.0.1/upload/</value>
+	</item>
+
+	<!-- 根域名 -->
+	<item key="domain.root" for="1" enabled="true">
+		<value>http://127.0.0.1:8080</value>
+	</item>
+	<item key="domain.root" for="2" enabled="true">
+		<value>http://test.seamgen.cn</value>
+	</item>
+	<item key="domain.root" for="3" enabled="false">
+		<value>https://www.seamgen.com</value>
+	</item>
+	<item key="domain.root" for="3" enabled="true">
+		<value>http://www.seamgen.cn</value>
+	</item>
+
+	<!-- 充值url -->
+	<item key="url.business.recharge" for="1" enabled="true">
+		<value>http://127.0.0.1:8080</value>
+	</item>
+
+	<!-- The context-root element specifies the context root of a web application. -->
+	<item key="context.root" for="1" enabled="true">
+		<value>/seamgen</value>
+	</item>
+	<item key="context.root" for="3" enabled="true">
+		<value>/</value>
+	</item>
+
+</key_value_pairs>
