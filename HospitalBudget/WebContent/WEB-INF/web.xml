@@ -54,6 +54,10 @@
 	<listener>
 		<listener-class>cn.dmdl.stl.hospitalbudget.listener.ScheduleJobHandlerListener</listener-class>
 	</listener>
+	<!-- FileCleanerCleanup -->
+	<listener>
+		<listener-class>org.apache.commons.fileupload.servlet.FileCleanerCleanup</listener-class>
+	</listener>
 	<servlet>
 		<servlet-name>Faces Servlet</servlet-name>
 		<servlet-class>javax.faces.webapp.FacesServlet</servlet-class>
@@ -62,6 +66,11 @@
 	<servlet>
 		<servlet-name>Seam Resource Servlet</servlet-name>
 		<servlet-class>org.jboss.seam.servlet.SeamResourceServlet</servlet-class>
+	</servlet>
+	<!-- 通用servlet -->
+	<servlet>
+		<servlet-name>GeneralServlet</servlet-name>
+		<servlet-class>cn.dmdl.stl.hospitalbudget.servlet.GeneralServlet</servlet-class>
 	</servlet>
 	<!-- 充值servlet -->
 	<servlet>
@@ -78,10 +87,20 @@
 		<servlet-name>ServerInfoServlet</servlet-name>
 		<servlet-class>cn.dmdl.stl.hospitalbudget.servlet.ServerInfoServlet</servlet-class>
 	</servlet>
-	<!-- 文件上傳servlet -->
+	<!-- 文件上传servlet -->
 	<servlet>
 		<servlet-name>FileUploadServlet</servlet-name>
 		<servlet-class>cn.dmdl.stl.hospitalbudget.servlet.FileUploadServlet</servlet-class>
+	</servlet>
+	<!-- 文件上传协助servlet -->
+	<servlet>
+		<servlet-name>FileUploadAssistServlet</servlet-name>
+		<servlet-class>cn.dmdl.stl.hospitalbudget.servlet.FileUploadAssistServlet</servlet-class>
+	</servlet>
+	<!-- 文件下载servlet -->
+	<servlet>
+		<servlet-name>FileDownloadServlet</servlet-name>
+		<servlet-class>cn.dmdl.stl.hospitalbudget.servlet.FileDownloadServlet</servlet-class>
 	</servlet>
 	<servlet-mapping>
 		<servlet-name>Faces Servlet</servlet-name>
@@ -90,6 +109,10 @@
 	<servlet-mapping>
 		<servlet-name>Seam Resource Servlet</servlet-name>
 		<url-pattern>/seam/resource/*</url-pattern>
+	</servlet-mapping>
+	<servlet-mapping>
+		<servlet-name>GeneralServlet</servlet-name>
+		<url-pattern>/GeneralServlet</url-pattern>
 	</servlet-mapping>
 	<servlet-mapping>
 		<servlet-name>RechargeServlet</servlet-name>
@@ -106,6 +129,14 @@
 	<servlet-mapping>
 		<servlet-name>FileUploadServlet</servlet-name>
 		<url-pattern>/FileUploadServlet</url-pattern>
+	</servlet-mapping>
+	<servlet-mapping>
+		<servlet-name>FileUploadAssistServlet</servlet-name>
+		<url-pattern>/FileUploadAssistServlet</url-pattern>
+	</servlet-mapping>
+	<servlet-mapping>
+		<servlet-name>FileDownloadServlet</servlet-name>
+		<url-pattern>/FileDownloadServlet</url-pattern>
 	</servlet-mapping>
 	<session-config>
 		<session-timeout>0</session-timeout>
