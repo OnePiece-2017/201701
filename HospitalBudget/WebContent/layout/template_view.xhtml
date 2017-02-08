@@ -21,7 +21,7 @@
 			<script type="text/javascript" src="#{request.contextPath}/javascript/template_view.js" charset="UTF-8" />
 			<script type="text/javascript">
 				jQuery.noConflict();
-				var ___contextRoot = '#{configureCache.getPathValue("context.root")}';
+				var ___contextRoot = '#{configureCache.getValue("context.root")}';
 			</script>
 			<ui:insert name="head" />
 		</head>
