@@ -104,8 +104,6 @@ public class UserInfoHome extends CriterionEntityHome<UserInfo> {
 			userInfoExtend.setBirthday(null);
 		}
 		userInfoExtend.setInterest(interest);
-		getEntityManager().merge(userInfoExtend);
-		getEntityManager().merge(instance);
 		getEntityManager().flush();
 		raiseAfterTransactionSuccessEvent();
 		return "updated";

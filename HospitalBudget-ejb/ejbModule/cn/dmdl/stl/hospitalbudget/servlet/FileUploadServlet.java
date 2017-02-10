@@ -33,6 +33,7 @@ import cn.dmdl.stl.hospitalbudget.boot.ConfigureCache;
 import cn.dmdl.stl.hospitalbudget.util.Assit;
 import cn.dmdl.stl.hospitalbudget.util.DataSourceManager;
 import cn.dmdl.stl.hospitalbudget.util.DateTimeHelper;
+import cn.dmdl.stl.hospitalbudget.util.Helper;
 import cn.dmdl.stl.hospitalbudget.util.HttpServletInvokeFeatures;
 import cn.dmdl.stl.hospitalbudget.util.HttpServletRule;
 import cn.dmdl.stl.hospitalbudget.util.MD5;
@@ -46,6 +47,7 @@ public class FileUploadServlet extends HttpServlet implements HttpServletRule, H
 
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		Integer repositoryDataKey = null;
 		JSONObject result = new JSONObject();
 		result.accumulate("invoke_result", INVOKE_SUCCESS);
 		boolean isMultipart = ServletFileUpload.isMultipartContent(request);// 检查是否有文件上传请求
@@ -65,10 +67,8 @@ public class FileUploadServlet extends HttpServlet implements HttpServletRule, H
 				DiskFileItemFactory factory = new DiskFileItemFactory(sizeThreshold, repository);
 				ServletFileUpload upload = new ServletFileUpload(factory);
 				long fileSizeMax = Long.parseLong(ConfigureCache.getValue("fileupload.maximum_size_of_a_single_uploaded_file"));// 单个文件上传阈值
-				fileSizeMax = 1024L * 1024 * 1024;// TODO: 仅供测试
 				upload.setFileSizeMax(fileSizeMax);
 				long sizeMax = Long.parseLong(ConfigureCache.getValue("fileupload.maximum_allowed_size_of_a_complete_request"));// 整个请求阈值
-				sizeMax = 1024L * 1024 * 1024;// TODO: 仅供测试
 				upload.setSizeMax(sizeMax);
 				try {
 					List<FileItem> items = upload.parseRequest(request);// 解析请求
@@ -88,25 +88,20 @@ public class FileUploadServlet extends HttpServlet implements HttpServletRule, H
 				} catch (FileSizeLimitExceededException e) {
 					result.element("invoke_result", INVOKE_FAILURE);
 					result.element("invoke_message", "单个文件上传超出阈值！" + upload.getFileSizeMax() + "字节");
-					logger.error("单个文件上传超出阈值！" + upload.getFileSizeMax() + "字节");
 				} catch (SizeLimitExceededException e) {
 					result.element("invoke_result", INVOKE_FAILURE);
 					result.element("invoke_message", "整个请求超出阈值！" + upload.getSizeMax() + "字节");
-					logger.error("整个请求超出阈值！" + upload.getSizeMax() + "字节");
 				} catch (FileUploadException e) {
 					result.element("invoke_result", INVOKE_FAILURE);
 					result.element("invoke_message", "文件上传失败！");
-					logger.error("文件上传失败！" + e.getMessage());
 				}
 			} else {
 				result.element("invoke_result", INVOKE_FAILURE);
 				result.element("invoke_message", "无法定位临时文件夹！");
-				logger.error("无法定位临时文件夹！");
 			}
 		} else {
 			result.element("invoke_result", INVOKE_FAILURE);
 			result.element("invoke_message", "无文件上传请求！");
-			logger.error("无文件上传请求！");
 		}
 
 		String contextRoot = ConfigureCache.getValue("context.root");
@@ -149,15 +144,14 @@ public class FileUploadServlet extends HttpServlet implements HttpServletRule, H
 				}
 			}
 		} else {
-			// TODO
+			repositoryDataKey = Helper.getInstance().createRepositoryData(1000L * 60, new JSONObject().accumulate("detailMessage", result.getString("invoke_message")));
 		}
-		String redirect = (!"/".equals(contextRoot) ? contextRoot : "") + "/sg-fileupload/page/Model.seam?invoke_result=" + result.getString("invoke_result") + "&code=" + code;
+		String redirect = (!"/".equals(contextRoot) ? contextRoot : "") + "/sg-fileupload/page/Model.seam?invoke_result=" + result.getString("invoke_result") + "&code=" + code + "&repositoryDataKey=" + repositoryDataKey;
 		response.sendRedirect(redirect);
 	}
 
 	// 处理一个规则的表单字段
 	private JSONObject processFormField(FileItem item) {
-		logger.info("processFormField-->start");
 		JSONObject result = null;
 		String name = item.getFieldName();
 		if (name != null && !"".equals(name)) {
@@ -171,14 +165,12 @@ public class FileUploadServlet extends HttpServlet implements HttpServletRule, H
 			}
 			result.accumulate("value", value);
 		}
-		logger.info("processFormField-->stop");
 		return result;
 	}
 
 	// 处理一个文件上传
 	private JSONObject processUploadedFile(FileItem item) {
-		// TODO: 代码还没写完，继续写吧try的地方
-		logger.info("processUploadedFile-->start");
+		// TODO: try
 		JSONObject result = null;
 		if (item != null && item.getName() != null && !"".equals(item.getName())) {// 忽略无真实文件的表单请求（未选择文件提交表单时文件名为空）
 			result = new JSONObject();
@@ -219,7 +211,6 @@ public class FileUploadServlet extends HttpServlet implements HttpServletRule, H
 			}
 			result.accumulate("url", ConfigureCache.getValue("storage.url.root") + fileName);
 		}
-		logger.info("processUploadedFile-->stop");
 		return result;
 	}
 

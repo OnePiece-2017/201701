@@ -39,9 +39,6 @@ public class FileUploadAssistServlet extends HttpServlet implements HttpServletR
 		JSONObject args = JSONObject.fromObject(request.getParameter("args"));
 		String assistKey = args.getString("assist_key");
 		String assistValue = args.getString("assist_value");
-		logger.info("args->" + args);
-		logger.info("assistKey->" + assistKey);
-		logger.info("assistValue->" + assistValue);
 
 		JSONObject result = new JSONObject();
 		result.accumulate("invoke_result", INVOKE_SUCCESS);
@@ -79,7 +76,6 @@ public class FileUploadAssistServlet extends HttpServlet implements HttpServletR
 		try {
 			if (assistValue != null && !"".equals(assistValue)) {
 				JSONObject assistValueJson = JSONObject.fromObject(assistValue);
-				System.out.println(assistValueJson);
 				JSONArray items = assistValueJson.getJSONArray("items");
 				boolean rebuild = assistValueJson.getBoolean("rebuild");
 				String source = assistValueJson.getString("source");
@@ -87,12 +83,10 @@ public class FileUploadAssistServlet extends HttpServlet implements HttpServletR
 					preparedStatement = connection.prepareStatement("delete from file_upload_information where binary the_key = '" + source + "'");
 					preparedStatement.executeUpdate();
 				}
-				// batch insert
+				// TODO: batch insert
 				if (items != null && items.size() > 0) {
 					for (Object object : items) {
-						System.out.println("object-->" + object);
 						JSONObject dataRow = JSONObject.fromObject(object);
-						System.out.println(dataRow);
 						StringBuffer insertSql = new StringBuffer("insert into file_upload_information (the_key, the_value, insert_time, insert_user)");
 						insertSql.append(" values ('").append(source).append("', '").append(dataRow.toString()).append("', '").append(DateTimeHelper.dateToStr(new Date(), DateTimeHelper.PATTERN_DATE_TIME)).append("', null").append(")");
 						preparedStatement = connection.prepareStatement(insertSql.toString());
@@ -102,7 +96,7 @@ public class FileUploadAssistServlet extends HttpServlet implements HttpServletR
 			}
 		} catch (Exception e) {
 			result.element("invoke_result", INVOKE_FAILURE);
-			result.element("invoke_message", "失败！保存数据");
+			result.element("invoke_message", "保存数据失败！");
 			logger.error("gainRecentlyUploaded", e);
 		} finally {
 			DataSourceManager.close(connection, preparedStatement, resultSet);
@@ -150,7 +144,7 @@ public class FileUploadAssistServlet extends HttpServlet implements HttpServletR
 			result.accumulate("data", data);
 		} catch (Exception e) {
 			result.element("invoke_result", INVOKE_FAILURE);
-			result.element("invoke_message", "失败！获取指定上传");
+			result.element("invoke_message", "获取指定上传失败！");
 			logger.error("gainRecentlyUploaded", e);
 		} finally {
 			DataSourceManager.close(connection, preparedStatement, resultSet);
@@ -173,20 +167,19 @@ public class FileUploadAssistServlet extends HttpServlet implements HttpServletR
 				if (INVOKE_SUCCESS.equals(theValueJson.getString("invoke_result"))) {
 					JSONArray data = theValueJson.getJSONArray("data");
 					result.accumulate("data", data);
-					System.out.println("data>>" + data.toString());
 				} else {
 					result.element("invoke_result", INVOKE_FAILURE);
-					result.element("invoke_message", "失败！无效的key");
+					result.element("invoke_message", "无效的key");
 					logger.error("无效的key");
 				}
 			} else {
 				result.element("invoke_result", INVOKE_FAILURE);
-				result.element("invoke_message", "失败！无效的key");
+				result.element("invoke_message", "无效的key");
 				logger.error("无效的key");
 			}
 		} catch (SQLException e) {
 			result.element("invoke_result", INVOKE_FAILURE);
-			result.element("invoke_message", "失败！获取最近上传");
+			result.element("invoke_message", "获取最近上传失败！");
 			logger.error("gainRecentlyUploaded", e);
 		} finally {
 			DataSourceManager.close(connection, preparedStatement, resultSet);

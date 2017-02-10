@@ -7,7 +7,11 @@
 		<link rel="stylesheet" type="text/css" href="#{request.contextPath}/sg-fileupload/css/exception.css" />
 		<script type="text/javascript">
 		//<![CDATA[
-			var repositoryDataKey = '#{request.getParameter("repositoryDataKey")}';
+			// Wait for me! exception.js
+			var request_parameter = {
+			    'invoke_result' : '#{request.getParameter("invoke_result")}',
+			    'repositoryDataKey' : '#{request.getParameter("repositoryDataKey")}'
+			};
 		//]]>
 		</script>
 	</ui:define>
@@ -17,7 +21,6 @@
 		<script type="text/javascript">
 		//<![CDATA[
 			jQuery(document).ready(function() {
-				//alert(repositoryDataKey);
 			});
 		//]]>
 		</script>
