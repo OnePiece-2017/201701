@@ -49,7 +49,7 @@ public class FileDownloadServlet extends HttpServlet implements HttpServletRule,
 					response.addHeader("Content-Length", "" + file.length());
 					Helper helper = Helper.getInstance();
 					Integer timeConsumingKey = helper.installTimeConsuming();
-					logger.info("正在下载" + Assit.wrapStr(performanceMap.get(performance), timeConsumingKey, file.getPath(), file.length()));
+					logger.info("正在下载" + Assit.wrapStr(performanceMap.get(performance), timeConsumingKey, file.getPath(), Assit.explainByte(file.length())));
 					if (1 == performance) {
 						FileInputStream fileInputStream = new FileInputStream(file);
 						BufferedInputStream bufferedInputStream = new BufferedInputStream(fileInputStream);
@@ -75,7 +75,8 @@ public class FileDownloadServlet extends HttpServlet implements HttpServletRule,
 					} else if (3 == performance) {
 					} else if (4 == performance) {
 					}
-					logger.info("完成下载" + Assit.wrapStr(performanceMap.get(performance), timeConsumingKey, file.getPath(), file.length(), helper.uninstallTimeConsuming(timeConsumingKey)));
+					Long timeConsumingValue = helper.uninstallTimeConsuming(timeConsumingKey);
+					logger.info("完成下载" + Assit.wrapStr(performanceMap.get(performance), timeConsumingKey, file.getPath(), Assit.explainByte(file.length()), timeConsumingValue != null ? Assit.explainTime(timeConsumingValue) : null));
 				} else {
 					disposeExceptionRedirect(response, name, "未指定下载性能！");
 					logger.error("未指定下载性能！");

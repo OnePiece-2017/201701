@@ -87,10 +87,11 @@ public class FileUploadServlet extends HttpServlet implements HttpServletRule, H
 					result.accumulate("data", data);
 				} catch (FileSizeLimitExceededException e) {
 					result.element("invoke_result", INVOKE_FAILURE);
-					result.element("invoke_message", "单个文件上传超出阈值！" + upload.getFileSizeMax() + "字节");
+					result.element("invoke_message", "单个文件上传超出阈值！" + Assit.explainByte(upload.getFileSizeMax()) + "（" + upload.getFileSizeMax() + "字节）");
+
 				} catch (SizeLimitExceededException e) {
 					result.element("invoke_result", INVOKE_FAILURE);
-					result.element("invoke_message", "整个请求超出阈值！" + upload.getSizeMax() + "字节");
+					result.element("invoke_message", "整个请求超出阈值！" + Assit.explainByte(upload.getSizeMax()) + "（" + upload.getSizeMax() + "字节）");
 				} catch (FileUploadException e) {
 					result.element("invoke_result", INVOKE_FAILURE);
 					result.element("invoke_message", "文件上传失败！");
