@@ -155,7 +155,7 @@ public class Assit {
 	 * newFile(pathname, 1024L * 1024 * 1024 * 10);
 	 */
 	public static void newFile(String pathname, long length) {
-		System.out.println("准备创建大小为" + 0 + "GB?（" + length + "字节）的文件！");// unitConversion
+		System.out.println("准备创建大小为" + 0 + "GB?（" + length + "字节）的文件！");
 		long maxLength = 1024L * 1024 * 1024 * 10;
 		Date beginDate = new Date();
 		System.out.println("开始时间：" + DateTimeHelper.dateToStr(beginDate, DateTimeHelper.PATTERN_DATE_TIME_FULL));
@@ -209,15 +209,68 @@ public class Assit {
 			System.out.println("啊哦！文件异常！");
 	}
 
-	/** 单位换算 */
-	public static void unitConversion() {
-		// 类似Windows10文件属性对话框
+	public static String explainTime(long milliseconds) {
+		StringBuffer result = new StringBuffer();
+		long modTemp = milliseconds;
+		long divideTemp = milliseconds;
+		long radixGroup[] = new long[] { 24 * 60 * 60 * 1000, 60 * 60 * 1000, 60 * 1000, 1000, 1 };
+		String labelGroup[] = new String[] { "天", "时", "分", "秒", "毫秒" };
+		for (int i = 0; i < radixGroup.length; i++) {
+			modTemp %= radixGroup[i];
+			divideTemp /= radixGroup[i];
+			result.append(divideTemp).append(labelGroup[i]);
+			divideTemp = modTemp;
+		}
+		return result.toString();
+	}
+
+	public static long generateMilliseconds(long day, long hour, long minute, long second, long millisecond) {
+		return day * 24 * 60 * 60 * 1000 + hour * 60 * 60 * 1000 + minute * 60 * 1000 + second * 1000 + millisecond * 1;
+	}
+
+	public static String explainByte(long length) {
+		StringBuffer result = new StringBuffer();
+		long modTemp = length;
+		long divideTemp = length;
+		long radixGroup[] = new long[7];
+		for (int i = radixGroup.length - 1; i > -1; i--) {
+			long temp = 1L;
+			for (int j = 0; j < i; j++)
+				temp *= 1024L;
+			radixGroup[radixGroup.length - i - 1] = temp;
+		}
+		String labelGroup[] = new String[] { /* "DB", "NB", "BB", "YB", "ZB", */"EB", "PB", "TB", "GB", "MB", "KB", "B" };
+		for (int i = 0; i < radixGroup.length; i++) {
+			modTemp %= radixGroup[i];
+			divideTemp /= radixGroup[i];
+			result.append(divideTemp).append(labelGroup[i]);
+			divideTemp = modTemp;
+		}
+		return result.toString();
+	}
+
+	public static long generateByte(long eb, long pb, long tb, long gb, long mb, long kb, long b) {
+		long total = 0L;
+		long source[] = new long[] { eb, pb, tb, gb, mb, kb, b };
+		for (int i = 0; i < source.length; i++) {
+			long temp = source[i];
+			for (int j = i; j < source.length - 1; j++)
+				temp *= 1024L;
+			total += temp;
+		}
+		return total;
 	}
 
 	public static void main(String[] args) {
 		String pathname = "D:/.trash/256M.txt";
 		new File(pathname).delete();
 		newFile(pathname, 1024L * 1024 * 256);
+
+		System.out.println(generateMilliseconds(30, 23, 59, 59, 999));
+		System.out.println(explainTime(generateMilliseconds(30, 23, 59, 59, 999)));
+
+		System.out.println(generateByte(0, 1023, 1023, 1023, 1023, 1023, 1023));
+		System.out.println(explainByte(generateByte(0, 1023, 1023, 1023, 1023, 1023, 1023)));
 	}
 
 }
