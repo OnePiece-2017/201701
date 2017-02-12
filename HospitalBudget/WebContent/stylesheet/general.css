@@ -85,3 +85,8 @@
 	cursor: default;
 	outline: none;
 }
+
+/* 阻止remodal修改body的padding-right */
+body {
+	padding-right: 0px !important;
+}
