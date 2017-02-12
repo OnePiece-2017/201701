@@ -1,3 +1,9 @@
+function ______launchDaemons() {
+	if (!window.top['daemon_installed']) {
+		window.top['daemon_installed'] = true;
+	}
+}
+
 var ___handle = (function() {
 	return {
 	    cookie : function() {
@@ -67,6 +73,7 @@ var ___remodal_fn_set = {
 
 jQuery(document).ready(function() {
 	___trash = '在文档加载后激活函数 http://www.w3school.com.cn/jquery/event_ready.asp';
+	______launchDaemons();
 });
 
 // 對JavaScript Date对象添加属性和方法
@@ -173,15 +180,15 @@ function ___browserType() {
 	var ua = navigator.userAgent;// 浏览器的用户代理报头
 	if (ua != null && ua != '') {
 		ua = ua.toUpperCase();
-		if (ua.indexOf('Firefox'.toUpperCase()) > -1) {// 火狐浏览器 Mozilla/5.0 (Windows NT 6.1; WOW64; rv:46.0) Gecko/20100101 Firefox/46.0
+		if (ua.indexOf('Firefox'.toUpperCase()) > -1) {
 			return ___constantValue('BROWSER_FIREFOX');
-		} else if (ua.indexOf('Chrome'.toUpperCase()) > -1) {// 谷歌浏览器 Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/51.0.2704.79 Safari/537.36
-			return ___constantValue('BROWSER_CHROME');;
-		} else if (ua.indexOf('MSIE'.toUpperCase()) > -1) {// IE浏览器 Mozilla/4.0 (compatible; MSIE 8.0; Windows NT 6.1; WOW64; Trident/4.0; SLCC2; .NET CLR 2.0.50727; .NET CLR 3.5.30729; .NET CLR 3.0.30729; .NET4.0C; .NET4.0E)
-			return ___constantValue('BROWSER_MSIE');;
+		} else if (ua.indexOf('Chrome'.toUpperCase()) > -1) {
+			return ___constantValue('BROWSER_CHROME');
+		} else if (ua.indexOf('MSIE'.toUpperCase()) > -1) {
+			return ___constantValue('BROWSER_MSIE');
 		}
 	} else {
-		return ___constantValue('BROWSER_UNKNOWN');;
+		return ___constantValue('BROWSER_UNKNOWN');
 	}
 }
 
