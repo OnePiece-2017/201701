@@ -52,12 +52,11 @@
 		</redirect>
 	</exception>
 
-	<exception class="org.jboss.seam.ConcurrentRequestTimeoutException"
-		log-level="trace">
+	<exception class="org.jboss.seam.ConcurrentRequestTimeoutException" log-level="trace">
 		<http-error error-code="503" />
 	</exception>
 
-	<exception>
+	<exception class="java.lang.Exception">
 		<redirect view-id="/error.xhtml">
 			<message severity="error">Unexpected error, please try again</message>
 		</redirect>
