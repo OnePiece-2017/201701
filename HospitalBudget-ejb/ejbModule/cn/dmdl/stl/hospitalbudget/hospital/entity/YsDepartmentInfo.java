@@ -30,6 +30,8 @@ public class YsDepartmentInfo implements java.io.Serializable {
 	private Integer theId;
 	private YsDepartmentInfo ysDepartmentInfo;
 	private String theValue;
+	private String budgetAttribute;
+	private Integer fundsSource;
 	private String theDescription;
 	private Date insertTime;
 	private Integer insertUser;
@@ -69,6 +71,24 @@ public class YsDepartmentInfo implements java.io.Serializable {
 
 	public void setTheValue(String theValue) {
 		this.theValue = theValue;
+	}
+
+	@Column(name = "budget_attribute")
+	public String getBudgetAttribute() {
+		return budgetAttribute;
+	}
+
+	public void setBudgetAttribute(String budgetAttribute) {
+		this.budgetAttribute = budgetAttribute;
+	}
+
+	@Column(name = "funds_source")
+	public Integer getFundsSource() {
+		return fundsSource;
+	}
+
+	public void setFundsSource(Integer fundsSource) {
+		this.fundsSource = fundsSource;
 	}
 
 	@Column(name = "the_description")
