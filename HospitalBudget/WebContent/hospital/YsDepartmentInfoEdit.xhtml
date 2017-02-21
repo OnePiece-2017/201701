@@ -12,6 +12,7 @@
 	<ui:define name="head">
 		<link rel="stylesheet" type="text/css" href="#{request.contextPath}/common/css/bootstrap.min.css" />
 		<link rel="stylesheet" type="text/css" href="#{request.contextPath}/common/css/bootstrap-select.min.css" />
+		<link rel="stylesheet" type="text/css" href="#{request.contextPath}/icheck/skins/square/blue.css" />
 	</ui:define>
 
 	<ui:define name="body">
@@ -67,6 +68,51 @@
 									<table>
 										<tr>
 											<td valign="middle">
+												<span class="field-name mb10">预算部门</span>
+											</td>
+											<td valign="top">
+												<font>收入预算部门</font>
+												<input type="checkbox" class="icheck" name="budgetAttribute" value="1" />
+												<font>支出预算部门</font>
+												<input type="checkbox" class="icheck" name="budgetAttribute" value="2" />
+												<h:inputHidden id="budgetAttributeHidden" value="#{ysDepartmentInfoHome.instance.budgetAttribute}" />
+											</td>
+											<td valign="middle">
+												<font color="red" style="margin-left: 3px;"></font>
+											</td>
+										</tr>
+									</table>
+								</div>
+							</td>
+							<td width="50%">
+								<div class="pb20">
+									<table>
+										<tr>
+											<td valign="middle">
+												<span class="field-name mb10">资金来源</span>
+											</td>
+											<td valign="middle">
+												<select id="fundsSourceValue" class="selectpicker" data-live-search="true">
+													<a:repeat value="#{ysDepartmentInfoHome.fundsSourceList}" var="_var">
+														<option value="#{_var[0]}">#{_var[1]}</option>
+													</a:repeat>
+												</select>
+												<h:inputHidden id="fundsSourceValueHidden" value="#{ysDepartmentInfoHome.fundsSourceValue}" />
+											</td>
+											<td valign="middle">
+												<font color="red" style="margin-left: 3px;"></font>
+											</td>
+										</tr>
+									</table>
+								</div>
+							</td>
+						</tr>
+						<tr>
+							<td width="50%">
+								<div class="pb20">
+									<table>
+										<tr>
+											<td valign="middle">
 												<span class="field-name mb10">描述</span>
 											</td>
 											<td valign="middle">
@@ -99,10 +145,16 @@
 		</h:form>
 		<script type="text/javascript" src="#{request.contextPath}/common/js/bootstrap.min.js" />
 		<script type="text/javascript" src="#{request.contextPath}/common/js/bootstrap-select.min.js" charset="UTF-8" />
+		<script type="text/javascript" src="#{request.contextPath}/icheck/js/icheck.min.js" />
 		<script type="text/javascript" src="#{request.contextPath}/toolkit/utils.js" />
 		<script type="text/javascript">
 		//<![CDATA[
 			jQuery(document).ready(function() {
+				
+				jQuery('.icheck').iCheck({
+					checkboxClass: 'icheckbox_square-blue',
+					increaseArea: '20%'
+				});
 
 				___textRestrictById('mainForm:theValue', 255);
 				___textRestrictById('mainForm:theDescription', 255);
@@ -110,6 +162,8 @@
 			    jQuery('.selectpicker').selectpicker();
 			    jQuery('#theParentValue').val(jQuery('#mainForm\\:theParentValueHidden').val());
 			    jQuery('#theParentValue').selectpicker('render');
+			    jQuery('#fundsSourceValue').val(jQuery('#mainForm\\:fundsSourceValueHidden').val());
+			    jQuery('#fundsSourceValue').selectpicker('render');
 				
 			    var message = '#{ysDepartmentInfoHome.message}';
 			    ___dynamic_function = function() {
@@ -131,6 +185,15 @@
 					return false;
 				}
 				jQuery('#mainForm\\:theParentValueHidden').val(jQuery('#theParentValue').val());
+				jQuery('#mainForm\\:fundsSourceValueHidden').val(jQuery('#fundsSourceValue').val());
+				var budgetAttribute = '';
+				jQuery('input[name="budgetAttribute"]:checked').each(function(){
+					budgetAttribute += this.value + ',';
+				});
+				if (budgetAttribute != '') {
+					budgetAttribute = budgetAttribute.substring(0, budgetAttribute.length - 1);
+				}
+				jQuery('#mainForm\\:budgetAttributeHidden').val(budgetAttribute);
 			}
 		//]]>
 		</script>
