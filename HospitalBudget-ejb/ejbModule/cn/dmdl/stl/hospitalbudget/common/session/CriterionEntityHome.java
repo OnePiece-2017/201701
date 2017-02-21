@@ -30,4 +30,18 @@ public class CriterionEntityHome<E> extends EntityHome<E> {
 	public void setMessage(String message) {
 		this.message = message;
 	}
+
+	/**
+	 * 中断代码，插入目标代码如下：
+	 * 
+	 * <pre>
+	 * if (interruptCode())
+	 * 	return null;
+	 * </pre>
+	 */
+	public boolean interruptCode() {
+		setMessage("中断代码");
+		return true;
+	}
+
 }
