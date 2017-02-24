@@ -14,6 +14,7 @@ public class CriterionNativeQuery<E> extends NativeQuery<E> {
 	protected static final String DIR_ASC = "asc";
 	protected static final String DIR_DESC = "desc";
 	protected int page = 1;
+	protected String keyword;
 
 	public CriterionNativeQuery() {
 		orderDirection = ConfigureCache.getSettingsValue("query_order_direction") != null ? ConfigureCache.getSettingsValue("query_order_direction") : DIR_DESC;
@@ -53,6 +54,14 @@ public class CriterionNativeQuery<E> extends NativeQuery<E> {
 	public void setPage(int page) {
 		this.page = page;
 		setFirstResult((page - 1) * maxResults);
+	}
+
+	public String getKeyword() {
+		return keyword;
+	}
+
+	public void setKeyword(String keyword) {
+		this.keyword = keyword;
 	}
 
 	public List<Long> getPageNoList() {
