@@ -76,6 +76,7 @@ public class Authenticator implements AuthenticatorLocal {
 						identity.addRole(permissionKey.toString());
 					}
 				}
+				identity.addRole("?");// <restrict>#{s:hasRole('?')}</restrict>
 
 				sessionToken.setUserInfoId(userInfo.getUserInfoId());
 				sessionToken.setRoleInfoId(userInfo.getRoleInfo().getRoleInfoId());
