@@ -31,7 +31,6 @@ public class YsDepartmentInfo implements java.io.Serializable {
 	private YsDepartmentInfo ysDepartmentInfo;
 	private String theValue;
 	private String budgetAttribute;
-	private YsFundsSource ysFundsSource;
 	private String theDescription;
 	private Date insertTime;
 	private Integer insertUser;
@@ -80,16 +79,6 @@ public class YsDepartmentInfo implements java.io.Serializable {
 
 	public void setBudgetAttribute(String budgetAttribute) {
 		this.budgetAttribute = budgetAttribute;
-	}
-
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "funds_source")
-	public YsFundsSource getYsFundsSource() {
-		return ysFundsSource;
-	}
-
-	public void setYsFundsSource(YsFundsSource ysFundsSource) {
-		this.ysFundsSource = ysFundsSource;
 	}
 
 	@Column(name = "the_description")

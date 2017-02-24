@@ -10,7 +10,6 @@ import org.jboss.seam.annotations.Name;
 
 import cn.dmdl.stl.hospitalbudget.common.session.CriterionEntityHome;
 import cn.dmdl.stl.hospitalbudget.hospital.entity.YsDepartmentInfo;
-import cn.dmdl.stl.hospitalbudget.hospital.entity.YsFundsSource;
 import cn.dmdl.stl.hospitalbudget.util.Assit;
 
 @Name("ysDepartmentInfoHome")
@@ -37,11 +36,6 @@ public class YsDepartmentInfoHome extends CriterionEntityHome<YsDepartmentInfo> 
 		} else {
 			instance.setYsDepartmentInfo(null);
 		}
-		if (fundsSourceValue != null) {
-			instance.setYsFundsSource(getEntityManager().find(YsFundsSource.class, fundsSourceValue));
-		} else {
-			instance.setYsFundsSource(null);
-		}
 		instance.setInsertTime(new Date());
 		instance.setInsertUser(sessionToken.getUserInfoId());
 		getEntityManager().persist(instance);
@@ -64,11 +58,6 @@ public class YsDepartmentInfoHome extends CriterionEntityHome<YsDepartmentInfo> 
 			instance.setYsDepartmentInfo(getEntityManager().find(YsDepartmentInfo.class, theParentValue));
 		} else {
 			instance.setYsDepartmentInfo(null);
-		}
-		if (fundsSourceValue != null) {
-			instance.setYsFundsSource(getEntityManager().find(YsFundsSource.class, fundsSourceValue));
-		} else {
-			instance.setYsFundsSource(null);
 		}
 		instance.setUpdateTime(new Date());
 		instance.setUpdateUser(sessionToken.getUserInfoId());
@@ -222,21 +211,6 @@ public class YsDepartmentInfoHome extends CriterionEntityHome<YsDepartmentInfo> 
 			}
 		}
 		theParentValue = theParentValue != null ? theParentValue : (instance.getYsDepartmentInfo() != null ? instance.getYsDepartmentInfo().getTheId() : null);
-
-		if (fundsSourceList != null) {
-			fundsSourceList.clear();
-		} else {
-			fundsSourceList = new ArrayList<Object[]>();
-		}
-		fundsSourceList.add(new Object[] { "", "无" });
-		dataSql = "select the_id, the_value from ys_funds_source where deleted = 0";
-		dataList = getEntityManager().createNativeQuery(dataSql).getResultList();
-		if (dataList != null && dataList.size() > 0) {
-			for (Object[] data : dataList) {
-				fundsSourceList.add(new Object[] { data[0], data[1] });
-			}
-		}
-		fundsSourceValue = fundsSourceValue != null ? fundsSourceValue : (instance.getYsFundsSource() != null ? instance.getYsFundsSource().getTheId() : null);
 
 	}
 
