@@ -25,6 +25,16 @@
 	height: 130px !important;
 }
 
+.fix--textarea-440x110 {
+	width: 440px !important;
+	height: 110px !important;
+}
+
+.fix--textarea-610x130 {
+	width: 610px !important;
+	height: 130px !important;
+}
+
 .fix--bc-purple {
 	background-color: #ddbaf6 !important;
 }
