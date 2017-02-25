@@ -11,6 +11,10 @@
 	width: 440px !important;
 }
 
+.fix--w610 {
+	width: 610px !important;
+}
+
 .fix--textarea-wh {
 	width: 300px !important;
 	height: 100px !important;
