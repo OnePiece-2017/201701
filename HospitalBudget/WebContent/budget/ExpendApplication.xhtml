@@ -20,6 +20,7 @@
 			.bs-w440 .bootstrap-select:not([class*="span"]):not([class*="col-"]):not([class*="form-control"]):not(.input-group-btn) {
 			    width: 440px;
 			}
+			
 			.normal-candidateProject .selected {
 				background: #da9a48;
 			}
@@ -30,6 +31,46 @@
 			
 			.node-totalAmount {
 				font-weight: bold;
+			}
+			.border{
+			  	border-left:none;
+			  	border-left-width:0px;
+			    border-right:none;
+			    border-right-width:0px;
+			  	border-top:none;
+			  	border-top-width:0px;
+			    border-bottom:1.4px solid rgba(15, 37, 67, 0.22);
+			 }
+			 .btn-add {
+			    color: #fff;
+			    background-color: #3c764e;
+			    border-color: #ffffff;
+			}
+			.modal-header-modal {
+			    min-height: 7.43px;
+			    padding: 0px;
+			    border-bottom: 1px solid #e5e5e5;
+			}
+			.modaltd .bootstrap-select:not([class*="span"]):not([class*="col-"]):not([class*="form-control"]):not(.input-group-btn) {
+			    width: 170px;
+			}
+			.allMoney {
+			    float: left;
+			    width: 123px;
+			    padding-right: 15px;
+			    font-family: '微软雅黑';
+			    text-align: right
+			}
+			.icon {
+			    background-image: url(../images/glyphicons-halflings.png);
+			    background-position: 14px 14px;
+			    background-repeat: no-repeat;
+			    display: inline-block;
+			    height: 14px;
+			    line-height: 14px;
+			    margin-top: 1px;
+			    vertical-align: text-top;
+			    width: 14px;
 			}
 		</style>
 	</ui:define>
@@ -45,65 +86,24 @@
 									<table>
 										<tr>
 											<td valign="middle">
-												<span class="field-name mb10">单据编号</span>
-											</td>
-											<td valign="middle">
-												<h:inputText id="formnum" value="#{expendApplyInfoHome.applySn}" styleClass="form-control mb10 fix--w220" />
-											</td>
-											<td valign="middle">
-												<font color="red" style="margin-left: 3px;">*</font>
-											</td>
-										</tr>
-									</table>
-								</div>
-							</td>
-							<td width="50%">
-								<div class="pb20">
-									<table>
-										<tr>
-											<td valign="middle">
-												<span class="field-name mb10">预算年份</span>
+												<span class="field-name mb10">预算年份:</span>
 											</td>
 											<td valign="middle">
 												<select id="budgetYear" class="selectpicker">
 													<a:repeat value="#{expendApplyInfoHome.budgetYearList}" var="_var">
-														<option value="#{_var[0]}">#{_var[1]}</option>
-													</a:repeat>
-												</select>
-											</td>
-											<td valign="middle">
-												<font color="red" style="margin-left: 3px;">*</font>
-											</td>
-										</tr>
-									</table>
-								</div>
-							</td>
-						</tr>
-						<tr>
-							<td width="50%">
-								<div class="pb20">
-									<table>
-										<tr>
-											<td valign="middle">
-												<span class="field-name mb10">报销部门</span>
-											</td>
-											<td valign="middle">
-											<rich:panel id="departPanl" style="margin:0; border:none; padding: 0;">
-												<select id="depart" class="selectpicker" data-live-search="true" onchange="departChange()">
-													<a:repeat value="#{expendApplyInfoHome.departmentInfoList}" var="_var">
-														<s:fragment rendered="#{expendApplyInfoHome.departmentId eq _var[0]}">
+														<s:fragment rendered="#{expendApplyInfoHome.year eq _var[0]}" >
 															<option value="#{_var[0]}" selected="selected">#{_var[1]}</option>
 														</s:fragment>
-														<s:fragment rendered="#{expendApplyInfoHome.departmentId ne _var[0]}">
-															<option value="#{_var[0]}">#{_var[1]}</option>
+														<s:fragment rendered="#{expendApplyInfoHome.year ne _var[0]}" >
+															<option value="#{_var[0]}" >#{_var[1]}</option>
 														</s:fragment>
 													</a:repeat>
 												</select>
-											</rich:panel>
 											</td>
 											<td valign="middle">
 												<font color="red" style="margin-left: 3px;">*</font>
 											</td>
+											
 										</tr>
 									</table>
 								</div>
@@ -113,59 +113,7 @@
 									<table>
 										<tr>
 											<td valign="middle">
-												<span class="field-name mb10">资金来源</span>
-											</td>
-											<td valign="middle">
-												<select id="fundsSource" class="selectpicker" data-live-search="true">
-													<a:repeat value="#{expendApplyInfoHome.fundsSourceList}" var="_fundsSource">
-														<option value="#{_fundsSource[0]}">#{_fundsSource[1]}</option>
-													</a:repeat>
-												</select>
-											</td>
-											<td valign="middle">
-												<font color="red" style="margin-left: 3px;">*</font>
-											</td>
-										</tr>
-									</table>
-								</div>
-							</td>
-						</tr>
-						<tr>
-							<td width="50%">
-								<div class="pb20">
-									<table>
-										<tr>
-											<td valign="middle">
-												<span class="field-name mb10">选择项目</span>
-											</td>
-											<td valign="top">
-												<rich:panel id="projectPanl" style="margin:0; border:none; padding: 0;">
-													<select id="projectId" class="selectpicker" data-live-search="true" onchange="changeProject()">
-														<option value="-1">请选择</option>
-														<a:repeat value="#{expendApplyInfoHome.projectList}" var="_var">
-															<s:fragment rendered="#{expendApplyInfoHome.projectId eq _var[0]}">
-																<option value="#{_var[0]}" selected="selected">#{_var[1]}</option>
-															</s:fragment>
-															<s:fragment rendered="#{expendApplyInfoHome.projectId ne _var[0]}">
-																<option value="#{_var[0]}" >#{_var[1]}</option>
-															</s:fragment>
-														</a:repeat>
-													</select>
-												</rich:panel>
-											</td>
-											<td valign="middle">
-												<font color="red" style="margin-left: 3px;">*</font>
-											</td>
-										</tr>
-									</table>
-								</div>
-							</td>
-							<td width="50%">
-								<div class="pb20">
-									<table>
-										<tr>
-											<td valign="middle">
-												<span class="field-name mb10">报销人</span>
+												<span class="field-name mb10">申请人:</span>
 											</td>
 											<td valign="middle">
 												<select id="user" class="selectpicker" data-live-search="true">
@@ -192,10 +140,10 @@
 									<table>
 										<tr>
 											<td valign="middle">
-												<span class="field-name mb10">收款单位</span>
+												<span class="field-name mb10">单据编号:</span>
 											</td>
 											<td valign="middle">
-												<h:inputText id="reciveCompany" value="#{expendApplyInfoHome.reciveCompany}" styleClass="form-control mb10 fix--w440" />
+												<h:inputText id="formnum" value="#{expendApplyInfoHome.applySn}" styleClass=" mb10 border" style="height:34px;width:220px" maxlength="20"/>
 											</td>
 											<td valign="middle">
 												<font color="red" style="margin-left: 3px;">*</font>
@@ -209,10 +157,90 @@
 									<table>
 										<tr>
 											<td valign="middle">
-												<span class="field-name mb10">发票号</span>
+												<span class="field-name mb10">财务账名:</span>
 											</td>
 											<td valign="middle">
-												<h:inputText id="invoicenum" value="#{expendApplyInfoHome.invoiceSn}" styleClass="form-control mb10 fix--w220" />
+												<h:inputText id="finaceAccountName" value="#{expendApplyInfoHome.finaceAccountName}" styleClass=" mb10 border" style="height:34px;width:220px" maxlength="20"/>
+											</td>
+											<td valign="middle">
+												<font color="red" style="margin-left: 3px;">*</font>
+											</td>
+										</tr>
+									</table>
+								</div>
+							</td>
+						</tr>
+						<tr>
+							<td width="50%">
+								<div class="pb20">
+									<table>
+										<tr>
+											<td valign="middle">
+												<span class="field-name mb10">收款单位:</span>
+											</td>
+											<td valign="middle">
+												<h:inputText id="reciveCompany" value="#{expendApplyInfoHome.reciveCompany}" styleClass=" mb10 border" style="height:34px;width:220px" maxlength="30"/>
+											</td>
+											<td valign="middle">
+												<font color="red" style="margin-left: 3px;">*</font>
+											</td>
+										</tr>
+									</table>
+								</div>
+							</td>
+							<td width="50%">
+								<div class="pb20">
+									<table>
+										<tr>
+											<td valign="middle">
+												<span class="field-name mb10">发票号:</span>
+											</td>
+											<td valign="middle">
+												<h:inputText id="invoicenum" value="#{expendApplyInfoHome.invoiceSn}" styleClass=" mb10 border" style="height:34px;width:220px" maxlength="20"/>
+											</td>
+											<td valign="middle">
+												<font color="red" style="margin-left: 3px;">*</font>
+											</td>
+										</tr>
+									</table>
+								</div>
+							</td>
+						</tr>
+						<tr>
+							<td width="50%">
+								<div class="pb20">
+									<table>
+										<tr>
+											<td valign="middle">
+												<span class="field-name mb10">摘要:</span>
+											</td>
+											<td valign="middle">
+												<h:inputText id="summary" value="#{expendApplyInfoHome.summary}" styleClass=" mb10 border" style="height:34px;width:220px" maxlength="20"/>
+											</td>
+											<td valign="middle">
+												<font color="red" style="margin-left: 3px;">*</font>
+											</td>
+										</tr>
+									</table>
+								</div>
+							</td>
+							<td width="50%">
+								<div class="pb20">
+									<table>
+										<tr>
+											<td valign="middle">
+												<span class="field-name mb10">报销人:</span>
+											</td>
+											<td valign="middle">
+												<select id="reimbursementer" class="selectpicker" data-live-search="true">
+													<a:repeat value="#{expendApplyInfoHome.applayUserList}" var="_department">
+														<optgroup label="#{_department[0]}" data-subtext="科室">
+															<a:repeat value="#{_department[1]}" var="_user">
+																<option value="#{_user[0]}">#{_user[1]}</option>
+															</a:repeat>
+														</optgroup>
+													</a:repeat>
+												</select>
 											</td>
 											<td valign="middle">
 												<font color="red" style="margin-left: 3px;">*</font>
@@ -224,43 +252,66 @@
 						</tr>
 					</table>
 				</div>
-				<div class="g-data-list-table freeze-candidateProject" style="height: 43px;">
-				  <rich:panel id="listPanl" style="margin:0; border:none; padding: 0;">
+				<div style="height: 43px;">
+					<a class="btn btn-add mr15" onclick=" toAddModel()" style="float:right ">添加</a>
+				</div>
+				<rich:panel id="listPanl" style="margin:0; border:none; padding: 0;">
+				<div class="g-data-list-table freeze-candidateProject" style="border: 1px solid #e1e1e1;overflow:auto;width:1900px;">
 				    <table class="record" width="100%" cellpadding="0" cellspacing="0">
 				        <tr>
-				        	<th width="5%">序号</th>
-				            <th width="15%">项目名称</th>
-				            <th width="10%">年预算金额</th>
-				            <th width="10%">已支出金额</th>
-				            <th width="10%">可支出金额</th>
-				            <th width="10%">本次支出金额</th>
-				            <th width="10%">支出日期</th>
-				            <th width="15%">备注</th>
+				        	<th width="2%">序号</th>
+				            <th width="6%">项目名称</th>
+				            <th width="7%">年预算金额</th>
+				            <th width="7%">已支出金额</th>
+				            <th width="7%">可支出金额</th>
+				            <th width="7%">本次预算内支出</th>
+				            <th width="7%">本次追加预算支出</th>
+				            <th width="7%">预算调整追加</th>
+				            <th width="7%">预算调整减少</th>
+				            <th width="7%">追加预算已支出</th>
+				            <th width="7%">追加预算可支出</th>
+				            <th width="8%">支出日期</th>
+				            <th width="9%">备注</th>
 				            <th width="10%">附件</th>
 				            <th width="5%">操作</th>
 				            <th style="display:none">id</th>
 				        </tr>
 				    <a:repeat value="#{expendApplyInfoHome.expendList}" var="_obj" rowKeyVar="_index">
 				        <tr class="root expendtr" style="font-size: 14px;font-weight: normal;">
-				        	<td width="5%">#{_index + 1}</td>
-				            <td width="15%">#{_obj[0]}</td>
-				            <td width="10%">#{_obj[1]}</td>
-				            <td width="10%">#{_obj[2]}</td>
-				            <td width="10%" name="canUseMoney">#{_obj[3]}</td>
-				            <td width="10%">
+				        	<td >#{_index + 1}</td>
+				            <td >#{_obj[0]}</td>
+				            <td >#{_obj[1]}</td>
+				            <td >#{_obj[2]}</td>
+				            <td  name="canUseMoney">#{_obj[3]}</td>
+				            <td >
 				            	<input id="money_#{_index}" name="money" class="form-control row-text-simplify" value="#{_obj[4]}" type="text"/>
 				            </td>
-				            <td width="10%">
+				            <td >
+				            	<input id="add_money_#{_index}" name="add_money" class="form-control row-text-simplify" value="#{_obj[9]}" type="text"/>
+				            </td>
+				            <td>
+				            	<input id="budget_add_#{_index}" name="budget_add" class="form-control row-text-simplify" value="#{_obj[10]}" type="text"/>
+				            </td>
+				            <td >
+				            	<input id="budget_cut_#{_index}" name="budget_cut" class="form-control row-text-simplify" value="#{_obj[11]}" type="text"/>
+				            </td>
+				             <td >
+				            	<input id="append_paid_#{_index}" name="append_paid" class="form-control row-text-simplify" value="#{_obj[12]}" type="text"/>
+				            </td>
+				            <td >
+				            	<input id="append_canpay_#{_index}" name="append_canpay" class="form-control row-text-simplify" value="#{_obj[13]}" type="text"/>
+				            </td>
+				            <td >
 				            	<div class="input-append date form_datetime_second" style="position:relative;" >
-                               		<input id="time_#{_index}" type="text" value="#{_obj[5]}" readonly="readonly" style="border-radius:4px;width:110px;height:34;" name="time"/> 
-                               		<span class="add-on" style="position:absolute; right:10px; top:3px;"><i class="icon-th" style="margin:0;"></i></span>
+                               		<input id="time_#{_index}" type="text" value="#{_obj[5]}" readonly="readonly" style="width:110px;height:34;" name="time"/> 
+                               		<span class="add-on" style="position:absolute; right:10px; top:3px;"><i class="icon-th" style="margin:0;"><img src="" alt="" /></i></span>
                                	</div>
 							</td>
-				            <td width="15%">
+				            <td >
 				            	<input name="comment" id="comment_#{_index}" class="form-control row-text-simplify" value="#{_obj[6]}" type="text"/>
 				            </td>
-				            <td width="10%">#{_obj[7]}</td>
-				            <td width="5%">
+				            <td >#{_obj[7]}</td>
+				            <td >
 				            	<a name="delete" title="删除" style="text-decoration: none; cursor: pointer;" onclick="deleteList()">
 									<img src="../images/icon_delete_16x16.png"/>
 								</a>
@@ -269,9 +320,77 @@
 				        </tr>
 				   	</a:repeat>
 				    </table>
-				  </rich:panel>
 				</div>
-				
+				</rich:panel>
+				<div class="pt30 pb30 fs14">
+					<table width="100%" cellpadding="0" cellspacing="0">
+						<tr>
+							<td width="50%">
+								<div class="pb20">
+									<table>
+										<tr>
+											<td valign="middle">
+												<span class="allMoney">单据总金额:</span>
+											</td>
+											<td valign="middle">
+												<h:inputText id="allMoney" value="#{expendApplyInfoHome.applySn}" styleClass=" border" style="height:34px;width: 100px;" maxlength="20" />
+											</td>
+											<td valign="middle">
+												<span class="allMoney mb10">申请时间:</span>
+											</td>
+											<td valign="middle">
+												<div class="input-append date form_datetime_second" style="position:relative;" >
+				                               		<input id="applyTime" type="text" value="" readonly="readonly" class = "border" style="width:110px;height:34;"  name="time"/> 
+				                               		<span class="add-on" style="position:absolute; right:10px; top:3px;background-image: url(../images/glyphicons-halflings.png);"><i class="icon-th" style="margin:0;background-image: url(../images/glyphicons-halflings.png);"></i></span>
+				                               	</div>
+											</td>
+											<td valign="middle">
+												<font color="red" style="margin-left: 3px;">*</font>
+											</td>
+										</tr>
+									</table>
+								</div>
+							</td>
+							<td width="50%">
+								<div class="pb20">
+									<table>
+										<tr>
+											<td valign="middle">
+												<span class="allMoney mb10">登记时间:</span>
+											</td>
+											<td valign="middle">
+												<div class="input-append date form_datetime_second" style="position:relative;" >
+				                               		<input id="registeTime" type="text" value="" readonly="readonly" class = "border" style="width:110px;height:34;" name="time"/> 
+				                               		<span class="add-on" style="position:absolute; right:10px; top:3px;background-image: url(../images/glyphicons-halflings.png);"><i class="icon-th" style="margin:0;background-image: url(../images/glyphicons-halflings.png);"></i></span>
+				                               	</div>
+											</td>
+											<td valign="middle">
+												<span class="allMoney mb10">登记人:</span>
+											</td>
+											<td valign="middle">
+												<h:inputText id="register" value="#{expendApplyInfoHome.applySn}" styleClass=" border" style="height:34px;width: 100px;" maxlength="20" />
+											</td>
+										</tr>
+									</table>
+								</div>
+							</td>
+						</tr>
+					</table>
+					<div class="pb20">
+						<table width="100%" cellpadding="0" cellspacing="0">
+							<tr>
+								<td width="10%" valign="middle">
+									<span class="allMoney ">备注:</span>
+								</td>
+								<td valign="middle">
+									<div>
+										<h:inputTextarea value=""  id="comment"/>
+									</div>
+								</td>
+							</tr>
+						</table>
+					</div>
+				</div>
 				<div class="pt50 pb95" style="padding-top: 200px;">
 					<h:inputHidden id="projectJson" value="#{expendApplyInfoHome.projectJson}" />
 					<table class="normal-btn">
@@ -286,26 +405,191 @@
 				</div>
 			</div>
 		</h:form>
+		<div class="modal fade" id="addModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+		<div class="modal-dialog pano_dialog add_dialog ">
+		<div class="modal-content" style="width: 600px;height: 400px;font-size: 13px;">
+		    <div class="modal-header-modal clear" style="font-size: 13px;">
+		        <h4 style="margin-left: 15px;" >选择项目</h4>
+		        <i class="i_close" data-dismiss="modal"></i>
+		    </div>
+		    <div class="modal-body modal_body">
+		    	<table width="550px" cellpadding="0" cellspacing="0">
+					<tr>
+						<td width="50%">
+							<div class="pb20">
+								<table>
+									<tr>
+										<td valign="middle">
+											<span class="field-name mb10" style="width:78px">报销部门:</span>
+										</td>
+										<td valign="middle" class="modaltd">
+										<rich:panel id="departPanl" style="margin:0; border:none; padding: 0;">
+											<select id="depart" class="selectpicker" data-live-search="true" onchange="departChange()">
+												<a:repeat value="#{expendApplyInfoHome.departmentInfoList}" var="_var">
+													<s:fragment rendered="#{expendApplyInfoHome.departmentId eq _var[0]}">
+														<option value="#{_var[0]}" selected="selected">#{_var[1]}</option>
+													</s:fragment>
+													<s:fragment rendered="#{expendApplyInfoHome.departmentId ne _var[0]}">
+														<option value="#{_var[0]}">#{_var[1]}</option>
+													</s:fragment>
+												</a:repeat>
+											</select>
+										</rich:panel>
+										</td>
+										<td valign="middle">
+											<font color="red" style="margin-left: 3px;">*</font>
+										</td>
+									</tr>
+								</table>
+							</div>
+						</td>
+						<td width="50%">
+							<div class="pb20">
+								<table>
+									<tr>
+										<td valign="middle">
+											<span class="field-name mb10" style="width:78px">资金来源:</span>
+										</td>
+										<td valign="middle" class="modaltd">
+										<rich:panel id="fundsSourcePanl" style="margin:0; border:none; padding: 0;">
+											<select id="fundsSource" class="selectpicker" data-live-search="true">
+												<a:repeat value="#{expendApplyInfoHome.fundsSourceList}" var="_fundsSource">
+													<option value="#{_fundsSource[0]}">#{_fundsSource[1]}</option>
+												</a:repeat>
+											</select>
+										</rich:panel>
+										</td>
+										<td valign="middle">
+											<font color="red" style="margin-left: 3px;">*</font>
+										</td>
+									</tr>
+								</table>
+							</div>
+						</td>
+					</tr>
+					<tr>
+						<td width="50%">
+							<div class="pb20">
+								<table>
+									<tr>
+										<td valign="middle">
+											<span class="field-name mb10" style="width:78px">选择项目:</span>
+										</td>
+										<td valign="top" class="modaltd">
+											<rich:panel id="projectPanl" style="margin:0; border:none; padding: 0;">
+												<select id="projectId" class="selectpicker" data-live-search="true" onchange="changeProject()">
+													<option value="-1">请选择</option>
+													<a:repeat value="#{expendApplyInfoHome.projectList}" var="_var">
+														<s:fragment rendered="#{expendApplyInfoHome.projectId eq _var[0]}">
+															<option value="#{_var[0]}" selected="selected">#{_var[1]}</option>
+														</s:fragment>
+														<s:fragment rendered="#{expendApplyInfoHome.projectId ne _var[0]}">
+															<option value="#{_var[0]}" >#{_var[1]}</option>
+														</s:fragment>
+													</a:repeat>
+												</select>
+											</rich:panel>
+										</td>
+										<td valign="middle">
+											<font color="red" style="margin-left: 1px;">*</font>
+										</td>
+									</tr>
+								</table>
+							</div>
+						</td>
+						<td width="50%">
+							<div class="pb20">
+								<table>
+									<tr>
+										<td valign="middle">
+											<span class="field-name mb10" style="width:90px">已到账金额:</span>
+										</td>
+										<td valign="middle" class="modaltd">
+										<rich:panel id="totalMoneyPanl" style="margin:0; border:none; padding: 0;">
+											<input id="totalMoney" value="#{expendApplyInfoHome.totalMoney}" class=" mb10 border" style="height:34px;width:159px" />
+										</rich:panel>
+										</td>
+									</tr>
+								</table>
+							</div>
+						</td>
+					</tr>
+					<tr>
+						<td width="50%">
+							<div class="pb20">
+								<table>
+									<tr>
+										<td valign="middle">
+											<span class="field-name mb10" style="width:90px">已使用金额:</span>
+										</td>
+										<td valign="top" class="modaltd">
+										<rich:panel id="usedMoneyPanl" style="margin:0; border:none; padding: 0;">
+											<h:inputText id="usedMoney" value="#{expendApplyInfoHome.usedMoney}" styleClass=" mb10 border" style="height:34px;width:159px" />
+										</rich:panel>
+										</td>
+									</tr>
+								</table>
+							</div>
+						</td>
+						<td width="50%">
+							<div class="pb20">
+								<table>
+									<tr>
+										<td valign="middle">
+											<span class="field-name mb10" style="width:90px">可使用金额:</span>
+										</td>
+										<td valign="middle" class="modaltd">
+										<rich:panel id="canUseMoneyPanl" style="margin:0; border:none; padding: 0;">
+											<h:inputText id="canUseMoney" value="#{expendApplyInfoHome.canUseMoney}" styleClass=" mb10 border" style="height:34px;width:159px" />
+										</rich:panel>
+										</td>
+									</tr>
+								</table>
+							</div>
+						</td>
+					</tr>
+				</table>
+		    </div>
+		    <div class="modal-footer">
+		       	<button type="button" class="btn btn-primary" onclick="toAddProject()">确定</button>
+		        <button type="button" class="btn btn-default" data-dismiss="modal">返回</button>
+		    </div>
+		    <h:form style="display:none" id="addProduct">
+		    	<h:inputHidden value="#{purchaseProductHome.productInfoId}" id="productInfoId"/>
+		    	<h:commandButton id="addButton"   value="添加商品" action="#{purchaseProductHome.addPurchaseProduct()}"></h:commandButton>
+		    </h:form>
+		</div>
+		</div>
+		</div>
 		<a:form>
 			<a:queue requestDelay="100" ignoreDupResponses="true" />
 			<a:jsFunction name="selectProject" action="#{expendApplyInfoHome.selectProject}" reRender="listPanl,departPanl" oncomplete="changeProjectComplete()">
 				<a:actionparam name="projectId" assignTo="#{expendApplyInfoHome.projectId}" />
 			</a:jsFunction>
 			<a:jsFunction name="save" action="#{expendApplyInfoHome.save}" data="#{expendApplyInfoHome.saveResult}" oncomplete="saveComplete(data)">
-				<a:actionparam name="applySn" assignTo="#{expendApplyInfoHome.applySn}" />
 				<a:actionparam name="year" assignTo="#{expendApplyInfoHome.year}" />
-				<a:actionparam name="departmentId" assignTo="#{expendApplyInfoHome.departmentId}" />
-				<a:actionparam name="fundsSourceId" assignTo="#{expendApplyInfoHome.fundsSourceId}" />
-				<a:actionparam name="projectId" assignTo="#{expendApplyInfoHome.projectId}" />
 				<a:actionparam name="applyUser" assignTo="#{expendApplyInfoHome.applyUser}" />
+				<a:actionparam name="applySn" assignTo="#{expendApplyInfoHome.applySn}" />
+				<a:actionparam name="finaceAccountName" assignTo="#{expendApplyInfoHome.finaceAccountName}" />
 				<a:actionparam name="reciveCompany" assignTo="#{expendApplyInfoHome.reciveCompany}" />
 				<a:actionparam name="invoiceSn" assignTo="#{expendApplyInfoHome.invoiceSn}" />
+				<a:actionparam name="summary" assignTo="#{expendApplyInfoHome.summary}" />
+				<a:actionparam name="applayer" assignTo="#{expendApplyInfoHome.applayer}" />
 				<a:actionparam name="projectJson" assignTo="#{expendApplyInfoHome.projectJson}" />
+				<a:actionparam name="applyTime" assignTo="#{expendApplyInfoHome.applyTime}" />
+				<a:actionparam name="registTime" assignTo="#{expendApplyInfoHome.registTime}" />
+				<a:actionparam name="register" assignTo="#{expendApplyInfoHome.register}" />
+				<a:actionparam name="comment" assignTo="#{expendApplyInfoHome.comment}" />
 			</a:jsFunction>
 			<a:jsFunction name="clearList" action="#{expendApplyInfoHome.clearList}" reRender="listPanl" oncomplete="changeProjectComplete()">
 			</a:jsFunction>
 			<a:jsFunction name="selectDepart" action="#{expendApplyInfoHome.selectDepart}" reRender="projectPanl" oncomplete="huidiao()">
 				<a:actionparam name="departmentId" assignTo="#{expendApplyInfoHome.departmentId}" />
+			</a:jsFunction>
+			<a:jsFunction name="modalInit" action="#{expendApplyInfoHome.modalInit}" reRender="departPanl,fundsSourcePanl,projectPanl,totalMoneyPanl,usedMoneyPanl,canUseMoneyPanl" oncomplete="toAddModelComplete()">
+			</a:jsFunction>
+			<a:jsFunction name="addProject" action="#{expendApplyInfoHome.addProject}" reRender="listPanl" oncomplete="addProjectComplete()">
+				<a:actionparam name="projectId" assignTo="#{expendApplyInfoHome.projectId}" />
 			</a:jsFunction>
 		</a:form>
 		<script type="text/javascript" src="#{request.contextPath}/common/js/bootstrap.min.js" />
@@ -331,6 +615,7 @@
 					forceParse: false, 
 					pickerPosition: "bottom-left"
 				});
+
 				 jQuery('.selectpicker').selectpicker();
 			});
 			
@@ -357,38 +642,21 @@
 
 			//提交校验
 			function checkSub(){
-				var applySn = jQuery("#mainForm\\:formnum").val();
 				var year = jQuery("#budgetYear").val();
-				var depart = jQuery("#depart").val();
-				var fundsSource = jQuery("#fundsSource").val();
-				var projectId = jQuery("#projectId").val();
 				var user = jQuery("#user").val();
+				var applySn = jQuery("#mainForm\\:formnum").val();
+				var finaceAccountName = jQuery("#mainForm\\:finaceAccountName").val();
 				var reciveCompany = jQuery("#mainForm\\:reciveCompany").val();
 				var invoicenum = jQuery("#mainForm\\:invoicenum").val();
+				var summary = jQuery("#mainForm\\:summary").val();
+				var reimbursementer = jQuery("#reimbursementer").val();
+				var applyTime = jQuery("#applyTime").val();
+				var registeTime = jQuery("#registeTime").val();
+				var register = jQuery("#mainForm\\:register").val();
+				var comment = jQuery("#mainForm\\:comment").val();
 				var flag = true;
-				if(applySn == ""){
-					___msg('温馨提示', "请输入单据编号");
-					flag = false;
-					return ;
-					
-				}
 				if(year == null){
 					___msg('温馨提示', "请选择预算年份");
-					flag = false;
-					return ;
-				}
-				if(depart == null || depart == "" || depart == "-1"){
-					___msg('温馨提示', "请选择部门");
-					flag = false;
-					return;
-				}
-				if(fundsSource == null || fundsSource == "" || fundsSource == "-1"){
-					___msg('温馨提示', "请选择资金来源");
-					flag = false;
-					return;
-				}
-				if(projectId == null || projectId == "" || projectId == "-1"){
-					___msg('温馨提示', "请选择项目");
 					flag = false;
 					return ;
 				}
@@ -396,6 +664,18 @@
 					___msg('温馨提示', "请选择报销人");
 					flag = false;
 					return ;
+				}
+				if(applySn == ""){
+					___msg('温馨提示', "请输入单据编号");
+					flag = false;
+					return ;
+					
+				}
+				if(finaceAccountName == ""){
+					___msg('温馨提示', "请输入账务账名");
+					flag = false;
+					return ;
+					
 				}
 				if(reciveCompany == ""){
 					___msg('温馨提示', "请输入收款公司");
@@ -407,10 +687,18 @@
 					flag = false;
 					return ;
 				}
-				if(invoicenum.length > 20){
-					___msg('温馨提示', "发票号不能大于20位");
+				if(summary == ""){
+					___msg('温馨提示', "请输入摘要");
 					flag = false;
-					return;
+					return ;
+				}
+				if(applyTime == ""){
+					___msg('温馨提示', "请选择申请时间");
+					flag = false;
+					return ;
+				}
+				if(null == reimbursementer || reimbursementer == ""){
+					reimbursementer = "0";
 				}
 				jQuery("input[name='money']").each(function(){
 					var price = jQuery(this).val();
@@ -453,8 +741,13 @@
 					flag = false;
 					return;
 				}
+				if(comment != "" && comment.length >200){
+					___msg('温馨提示', "备注不能大于200字");
+					flag = false;
+					return;
+				}
 				if(flag){
-					save(applySn,year,depart,fundsSource,projectId,user,reciveCompany,invoicenum,json);
+					save(year,user,applySn,finaceAccountName,reciveCompany,invoicenum,summary,reimbursementer,json,applyTime,registeTime,register,comment);
 				}
 				
 			}
@@ -476,10 +769,20 @@
 				jQuery(".expendtr").each(function(i){
 					var projectId= jQuery("#project_id_" + i).text();
 					var money = jQuery("#money_" + i).val();
+					var addMoney = jQuery("#add_money_" + i).val();
+					var budgetAdd = jQuery("#budget_add_" + i).val();
+					var budgetCut = jQuery("#budget_cut_" + i).val();
+					var appendPaid = jQuery("#append_paid_" + i).val();
+					var appendCanpay = jQuery("#append_canpay_" + i).val();
 					var time = jQuery("#time_" + i).val();
 					var comment = jQuery("#comment_" + i).val();
 					json += '{"project_id":"' + projectId + '",';
 					json += '"expend_money":"' + money + '",';
+					json += '"add_money":"' + addMoney + '",';
+					json += '"budget_add":"' + budgetAdd + '",';
+					json += '"budget_cut":"' + budgetCut + '",';
+					json += '"append_paid":"' + appendPaid + '",';
+					json += '"append_canpay":"' + appendCanpay + '",';
 					json += '"expend_time":"' + time + '",';
 					json += '"expend_comment":"' + comment + '"},';
 				});
@@ -503,6 +806,34 @@
 			//回调初始化下拉列表
 			function huidiao(){
 				jQuery('.selectpicker').selectpicker();
+			}
+			//添加初始化下拉列表
+			function toAddModel(){
+				modalInit();
+			}
+			function toAddModelComplete(){
+				jQuery("#addModal").modal("show");
+				huidiao();
+			}
+			//添加项目
+			function toAddProject(){
+				var projectId = jQuery("#projectId").val();
+				addProject(projectId);
+			}
+			function addProjectComplete(){
+				jQuery(".form_datetime_second").datetimepicker({
+					format: "yyyy-mm-dd",  
+					autoclose: true,
+					weekStart: 1,
+					language:  'zh-CN',
+					startView: 2,
+					minView: 2,
+					maxView: 2,	
+					forceParse: false, 	
+					pickerPosition: "bottom-left"
+				});
+				jQuery("#addModal").modal("hide");
+				huidiao();
 			}
 		//]]>
 		</script>

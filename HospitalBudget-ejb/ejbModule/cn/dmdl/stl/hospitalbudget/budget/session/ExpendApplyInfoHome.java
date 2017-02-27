@@ -22,10 +22,15 @@ import net.sf.json.JSONObject;
 
 
 
+
+
+
+
 import org.jboss.seam.annotations.Name;
 
 import cn.dmdl.stl.hospitalbudget.admin.entity.UserInfo;
 import cn.dmdl.stl.hospitalbudget.budget.entity.ExpendApplyInfo;
+import cn.dmdl.stl.hospitalbudget.budget.entity.ExpendApplyProject;
 import cn.dmdl.stl.hospitalbudget.budget.entity.NormalExpendBudgetOrderInfo;
 import cn.dmdl.stl.hospitalbudget.budget.entity.TaskOrder;
 import cn.dmdl.stl.hospitalbudget.budget.entity.TaskUser;
@@ -50,13 +55,23 @@ public class ExpendApplyInfoHome extends CriterionEntityHome<ExpendApplyInfo>{
 	private Integer applyUser;//申请人id
 	private String reciveCompany;//收款单位
 	private String invoiceSn;//发票
+	private String finaceAccountName;//财务账名
+	private String summary;//摘要
+	private Integer applayer;//申请人
+	private String totalMoney;//已到账金额
+	private String usedMoney;//已使用金额
+	private String canUseMoney;//可使用金额
 	private String projectJson;//json
 	
+	private String comment ;//备注
+	private Float allMoney;//总金额
+	private String applyTime;//申请时间
+	private String registTime;//登记时间
+	private Integer register;//登记人
 	private JSONObject saveResult;
 	@SuppressWarnings("unchecked")
 	public void wire(){
 		projectList = new ArrayList<Object[]>();
-		fundsSourceList = new ArrayList<Object[]>();
 		reciveCompanyList = new ArrayList<Object[]>();
 		applySn = "";
 		projectId = -1;
@@ -67,6 +82,30 @@ public class ExpendApplyInfoHome extends CriterionEntityHome<ExpendApplyInfo>{
 		invoiceSn = "";
 		projectJson = "";
 		expendList = new ArrayList<Object[]>();
+		Calendar calendar = Calendar.getInstance();
+		year = calendar.get(Calendar.YEAR);
+		
+		
+		//初始化人员
+		wireBudgetPerson();
+		
+	}
+	
+	
+	/**
+	 * 弹出模态框初始化
+	 */
+	@SuppressWarnings("unchecked")
+	public void modalInit(){
+		fundsSourceList = new ArrayList<Object[]>();
+		//初始化科室
+		wireDepartmentInfo();
+		//初始化资金来源
+		String sourceSql = "select yfs.the_id,yfs.the_value from ys_funds_source yfs where yfs.deleted=0";
+		List<Object[]> list = getEntityManager().createNativeQuery(sourceSql).getResultList();
+		if(list.size() > 0){
+			fundsSourceList = list;
+		}
 		//查询当前登陆人为项目预算人的支出项目
 		StringBuffer projectSql = new StringBuffer();
 		projectSql.append(" SELECT ");
@@ -87,21 +126,16 @@ public class ExpendApplyInfoHome extends CriterionEntityHome<ExpendApplyInfo>{
 		projectSql.append(" LEFT JOIN ys_convention_project_user ycpu ON ycp.the_id = ycpu.convention_project_id ");
 		projectSql.append(" WHERE neboi.is_new = 1 AND ycpu.user_info_id =  ");
 		projectSql.append(sessionToken.getUserInfoId());
-		List<Object[]> list = getEntityManager().createNativeQuery(projectSql.toString()).getResultList();
-		if(list.size() > 0){
-			projectList = list;
+		List<Object[]> list1 = getEntityManager().createNativeQuery(projectSql.toString()).getResultList();
+		if(list1.size() > 0){
+			projectList = list1;
 		}
-		//初始化科室
-		wireDepartmentInfo();
-		//初始化人员
-		wireBudgetPerson();
-		//初始化资金来源
-		Object[] sourceObj = new Object[2];
-		sourceObj[0] = 1;
-		sourceObj[1] = "自有资金";
-		fundsSourceList.add(sourceObj);
+		totalMoney = "";//已到账金额
+		usedMoney = "";//已使用金额
+		canUseMoney = "";//可使用金额
+		departmentId = -1;
+		projectId = -1;
 	}
-	
 	/**
 	 * 预算年份
 	 * @return
@@ -255,7 +289,7 @@ public class ExpendApplyInfoHome extends CriterionEntityHome<ExpendApplyInfo>{
 	 */
 	@SuppressWarnings("unchecked")
 	public void selectProject(){
-		if(null == expendList){
+		/*if(null == expendList){
 			expendList = new ArrayList<Object[]>();
 		}else{
 			expendList.clear();
@@ -306,6 +340,67 @@ public class ExpendApplyInfoHome extends CriterionEntityHome<ExpendApplyInfo>{
 		obj[7] = "";
 		obj[8] = project[3];
 		departmentId = Integer.parseInt(project[4].toString());
+		expendList.add(obj);*/
+	}
+	
+	/**
+	 * 添加项目提交
+	 */
+	@SuppressWarnings("unchecked")
+	public void addProject(){
+		if(null == expendList){
+			expendList = new ArrayList<Object[]>();
+		}
+		boolean isSubProject = false;
+		StringBuffer sql = new StringBuffer();
+		NormalExpendBudgetOrderInfo neboi = getEntityManager().find(NormalExpendBudgetOrderInfo.class, projectId);
+		if(null != neboi.getSubProjectId()){
+			isSubProject = true;
+		}
+		if(isSubProject){
+			sql.append(" SELECT ");
+			sql.append(" ycpe.the_value,");
+			sql.append(" neboi.project_amount,");
+			sql.append(" neboi.now_amout,");
+			sql.append(" neboi.normal_expend_budget_order_id,");
+			sql.append(" ycp.department_info_id ");
+			sql.append(" FROM normal_expend_budget_order_info neboi ");
+			sql.append(" LEFT JOIN ys_convention_project_extend ycpe ON ycpe.the_id = neboi.sub_project_id ");
+			sql.append(" LEFT JOIN ys_convention_project ycp on ycp.the_id = ycpe.convention_project_id ");
+			sql.append(" where neboi.normal_expend_budget_order_id=");
+			sql.append(projectId);
+		}else{
+			sql.append(" SELECT ");
+			sql.append(" ycp.the_value,");
+			sql.append(" neboi.project_amount,");
+			sql.append(" neboi.now_amout,");
+			sql.append(" neboi.normal_expend_budget_order_id,");
+			sql.append(" ycp.department_info_id ");
+			sql.append(" FROM normal_expend_budget_order_info neboi ");
+			sql.append(" LEFT JOIN ys_convention_project ycp ON ycp.the_id = neboi.normal_project_id ");
+			sql.append(" where neboi.normal_expend_budget_order_id=");
+			sql.append(projectId);
+		}
+		List<Object[]> list = getEntityManager().createNativeQuery(sql.toString()).getResultList();
+		Object[] project = list.get(0);
+		DecimalFormat df = new DecimalFormat("#.00");
+		double totalMoney = project[1] == null ? 0 : Double.parseDouble(project[1].toString());
+		double nowMoney = project[2] == null ? 0 : Double.parseDouble(project[2].toString());
+		Object[] obj = new Object[14];
+		obj[0] = project[0];
+		obj[1] = df.format(Double.parseDouble(project[1].toString()));
+		obj[2] = totalMoney - nowMoney == 0 ? "0.00" : df.format(totalMoney - nowMoney);
+		obj[3] = Double.parseDouble(project[2].toString()) == 0 ? "0.00" : df.format(Double.parseDouble(project[2].toString()));
+		obj[4] = "";
+		obj[5] = "";
+		obj[6] = "";
+		obj[7] = "";
+		obj[8] = project[3];
+		obj[9] = "";
+		obj[10] = "";
+		obj[11] = "";
+		obj[12] = "";
+		obj[13] = "";
 		expendList.add(obj);
 	}
 	/**
@@ -316,6 +411,90 @@ public class ExpendApplyInfoHome extends CriterionEntityHome<ExpendApplyInfo>{
 	public void save(){
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 		joinTransaction();
+		//申请单
+		ExpendApplyInfo expendApplyInfo = new ExpendApplyInfo();
+		expendApplyInfo.setExpendApplyCode(applySn);
+		expendApplyInfo.setFinaceAccountName(finaceAccountName);
+		expendApplyInfo.setYear(year.toString());
+		expendApplyInfo.setApplyUserId(applyUser);
+		expendApplyInfo.setReciveCompany(reciveCompany);
+		expendApplyInfo.setInvoiceNum(invoiceSn);
+		expendApplyInfo.setInsertUser(sessionToken.getUserInfoId());
+		expendApplyInfo.setInsertTime(new Date());
+		expendApplyInfo.setDeleted(false);
+		expendApplyInfo.setSummary(summary);
+		expendApplyInfo.setReimbursementer(applayer);
+		try {
+			expendApplyInfo.setApplyTime(sdf.parse(applyTime));
+		} catch (ParseException e1) {
+			saveResult.element("invoke_result", "INVOKE_FAILURE");
+			saveResult.element("message", "操作失败！时间保存失败！");
+			return ;
+		}
+		if(null != registTime && !registTime.equals("")){
+			try {
+				expendApplyInfo.setRegistTime(sdf.parse(registTime));
+			} catch (ParseException e1) {
+				saveResult.element("invoke_result", "INVOKE_FAILURE");
+				saveResult.element("message", "操作失败！时间保存失败！");
+				return ;
+			}
+		}
+		
+		if(null != comment && !comment.equals("")){
+			expendApplyInfo.setComment(comment);
+		}
+		if(null != register && register != 0){
+			expendApplyInfo.setRegister(register);
+		}
+		
+		//配置流程信息
+		UserInfo userInfo = getEntityManager().find(UserInfo.class, sessionToken.getUserInfoId());
+		TaskOrder taskOrder = new TaskOrder();
+		taskOrder.setTaskName(userInfo.getYsDepartmentInfo().getTheValue() + "〔" + year + "〕常规支出执行");
+		taskOrder.setDeptId(userInfo.getYsDepartmentInfo().getTheId());
+		taskOrder.setEditUserId(sessionToken.getUserInfoId());
+		taskOrder.setTaskType(4);// 常规支出执行
+		taskOrder.setInsertTime(new Date());
+		taskOrder.setInsertUser(sessionToken.getUserInfoId());
+		taskOrder.setOrderStatus(0);// 待处理
+		taskOrder.setAuditOpinion(null);
+		List<Object> processInfoList = getEntityManager().createNativeQuery("select process_info_id from process_info where deleted = 0 and process_type = 1 and project_process_type = 4 and dept_id = " + userInfo.getYsDepartmentInfo().getTheId()).getResultList();// 获取当前登录人所属部门的常规项目流程的常规支出执行流程
+		if (processInfoList != null && processInfoList.size() > 0) {// 有流程信息
+			List<Object> processStepInfoList = getEntityManager().createNativeQuery("select process_step_info_id from process_step_info where step_index = 1 and process_info_id = " + processInfoList.get(0).toString()).getResultList();// 获取流程配置中的第一步
+			if (processStepInfoList != null && processStepInfoList.size() > 0) {// 有步骤配置
+				int processStepInfoId = Integer.parseInt(processStepInfoList.get(0).toString());
+				taskOrder.setProcessStepInfoId(processStepInfoId);
+				taskOrder.setOrderSn("");// 准备持久化（必填字段）
+				getEntityManager().persist(taskOrder);// 执行持久化
+				taskOrder.setOrderSn("CGZX-" + year + "-" + Assit.fillZero(taskOrder.getTaskOrderId(), (short) 9));// 生成订单号
+				List<Object> processStepUserList = getEntityManager().createNativeQuery("select user_id from process_step_user where type = 0 and process_step_info_id = " + processStepInfoId).getResultList();// 获取流程配置中的第一步的处理人
+				if (processStepInfoList != null && processStepInfoList.size() > 0) {// 步骤配置中有用户
+					for (Object processStepUser : processStepUserList) {
+						TaskUser taskUser = new TaskUser();
+						taskUser.setTaskOrderId(taskOrder.getTaskOrderId());
+						taskUser.setUserId((Integer) processStepUser);
+						taskUser.setHandleFlg(false);// 未处理
+						getEntityManager().persist(taskUser);
+					}
+				} else {
+					saveResult.element("invoke_result", "INVOKE_FAILURE");
+					saveResult.element("message", "操作失败！请先完善科室[" + userInfo.getYsDepartmentInfo().getTheValue() + "]的步骤配置的用户信息！");
+					return ;
+				}
+			} else {
+				saveResult.element("invoke_result", "INVOKE_FAILURE");
+				saveResult.element("message", "操作失败！请先完善科室[" + userInfo.getYsDepartmentInfo().getTheValue() + "]的步骤配置！");
+				return ;
+			}
+		} else {
+			saveResult.element("invoke_result", "INVOKE_FAILURE");
+			saveResult.element("message", "操作失败！请先完善科室[" + userInfo.getYsDepartmentInfo().getTheValue() + "]的流程信息！");
+			return ;
+		}
+		expendApplyInfo.setTaskOrderId(taskOrder.getTaskOrderId());
+		expendApplyInfo.setOrderSn(taskOrder.getOrderSn());
+		getEntityManager().persist(expendApplyInfo);
 		if (saveResult != null) {
 			saveResult.clear();
 		} else {
@@ -325,6 +504,7 @@ public class ExpendApplyInfoHome extends CriterionEntityHome<ExpendApplyInfo>{
 		saveResult.accumulate("message", "提交成功！");
 		JSONObject jsonObject = JSONObject.fromObject(projectJson);
 		JSONArray expendList = jsonObject.getJSONArray("expend_list");
+		float allMoney = 0f;
 		for(int i = 0;i < expendList.size();i++){
 			//获取参数
 			JSONObject project = expendList.getJSONObject(i);
@@ -332,74 +512,49 @@ public class ExpendApplyInfoHome extends CriterionEntityHome<ExpendApplyInfo>{
 			String expendMoney = project.getString("expend_money");
 			String expendTime = project.getString("expend_time");
 			String expendComment = project.getString("expend_comment");
-			UserInfo userInfo = getEntityManager().find(UserInfo.class, sessionToken.getUserInfoId());
-			TaskOrder taskOrder = new TaskOrder();
-			taskOrder.setTaskName(userInfo.getYsDepartmentInfo().getTheValue() + "〔" + year + "〕常规支出执行");
-			taskOrder.setDeptId(userInfo.getYsDepartmentInfo().getTheId());
-			taskOrder.setEditUserId(sessionToken.getUserInfoId());
-			taskOrder.setTaskType(4);// 常规支出执行
-			taskOrder.setInsertTime(new Date());
-			taskOrder.setInsertUser(sessionToken.getUserInfoId());
-			taskOrder.setOrderStatus(0);// 待处理
-			taskOrder.setAuditOpinion(null);
-			List<Object> processInfoList = getEntityManager().createNativeQuery("select process_info_id from process_info where deleted = 0 and process_type = 1 and project_process_type = 4 and dept_id = " + userInfo.getYsDepartmentInfo().getTheId()).getResultList();// 获取当前登录人所属部门的常规项目流程的常规支出执行流程
-			if (processInfoList != null && processInfoList.size() > 0) {// 有流程信息
-				List<Object> processStepInfoList = getEntityManager().createNativeQuery("select process_step_info_id from process_step_info where step_index = 1 and process_info_id = " + processInfoList.get(0).toString()).getResultList();// 获取流程配置中的第一步
-				if (processStepInfoList != null && processStepInfoList.size() > 0) {// 有步骤配置
-					int processStepInfoId = Integer.parseInt(processStepInfoList.get(0).toString());
-					taskOrder.setProcessStepInfoId(processStepInfoId);
-					taskOrder.setOrderSn("");// 准备持久化（必填字段）
-					getEntityManager().persist(taskOrder);// 执行持久化
-					taskOrder.setOrderSn("CGZX-" + year + "-" + Assit.fillZero(taskOrder.getTaskOrderId(), (short) 9));// 生成订单号
-					List<Object> processStepUserList = getEntityManager().createNativeQuery("select user_id from process_step_user where type = 0 and process_step_info_id = " + processStepInfoId).getResultList();// 获取流程配置中的第一步的处理人
-					if (processStepInfoList != null && processStepInfoList.size() > 0) {// 步骤配置中有用户
-						for (Object processStepUser : processStepUserList) {
-							TaskUser taskUser = new TaskUser();
-							taskUser.setTaskOrderId(taskOrder.getTaskOrderId());
-							taskUser.setUserId((Integer) processStepUser);
-							taskUser.setHandleFlg(false);// 未处理
-							getEntityManager().persist(taskUser);
-						}
-					} else {
-						saveResult.element("invoke_result", "INVOKE_FAILURE");
-						saveResult.element("message", "操作失败！请先完善科室[" + userInfo.getYsDepartmentInfo().getTheValue() + "]的步骤配置的用户信息！");
-						return ;
-					}
-				} else {
-					saveResult.element("invoke_result", "INVOKE_FAILURE");
-					saveResult.element("message", "操作失败！请先完善科室[" + userInfo.getYsDepartmentInfo().getTheValue() + "]的步骤配置！");
-					return ;
-				}
-			} else {
-				saveResult.element("invoke_result", "INVOKE_FAILURE");
-				saveResult.element("message", "操作失败！请先完善科室[" + userInfo.getYsDepartmentInfo().getTheValue() + "]的流程信息！");
-				return ;
+			String addMoney = project.getString("add_money");
+			String budgetAdd = project.getString("budget_add");
+			String budgetCut = project.getString("budget_cut");
+			String appendPaid = project.getString("append_paid");
+			String appendCanpay = project.getString("append_canpay");
+			allMoney += Float.parseFloat(expendMoney);
+			//保存支出申请单详细列表
+			ExpendApplyProject eap = new ExpendApplyProject();
+			eap.setExpendApplyInfoId(expendApplyInfo.getExpendApplyInfoId());
+			eap.setNormalExpendBudgetOrderId(projectId);
+			eap.setExpendMoney(Float.parseFloat(expendMoney));
+			if(!addMoney.equals("")){
+				eap.setBudgetAppendExpend(Float.parseFloat(addMoney));
 			}
-			ExpendApplyInfo eai = new ExpendApplyInfo();
-			eai.setExpendApplyCode(applySn);
-			eai.setTaskOrderId(taskOrder.getTaskOrderId());
-			eai.setOrderSn(taskOrder.getOrderSn());
-			eai.setYear(year.toString());
-			eai.setDepartmentInfoId(departmentId);
-			eai.setApplyUserId(applyUser);
-			eai.setFundsSource(fundsSourceId);
-			eai.setReciveCompany(reciveCompany);
-			eai.setInvoiceNum(invoiceSn);
-			eai.setNormalExpendBudgetOrderId(Integer.parseInt(projectInfoId));
-			eai.setExpendMoney(Float.parseFloat(expendMoney));
-			eai.setInsertUser(sessionToken.getUserInfoId());
-			eai.setInsertTime(new Date());
-			eai.setDeleted(false);
+			if(!budgetAdd.equals("")){
+				eap.setBudgetAdjustmentAppend(Float.parseFloat(budgetAdd));
+			}
+			if(!budgetCut.equals("")){
+				eap.setBudgetAdjestmentCut(Float.parseFloat(budgetCut));
+			}
+			if(!appendPaid.equals("")){
+				eap.setAppendBudgetPaid(Float.parseFloat(appendPaid));
+			}
+			if(!appendCanpay.equals("")){
+				eap.setAppendBudgetCanCut(Float.parseFloat(appendCanpay));
+			}
 			try {
-				eai.setExpendTime(sdf.parse(expendTime));
+				eap.setExpendTime(sdf.parse(expendTime));
 			} catch (ParseException e) {
 				saveResult.element("invoke_result", "INVOKE_FAILURE");
 				saveResult.element("message", "操作失败！时间保存失败！");
-				e.printStackTrace();
 				return ;
 			}
-			eai.setComment(expendComment);
-			getEntityManager().persist(eai);
+			eap.setComment(expendComment);
+			eap.setInsertUser(sessionToken.getUserInfoId());
+			eap.setInsertTime(new Date());
+			eap.setDeleted(false);
+			getEntityManager().persist(eap);
+			expendApplyInfo.setTotalMoney(allMoney);
+			getEntityManager().merge(expendApplyInfo);
+			
+			//to-do 预算下达金额减去支出金额
+			
 			//执行申请后再减掉金额
 			NormalExpendBudgetOrderInfo neboi = getEntityManager().find(NormalExpendBudgetOrderInfo.class, Integer.parseInt(projectInfoId));
 			neboi.setNowAmount(neboi.getNowAmount() - Double.parseDouble(expendMoney));
@@ -421,7 +576,6 @@ public class ExpendApplyInfoHome extends CriterionEntityHome<ExpendApplyInfo>{
 					getEntityManager().merge(parentProject);
 				}
 			}
-			
 			
 		}
 		getEntityManager().flush();
@@ -604,6 +758,104 @@ public class ExpendApplyInfoHome extends CriterionEntityHome<ExpendApplyInfo>{
 
 	public void setSaveResult(JSONObject saveResult) {
 		this.saveResult = saveResult;
+	}
+
+	public String getFinaceAccountName() {
+		return finaceAccountName;
+	}
+
+	public void setFinaceAccountName(String finaceAccountName) {
+		this.finaceAccountName = finaceAccountName;
+	}
+
+	public String getSummary() {
+		return summary;
+	}
+
+	public void setSummary(String summary) {
+		this.summary = summary;
+	}
+
+	public Integer getApplayer() {
+		return applayer;
+	}
+
+	public void setApplayer(Integer applayer) {
+		this.applayer = applayer;
+	}
+
+	public String getTotalMoney() {
+		return totalMoney;
+	}
+
+	public void setTotalMoney(String totalMoney) {
+		this.totalMoney = totalMoney;
+	}
+
+	public String getUsedMoney() {
+		return usedMoney;
+	}
+
+	public void setUsedMoney(String usedMoney) {
+		this.usedMoney = usedMoney;
+	}
+
+	public String getCanUseMoney() {
+		return canUseMoney;
+	}
+
+	public void setCanUseMoney(String canUseMoney) {
+		this.canUseMoney = canUseMoney;
+	}
+
+
+	public String getComment() {
+		return comment;
+	}
+
+
+	public void setComment(String comment) {
+		this.comment = comment;
+	}
+
+
+	public Float getAllMoney() {
+		return allMoney;
+	}
+
+
+	public void setAllMoney(Float allMoney) {
+		this.allMoney = allMoney;
+	}
+
+
+	public String getApplyTime() {
+		return applyTime;
+	}
+
+
+	public void setApplyTime(String applyTime) {
+		this.applyTime = applyTime;
+	}
+
+
+	public String getRegistTime() {
+		return registTime;
+	}
+
+
+	public void setRegistTime(String registTime) {
+		this.registTime = registTime;
+	}
+
+
+	public Integer getRegister() {
+		return register;
+	}
+
+
+	public void setRegister(Integer register) {
+		this.register = register;
 	}
 	
 	

@@ -25,21 +25,24 @@ public class ExpendApplyInfo implements java.io.Serializable{
 	private String expendApplyCode;//单据编号
 	private Integer taskOrderId;
 	private String orderSn;
+	private String finaceAccountName;
 	private String year;
-	private Integer departmentInfoId;
 	private Integer applyUserId;
-	private Integer fundsSource;
 	private String reciveCompany;
 	private String invoiceNum;//发票号
-	private Integer normalExpendBudgetOrderId;
-	private Float expendMoney;
 	private Integer insertUser;
 	private Boolean deleted;
-	private Date expendTime;
 	private Date insertTime;
 	private Date updateTime;
 	private Integer updateUser;
-	private String comment;
+	private String summary;
+	private Integer reimbursementer;
+	private String comment ;//备注
+	private Float totalMoney;//总金额
+	private Date applyTime;//申请时间
+	private Date registTime;//登记时间
+	private Integer register;//登记人
+	
 	
 	@Id
 	@GeneratedValue(strategy = IDENTITY)
@@ -61,15 +64,6 @@ public class ExpendApplyInfo implements java.io.Serializable{
 		this.expendApplyCode = expendApplyCode;
 	}
 	
-	@Column(name = "order_sn", nullable = false, length = 45)
-	@NotNull
-	@Length(max = 45)
-	public String getOrderSn() {
-		return orderSn;
-	}
-	public void setOrderSn(String orderSn) {
-		this.orderSn = orderSn;
-	}
 	
 	@Column(name = "year", nullable = false, length = 10)
 	@NotNull
@@ -81,14 +75,6 @@ public class ExpendApplyInfo implements java.io.Serializable{
 		this.year = year;
 	}
 	
-	@Column(name = "department_info_id")
-	@NotNull
-	public Integer getDepartmentInfoId() {
-		return departmentInfoId;
-	}
-	public void setDepartmentInfoId(Integer departmentInfoId) {
-		this.departmentInfoId = departmentInfoId;
-	}
 	
 	@Column(name = "applay_user_id")
 	@NotNull
@@ -99,14 +85,6 @@ public class ExpendApplyInfo implements java.io.Serializable{
 		this.applyUserId = applyUserId;
 	}
 	
-	@Column(name = "funds_source")
-	@NotNull
-	public Integer getFundsSource() {
-		return fundsSource;
-	}
-	public void setFundsSource(Integer fundsSource) {
-		this.fundsSource = fundsSource;
-	}
 	
 	@Column(name = "recive_company", nullable = false, length = 600)
 	@NotNull
@@ -128,23 +106,7 @@ public class ExpendApplyInfo implements java.io.Serializable{
 		this.invoiceNum = invoiceNum;
 	}
 	
-	@Column(name = "normal_expend_budget_order_id")
-	@NotNull
-	public Integer getNormalExpendBudgetOrderId() {
-		return normalExpendBudgetOrderId;
-	}
-	public void setNormalExpendBudgetOrderId(Integer normalExpendBudgetOrderId) {
-		this.normalExpendBudgetOrderId = normalExpendBudgetOrderId;
-	}
 	
-	@Column(name = "expend_money")
-	@NotNull
-	public Float getExpendMoney() {
-		return expendMoney;
-	}
-	public void setExpendMoney(Float expendMoney) {
-		this.expendMoney = expendMoney;
-	}
 	
 	@Column(name = "insert_user")
 	@NotNull
@@ -164,15 +126,6 @@ public class ExpendApplyInfo implements java.io.Serializable{
 		this.deleted = deleted;
 	}
 	
-	@Temporal(TemporalType.TIMESTAMP)
-	@Column(name = "expend_time", nullable = false, length = 19)
-	@NotNull
-	public Date getExpendTime() {
-		return expendTime;
-	}
-	public void setExpendTime(Date expendTime) {
-		this.expendTime = expendTime;
-	}
 	
 	@Temporal(TemporalType.TIMESTAMP)
 	@Column(name = "insert_time", nullable = false, length = 19)
@@ -199,13 +152,32 @@ public class ExpendApplyInfo implements java.io.Serializable{
 	public void setUpdateUser(Integer updateUser) {
 		this.updateUser = updateUser;
 	}
-	@Column(name = "comment")
-	public String getComment() {
-		return comment;
+	
+	@Column(name = "finace_account_name")
+	@NotNull
+	public String getFinaceAccountName() {
+		return finaceAccountName;
 	}
-	public void setComment(String comment) {
-		this.comment = comment;
+	public void setFinaceAccountName(String finaceAccountName) {
+		this.finaceAccountName = finaceAccountName;
 	}
+	
+	@Column(name = "summary")
+	public String getSummary() {
+		return summary;
+	}
+	public void setSummary(String summary) {
+		this.summary = summary;
+	}
+	
+	@Column(name = "reimbursementer")
+	public Integer getReimbursementer() {
+		return reimbursementer;
+	}
+	public void setReimbursementer(Integer reimbursementer) {
+		this.reimbursementer = reimbursementer;
+	}
+	
 	@Column(name = "task_order_id")
 	@NotNull
 	public Integer getTaskOrderId() {
@@ -213,6 +185,55 @@ public class ExpendApplyInfo implements java.io.Serializable{
 	}
 	public void setTaskOrderId(Integer taskOrderId) {
 		this.taskOrderId = taskOrderId;
+	}
+	
+	@Column(name = "order_sn", nullable = false, length = 45)
+	@NotNull
+	@Length(max = 45)
+	public String getOrderSn() {
+		return orderSn;
+	}
+	public void setOrderSn(String orderSn) {
+		this.orderSn = orderSn;
+	}
+	@Column(name = "comment")
+	public String getComment() {
+		return comment;
+	}
+	public void setComment(String comment) {
+		this.comment = comment;
+	}
+	@Column(name = "total_money")
+	public Float getTotalMoney() {
+		return totalMoney;
+	}
+	public void setTotalMoney(Float totalMoney) {
+		this.totalMoney = totalMoney;
+	}
+	
+	@Column(name = "register")
+	public Integer getRegister() {
+		return register;
+	}
+	public void setRegister(Integer register) {
+		this.register = register;
+	}
+	@Temporal(TemporalType.TIMESTAMP)
+	@Column(name = "apply_time",  length = 19)
+	@NotNull
+	public Date getApplyTime() {
+		return applyTime;
+	}
+	public void setApplyTime(Date applyTime) {
+		this.applyTime = applyTime;
+	}
+	@Temporal(TemporalType.TIMESTAMP)
+	@Column(name = "register_time",  length = 19)
+	public Date getRegistTime() {
+		return registTime;
+	}
+	public void setRegistTime(Date registTime) {
+		this.registTime = registTime;
 	}
 	
 	

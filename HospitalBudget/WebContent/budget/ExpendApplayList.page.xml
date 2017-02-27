@@ -5,8 +5,5 @@
 
 	<param name="from" />
 	<param name="page" value="#{expendApplayList.page}" />
-	<param name="departId" value="#{expendApplayList.departId}" />
-	<param name="projectId" value="#{expendApplayList.projectId}" />
-	<param name="fundsSourceId" value="#{expendApplayList.fundsSourceId}" />
-	<param name="expendTime" value="#{expendApplayList.expendTime}" />
+	<param name="searchKey" value="#{expendApplayList.searchKey}" />
 </page>

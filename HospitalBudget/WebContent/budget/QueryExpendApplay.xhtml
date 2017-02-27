@@ -15,16 +15,95 @@
 		<link rel="stylesheet" type="text/css" href="#{request.contextPath}/common/css/bootstrap-select2.min.css" />
 	</ui:define>
 	<ui:define name="body">
+	#{queryExpendApplay.wire()}
 		<div class="g-data-list-condition">
 			<h:form id="mainForm">
 				<input type="hidden" name="page" value="1" />
 				<div>
-					<div class="fl w300">
-						<h:inputText id="keyword" value="#{ysGeneralProjectList.keyword}" styleClass="form-control mt10 ml10" />
+					<div class="fl" style="width: 180px;margin-top: 8px;margin-left:20px;">
+						<table>
+							<tr>
+								<td valign="middle">
+									<span class="field-name mb10">科室</span>
+								</td>
+								<td valign="middle">
+									<select id="depart" class="selectpicker">
+										<a:repeat value="#{queryExpendApplay.departList}" var="_var">
+											<s:fragment rendered="#{queryExpendApplay.departId eq _var[0]}">
+												<option value="#{_var[0]}" selected="selected">#{_var[1]}</option>
+											</s:fragment>
+											<s:fragment rendered="#{queryExpendApplay.departId ne _var[0]}">
+												<option value="#{_var[0]}" >#{_var[1]}</option>
+											</s:fragment>
+										</a:repeat>
+									</select>
+								</td>
+							</tr>
+						</table>
 					</div>
-				</div> 
+					<div class="fl" style="width: 210px;margin-top: 8px;margin-left: 20px;">
+					<table>
+						<tr>
+							<td valign="middle">
+								<span class="field-name mb10">资金来源</span>
+							</td>
+							<td valign="middle">
+								<select id="fundsSource" class="selectpicker">
+									<a:repeat value="#{queryExpendApplay.fundsSourceList}" var="_var">
+										<s:fragment rendered="#{queryExpendApplay.fundsSourceId eq _var[0]}">
+											<option value="#{_var[0]}" selected="selected">#{_var[1]}</option>
+										</s:fragment>
+										<s:fragment rendered="#{queryExpendApplay.fundsSourceId ne _var[0]}">
+											<option value="#{_var[0]}" >#{_var[1]}</option>
+										</s:fragment>
+									</a:repeat>
+								</select>
+							</td>
+						</tr>
+					</table>
+					</div>
+					<div class="fl" style="width: 210px;margin-top: 8px;margin-left: 20px;">
+					<table>
+						<tr>
+							<td valign="middle">
+								<span class="field-name mb10">项目名称</span>
+							</td>
+							<td valign="middle">
+								<select id="project" class="selectpicker">
+									<a:repeat value="#{queryExpendApplay.projectList}" var="_var">
+										<s:fragment rendered="#{queryExpendApplay.projectId eq _var[0]}">
+											<option value="#{_var[0]}" selected="selected">#{_var[1]}</option>
+										</s:fragment>
+										<s:fragment rendered="#{queryExpendApplay.projectId ne _var[0]}">
+											<option value="#{_var[0]}">#{_var[1]}</option>
+										</s:fragment>
+									</a:repeat>
+								</select>
+							</td>
+						</tr>
+					</table>
+					</div>
+					<div class="fl" style="width: 240px;margin-top: 8px;margin-left: 30px;">
+					<table>
+						<tr>
+							<td valign="middle">
+								<span class="field-name mb10">提交时间</span>
+							</td>
+							<td valign="middle">
+								<div class="input-append date form_datetime_second" style="position:relative;" >
+	                               		<input type="text" value="#{queryExpendApplay.expendTime}" readonly="readonly" style="border-radius:4px;width:110px;height:34;" name="time"/> 
+	                               		<span class="add-on" style="position:absolute; right:10px; top:3px;"><i class="icon-th" style="margin:0;"></i></span>
+	                            </div>
+							</td>
+						</tr>
+					</table>
+					</div>
+				</div>
 				<div class="fl">
-					<h:commandButton styleClass="btn btn-primary mt10 ml20" action="/budget/QueryExpendApplay.xhtml" value="搜索" />
+					<h:inputHidden value="#{queryExpendApplay.departId}" id="departIdHidden"/>
+					<h:inputHidden value="#{queryExpendApplay.projectId}" id="projectIdHidden"/>
+					<h:inputHidden value="#{queryExpendApplay.fundsSourceId}" id="fundsSourceIdHidden"/>
+					<h:commandButton styleClass="btn btn-primary mt10 ml20" action="/budget/QueryExpendApplay.xhtml" value="搜索" onclick="searchBefore()"/>
 				</div>
 			</h:form>
 		</div>
@@ -32,34 +111,30 @@
 		    <table class="record" width="100%" cellpadding="0" cellspacing="0">
 		        <tr>
 		            <th width="5%">序号</th>
-		            <th width="10%">单据编号</th>
-		            <th width="6%">支出年份</th>
-		            <th width="10%">账务账名</th>
-		            <th width="10%">收款单位</th>
-		            <th width="10%">发票号</th>
-		            <th width="7%">申请人</th>
-		            <th width="10%">申请时间</th>
-		            <th width="10%">摘要</th>
-		            <th width="15%">备注</th>
+		            <th width="20%">单据编号</th>
+		            <th width="15%">预算科室</th>
+		            <th width="10%">资金来源</th>
+		            <th width="15%">项目名称</th>
+		            <th width="10%">支出金额</th>
+		            <th width="10%">申请人</th>
+		            <th width="15%">申请提交时间</th>
 		        </tr>
-		        <a:repeat value="#{expendApplayList.expendApplyInfoList}" var="_result" rowKeyVar="_row">
+		        <a:repeat value="#{queryExpendApplay.resultList}" var="_result" rowKeyVar="_row">
 		        	<tr class="node-record #{_row % 2 eq 0 ? 'odd' : 'even'}">
 			        	<td>#{_row + 1}</td>
 			        	<td>
-			        		#{_result[1]}
+			        		<a  href="/HospitalBudget/budget/ExpendApplayDetail.seam?expendApplayId=#{_result[0]}"  title="查看详情">#{_result[1]}</a>
 			        	</td>
-			        	<td>#{_result[2]}</td>
 			        	<td>#{_result[3]}</td>
-			        	<td>#{_result[4]}</td>
+			        	<td>#{commonFinder.getMoneySource(_result[2])}</td>
+			        	<td>#{_result[4] == null ? _result[8] : _result[4]}</td>
 			        	<td>#{_result[5]}</td>
 			        	<td>#{_result[6]}</td>
 			        	<td>#{commonFinder.parseDate(_result[7])}</td>
-			        	<td>#{_result[8]}</td>
-			        	<td>#{_result[9]}</td>
 		        	</tr>
 		        </a:repeat>
 		    </table>
-		    #{paginationModel.init(expendApplayList)}
+		    #{paginationModel.init(queryExpendApplay)}
 		    <s:fragment rendered="#{paginationModel.query != null}">
 				<table class="pagination-model" style="width: auto; margin: 40px auto;" cellpadding="0" cellspacing="0">
 					<tr>
@@ -143,6 +218,12 @@
 				jQuery('.selectpicker').selectpicker();
 			}
 
+			//搜索
+			function searchBefore(){
+				jQuery("#mainForm\\:departIdHidden").val(jQuery("#depart").val());
+				jQuery("#mainForm\\:fundsSourceIdHidden").val(jQuery("#fundsSource").val());
+				jQuery("#mainForm\\:projectIdHidden").val(jQuery("#project").val());
+			}
 		//]]>
 		</script>
 	</ui:define>

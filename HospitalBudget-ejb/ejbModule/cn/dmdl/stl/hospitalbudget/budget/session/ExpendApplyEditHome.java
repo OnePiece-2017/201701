@@ -320,7 +320,7 @@ public class ExpendApplyEditHome extends CriterionEntityHome<ExpendApplyInfo>{
 		JSONArray expendList = jsonObject.getJSONArray("expend_list");
 		for(int i = 0;i < expendList.size();i++){
 			//获取参数
-			JSONObject project = expendList.getJSONObject(i);
+			/*JSONObject project = expendList.getJSONObject(i);
 			String projectInfoId = project.getString("project_id");
 			String expendMoney = project.getString("expend_money");
 			String expendTime = project.getString("expend_time");
@@ -417,7 +417,7 @@ public class ExpendApplyEditHome extends CriterionEntityHome<ExpendApplyInfo>{
 					parentProject.setNowAmount(parentProject.getNowAmount() - Float.parseFloat(expendMoney));
 					getEntityManager().merge(parentProject);
 				}
-			}
+			}*/
 			
 			
 		}

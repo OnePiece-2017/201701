@@ -29,7 +29,8 @@ public class ExpendExecutHome extends CriterionEntityHome<Object> {
 	private Integer handResult;//处理结果
 	private String handSay;//处理意见
 	private JSONObject saveResult;
-	private Object[] expendApplyInfo;
+	private Object[] expendApplyInfo;//公共头部
+	private List<Object[]> projectList;//项目列表
 	private String setpName;//步骤名称
 	
 	
@@ -49,16 +50,16 @@ public class ExpendExecutHome extends CriterionEntityHome<Object> {
 	@SuppressWarnings("unchecked")
 	private void updateProjectTaskOrderId(int oldTaskOrderId, int newTaskOrderId) {
 		List<ExpendApplyInfo> oldExpendApplyInfoList = getEntityManager().createQuery("select expendApplyInfo from ExpendApplyInfo expendApplyInfo where expendApplyInfo.taskOrderId = " + oldTaskOrderId).getResultList();
-		if (oldExpendApplyInfoList != null && oldExpendApplyInfoList.size() > 0) {
+		/*if (oldExpendApplyInfoList != null && oldExpendApplyInfoList.size() > 0) {
 			joinTransaction();
 			for (ExpendApplyInfo expendApplyInfo : oldExpendApplyInfoList) {
 				expendApplyInfo.setTaskOrderId(newTaskOrderId);// 跟踪订单信息
 				NormalExpendBudgetOrderInfo neboi = getEntityManager().find(NormalExpendBudgetOrderInfo.class,expendApplyInfo.getNormalExpendBudgetOrderId());
-				/*neboi.setNowAmount(neboi.getNowAmount() + expendApplyInfo.getExpendMoney());
-				getEntityManager().merge(expendApplyInfo);
-				getEntityManager().merge(neboi);*/
-				//不通过加上金额
 				neboi.setNowAmount(neboi.getNowAmount() + expendApplyInfo.getExpendMoney());
+				getEntityManager().merge(expendApplyInfo);
+				getEntityManager().merge(neboi);
+				//不通过加上金额
+				//neboi.setNowAmount(neboi.getNowAmount() + expendApplyInfo.getExpendMoney());
 				getEntityManager().merge(neboi);
 				if(null == neboi.getSubProjectId()){
 					
@@ -79,7 +80,7 @@ public class ExpendExecutHome extends CriterionEntityHome<Object> {
 				}
 			}
 			getEntityManager().flush();
-		}
+		}*/
 	}
 
 	@SuppressWarnings("unchecked")
@@ -173,45 +174,27 @@ public class ExpendExecutHome extends CriterionEntityHome<Object> {
 		JSONArray resultSet = new JSONArray();
 		StringBuffer dataSql = new StringBuffer();
 		dataSql.append(" SELECT");
-		dataSql.append(" eai.expend_apply_code,");//0单据编号
-		dataSql.append(" eai.`year`,");//1执行年份
-		dataSql.append(" ydi.the_value as depart_name,");//2报销部门
-		dataSql.append(" uie1.fullname as apply_name,");//3报销人
-		dataSql.append(" eai.funds_source,");//4资金来源
-		dataSql.append(" eai.recive_company,");//5收款单位
-		dataSql.append(" eai.invoice_num,");//6发票号
-		dataSql.append(" ycp.the_value as project_name,");//7项目名称
-		dataSql.append(" ycpe.the_value as sub_project_name,");//8子项目名称
-		dataSql.append(" eai.expend_money,");//9支出金额
-		dataSql.append(" neboi.project_amount,");//10年度预算金额
-		dataSql.append(" neboi.now_amout,");//11可支出金额
-		dataSql.append(" eai.expend_time,");//12支出时间
-		dataSql.append(" eai.insert_time, ");//13申请时间
-		dataSql.append(" uie2.fullname  as insert_name,");//14提交人
-		dataSql.append(" eai.`comment`  ");//15备注
+		dataSql.append(" eai.`year`,");//0执行年份
+		dataSql.append(" uie.fullname as applay_name,");//1申请人
+		dataSql.append(" eai.expend_apply_code,");//2单据编号
+		dataSql.append(" eai.finace_account_name,");//3账务账名
+		dataSql.append(" eai.recive_company,");//4收款单位
+		dataSql.append(" eai.invoice_num,");//5发票号
+		dataSql.append(" eai.summary,");//6摘要
+		dataSql.append(" uie1.fullname ");//8报销人
 		dataSql.append(" FROM expend_apply_info eai");
-		dataSql.append(" LEFT JOIN normal_expend_budget_order_info neboi ON eai.normal_expend_budget_order_id = neboi.normal_expend_budget_order_id ");
-		dataSql.append(" LEFT JOIN ys_convention_project ycp on ycp.the_id=neboi.normal_project_id ");
-		dataSql.append(" left join ys_convention_project_extend ycpe on ycpe.the_id = neboi.sub_project_id ");
-		dataSql.append(" LEFT JOIN ys_department_info ydi on eai.department_info_id=ydi.the_id ");
 		dataSql.append(" LEFT JOIN user_info ui on eai.applay_user_id=ui.user_info_id ");
-		dataSql.append(" LEFT JOIN user_info_extend uie1 on uie1.user_info_extend_id=ui.user_info_extend_id ");
-		dataSql.append(" LEFT JOIN user_info ui1 on ui1.user_info_id=eai.insert_user ");
-		dataSql.append(" LEFT JOIN user_info_extend uie2 on uie2.user_info_extend_id=ui1.user_info_extend_id ");
+		dataSql.append(" LEFT JOIN user_info_extend uie on uie.user_info_extend_id=ui.user_info_extend_id ");
+		dataSql.append(" LEFT JOIN user_info ui1 on eai.reimbursementer=ui1.user_info_id ");
+		dataSql.append(" LEFT JOIN user_info_extend uie1 on uie1.user_info_extend_id=ui1.user_info_extend_id ");
 		dataSql.append(" where eai.deleted=0 and eai.task_order_id=").append(taskOrderId);
 		dataSql.insert(0, "select * from (").append(") as recordset");// 解决找不到列
 		List<Object[]> dataList = getEntityManager().createNativeQuery(dataSql.toString()).getResultList();
 		if (dataList != null && dataList.size() > 0) {
 			expendApplyInfo = dataList.get(0);
-			expendApplyInfo[4] = commonFinder.getMoneySource(Integer.parseInt(expendApplyInfo[4].toString()));
-			expendApplyInfo[11] = Double.parseDouble(expendApplyInfo[9].toString()) + Double.parseDouble(expendApplyInfo[11].toString());
-			try {
-				expendApplyInfo[12] =  sdfday.format(sdfday.parse(expendApplyInfo[12].toString()));
-				expendApplyInfo[13] =  sdfs.format(sdfs.parse(expendApplyInfo[13].toString()));
-			} catch (ParseException e) {
-				e.printStackTrace();
-			}
 		}
+		
+		//查询项目列表
 		return resultSet;
 	}
 	
@@ -280,6 +263,14 @@ public class ExpendExecutHome extends CriterionEntityHome<Object> {
 
 	public void setHandSay(String handSay) {
 		this.handSay = handSay;
+	}
+
+	public List<Object[]> getProjectList() {
+		return projectList;
+	}
+
+	public void setProjectList(List<Object[]> projectList) {
+		this.projectList = projectList;
 	}
 
 	
