@@ -38,7 +38,7 @@ function updateUploaded(result) {
 					dataRow += '	<td><img class="icon" src="' + ______sgFileTypeInfo[type].icon + '"></td>';
 					dataRow += '	<td>' + ______sgFileTypeInfo[type].type + '</td>';
 					dataRow += '	<td>' + size + '字节</td>';
-					dataRow += '	<td>' + ___genStdHtml___a_abbr(name) + '</td>';
+					dataRow += '	<td>' + ___genStdHtml___a_abbr(name, 19) + '</td>';
 					dataRow += '	<td>';
 					dataRow += '		<a class="a-btn-download" onclick="downloadFile(this);" title="下载"><img src="../misc/icon_down_32x32.png"></a>';
 					dataRow += '		<a class="a-btn-delete" onclick="deleteDataRow(this);" title="删除"><img src="../misc/icon_delete_sign_32x32.png"></a>';
@@ -105,7 +105,7 @@ function loadUploaded(items) {
 				dataRow += '	<td><img class="icon" src="' + ______sgFileTypeInfo[type].icon + '"></td>';
 				dataRow += '	<td>' + ______sgFileTypeInfo[type].type + '</td>';
 				dataRow += '	<td>' + size + '字节</td>';
-				dataRow += '	<td>' + ___genStdHtml___a_abbr(name) + '</td>';
+				dataRow += '	<td>' + ___genStdHtml___a_abbr(name, 19) + '</td>';
 				dataRow += '	<td>';
 				dataRow += '		<a class="a-btn-download" onclick="downloadFile(this);" title="下载"><img src="../misc/icon_down_32x32.png"></a>';
 				dataRow += '		<a class="a-btn-delete" onclick="deleteDataRow(this);" title="删除"><img src="../misc/icon_delete_sign_32x32.png"></a>';

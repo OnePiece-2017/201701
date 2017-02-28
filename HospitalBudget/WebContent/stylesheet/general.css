@@ -80,10 +80,10 @@
 }
 
 .a-abbr {
-	color: #333333;
-	text-decoration: none;
-	cursor: default;
-	outline: none;
+	color: #333333 !important;
+	text-decoration: none !important;
+	cursor: default !important;
+	outline: none !important;
 }
 
 /* 阻止remodal修改body的padding-right */

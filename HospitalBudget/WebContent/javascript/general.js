@@ -212,6 +212,6 @@ function ___isNumber(arg) {
 	return arg != null && arg !== '' && Number(arg).toString() === arg.toString();
 }
 
-function ___genStdHtml___a_abbr(value) {
-	return '<a class="a-abbr" href="javascript:void(0);" title="' + value + '">' + ___abbr(value, 19) + '</a>';
+function ___genStdHtml___a_abbr(value, length) {
+	return '<a class="a-abbr" href="javascript:void(0);" title="' + value + '">' + ___abbr(value, length) + '</a>';
 }

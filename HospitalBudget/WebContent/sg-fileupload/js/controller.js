@@ -23,7 +23,7 @@ jQuery(document).ready(function() {
 			dataRow += '	<td><img class="icon" src="' + ______sgFileTypeInfo[type].icon + '"></td>';
 			dataRow += '	<td>' + ______sgFileTypeInfo[type].type + '</td>';
 			dataRow += '	<td>' + size + '字节</td>';
-			dataRow += '	<td>' + ___genStdHtml___a_abbr(name) + '</td>';
+			dataRow += '	<td>' + ___genStdHtml___a_abbr(name, 19) + '</td>';
 			dataRow += '	<td></td>';
 			dataRow += '</tr>';
 			blob = window.URL.createObjectURL(file);
