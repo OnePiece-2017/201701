@@ -1,6 +1,7 @@
 var ______promptMessage = {
     'isWired' : false,
     'refer' : {},
+    'callback' : {},
     'iconset' : {
         'question' : (___contextRoot != '/' ? ___contextRoot : '') + '/prompt-message/img/icon_question_64x64.png',
         'success' : (___contextRoot != '/' ? ___contextRoot : '') + '/prompt-message/img/icon_success_64x64.png',
@@ -64,6 +65,9 @@ jQuery(document).ready(function() {
 	});
 	______promptMessage['refer']['btnClose'].click(function() {
 		______promptMessage['refer']['master'].hide();
+		if (______promptMessage['callback']['fadeOutCallback'] != null && 'function' === typeof ______promptMessage['callback']['fadeOutCallback']) {
+			______promptMessage['callback']['fadeOutCallback']();
+		}
 	});
 });
 
@@ -86,6 +90,8 @@ function ___promptMessage(arg) {
 	______promptMessageReset();
 	if (arg != null && 'object' === typeof arg && !arg.hasOwnProperty('length') && 'type' in arg && 'title' in arg && 'prompt' in arg && 'fadeInMillis' in arg && 'fadeOutMillis' in arg && 'fadeInCallback' in arg && 'fadeOutCallback' in arg) {
 		var type = arg['type'], title = arg['title'], prompt = arg['prompt'], fadeInMillis = arg['fadeInMillis'], fadeOutMillis = arg['fadeOutMillis'], fadeInCallback = arg['fadeInCallback'], fadeOutCallback = arg['fadeOutCallback'];
+		______promptMessage['callback']['fadeInCallback'] = fadeInCallback;
+		______promptMessage['callback']['fadeOutCallback'] = fadeOutCallback;
 		var logo = ______promptMessage['iconset'][type];
 		if (null == logo || '' == logo) {
 			logo = ______promptMessage['iconset']['info'];
