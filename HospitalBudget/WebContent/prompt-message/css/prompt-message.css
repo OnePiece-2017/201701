@@ -1,0 +1,102 @@
+.prompt-message {
+	position: fixed;
+	width: 100%;
+	height: 100%;
+	z-index: 953610236;
+	left: 0;
+	top: 0;
+	background: rgba(0, 0, 0, 0.88);
+	display: none;
+}
+
+.prompt-message-contents {
+	position: fixed;
+	width: 640px;
+	height: 320px;
+	background: #5376c9;
+	left: 23%;
+	top: 15%;
+	border-radius: 15px;
+}
+
+.sg-fileupload-panel .banner .close-panel {
+	float: right;
+	width: 24px;
+	height: 24px;
+	margin: 20px 20px;
+	opacity: 0.3;
+	cursor: pointer;
+}
+
+.prompt-message-contents .btn-close {
+	width: 36px;
+	height: 36px;
+	position: absolute;
+	right: 15px;
+	top: 15px;
+	cursor: pointer;
+	display: none;
+}
+
+.prompt-message-contents .btn-close img {
+	width: 36px;
+	height: 36px;
+	opacity: 0.5;
+}
+
+.prompt-message-contents .btn-close img:hover {
+	width: 36px;
+	height: 36px;
+	opacity: 1.0;
+}
+
+.prompt-message-contents .countdown {
+	width: 100%;
+	height: 5px;
+	position: absolute;
+	margin-top: 22px;
+	background: #0a3d59;
+}
+
+.prompt-message-contents .logo {
+	width: 192px;
+	height: 100%;
+	float: left;
+}
+
+.prompt-message-contents .logo img {
+	width: 64px;
+	height: 64px;
+	margin: 128px 64px;
+}
+
+.prompt-message-contents .title {
+	width: 448px;
+	height: 30%;
+	float: left;
+}
+
+.prompt-message-contents .title span {
+	display: block;
+	text-align: center;
+	font-size: 25px;
+	line-height: 30px;
+	color: #fff;
+	margin-top: 44px;
+}
+
+.prompt-message-contents .prompt {
+	width: 448px;
+	height: 70%;
+	float: left;
+	border-radius: 15px;
+	border-top: 1px solid currentColor;
+}
+
+.prompt-message-contents .prompt span {
+	float: left;
+	font-size: 17px;
+	line-height: 32px;
+	color: #000;
+	margin: 5px 10px;
+}
