@@ -48,7 +48,7 @@ jQuery(document).ready(function() {
 	// 3. 设置滚动条
 	______promptMessage['refer']['prompt'].niceScroll({
 	    cursorcolor : '#062121',
-	    cursorwidth : 9,
+	    cursorwidth : 6,
 	    cursoropacitymax : 0.8,
 	    touchbehavior : false,
 	    autohidemode : false
