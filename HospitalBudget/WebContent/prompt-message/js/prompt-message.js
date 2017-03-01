@@ -64,10 +64,11 @@ jQuery(document).ready(function() {
 		});
 	});
 	______promptMessage['refer']['btnClose'].click(function() {
-		______promptMessage['refer']['master'].hide();
-		if (______promptMessage['callback']['fadeOutCallback'] != null && 'function' === typeof ______promptMessage['callback']['fadeOutCallback']) {
-			______promptMessage['callback']['fadeOutCallback']();
-		}
+		______promptMessage['refer']['master'].fadeOut('fast', function() {
+			if (______promptMessage['callback']['fadeOutCallback'] != null && 'function' === typeof ______promptMessage['callback']['fadeOutCallback']) {
+				______promptMessage['callback']['fadeOutCallback']();
+			}
+		});
 	});
 });
 
