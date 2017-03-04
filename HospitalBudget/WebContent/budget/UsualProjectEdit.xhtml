@@ -611,7 +611,7 @@
 				jQuery('#fundsSourceId').val(jQuery('#mainForm\\:fundsSourceIdHidden').val());
 				jQuery('#fundsSourceId').selectpicker('render');
 			
-				subprojectOutputFlush();
+				setTimeout('subprojectOutputFlush();', 0);//解决Chrome元素渲染速度问题
 			});
 			
 			function setSubprojectInteractive(show) {
