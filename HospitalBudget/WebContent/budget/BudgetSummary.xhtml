@@ -45,7 +45,7 @@
 							<span>科室</span>
 						</div>
 						<div class="fl">
-							<select id="departmentIds" class="selectpicker" multiple="multiple" data-live-search="true">
+							<select id="departmentIds" class="selectpicker" multiple="multiple" data-live-search="true" title="全部科室">
 								<a:repeat value="#{budgetSummaryHome.departmentInfoList}" var="_var">
 									<option value="#{_var[0]}">#{_var[1]}</option>
 								</a:repeat>
@@ -53,26 +53,52 @@
 						</div>
 					</div>
 				</div>
-				<strong style="font-size: 20px;">预算汇总上会</strong>
-				<font style="margin-left: 15px;color: #f903ed;">(共<span class="node-summaryInfo">0</span>行)</font>
+				<strong style="font-size: 20px;">收入预算</strong>
+				<!-- <font style="margin-left: 15px;color: #f903ed;">(共<span id="income_rows" class="node-summaryInfo">0</span>行)</font> -->
 				<div class="g-data-list-table freeze-attendProject" style="height: 42px;">
 				    <table class="record" width="100%" cellpadding="0" cellspacing="0">
 				        <tr>
-				            <th width="5%">ID</th>
+				            <!-- <th width="5%">ID</th> -->
 				            <th width="10%">年份</th>
 				            <th width="15%">科室</th>
-				            <th width="25%">订单号</th>
-				            <th width="20%">预算类型</th>
+				            <!-- <th width="25%">订单号</th> -->
+				            <!-- <th width="20%">预算类型</th> -->
 				            <th width="20%">预算金额(元)</th>
+				            <th width="20%">与上一年预算同比增减金额</th>
+				            <th width="20%">与上一年预算同比增减率</th>
 				            <th width="4%">选择</th>
-				            <th width="1%">　</th>
+				            <th width="10%">操作</th>
 				        </tr>
 				    </table>
 				</div>
-				<div class="g-data-list-table normal-attendProject" style="border-radius: 0;height: 306px;">
+				<div class="g-data-list-table normal-attendProject" id="income_table_div" style="border-radius: 0;height: 306px;">
 				    <table class="record" width="100%" cellpadding="0" cellspacing="0">
 				    </table>
 				</div>
+				
+				<strong style="font-size: 20px;">支出预算</strong>
+				<!-- <font style="margin-left: 15px;color: #f903ed;">(共<span id="expand_rows" class="node-summaryInfo">0</span>行)</font> -->
+				<div class="g-data-list-table freeze-attendProject" id="expand_freez_head" style="height: 42px;">
+				    <table class="record" width="100%" cellpadding="0" cellspacing="0">
+				        <tr>
+				            <!-- <th width="5%">ID</th> -->
+				            <th width="10%">年份</th>
+				            <th width="15%">科室</th>
+				            <!-- <th width="25%">订单号</th> -->
+				            <!-- <th width="20%">预算类型</th> -->
+				            <th width="20%">预算金额(元)</th>
+				            <th width="20%">与上一年预算同比增减金额</th>
+				            <th width="20%">与上一年预算同比增减率</th>
+				            <th width="4%">选择</th>
+				            <th width="10%">操作</th>
+				        </tr>
+				    </table>
+				</div>
+				<div class="g-data-list-table normal-attendProject" id="expand_table_div" style="border-radius: 0;height: 306px;">
+				    <table class="record" width="100%" cellpadding="0" cellspacing="0">
+				    </table>
+				</div>
+				
 				<div class="pt50 pb95">
 					<table class="normal-btn">
 						<tr>
@@ -110,8 +136,10 @@
 				jQuery('#budgetYear').val(new Date().getFullYear());
 			    jQuery('.selectpicker').selectpicker();
 
-			    jQuery('.normal-attendProject .record').prepend(jQuery('.freeze-attendProject tbody').html());
-			    jQuery('.normal-attendProject .record tr:first').find('th').html('').css('height', 0);
+			    jQuery('#income_table_div .record').prepend(jQuery('.freeze-attendProject tbody').html());
+			    jQuery('#expand_table_div .record').prepend(jQuery('#expand_freez_head tbody').html());
+			    jQuery('#income_table_div .record tr:first').find('th').html('').css('height', 0);
+			    jQuery('#expand_table_div .record tr:first').find('th').html('').css('height', 0);
 			    jQuery('.normal-attendProject').niceScroll({
 					cursorcolor : '#5cb85c',
 					cursorwidth : 9,
@@ -123,15 +151,16 @@
 			    jQuery('#budgetYear, #departmentIds').change(renewTable);
 			    renewTable();
 
-			    updateSummaryInfo();
+			    //updateSummaryInfo();
 			});
 			
 			function renewTable() {
 				jQuery('.normal-attendProject .data-row').remove();
 				var html = '';
+				var expandHtml = '';
 				if (attendProject != null && attendProject.length > 0) {
 					var budgetYear = jQuery('#budgetYear').val();
-					var departmentSet = {};
+ 					var departmentSet = {};
 					var departmentIds = jQuery('#departmentIds').val();
 					if (departmentIds != null && departmentIds.length) {
 						for (var i = 0; i < departmentIds.length; i++) {
@@ -139,21 +168,39 @@
 						}
 					}
 					for (var i = 0; i < attendProject.length; i++) {
-						if (budgetYear == attendProject[i]['year'] && departmentSet[attendProject[i]['departmentId']] != null) {
-							html += '<tr class="data-row">';
-							html += '	<td class="primary-key">' + attendProject[i]['normalBudgetCollectionId'] + '</td>';
-							html += '	<td>' + attendProject[i]['year'] + '</td>';
-							html += '	<td>' + attendProject[i]['departmentName'] + '</td>';
-							html += '	<td>' + attendProject[i]['orderSn'] + '</td>';
-							html += '	<td>' + attendProject[i]['amountType'] + '</td>';
-							html += '	<td>' + attendProject[i]['budgetAmount'] + '</td>';
-							html += '	<td><input type="checkbox" class="icheck"></td>';
-							html += '	<td>　</td>';
-							html += '</tr>';
+						if (budgetYear == attendProject[i]['year'] && (departmentSet[attendProject[i]['departmentId']] != null || departmentIds == null)) {
+							if(attendProject[i]['amountType'] == "1"){
+								html += '<tr class="data-row">';
+								//html += '	<td class="primary-key">' + attendProject[i]['normalBudgetCollectionId'] + '</td>';
+								html += '	<td>' + attendProject[i]['year'] + '</td>';
+								html += '	<td>' + attendProject[i]['departmentName'] + '</td>';
+								//html += '	<td>' + attendProject[i]['orderSn'] + '</td>';
+								//html += '	<td>' + attendProject[i]['amountTypeName'] + '</td>';
+								html += '	<td>' + attendProject[i]['budgetAmount'] + '</td>';
+								html += '	<td>--</td>';
+								html += '	<td>--</td>';
+								html += '	<td><input type="checkbox" class="icheck"></td>';
+								html += '	<td><a href="../budget/CollectionInfo.seam?year=' + attendProject[i]['year'] + '&amp;amountTypeCode=' + attendProject[i]['amountType'] + '"  title="编辑" style="text-decoration: none;"><img src="../images/icon_view_16x16.png"></a></td>';
+								html += '</tr>';
+							}else if(attendProject[i]['amountType'] == "2"){
+								expandHtml += '<tr class="data-row">';
+								//html += '	<td class="primary-key">' + attendProject[i]['normalBudgetCollectionId'] + '</td>';
+								expandHtml += '	<td>' + attendProject[i]['year'] + '</td>';
+								expandHtml += '	<td>' + attendProject[i]['departmentName'] + '</td>';
+								//html += '	<td>' + attendProject[i]['orderSn'] + '</td>';
+								//html += '	<td>' + attendProject[i]['amountTypeName'] + '</td>';
+								expandHtml += '	<td>' + attendProject[i]['budgetAmount'] + '</td>';
+								expandHtml += '	<td>--</td>';
+								expandHtml += '	<td>--</td>';
+								expandHtml += '	<td><input type="checkbox" class="icheck"></td>';
+								expandHtml += '	<td><a href="../budget/CollectionInfo.seam?year=' + attendProject[i]['year'] + '&amp;amountTypeCode=' + attendProject[i]['amountType'] + '"  title="查看" style="text-decoration: none;"><img src="../images/icon_view_16x16.png"></a></td>';
+								expandHtml += '</tr>';
+							}
 						}
-					}
+					} 
 				}
-				jQuery('.normal-attendProject .record').append(html);
+				jQuery('#income_table_div .record').append(html);
+				jQuery('#expand_table_div .record').append(expandHtml);
 				jQuery('.normal-attendProject .icheck').iCheck({
 					checkboxClass: 'icheckbox_square-blue',
 					radioClass: 'iradio_square-blue',
@@ -165,8 +212,8 @@
 			
 			function updateSummaryInfo() {
 				var rows = jQuery('.normal-attendProject tr.data-row').length;
-				if (jQuery('.node-summaryInfo').html() != rows) {
-					jQuery('.node-summaryInfo').html(rows);
+				if (jQuery('#income_rows').html() != rows) {
+					jQuery('#income_rows').html(rows);
 				}
 				setTimeout("updateSummaryInfo()", 100);
 			}

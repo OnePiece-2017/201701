@@ -23,6 +23,8 @@ public class BudgetSummaryHome extends CriterionEntityHome<Object> {
 	private static final long serialVersionUID = 1L;
 	private String saveArgs;
 	private JSONObject saveResult;
+	private String year;
+	private Integer amountType;
 
 	@SuppressWarnings("unchecked")
 	public void saveAction() {
@@ -104,10 +106,11 @@ public class BudgetSummaryHome extends CriterionEntityHome<Object> {
 				row.accumulate("orderSn", data[4]);
 				int amountType = (Integer) data[5];
 				if (amountType == 1) {
-					row.accumulate("amountType", "收入预算");
+					row.accumulate("amountTypeName", "收入预算");
 				} else if (amountType == 2) {
-					row.accumulate("amountType", "支出预算");
+					row.accumulate("amountTypeName", "支出预算");
 				}
+				row.accumulate("amountType", amountType);
 				row.accumulate("budgetAmount", data[6]);
 				resultSet.add(row);
 			}
@@ -180,5 +183,21 @@ public class BudgetSummaryHome extends CriterionEntityHome<Object> {
 
 	public void setSaveArgs(String saveArgs) {
 		this.saveArgs = saveArgs;
+	}
+	
+	public String getYear() {
+		return year;
+	}
+
+	public void setYear(String year) {
+		this.year = year;
+	}
+
+	public Integer getAmountType() {
+		return amountType;
+	}
+
+	public void setAmountType(Integer amountType) {
+		this.amountType = amountType;
 	}
 }
