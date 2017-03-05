@@ -117,37 +117,38 @@ public class QueryExpendApplay extends CriterionNativeQuery<Object[]> {
 		}
 		StringBuffer sql = new StringBuffer();
 		sql.append(" SELECT ");
-		sql.append(" eai.expend_apply_info_id, ");//0申请单id
+		sql.append(" eap.expend_apply_project_id, ");//0申请单项目id
 		sql.append(" eai.expend_apply_code, ");//1申请编号
-		sql.append(" eai.funds_source, ");//2资金来源
-		sql.append(" ydi.the_value as depart_name, ");//3部门名字
-		sql.append(" ycp.the_value as peoject_name, ");//4项目名字
-		sql.append(" eai.expend_money, ");//5支出金额
+		sql.append(" di.the_value as department_name, ");//2科室名称
+		sql.append(" fs.the_value as funds_source_name, ");//3资金来源
+		sql.append(" up.the_value as project_name, ");//4项目名字
+		sql.append(" eap.expend_money, ");//5支出金额
 		sql.append(" uie.fullname, ");//6申请人名字
-		sql.append(" eai.insert_time, ");//7申请提交时间
+		sql.append(" eai.apply_time ");//7申请提交时间
 		sql.append(" ycpe.the_value as sub_project_name ");
-		sql.append(" FROM expend_apply_info eai ");
-		sql.append(" LEFT JOIN ys_department_info ydi ON eai.department_info_id = ydi.the_id ");
-		sql.append(" LEFT JOIN normal_expend_budget_order_info neboi on neboi.normal_expend_budget_order_id=eai.normal_expend_budget_order_id ");
-		sql.append(" LEFT JOIN ys_convention_project ycp on ycp.the_id=neboi.normal_project_id ");
+		sql.append(" FROM expend_apply_project eap ");
+		sql.append(" LEFT JOIN expend_apply_info eai ON eai.expend_apply_info_id = eap.expend_apply_info_id ");
+		sql.append(" LEFT JOIN normal_expend_budget_order_info neboi on neboi.normal_expend_budget_order_id=eap.normal_expend_budget_order_id ");
+		sql.append(" LEFT JOIN usual_project up on up.the_id=neboi.normal_project_id ");
+		sql.append(" LEFT JOIN ys_department_info di on di.the_id=up.department_info_id ");
+		sql.append(" LEFT JOIN ys_funds_source fs on fs.the_id=up.funds_source_id ");
 		sql.append(" LEFT JOIN user_info ui on ui.user_info_id=eai.applay_user_id ");
 		sql.append(" LEFT JOIN user_info_extend uie on ui.user_info_extend_id=uie.user_info_extend_id ");
-		sql.append(" LEFT JOIN ys_convention_project_extend ycpe on neboi.sub_project_id=ycpe.the_id ");
-		sql.append(" where eai.deleted=0 ");
+		sql.append(" where eap.deleted=0 ");
 		if(privateRole){
-			sql.append(" eai.insert_user= ").append(sessionToken.getUserInfoId());
+			sql.append(" eap.insert_user= ").append(sessionToken.getUserInfoId());
 		}
 		if(null != projectId && projectId != -1){
-			sql.append(" and (ycp.the_id= ").append(projectId).append(" or ycpe.the_id=").append(projectId).append(")");
+			sql.append(" and neboi.normal_project_id=").append(projectId);
 		}
 		if(null != fundsSourceId && fundsSourceId != -1){
-			sql.append(" and eai.funds_source= ").append(fundsSourceId);
+			sql.append(" and up.funds_source_id= ").append(fundsSourceId);
 		}
 		if(null != departId && departId != -1){
-			sql.append(" and eai.department_info_id=").append(departId);
+			sql.append(" and up.department_info_id").append(departId);
 		}
 		if(null != expendTime && !expendTime.equals("")){
-			sql.append(" and date_format(eai.insert_time,'%Y-%m-%d')='").append(expendTime).append("'");
+			sql.append(" and date_format(eai.apply_time,'%Y-%m-%d')='").append(expendTime).append("'");
 		}
 		sql.insert(0, "select * from (").append(") as recordset");
 		setEjbql(sql.toString());

@@ -1,0 +1,511 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:s="http://jboss.com/products/seam/taglib"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:a="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich"
+	template="/layout/template_edit.xhtml">
+
+	<ui:define name="head">
+		<link rel="stylesheet" type="text/css" href="#{request.contextPath}/common/css/bootstrap-datetimepicker.min.css" />
+		<link rel="stylesheet" type="text/css" href="#{request.contextPath}/common/css/bootstrap.min.css" />
+		<link rel="stylesheet" type="text/css" href="#{request.contextPath}/common/css/bootstrap-select.min.css" />
+		<link rel="stylesheet" type="text/css" href="#{request.contextPath}/icheck/skins/square/blue.css" />
+		<link rel="stylesheet" type="text/css" href="#{request.contextPath}/stylesheet/fix.css" />
+		<link rel="stylesheet" type="text/css" href="#{request.contextPath}/stylesheet/template_list.css" />
+		<style type="text/css">
+			.bs-w440 .bootstrap-select:not([class*="span"]):not([class*="col-"]):not([class*="form-control"]):not(.input-group-btn) {
+			    width: 440px;
+			}
+			
+			.normal-candidateProject .selected {
+				background: #da9a48;
+			}
+			
+			.normal-attendProject .root {
+				background: #add595;
+			}
+			
+			.node-totalAmount {
+				font-weight: bold;
+			}
+			.border{
+			  	border-left:none;
+			  	border-left-width:0px;
+			    border-right:none;
+			    border-right-width:0px;
+			  	border-top:none;
+			  	border-top-width:0px;
+			    border-bottom:1.4px solid rgba(15, 37, 67, 0.22);
+			 }
+			 .btn-add {
+			    color: #fff;
+			    background-color: #3c764e;
+			    border-color: #ffffff;
+			}
+			.modal-header-modal {
+			    min-height: 7.43px;
+			    padding: 0px;
+			    border-bottom: 1px solid #e5e5e5;
+			}
+			.modaltd .bootstrap-select:not([class*="span"]):not([class*="col-"]):not([class*="form-control"]):not(.input-group-btn) {
+			    width: 170px;
+			}
+			.allMoney {
+			    float: left;
+			    width: 123px;
+			    padding-right: 15px;
+			    font-family: '微软雅黑';
+			    text-align: right
+			}
+			.icon {
+			    background-image: url(../images/glyphicons-halflings.png);
+			    background-position: 14px 14px;
+			    background-repeat: no-repeat;
+			    display: inline-block;
+			    height: 14px;
+			    line-height: 14px;
+			    margin-top: 1px;
+			    vertical-align: text-top;
+			    width: 14px;
+			}
+		</style>
+	</ui:define>
+	<ui:define name="body">
+	#{expendApplyConfirmHome.wire()}
+		<h:form id="mainForm" styleClass="edit" enctype="multipart/form-data">
+			<div class="pd0-10">
+				<div class="pt30 pb30 fs14">
+				<h:inputHidden value="#{expendApplyConfirmHome.expendConfirmId}" id="expendApplyIdEdit"/>
+					<table width="100%" cellpadding="0" cellspacing="0">
+						<tr>
+							<td width="50%">
+								<div class="pb20">
+									<table>
+										<tr>
+											<td valign="middle">
+												<span class="field-name mb10">预算年份:</span>
+											</td>
+											<td valign="middle">
+												<input id="year" value="#{expendApplyConfirmHome.expendApplyInfo.year}" class=" mb10 border" style="height:34px;width:220px" maxlength="20" readonly="readonly"/>
+											</td>
+										</tr>
+									</table>
+								</div>
+							</td>
+							<td width="50%">
+								<div class="pb20">
+									<table>
+										<tr>
+											<td valign="middle">
+												<span class="field-name mb10">申请人:</span>
+											</td>
+											<td valign="middle">
+												<input  value="#{expendApplyConfirmHome.applyUser}" class=" mb10 border" style="height:34px;width:220px" maxlength="20" readonly="readonly"/>
+											</td>
+										</tr>
+									</table>
+								</div>
+							</td>
+						</tr>
+						<tr>
+							<td width="50%">
+								<div class="pb20">
+									<table>
+										<tr>
+											<td valign="middle">
+												<span class="field-name mb10">单据编号:</span>
+											</td>
+											<td valign="middle">
+												<input  value="#{expendApplyConfirmHome.expendApplyInfo.expendApplyCode}" class=" mb10 border" style="height:34px;width:220px" maxlength="20" readonly="readonly"/>
+											</td>
+										</tr>
+									</table>
+								</div>
+							</td>
+							<td width="50%">
+								<div class="pb20">
+									<table>
+										<tr>
+											<td valign="middle">
+												<span class="field-name mb10">财务账名:</span>
+											</td>
+											<td valign="middle">
+												<input  value="#{expendApplyConfirmHome.expendApplyInfo.finaceAccountName}" class=" mb10 border" style="height:34px;width:220px" maxlength="20" readonly="readonly"/>
+											</td>
+										</tr>
+									</table>
+								</div>
+							</td>
+						</tr>
+						<tr>
+							<td width="50%">
+								<div class="pb20">
+									<table>
+										<tr>
+											<td valign="middle">
+												<span class="field-name mb10">收款单位:</span>
+											</td>
+											<td valign="middle"> 
+												<input  value="#{expendApplyConfirmHome.expendApplyInfo.reciveCompany}" class=" mb10 border" style="height:34px;width:220px" maxlength="30" readonly="readonly"/>
+											</td>
+										</tr>
+									</table>
+								</div>
+							</td>
+							<td width="50%">
+								<div class="pb20">
+									<table>
+										<tr>
+											<td valign="middle">
+												<span class="field-name mb10">发票号:</span>
+											</td>
+											<td valign="middle">
+												<input value="#{expendApplyConfirmHome.expendApplyInfo.invoiceNum}" class=" mb10 border" style="height:34px;width:220px" maxlength="20" readonly="readonly"/>
+											</td>
+										</tr>
+									</table>
+								</div>
+							</td>
+						</tr>
+						<tr>
+							<td width="50%">
+								<div class="pb20">
+									<table>
+										<tr>
+											<td valign="middle">
+												<span class="field-name mb10">摘要:</span>
+											</td>
+											<td valign="middle">
+												<input value="#{expendApplyConfirmHome.expendApplyInfo.summary}" class=" mb10 border" style="height:34px;width:220px" maxlength="20" readonly="readonly"/>
+											</td>
+										</tr>
+									</table>
+								</div>
+							</td>
+							<td width="50%">
+								<div class="pb20">
+									<table>
+										<tr>
+											<td valign="middle">
+												<span class="field-name mb10">报销人:</span>
+											</td>
+											<td valign="middle">
+												<input value="#{expendApplyConfirmHome.reimbursementer}" class=" mb10 border" style="height:34px;width:220px" maxlength="20" readonly="readonly"/>
+											</td>
+										</tr>
+									</table>
+								</div>
+							</td>
+						</tr>
+					</table>
+				</div>
+				<rich:panel id="listPanl" style="margin:0; border:none; padding: 0;">
+				<div class="g-data-list-table freeze-candidateProject" style="border: 1px solid #e1e1e1;overflow:auto;width:1900px;">
+				    <table class="record" width="100%" cellpadding="0" cellspacing="0">
+				        <tr>
+				        	<th width="2%">序号</th>
+				            <th width="6%">项目名称</th>
+				            <th width="7%">年预算金额</th>
+				            <th width="7%">已支出金额</th>
+				            <th width="7%">可支出金额</th>
+				            <th width="7%">本次预算内支出</th>
+				            <th width="7%">本次追加预算支出</th>
+				            <th width="7%">预算调整追加</th>
+				            <th width="7%">预算调整减少</th>
+				            <th width="7%">追加预算已支出</th>
+				            <th width="7%">追加预算可支出</th>
+				            <th width="8%">支出日期</th>
+				            <th width="9%">备注</th>
+				            <th width="10%">附件</th>
+				            <th style="display:none">id</th>
+				        </tr>
+				    <a:repeat value="#{expendApplyConfirmHome.projectList}" var="_obj" rowKeyVar="_index">
+				        <tr class="root expendtr" style="font-size: 14px;font-weight: normal;">
+				        	<td >#{_index + 1}</td>
+				            <td >#{_obj[0]}</td>
+				            <td >#{_obj[1]}</td>
+				            <td >#{_obj[2]}</td>
+				            <td  name="canUseMoney">#{_obj[3]}</td>
+				            <td >
+				            	<input id="money_#{_index}" name="money" class="form-control row-text-simplify" value="#{_obj[4]}" type="text" onblur="totalMoney()"/>
+				            </td>
+				            <td >
+				            	#{_obj[9]}
+				            </td>
+				            <td>
+				            	#{_obj[10]}
+				            </td>
+				            <td >
+				            	#{_obj[11]}
+				            </td>
+				             <td >
+				            	#{_obj[12]}
+				            </td>
+				            <td >
+				            	#{_obj[13]}
+				            </td>
+				            <td >
+                              #{_obj[5]}
+							</td>
+				            <td >
+				            	#{_obj[6]}
+				            </td>
+				            <td >#{_obj[7]}</td>
+				            <td style="display:none" id="project_id_#{_index}">#{_obj[8]}</td>
+				        </tr>
+				   	</a:repeat>
+				    </table>
+				</div>
+				</rich:panel>
+				<div class="pt30 pb30 fs14">
+					<table width="100%" cellpadding="0" cellspacing="0">
+						<tr>
+							<td width="33%">
+								<div class="pb20">
+									<table>
+										<tr>
+											<td valign="middle">
+												<span class="allMoney">单据总金额:</span>
+											</td>
+											<td valign="middle">
+												<input id="allMoney" value="#{expendApplyConfirmHome.totalMoney}" class=" border" style="height:34px;width: 100px;" maxlength="20"  readonly="readonly"/>
+											</td>
+										</tr>
+									</table>
+								</div>
+							</td>
+							<td width="33%">
+								<div class="pb20">
+									<table>
+										<tr>
+											<td valign="middle">
+												<span class="allMoney mb10">申请时间:</span>
+											</td>
+											<td valign="middle">
+												<input id="allMoney" value="#{expendApplyConfirmHome.applyTime}" class=" border" style="height:34px;width: 100px;" maxlength="20"  readonly="readonly"/>
+											</td>
+										</tr>
+									</table>
+								</div>
+							</td>
+							<td width="33%">
+								<div class="pb20">
+									<table>
+										<tr>
+											<td valign="middle">
+												<span class="allMoney mb10">确认时间:</span>
+											</td>
+											<td valign="middle">
+												<div class="input-append date form_datetime_second" style="position:relative;" >
+				                               		<input id="confirmTime" type="text" value="" readonly="readonly" class = "border" style="width:110px;height:34;" /> 
+				                               		<span class="add-on" style="position:absolute; right:10px; top:3px;background-image: url(../images/glyphicons-halflings.png);"><i class="icon-th" style="margin:0;background-image: url(../images/glyphicons-halflings.png);"></i></span>
+				                               	</div> 
+											</td>
+											<td valign="middle">
+												<font color="red" style="margin-left: 3px;">*</font>
+											</td>
+										</tr>
+									</table>
+								</div>
+							</td>
+						</tr>
+						</table>
+						<table width="100%" cellpadding="0" cellspacing="0">
+						<tr>
+							<td width="50%">
+								<div class="pb20">
+									<table>
+										<tr>
+											<td valign="middle">
+												<span class="allMoney mb10">登记人:</span>
+											</td>
+											<td valign="middle">
+												<input  type="text" value="#{expendApplyConfirmHome.register}" readonly="readonly" class = "border" style="width:110px;height:34;" /> 
+											</td>
+										</tr>
+									</table>
+								</div>
+							</td>
+							<td width="50%">
+								<div class="pb20">
+									<table>
+										<tr>
+											<td valign="middle">
+												<span class="allMoney mb10">登记时间:</span>
+											</td>
+											<td valign="middle">
+												<div class="input-append date form_datetime_second" style="position:relative;" >
+				                               		<input  type="text" value="#{expendApplyConfirmHome.expendApplyInfo.registTime}" readonly="readonly" class = "border" style="width:110px;height:34;" /> 
+				                               		<span class="add-on" style="position:absolute; right:10px; top:3px;background-image: url(../images/glyphicons-halflings.png);"><i class="icon-th" style="margin:0;background-image: url(../images/glyphicons-halflings.png);"></i></span>
+				                               	</div> 
+											</td>
+										</tr>
+									</table>
+								</div>
+							</td>
+						</tr>
+					</table>
+					<div class="pb20">
+						<table width="100%" cellpadding="0" cellspacing="0">
+							<tr>
+								<td width="10%" valign="middle">
+									<span class="allMoney ">备注:</span>
+								</td>
+								<td valign="middle">
+									<div>
+										<h:inputTextarea value="#{expendApplyConfirmHome.expendApplyInfo.comment}"  />
+									</div>
+								</td>
+							</tr>
+						</table>
+					</div>
+				</div>
+				<div class="pt50 pb95" style="padding-top: 200px;">
+					<table class="normal-btn">
+						<tr>
+							<td>
+								<a class="btn btn-primary mr15" onclick="return checkSub();">提交</a>
+								<s:button id="cancel" value="返回" view="/budget/ExpendApplayList.xhtml" propagation="none" styleClass="btn btn-default" />
+							</td>
+						</tr>
+					</table>
+					<br />
+					<br />
+				</div>
+			</div>
+		</h:form>
+		<a:form>
+			<a:jsFunction name="save" action="#{expendApplyConfirmHome.save}" data="#{expendApplyConfirmHome.saveResult}" oncomplete="saveComplete(data)">
+				<a:actionparam name="expendConfirmId" assignTo="#{expendApplyConfirmHome.expendConfirmId}" />
+				<a:actionparam name="totalMoney" assignTo="#{expendApplyConfirmHome.totalMoney}" />
+				<a:actionparam name="confirmTime" assignTo="#{expendApplyConfirmHome.confirmTime}" />
+				<a:actionparam name="projectJson" assignTo="#{expendApplyConfirmHome.projectJson}" />
+			</a:jsFunction>
+		</a:form>
+		<script type="text/javascript" src="#{request.contextPath}/common/js/bootstrap.min.js" />
+		<script type="text/javascript" src="#{request.contextPath}/common/js/bootstrap-datetimepicker.min.js" charset="UTF-8" />
+		<script type="text/javascript" src="#{request.contextPath}/common/js/bootstrap-datetimepicker.zh-CN.js" charset="UTF-8" />
+		<script type="text/javascript" src="#{request.contextPath}/common/js/bootstrap-select-defaults-zh_CN.min.js" charset="UTF-8" />
+		<script type="text/javascript" src="#{request.contextPath}/common/js/bootstrap-select.min.js" charset="UTF-8" />
+		<script type="text/javascript" src="#{request.contextPath}/icheck/js/icheck.min.js" charset="UTF-8" />
+		<script type="text/javascript" src="#{request.contextPath}/toolkit/utils.js" />
+		<script type="text/javascript">
+		//<![CDATA[
+			jQuery(document).ready(function() {
+				
+				//时间插件
+				jQuery(".form_datetime_second").datetimepicker({
+					format: "yyyy-mm-dd",  
+					autoclose: true,
+					weekStart: 1,
+					language:  'zh-CN',
+					startView: 2,
+					minView: 2,
+					maxView: 2,	
+					forceParse: false, 
+					pickerPosition: "bottom-left"
+				});
+				 jQuery('.selectpicker').selectpicker();
+			});
+			
+
+			//提交校验
+			function checkSub(){
+				var flag = true;
+				var expendConfirmId = jQuery("#mainForm\\:expendApplyIdEdit").val();
+				var confirmTime = jQuery("#confirmTime").val();
+				var totalMoney = jQuery("#allMoney").val();
+				if(confirmTime == ""){
+					___msg('温馨提示', "请选择确认时间");
+					flag = false;
+					return ;
+				}
+				jQuery("input[name='money']").each(function(){
+					var price = jQuery(this).val();
+					if(price =="" ||  isNaN(price)){
+						___msg('温馨提示', "请输入支出金额");
+						flag = false;
+						return;
+						if(parseFloat(price) < 0 || parseFloat(price) == 0){
+							___msg('温馨提示', "请输入正确的数字");
+							flag = false;
+							return ;
+						}
+					}else{
+						if(parseFloat(price) > parseFloat(jQuery(this).parent().parent().find("td[name='canUseMoney']").text())){
+							___msg('温馨提示', "支出金额不能大于可支出金额");
+							flag = false;
+							return;
+						}
+					}
+				});
+				var json = getJson();
+				if(flag){
+					save(expendConfirmId,totalMoney,confirmTime,json);
+				}
+				
+			}
+
+			//保存回调
+			function saveComplete(data){
+				if (data != null && 'INVOKE_SUCCESS' == data.invoke_result) {
+				    ___dynamic_function = function() {
+				    	window.location.href = '../budget/ExpendApplayList.seam';
+					};
+					___msg('温馨提示', data.message, {closed: ___dynamic_function});
+				} else {
+					___msg('温馨提示', data.message);
+				}
+			}
+
+			//获取列表json
+			function getJson(){
+				var json = '{"expend_list":[';
+				jQuery(".expendtr").each(function(i){
+					var projectId= jQuery("#project_id_" + i).text();
+					var money = jQuery("#money_" + i).val();
+					json += '{"project_id":"' + projectId + '",';
+					json += '"expend_money":"' + money + '"},';
+				});
+				json = json.substring(0,json.length-1);
+				json += "]}"; 
+				return json;
+			}
+
+
+			function totalMoney(){
+				var total = 0;
+				jQuery("input[name='money']").each(function(){
+					var price = jQuery(this).val();
+					if(price == ""){
+						price = "0";
+					}
+					if(isNaN(price)){
+						___msg('温馨提示', "请输入正确的支出金额");
+						flag = false;
+						return;
+						if(parseFloat(price) < 0 || parseFloat(price) == 0){
+							___msg('温馨提示', "请输入正确的支出金额");
+							flag = false;
+							return ;
+						}
+					}else{
+						if(parseFloat(price) > parseFloat(jQuery(this).parent().parent().find("td[name='canUseMoney']").text())){
+							___msg('温馨提示', "支出金额不能大于可支出金额");
+							flag = false;
+							return;
+						}
+					}
+					total += parseFloat(price);
+				});
+				jQuery("#mainForm\\:allMoney").val(total);
+			}
+		//]]>
+		</script>
+	</ui:define>
+
+</ui:composition>

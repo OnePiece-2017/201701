@@ -68,6 +68,26 @@
 					<td class="field-name" width="20%">报销人</td>
 					<td class="field-value" width="30%">#{expendExecutHome.expendApplyInfo[7]}</td>
 				</tr>
+				<tr class="odd">
+					<td class="field-name" width="20%">单据总金额</td>
+					<td class="field-value" width="30%">#{expendExecutHome.expendApplyInfo[12]}</td>
+					<td class="field-name" width="20%">申请时间</td>
+					<td class="field-value" width="30%">#{expendExecutHome.expendApplyInfo[8]}</td>
+				</tr>
+				<tr class="even">
+					<td class="field-name" width="20%">登记时间</td>
+					<td class="field-value" width="30%">#{expendExecutHome.expendApplyInfo[9]}</td>
+					<td class="field-name" width="20%">登记人</td>
+					<td class="field-value" width="30%">#{expendExecutHome.expendApplyInfo[10]}</td>
+				</tr>
+				<tr class="odd" style="height: 68px;">
+					<!-- <table class="mt20 table-grid" width="100%" cellpadding="0" cellspacing="0">
+						<tr class="odd"> -->
+							<td class="field-name" width="20%">备注</td>
+							<td class="field-value" rowspan="3" width="30%">#{expendExecutHome.expendApplyInfo[11]}</td>
+						<!-- </tr> -->
+					<!-- </table> -->
+				</tr>
 			</table>
 			<br />
 			<br />
@@ -76,33 +96,58 @@
 				<div class="g-data-list-table freeze-attendProject" style="height: 44px;">
 				    <table class="record" width="100%" cellpadding="0" cellspacing="0">
 				        <tr>
-				            <th width="5%">序号</th>
-				            <th width="15%">项目名称</th>
-				            <th width="10%">年预算金额</th>
-				            <th width="10%">已支出金额</th>
-				            <th width="10%">可支出金额</th>
-				            <th width="10%">本次支出金额</th>
-				            <th width="10%">支出日期</th>
-				            <th width="15%">备注</th>
+				            <th width="2%">序号</th>
+				            <th width="6%">项目名称</th>
+				            <th width="7%">年预算金额</th>
+				            <th width="7%">已支出金额</th>
+				            <th width="7%">可支出金额</th>
+				            <th width="7%">本次预算内支出</th>
+				            <th width="7%">本次追加预算支出</th>
+				            <th width="7%">预算调整追加</th>
+				            <th width="7%">预算调整减少</th>
+				            <th width="7%">追加预算已支出</th>
+				            <th width="7%">追加预算可支出</th>
+				            <th width="8%">支出日期</th>
+				            <th width="9%">备注</th>
 				            <th width="10%">附件</th>
+				            <th width="5%">操作</th>
 				        </tr>
+				         <a:repeat value="#{expendExecutHome.projectList}" var="_obj" rowKeyVar="_index">
 				        <tr class="root" style="font-size: 14px;font-weight: normal;">
-				        	<td width="5%">1</td>
-				            <td width="15%">#{expendExecutHome.expendApplyInfo[7] eq null ? expendExecutHome.expendApplyInfo[8] : expendExecutHome.expendApplyInfo[7]}</td>
-				            <td width="10%">#{expendExecutHome.expendApplyInfo[10]}</td>
-				            <td width="10%">#{expendExecutHome.expendApplyInfo[10] - expendExecutHome.expendApplyInfo[11]}</td>
-				            <td width="10%" >#{expendExecutHome.expendApplyInfo[11]}</td>
-				            <td width="10%">
-				            	#{expendExecutHome.expendApplyInfo[9]}
+				        	<td>#{_index + 1}</td>
+				            <td>#{_obj[0]}</td>
+				            <td>#{_obj[1]}</td>
+				            <td>#{_obj[2]}</td>
+				            <td>#{_obj[3]}</td>
+				            <td>
+				            	#{_obj[4]}
 				            </td>
-				            <td width="10%">
-				            	#{expendExecutHome.expendApplyInfo[12]}
+				            <td>
+				            	#{_obj[9]}
 							</td>
-				            <td width="15%">
-				            	#{expendExecutHome.expendApplyInfo[15]}
+				            <td>
+				            	#{_obj[10]}
 				            </td>
-				            <td width="10%"></td>
+				            <td>
+				            	#{_obj[11]}
+				            </td>
+				            <td>
+				            	#{_obj[12]}
+				            </td>
+				            <td>
+				            	#{_obj[13]}
+				            </td>
+				            <td>
+				            	#{_obj[5]}
+				            </td>
+				            <td>
+				            	#{_obj[6]}
+				            </td>
+				            <td>
+				            	#{_obj[7]}
+				            </td>
 				       </tr>
+				       </a:repeat>
 				    </table>
 				</div>
 				<div class="g-data-list-table normal-attendProject" style="border-radius: 0;height:156px;">

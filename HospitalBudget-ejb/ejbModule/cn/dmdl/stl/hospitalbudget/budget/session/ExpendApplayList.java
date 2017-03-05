@@ -65,7 +65,8 @@ public class ExpendApplayList extends CriterionNativeQuery<Object[]> {
 		sql.append(" uie.fullname, ");//6申请人名字
 		sql.append(" eai.apply_time, ");//7申请时间
 		sql.append(" eai.summary, ");//8摘要
-		sql.append(" eai.`comment` ");//9摘要
+		sql.append(" eai.`comment`, ");//9备注
+		sql.append(" eai.expend_apply_status ");//10状态
 		sql.append(" FROM expend_apply_info eai ");
 		sql.append(" LEFT JOIN user_info ui ON eai.applay_user_id = ui.user_info_id ");
 		sql.append(" LEFT JOIN user_info_extend uie on ui.user_info_extend_id=uie.user_info_extend_id ");

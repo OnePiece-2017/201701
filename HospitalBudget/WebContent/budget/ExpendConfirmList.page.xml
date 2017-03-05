@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<page xmlns="http://jboss.com/products/seam/pages" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://jboss.com/products/seam/pages http://jboss.com/products/seam/pages-2.2.xsd"
+	login-required="true">
+
+	<param name="from" />
+	<param name="page" value="#{expendConfrimList.page}" />
+	<param name="departmentId" value="#{expendConfrimList.departmentId}" />
+	<param name="applyUser" value="#{expendConfrimList.applyUser}" />
+	<param name="applyTime" value="#{expendConfrimList.applyTime}" />
+	<param name="confirmStatus" value="#{expendConfrimList.confirmStatus}" />
+</page>

@@ -3,6 +3,7 @@ package cn.dmdl.stl.hospitalbudget.budget.session;
 import java.text.DecimalFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -13,6 +14,9 @@ import org.jboss.seam.annotations.In;
 import org.jboss.seam.annotations.Name;
 
 import cn.dmdl.stl.hospitalbudget.budget.entity.ExpendApplyInfo;
+import cn.dmdl.stl.hospitalbudget.budget.entity.ExpendApplyProject;
+import cn.dmdl.stl.hospitalbudget.budget.entity.ExpendConfirmInfo;
+import cn.dmdl.stl.hospitalbudget.budget.entity.ExpendConfirmProject;
 import cn.dmdl.stl.hospitalbudget.budget.entity.NormalBudgetCollectionInfo;
 import cn.dmdl.stl.hospitalbudget.budget.entity.NormalExpendBudgetOrderInfo;
 import cn.dmdl.stl.hospitalbudget.budget.entity.ProcessStepInfo;
@@ -29,7 +33,7 @@ public class ExpendExecutHome extends CriterionEntityHome<Object> {
 	private Integer handResult;//处理结果
 	private String handSay;//处理意见
 	private JSONObject saveResult;
-	private Object[] expendApplyInfo;//公共头部
+	private Object[] expendApplyInfo = new Object[14];//公共头部
 	private List<Object[]> projectList;//项目列表
 	private String setpName;//步骤名称
 	
@@ -40,48 +44,13 @@ public class ExpendExecutHome extends CriterionEntityHome<Object> {
 	 * @param newTaskOrderId
 	 */
 	public void wire(){
-		expendApplyInfo = new Object[16];
+		
 		setpName = "";
 		getAttendProject();
 		queryStepName();
 		
 	}
 	
-	@SuppressWarnings("unchecked")
-	private void updateProjectTaskOrderId(int oldTaskOrderId, int newTaskOrderId) {
-		List<ExpendApplyInfo> oldExpendApplyInfoList = getEntityManager().createQuery("select expendApplyInfo from ExpendApplyInfo expendApplyInfo where expendApplyInfo.taskOrderId = " + oldTaskOrderId).getResultList();
-		/*if (oldExpendApplyInfoList != null && oldExpendApplyInfoList.size() > 0) {
-			joinTransaction();
-			for (ExpendApplyInfo expendApplyInfo : oldExpendApplyInfoList) {
-				expendApplyInfo.setTaskOrderId(newTaskOrderId);// 跟踪订单信息
-				NormalExpendBudgetOrderInfo neboi = getEntityManager().find(NormalExpendBudgetOrderInfo.class,expendApplyInfo.getNormalExpendBudgetOrderId());
-				neboi.setNowAmount(neboi.getNowAmount() + expendApplyInfo.getExpendMoney());
-				getEntityManager().merge(expendApplyInfo);
-				getEntityManager().merge(neboi);
-				//不通过加上金额
-				//neboi.setNowAmount(neboi.getNowAmount() + expendApplyInfo.getExpendMoney());
-				getEntityManager().merge(neboi);
-				if(null == neboi.getSubProjectId()){
-					
-				}else{
-					String hql = "select normalExpendBudgetOrderInfo from NormalExpendBudgetOrderInfo normalExpendBudgetOrderInfo where normalExpendBudgetOrderInfo.orderSn ='" + neboi.getOrderSn() + "'";
-					List<NormalExpendBudgetOrderInfo> neboiList = getEntityManager().createQuery(hql).getResultList();
-					NormalExpendBudgetOrderInfo parentProject = null;
-					for(NormalExpendBudgetOrderInfo par : neboiList){
-						if(null == par.getSubProjectId()){
-							parentProject = par;
-							break;
-						}
-					}
-					if(null != parentProject){
-						parentProject.setNowAmount(parentProject.getNowAmount() + expendApplyInfo.getExpendMoney());
-						getEntityManager().merge(parentProject);
-					}
-				}
-			}
-			getEntityManager().flush();
-		}*/
-	}
 
 	@SuppressWarnings("unchecked")
 	public void saveAction() {
@@ -104,11 +73,23 @@ public class ExpendExecutHome extends CriterionEntityHome<Object> {
 				newTaskOrder.setTaskType(oldTaskOrder.getTaskType());
 				newTaskOrder.setInsertTime(new Date());
 				newTaskOrder.setInsertUser(sessionToken.getUserInfoId());
+				List<ExpendApplyInfo> oldExpendApplyInfoList = getEntityManager().createQuery("select expendApplyInfo from ExpendApplyInfo expendApplyInfo where expendApplyInfo.taskOrderId = " + oldTaskOrder.getTaskOrderId()).getResultList();
 				if (handResult != 1) {// 不通过
 					oldTaskOrder.setOrderStatus(2);
 					newTaskOrder.setOrderStatus(3);
 					getEntityManager().persist(newTaskOrder);// 提前缓存对象
-					updateProjectTaskOrderId(oldTaskOrder.getTaskOrderId(), newTaskOrder.getTaskOrderId());
+					if (oldExpendApplyInfoList != null && oldExpendApplyInfoList.size() > 0) {
+						for (ExpendApplyInfo expendApplyInfo : oldExpendApplyInfoList) {
+							expendApplyInfo.setTaskOrderId(newTaskOrder.getTaskOrderId());// 跟踪订单信息
+							ProcessStepInfo currentProcessStepInfo = getEntityManager().find(ProcessStepInfo.class, oldTaskOrder.getProcessStepInfoId());
+							List<ProcessStepInfo> nextProcessStepInfoList = getEntityManager().createQuery("select processStepInfo from ProcessStepInfo processStepInfo where processStepInfo.processInfo.processInfoId = " + currentProcessStepInfo.getProcessInfo().getProcessInfoId() + " and processStepInfo.stepIndex = " + (currentProcessStepInfo.getStepIndex() - 1)).getResultList();
+							if (nextProcessStepInfoList != null && nextProcessStepInfoList.size() > 0) {// 有上一步 是不是初始状态
+								expendApplyInfo.setExpendApplyStatus(0);
+							}
+							getEntityManager().merge(expendApplyInfo);
+						}
+					}
+					//updateProjectTaskOrderId(oldTaskOrder.getTaskOrderId(), newTaskOrder.getTaskOrderId());
 				} else {// 通过
 					oldTaskOrder.setOrderStatus(1);
 					newTaskOrder.setOrderStatus(0);
@@ -118,7 +99,14 @@ public class ExpendExecutHome extends CriterionEntityHome<Object> {
 						ProcessStepInfo nextProcessStepInfo = nextProcessStepInfoList.get(0);
 						newTaskOrder.setProcessStepInfoId(nextProcessStepInfo.getProcessStepInfoId());
 						getEntityManager().persist(newTaskOrder);// 提前缓存对象
-						updateProjectTaskOrderId(oldTaskOrder.getTaskOrderId(), newTaskOrder.getTaskOrderId());
+						if (oldExpendApplyInfoList != null && oldExpendApplyInfoList.size() > 0) {
+							for (ExpendApplyInfo expendApplyInfo : oldExpendApplyInfoList) {
+								expendApplyInfo.setTaskOrderId(newTaskOrder.getTaskOrderId());// 跟踪订单信息
+								expendApplyInfo.setExpendApplyStatus(1);
+								getEntityManager().merge(expendApplyInfo);
+							}
+						}
+						//updateProjectTaskOrderId(oldTaskOrder.getTaskOrderId(), newTaskOrder.getTaskOrderId());
 						String processStepUserSql = "select IFNULL(GROUP_CONCAT(user_id), '') as result from process_step_user where type = 0 and process_step_info_id = " + nextProcessStepInfo.getProcessStepInfoId();
 						List<Object> processStepUserList = getEntityManager().createNativeQuery(processStepUserSql).getResultList();
 						String[] processStepUserArr = processStepUserList.get(0).toString().split(",");
@@ -131,20 +119,32 @@ public class ExpendExecutHome extends CriterionEntityHome<Object> {
 						}
 					} else {
 						oldTaskOrder.setOrderStatus(9);
-						NormalBudgetCollectionInfo normalBudgetCollectionInfo = new NormalBudgetCollectionInfo();
-						normalBudgetCollectionInfo.setOrderSn(oldTaskOrder.getOrderSn());
-						normalBudgetCollectionInfo.setDeptId(oldTaskOrder.getDeptId());
-						List<Object[]> summaryList = getEntityManager().createNativeQuery("select eai.`year`,eai.expend_money from expend_apply_info eai  where  eai.task_order_id= " + oldTaskOrder.getTaskOrderId()).getResultList();
-						if (summaryList != null && summaryList.size() > 0) {
-							Object[] summary = summaryList.get(0);
-							normalBudgetCollectionInfo.setYear(summary[0].toString());
-							normalBudgetCollectionInfo.setBudgetAmount(Double.parseDouble(new DecimalFormat("#.##").format(Double.parseDouble(summary[1].toString()))));
+						//如果通过则修改申请单状态
+						if (oldExpendApplyInfoList != null && oldExpendApplyInfoList.size() > 0) {
+							for (ExpendApplyInfo expendApplyInfo : oldExpendApplyInfoList) {
+								expendApplyInfo.setExpendApplyStatus(2);
+								getEntityManager().merge(expendApplyInfo);
+							}
 						}
-						normalBudgetCollectionInfo.setAmountType(4);
-						normalBudgetCollectionInfo.setSubmitFlag(false);
-						normalBudgetCollectionInfo.setInsertTime(new Date());
-						normalBudgetCollectionInfo.setInsertUser(sessionToken.getUserInfoId());
-						getEntityManager().persist(normalBudgetCollectionInfo);
+						//生成确认单和确认项目单
+						ExpendConfirmInfo eci = new ExpendConfirmInfo();
+						eci.setExpend_apply_info_id(oldExpendApplyInfoList.get(0).getExpendApplyInfoId());
+						eci.setInsertUser(sessionToken.getUserInfoId());
+						eci.setInsertTime(new Date());
+						eci.setTotalMoney(oldExpendApplyInfoList.get(0).getTotalMoney());
+						eci.setConfirm_status(0);
+						eci.setYear(oldExpendApplyInfoList.get(0).getYear());
+						getEntityManager().persist(eci);
+						
+						String eapSql = "select expendApplyProject from ExpendApplyProject expendApplyProject where expendApplyProject.deleted=0 and expendApplyProject.expendApplyInfoId=" + oldExpendApplyInfoList.get(0).getExpendApplyInfoId();
+						List<ExpendApplyProject> eapList = getEntityManager().createQuery(eapSql).getResultList();
+						for(ExpendApplyProject eap : eapList){
+							ExpendConfirmProject efp = new ExpendConfirmProject();
+							efp.setExpend_confirm_info_id(eci.getExpend_confirm_info_id());
+							efp.setExpend_apply_project_id(eap.getExpendApplyProjectId());
+							efp.setProjectId(eap.getProjectId());
+							getEntityManager().persist(efp);
+						}
 					}
 				}
 				List<TaskUser> taskUserList = getEntityManager().createQuery("select taskUser from TaskUser taskUser where taskOrderId = " + oldTaskOrder.getTaskOrderId() + " and userId = " + sessionToken.getUserInfoId()).getResultList();
@@ -157,6 +157,7 @@ public class ExpendExecutHome extends CriterionEntityHome<Object> {
 				getEntityManager().merge(oldTaskOrder);
 				getEntityManager().flush();
 			} catch (Exception e) {
+				e.printStackTrace();
 				saveResult.element("invoke_result", "INVOKE_FAILURE");
 				saveResult.element("message", "操作失败！" + e.getMessage());
 			}
@@ -168,6 +169,7 @@ public class ExpendExecutHome extends CriterionEntityHome<Object> {
 
 	@SuppressWarnings("unchecked")
 	public List<Object[]> getAttendProject() {
+		projectList = new ArrayList<Object[]>();
 		CommonFinder commonFinder = new CommonFinder();
 		SimpleDateFormat sdfday = new SimpleDateFormat("yyyy-MM-dd");
 		SimpleDateFormat sdfs = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
@@ -181,20 +183,88 @@ public class ExpendExecutHome extends CriterionEntityHome<Object> {
 		dataSql.append(" eai.recive_company,");//4收款单位
 		dataSql.append(" eai.invoice_num,");//5发票号
 		dataSql.append(" eai.summary,");//6摘要
-		dataSql.append(" uie1.fullname ");//8报销人
+		dataSql.append(" uie1.fullname,");//7报销人
+		dataSql.append(" eai.apply_time, ");//8申请时间
+		dataSql.append(" eai.register_time, ");//9登记时间
+		dataSql.append(" uie2.fullname as register, ");//10登记人
+		dataSql.append(" eai.`comment`, eai.finace_account_name as totalMoney ");//11  12备注
 		dataSql.append(" FROM expend_apply_info eai");
 		dataSql.append(" LEFT JOIN user_info ui on eai.applay_user_id=ui.user_info_id ");
 		dataSql.append(" LEFT JOIN user_info_extend uie on uie.user_info_extend_id=ui.user_info_extend_id ");
 		dataSql.append(" LEFT JOIN user_info ui1 on eai.reimbursementer=ui1.user_info_id ");
 		dataSql.append(" LEFT JOIN user_info_extend uie1 on uie1.user_info_extend_id=ui1.user_info_extend_id ");
+		dataSql.append(" LEFT JOIN user_info ui2 ON eai.register = ui2.user_info_id ");
+		dataSql.append(" LEFT JOIN user_info_extend uie2 ON uie2.user_info_extend_id = ui2.user_info_extend_id ");
 		dataSql.append(" where eai.deleted=0 and eai.task_order_id=").append(taskOrderId);
 		dataSql.insert(0, "select * from (").append(") as recordset");// 解决找不到列
 		List<Object[]> dataList = getEntityManager().createNativeQuery(dataSql.toString()).getResultList();
 		if (dataList != null && dataList.size() > 0) {
 			expendApplyInfo = dataList.get(0);
+			if(null != expendApplyInfo[9] && !expendApplyInfo[9].toString().equals("")){
+				try {
+					expendApplyInfo[9] = sdfday.format(sdfday.parse(expendApplyInfo[9].toString()));
+				} catch (ParseException e) {
+					
+				}
+			}
+			if(null != expendApplyInfo[8] && !expendApplyInfo[8].toString().equals("")){
+				try {
+					expendApplyInfo[8] = sdfday.format(sdfday.parse(expendApplyInfo[8].toString()));
+				} catch (ParseException e) {
+					
+				}
+			}
 		}
 		
 		//查询项目列表
+		StringBuffer projectSql = new StringBuffer();
+		projectSql.append(" SELECT ");
+		projectSql.append(" up.the_value, ");
+		projectSql.append(" expi.budget_amount, ");
+		projectSql.append(" expi.budget_amount_frozen, ");
+		projectSql.append(" expi.budget_amount_surplus, ");
+		projectSql.append(" eap.expend_money, ");
+		projectSql.append(" eap.budget_append_expend, ");//5
+		projectSql.append(" eap.budget_adjustment_append, ");
+		projectSql.append(" eap.budget_adjestment_cut, ");
+		projectSql.append(" eap.append_budget_paid, ");
+		projectSql.append(" eap.append_budget_money, ");
+		projectSql.append(" eap.expend_time, ");//10
+		projectSql.append(" eap.`comment`,eap.project_id ");
+		projectSql.append(" FROM expend_apply_project eap ");
+		projectSql.append(" LEFT JOIN expend_apply_info eai ON eap.expend_apply_info_id = eai.expend_apply_info_id ");
+		projectSql.append(" LEFT JOIN usual_project up on up.the_id=eap.project_id ");
+		projectSql.append(" LEFT JOIN normal_expend_plan_info expi on  expi.project_id=eap.project_id and expi.`year` = eai.`year` ");
+		projectSql.append(" where eap.deleted=0 ");
+		projectSql.append(" and eai.task_order_id=").append(taskOrderId);
+		List<Object[]> list = getEntityManager().createNativeQuery(projectSql.toString()).getResultList();
+		float allMoney = 0f;
+		if(list.size() > 0){
+			for(Object[] obj : list){
+				Object[] projectDetail = new Object[14];
+				projectDetail[0] = obj[0];
+				projectDetail[1] = obj[1];
+				projectDetail[2] = Float.parseFloat(obj[2].toString()) - Float.parseFloat(obj[4].toString());
+				projectDetail[3] = Float.parseFloat(obj[3].toString()) + Float.parseFloat(obj[4].toString());;
+				projectDetail[4] = obj[4];
+				allMoney += Float.parseFloat(projectDetail[4].toString());
+				try {
+					projectDetail[5] = sdfday.format(sdfday.parse(obj[10].toString()));
+				} catch (ParseException e) {
+					projectDetail[5] = obj[10].toString();
+				}
+				projectDetail[6] = obj[11] == null ? "" : obj[11].toString();
+				projectDetail[7] = "";
+				projectDetail[8] = obj[12];
+				projectDetail[9] = obj[5];
+				projectDetail[10] = obj[6];
+				projectDetail[11] = obj[7];
+				projectDetail[12] = obj[8];
+				projectDetail[13] = obj[9];
+				projectList.add(projectDetail);
+			}
+		}
+		expendApplyInfo[12] = allMoney;
 		return resultSet;
 	}
 	

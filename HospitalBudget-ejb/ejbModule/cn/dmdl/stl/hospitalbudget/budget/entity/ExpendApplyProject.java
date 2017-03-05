@@ -21,7 +21,7 @@ public class ExpendApplyProject implements java.io.Serializable{
 	private static final long serialVersionUID = 1L;
 	private Integer ExpendApplyProjectId;
 	private Integer expendApplyInfoId;
-	private Integer normalExpendBudgetOrderId;
+	private Integer projectId;
 	private Float expendMoney;//本次预算内支出
 	private Float budgetAppendExpend;//预算追加支出
 	private Float budgetAdjustmentAppend;//预算调整追加
@@ -48,13 +48,13 @@ public class ExpendApplyProject implements java.io.Serializable{
 		ExpendApplyProjectId = expendApplyProjectId;
 	}
 	
-	@Column(name = "normal_expend_budget_order_id")
+	@Column(name = "project_id")
 	@NotNull
-	public Integer getNormalExpendBudgetOrderId() {
-		return normalExpendBudgetOrderId;
+	public Integer getProjectId() {
+		return projectId;
 	}
-	public void setNormalExpendBudgetOrderId(Integer normalExpendBudgetOrderId) {
-		this.normalExpendBudgetOrderId = normalExpendBudgetOrderId;
+	public void setProjectId(Integer projectId) {
+		this.projectId = projectId;
 	}
 	
 	
@@ -63,6 +63,7 @@ public class ExpendApplyProject implements java.io.Serializable{
 	public Float getExpendMoney() {
 		return expendMoney;
 	}
+	
 	public void setExpendMoney(Float expendMoney) {
 		this.expendMoney = expendMoney;
 	}

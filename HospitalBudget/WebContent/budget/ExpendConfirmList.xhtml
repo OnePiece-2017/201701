@@ -14,21 +14,110 @@
 		<link rel="stylesheet" type="text/css" href="#{request.contextPath}/common/css/bootstrap-datetimepicker.min.css" />
 		<link rel="stylesheet" type="text/css" href="#{request.contextPath}/common/css/bootstrap-select2.min.css" />
 	</ui:define>
+	
 	<ui:define name="body">
+	#{expendConfrimList.wire()}
 		<div class="g-data-list-condition">
 			<h:form id="mainForm">
 				<input type="hidden" name="page" value="1" />
 				<div>
-					<div class="fl w300">
-						<h:inputText id="keyword" value="#{ysGeneralProjectList.keyword}" styleClass="form-control mt10 ml10" />
+					<div class="fl" style="width: 180px;margin-top: 8px;margin-left:20px;">
+						<table>
+							<tr>
+								<td valign="middle">
+									<span class="field-name mb10">科室</span>
+								</td>
+								<td valign="middle">
+									<select id="depart" class="selectpicker">
+										<a:repeat value="#{expendConfrimList.departList}" var="_var">
+											<s:fragment rendered="#{expendConfrimList.departmentId eq _var[0]}">
+												<option value="#{_var[0]}" selected="selected">#{_var[1]}</option>
+											</s:fragment>
+											<s:fragment rendered="#{expendConfrimList.departmentId ne _var[0]}">
+												<option value="#{_var[0]}" >#{_var[1]}</option>
+											</s:fragment>
+										</a:repeat>
+									</select>
+								</td>
+							</tr>
+						</table>
 					</div>
-				</div> 
-				<div class="fl">
-					<h:commandButton styleClass="btn btn-primary mt10 ml20" action="/budget/QueryExpendApplay.xhtml" value="搜索" />
+					<div class="fl" style="width: 210px;margin-top: 8px;margin-left: 20px;">
+					<table>
+						<tr>
+							<td valign="middle">
+								<span class="field-name mb10">申请编制人</span>
+							</td>
+							<td valign="middle">
+								<select id="fundsSource" class="selectpicker">
+									<a:repeat value="#{expendConfrimList.applayUserList}" var="_department">
+										<option value="-1">请选择</option>
+										<optgroup label="#{_department[0]}" data-subtext="科室">
+											<a:repeat value="#{_department[1]}" var="_user">
+												<s:fragment rendered="#{expendConfrimList.applyUser eq _user[0]}">
+													<option value="#{_user[0]}" selected="selected">#{_user[1]}</option>
+												</s:fragment>
+												<s:fragment rendered="#{expendConfrimList.applyUser ne _user[0]}">
+													<option value="#{_user[0]}">#{_user[1]}</option>
+												</s:fragment>
+											</a:repeat>
+										</optgroup>
+									</a:repeat>
+								</select>
+							</td>
+						</tr>
+					</table>
+					</div>
+					<div class="fl" style="width: 210px;margin-top: 8px;margin-left: 20px;">
+					<table>
+						<tr>
+							<td valign="middle">
+								<span class="field-name mb10">申请提交时间</span>
+							</td>
+							<td valign="middle">
+								<div class="input-append date form_datetime_second" style="position:relative;" >
+	                               		<input id="applyTime" type="text" value="#{expendConfrimList.applyTime}" readonly="readonly" style="border-radius:4px;width:110px;height:34;" name="time"/> 
+	                               		<span class="add-on" style="position:absolute; right:10px; top:3px;"><i class="icon-th" style="margin:0;"></i></span>
+	                            </div>
+							</td>
+						</tr>
+					</table>
+					</div>
+					<div class="fl" style="width: 240px;margin-top: 8px;margin-left: 30px;">
+					<table>
+						<tr>
+							<td valign="middle">
+								<span class="field-name mb10">确认状态</span>
+							</td>
+							<td valign="middle">
+								<select id="confirmStatus" class="selectpicker">
+									<s:fragment rendered="#{expendConfrimList.confirmStatus eq -1}">
+										<option value="-1" selected="selected">全部</option>
+										<option value="0">未确认</option>
+										<option value="1">已确认</option>
+									</s:fragment>
+									<s:fragment rendered="#{expendConfrimList.confirmStatus eq 0}">
+										<option value="-1">全部</option>
+										<option value="0" selected="selected">未确认</option>
+										<option value="1">已确认</option>
+									</s:fragment>
+									<s:fragment rendered="#{expendConfrimList.confirmStatus eq 1}">
+										<option value="-1">全部</option>
+										<option value="0" >未确认</option>
+										<option value="1" selected="selected">已确认</option>
+									</s:fragment>
+								</select>
+							</td>
+						</tr>
+					</table>
+					</div>
 				</div>
-				<div class="fr">
-						<s:link value="添加" view="/budget/ExpendApplication.xhtml" styleClass="btn btn-success fr mt10 mr10">
-						</s:link>
+				<div class="fl">
+					<h:inputHidden value="#{expendConfrimList.departmentId}" id="departId"/>
+					<h:inputHidden value="#{expendConfrimList.applyUser}" id="applyUser"/>
+					<h:inputHidden value="#{expendConfrimList.applyTime}" id="applyTime"/>
+					<h:inputHidden value="#{expendConfrimList.confirmStatus}" id="confirmStatus"/>
+					<h:commandButton styleClass="btn btn-primary mt10 ml20" action="/budget/ExpendConfirmList.xhtml" onclick="return check();" value="搜索" />
 				</div>
 			</h:form>
 		</div>
@@ -47,7 +136,7 @@
 		            <th width="10%">备注</th>
 		            <th width="5%">操作</th>
 		        </tr>
-		        <a:repeat value="#{expendApplayList.resultList}" var="_result" rowKeyVar="_row">
+		        <a:repeat value="#{expendConfrimList.resultList}" var="_result" rowKeyVar="_row">
 		        	<tr class="node-record #{_row % 2 eq 0 ? 'odd' : 'even'}">
 			        	<td>#{_row + 1}</td>
 			        	<td>
@@ -63,20 +152,16 @@
 			        	<td>#{_result[9]}</td>
 			        	<td>
 			        		<s:fragment rendered="#{_result[10] eq 0}">
-				        		<s:link title="编辑" view="/budget/ExpendApplication.xhtml" style="text-decoration: none;" >
-				        			<f:param name="expendApplyInfoId" value="#{_result[0]}" />
-				        			<img src="../images/icon_edit_16x16.png" />
-				        		</s:link>
-				        		<s:link title="删除" view="/budget/ExpendApplication.xhtml" onclick="return confirm('是否删除？');" action="#{expendApplyInfoHome.remove()}" style="text-decoration: none;" >
-				        			<f:param name="expendApplyInfoId" value="#{_result[0]}" />
-				        			<img src="../images/icon_delete_16x16.png" />
+				        		<s:link title="确认" view="/budget/ExpendApplyConfirm.xhtml" style="text-decoration: none;" >
+				        			<f:param name="expendConfirmId" value="#{_result[0]}" />
+				        			<img src="../images/icon_law_16x16.png" />
 				        		</s:link>
 			        		</s:fragment>
 						</td>
 		        	</tr>
 		        </a:repeat>
 		    </table>
-		    #{paginationModel.init(expendApplayList)}
+		    #{paginationModel.init(expendConfrimList)}
 		    <s:fragment rendered="#{paginationModel.query != null}">
 				<table class="pagination-model" style="width: auto; margin: 40px auto;" cellpadding="0" cellspacing="0">
 					<tr>
@@ -160,6 +245,17 @@
 				jQuery('.selectpicker').selectpicker();
 			}
 
+			function check(){
+				var departId = jQuery("#depart").val();
+				var applyer = jQuery("#fundsSource").val();
+				var applyTime = jQuery("#applyTime").val();
+				var confirmStatus = jQuery("#confirmStatus").val();
+				jQuery("#mainForm\\:departId").val(departId);
+				jQuery("#mainForm\\:applyUser").val(applyer);
+				jQuery("#mainForm\\:applyTime").val(applyTime);
+				jQuery("#mainForm\\:confirmStatus").val(confirmStatus);
+				return true;
+			}
 		//]]>
 		</script>
 	</ui:define>

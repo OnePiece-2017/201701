@@ -3,6 +3,28 @@
 	xsi:schemaLocation="http://jboss.com/products/seam/pages http://jboss.com/products/seam/pages-2.2.xsd"
 	login-required="true">
 
-<begin-conversation join="true" flush-mode="MANUAL" />
+	<begin-conversation join="true" flush-mode="MANUAL" />
 
+	<param name="expendApplyInfoId" value="#{expendApplyInfoHome.expendApplyInfoId}" />
+
+	<navigation from-action="#{expendApplyInfoHome.save()}">
+			<rule if-outcome="ok">
+				<end-conversation />
+				<redirect view-id="/budget/ExpendApplayList.xhtml" />
+			</rule>
+	</navigation>
+	
+	<navigation from-action="#{expendApplyInfoHome.update()}">
+			<rule if-outcome="ok">
+				<end-conversation />
+				<redirect view-id="/budget/ExpendApplayList.xhtml" />
+			</rule>
+	</navigation>
+	
+	<navigation from-action="#{expendApplyInfoHome.remove()}">
+			<rule if-outcome="ok">
+				<end-conversation />
+				<redirect view-id="/budget/ExpendApplayList.xhtml" />
+			</rule>
+	</navigation>
 </page>

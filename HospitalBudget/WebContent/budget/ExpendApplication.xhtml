@@ -79,6 +79,7 @@
 		<h:form id="mainForm" styleClass="edit" enctype="multipart/form-data">
 			<div class="pd0-10">
 				<div class="pt30 pb30 fs14">
+				<h:inputHidden value="#{expendApplyInfoHome.expendApplyInfoId}" id="expendApplyIdEdit"/>
 					<table width="100%" cellpadding="0" cellspacing="0">
 						<tr>
 							<td width="50%">
@@ -253,7 +254,7 @@
 					</table>
 				</div>
 				<div style="height: 43px;">
-					<a class="btn btn-add mr15" onclick=" toAddModel()" style="float:right ">添加</a>
+					<a class="btn btn-add mr15" onclick="toAddModel()" style="float:right ">添加</a>
 				</div>
 				<rich:panel id="listPanl" style="margin:0; border:none; padding: 0;">
 				<div class="g-data-list-table freeze-candidateProject" style="border: 1px solid #e1e1e1;overflow:auto;width:1900px;">
@@ -284,7 +285,7 @@
 				            <td >#{_obj[2]}</td>
 				            <td  name="canUseMoney">#{_obj[3]}</td>
 				            <td >
-				            	<input id="money_#{_index}" name="money" class="form-control row-text-simplify" value="#{_obj[4]}" type="text"/>
+				            	<input id="money_#{_index}" name="money" class="form-control row-text-simplify" value="#{_obj[4]}" type="text" onblur="totalMoney()"/>
 				            </td>
 				            <td >
 				            	<input id="add_money_#{_index}" name="add_money" class="form-control row-text-simplify" value="#{_obj[9]}" type="text"/>
@@ -333,14 +334,14 @@
 												<span class="allMoney">单据总金额:</span>
 											</td>
 											<td valign="middle">
-												<h:inputText id="allMoney" value="#{expendApplyInfoHome.applySn}" styleClass=" border" style="height:34px;width: 100px;" maxlength="20" />
+												<h:inputText id="allMoney" value="#{expendApplyInfoHome.expendAllMoney}" styleClass=" border" style="height:34px;width: 100px;" maxlength="20"  readonly="readonly"/>
 											</td>
 											<td valign="middle">
 												<span class="allMoney mb10">申请时间:</span>
 											</td>
 											<td valign="middle">
 												<div class="input-append date form_datetime_second" style="position:relative;" >
-				                               		<input id="applyTime" type="text" value="" readonly="readonly" class = "border" style="width:110px;height:34;"  name="time"/> 
+				                               		<input id="applyTime" type="text" value="#{expendApplyInfoHome.applyTime}" readonly="readonly" class = "border" style="width:110px;height:34;" /> 
 				                               		<span class="add-on" style="position:absolute; right:10px; top:3px;background-image: url(../images/glyphicons-halflings.png);"><i class="icon-th" style="margin:0;background-image: url(../images/glyphicons-halflings.png);"></i></span>
 				                               	</div>
 											</td>
@@ -360,7 +361,7 @@
 											</td>
 											<td valign="middle">
 												<div class="input-append date form_datetime_second" style="position:relative;" >
-				                               		<input id="registeTime" type="text" value="" readonly="readonly" class = "border" style="width:110px;height:34;" name="time"/> 
+				                               		<input id="registeTime" type="text" value="#{expendApplyInfoHome.registTime}" readonly="readonly" class = "border" style="width:110px;height:34;" /> 
 				                               		<span class="add-on" style="position:absolute; right:10px; top:3px;background-image: url(../images/glyphicons-halflings.png);"><i class="icon-th" style="margin:0;background-image: url(../images/glyphicons-halflings.png);"></i></span>
 				                               	</div>
 											</td>
@@ -368,7 +369,15 @@
 												<span class="allMoney mb10">登记人:</span>
 											</td>
 											<td valign="middle">
-												<h:inputText id="register" value="#{expendApplyInfoHome.applySn}" styleClass=" border" style="height:34px;width: 100px;" maxlength="20" />
+												<select id="register" class="selectpicker" data-live-search="true">
+													<a:repeat value="#{expendApplyInfoHome.applayUserList}" var="_department">
+														<optgroup label="#{_department[0]}" data-subtext="科室">
+															<a:repeat value="#{_department[1]}" var="_user">
+																<option value="#{_user[0]}">#{_user[1]}</option>
+															</a:repeat>
+														</optgroup>
+													</a:repeat>
+												</select>
 											</td>
 										</tr>
 									</table>
@@ -384,7 +393,7 @@
 								</td>
 								<td valign="middle">
 									<div>
-										<h:inputTextarea value=""  id="comment"/>
+										<h:inputTextarea value="#{expendApplyInfoHome.comment}"  id="comment"/>
 									</div>
 								</td>
 							</tr>
@@ -396,7 +405,13 @@
 					<table class="normal-btn">
 						<tr>
 							<td>
-								<a class="btn btn-primary mr15" onclick="return checkSub();">提交</a>
+								<s:fragment rendered="#{expendApplyInfoHome.expendApplyInfoId eq null or expendApplyInfoHome.expendApplyInfoId eq 0}">
+									<a class="btn btn-primary mr15" onclick="return checkSub();">提交</a>
+								</s:fragment>
+								<s:fragment rendered="#{expendApplyInfoHome.expendApplyInfoId ne null and expendApplyInfoHome.expendApplyInfoId ne 0}">
+									<a class="btn btn-primary mr15" onclick="return checkEdit();">提交</a>
+								</s:fragment>
+								<s:button id="cancel" value="返回" view="/budget/ExpendApplayList.xhtml" propagation="none" styleClass="btn btn-default" />
 							</td>
 						</tr>
 					</table>
@@ -452,9 +467,15 @@
 										</td>
 										<td valign="middle" class="modaltd">
 										<rich:panel id="fundsSourcePanl" style="margin:0; border:none; padding: 0;">
-											<select id="fundsSource" class="selectpicker" data-live-search="true">
+											<select id="fundsSource" class="selectpicker" data-live-search="true" onchange="fundsSource()">
+													<option value="-1" selected="selected">请选择</option>
 												<a:repeat value="#{expendApplyInfoHome.fundsSourceList}" var="_fundsSource">
-													<option value="#{_fundsSource[0]}">#{_fundsSource[1]}</option>
+													<s:fragment rendered="#{expendApplyInfoHome.fundsSourceId eq _fundsSource[0]}">
+														<option value="#{_fundsSource[0]}" selected="selected">#{_fundsSource[1]}</option>
+													</s:fragment>
+													<s:fragment rendered="#{expendApplyInfoHome.fundsSourceId ne _fundsSource[0]}">
+														<option value="#{_fundsSource[0]}">#{_fundsSource[1]}</option>
+													</s:fragment>
 												</a:repeat>
 											</select>
 										</rich:panel>
@@ -480,11 +501,11 @@
 												<select id="projectId" class="selectpicker" data-live-search="true" onchange="changeProject()">
 													<option value="-1">请选择</option>
 													<a:repeat value="#{expendApplyInfoHome.projectList}" var="_var">
-														<s:fragment rendered="#{expendApplyInfoHome.projectId eq _var[0]}">
-															<option value="#{_var[0]}" selected="selected">#{_var[1]}</option>
+														<s:fragment rendered="#{expendApplyInfoHome.projectId eq _var[1]}">
+															<option value="#{_var[1]}" selected="selected">#{_var[2]}</option>
 														</s:fragment>
-														<s:fragment rendered="#{expendApplyInfoHome.projectId ne _var[0]}">
-															<option value="#{_var[0]}" >#{_var[1]}</option>
+														<s:fragment rendered="#{expendApplyInfoHome.projectId ne _var[1]}">
+															<option value="#{_var[1]}" >#{_var[2]}</option>
 														</s:fragment>
 													</a:repeat>
 												</select>
@@ -506,7 +527,7 @@
 										</td>
 										<td valign="middle" class="modaltd">
 										<rich:panel id="totalMoneyPanl" style="margin:0; border:none; padding: 0;">
-											<input id="totalMoney" value="#{expendApplyInfoHome.totalMoney}" class=" mb10 border" style="height:34px;width:159px" />
+											<input id="totalMoney" value="#{expendApplyInfoHome.totalMoney}" class=" mb10 border" style="height:34px;width:159px;"  readonly="readonly"/>
 										</rich:panel>
 										</td>
 									</tr>
@@ -524,7 +545,7 @@
 										</td>
 										<td valign="top" class="modaltd">
 										<rich:panel id="usedMoneyPanl" style="margin:0; border:none; padding: 0;">
-											<h:inputText id="usedMoney" value="#{expendApplyInfoHome.usedMoney}" styleClass=" mb10 border" style="height:34px;width:159px" />
+											<h:inputText id="usedMoney" value="#{expendApplyInfoHome.usedMoney}" styleClass=" mb10 border" style="height:34px;width:159px;"  readonly="readonly"/>
 										</rich:panel>
 										</td>
 									</tr>
@@ -540,7 +561,7 @@
 										</td>
 										<td valign="middle" class="modaltd">
 										<rich:panel id="canUseMoneyPanl" style="margin:0; border:none; padding: 0;">
-											<h:inputText id="canUseMoney" value="#{expendApplyInfoHome.canUseMoney}" styleClass=" mb10 border" style="height:34px;width:159px" />
+											<h:inputText id="canUseMoney" value="#{expendApplyInfoHome.canUseMoney}" styleClass=" mb10 border" style="height:34px;width:159px;"  readonly="readonly"/>
 										</rich:panel>
 										</td>
 									</tr>
@@ -563,8 +584,10 @@
 		</div>
 		<a:form>
 			<a:queue requestDelay="100" ignoreDupResponses="true" />
-			<a:jsFunction name="selectProject" action="#{expendApplyInfoHome.selectProject}" reRender="listPanl,departPanl" oncomplete="changeProjectComplete()">
+			<a:jsFunction name="selectProject" action="#{expendApplyInfoHome.selectProject}" reRender="departPanl,fundsSourcePanl,projectPanl,totalMoneyPanl,usedMoneyPanl,canUseMoneyPanl" oncomplete="changeProjectComplete()">
 				<a:actionparam name="projectId" assignTo="#{expendApplyInfoHome.projectId}" />
+				<a:actionparam name="departmentId" assignTo="#{expendApplyInfoHome.departmentId}" />
+				<a:actionparam name="fundsSourceId" assignTo="#{expendApplyInfoHome.fundsSourceId}" />
 			</a:jsFunction>
 			<a:jsFunction name="save" action="#{expendApplyInfoHome.save}" data="#{expendApplyInfoHome.saveResult}" oncomplete="saveComplete(data)">
 				<a:actionparam name="year" assignTo="#{expendApplyInfoHome.year}" />
@@ -581,12 +604,36 @@
 				<a:actionparam name="register" assignTo="#{expendApplyInfoHome.register}" />
 				<a:actionparam name="comment" assignTo="#{expendApplyInfoHome.comment}" />
 			</a:jsFunction>
+			<a:jsFunction name="update" action="#{expendApplyInfoHome.update}" data="#{expendApplyInfoHome.saveResult}" oncomplete="saveComplete(data)">
+				<a:actionparam name="expendApplyInfoId" assignTo="#{expendApplyInfoHome.expendApplyInfoId}" />
+				<a:actionparam name="year" assignTo="#{expendApplyInfoHome.year}" />
+				<a:actionparam name="applyUser" assignTo="#{expendApplyInfoHome.applyUser}" />
+				<a:actionparam name="applySn" assignTo="#{expendApplyInfoHome.applySn}" />
+				<a:actionparam name="finaceAccountName" assignTo="#{expendApplyInfoHome.finaceAccountName}" />
+				<a:actionparam name="reciveCompany" assignTo="#{expendApplyInfoHome.reciveCompany}" />
+				<a:actionparam name="invoiceSn" assignTo="#{expendApplyInfoHome.invoiceSn}" />
+				<a:actionparam name="summary" assignTo="#{expendApplyInfoHome.summary}" />
+				<a:actionparam name="applayer" assignTo="#{expendApplyInfoHome.applayer}" />
+				<a:actionparam name="projectJson" assignTo="#{expendApplyInfoHome.projectJson}" />
+				<a:actionparam name="applyTime" assignTo="#{expendApplyInfoHome.applyTime}" />
+				<a:actionparam name="registTime" assignTo="#{expendApplyInfoHome.registTime}" />
+				<a:actionparam name="register" assignTo="#{expendApplyInfoHome.register}" />
+				<a:actionparam name="comment" assignTo="#{expendApplyInfoHome.comment}" />
+			</a:jsFunction>
 			<a:jsFunction name="clearList" action="#{expendApplyInfoHome.clearList}" reRender="listPanl" oncomplete="changeProjectComplete()">
 			</a:jsFunction>
-			<a:jsFunction name="selectDepart" action="#{expendApplyInfoHome.selectDepart}" reRender="projectPanl" oncomplete="huidiao()">
+			<a:jsFunction name="selectDepart" action="#{expendApplyInfoHome.selectDepart}" reRender="departPanl,fundsSourcePanl,projectPanl,totalMoneyPanl,usedMoneyPanl,canUseMoneyPanl" oncomplete="huidiao()">
 				<a:actionparam name="departmentId" assignTo="#{expendApplyInfoHome.departmentId}" />
+				<a:actionparam name="fundsSourceId" assignTo="#{expendApplyInfoHome.fundsSourceId}" />
+				<a:actionparam name="projectId" assignTo="#{expendApplyInfoHome.projectId}" />
+			</a:jsFunction>
+			<a:jsFunction name="selectFoundsSource" action="#{expendApplyInfoHome.selectFoundsSource}" reRender="departPanl,fundsSourcePanl,projectPanl,totalMoneyPanl,usedMoneyPanl,canUseMoneyPanl" oncomplete="huidiao()">
+				<a:actionparam name="departmentId" assignTo="#{expendApplyInfoHome.departmentId}" />
+				<a:actionparam name="fundsSourceId" assignTo="#{expendApplyInfoHome.fundsSourceId}" />
+				<a:actionparam name="projectId" assignTo="#{expendApplyInfoHome.projectId}" />
 			</a:jsFunction>
 			<a:jsFunction name="modalInit" action="#{expendApplyInfoHome.modalInit}" reRender="departPanl,fundsSourcePanl,projectPanl,totalMoneyPanl,usedMoneyPanl,canUseMoneyPanl" oncomplete="toAddModelComplete()">
+				<a:actionparam name="year" assignTo="#{expendApplyInfoHome.year}" />
 			</a:jsFunction>
 			<a:jsFunction name="addProject" action="#{expendApplyInfoHome.addProject}" reRender="listPanl" oncomplete="addProjectComplete()">
 				<a:actionparam name="projectId" assignTo="#{expendApplyInfoHome.projectId}" />
@@ -615,14 +662,35 @@
 					forceParse: false, 
 					pickerPosition: "bottom-left"
 				});
-
+				 jQuery('.selectpicker').selectpicker();
+				var applyUser = "#{expendApplyInfoHome.applyUser}";
+				var applayer = "#{expendApplyInfoHome.applayer}";
+				var register = "#{expendApplyInfoHome.register}";
+				var expendIdEdit = jQuery("#mainForm\\:expendApplyIdEdit").val();
+				if(expendIdEdit != "0"){
+					jQuery("#user").selectpicker("val",applyUser);
+					if(applayer != "0"){
+						jQuery("#reimbursementer").selectpicker("val",applayer);
+					}else{
+						jQuery('#reimbursementer').selectpicker({noneSelectedText:"全部"});
+						jQuery('#reimbursementer').selectpicker('deselectAll');
+					}
+					if(register != "0"){
+						jQuery("#register").selectpicker("val",register);
+					}else{
+						jQuery('#register').selectpicker({noneSelectedText:"全部"});
+						jQuery('#register').selectpicker('deselectAll');
+					}
+				}
 				 jQuery('.selectpicker').selectpicker();
 			});
 			
 			//选择项目
 			function changeProject(){
+				var depart = jQuery("#depart").val();
+				var fundsSource = jQuery("#fundsSource").val();
 				var project = jQuery("#projectId").val();
-				selectProject(project);
+				selectProject(project,depart,fundsSource);
 			}
 			//选择项目回调
 			function changeProjectComplete(){
@@ -652,7 +720,135 @@
 				var reimbursementer = jQuery("#reimbursementer").val();
 				var applyTime = jQuery("#applyTime").val();
 				var registeTime = jQuery("#registeTime").val();
-				var register = jQuery("#mainForm\\:register").val();
+				var register = jQuery("#register").val();
+				var comment = jQuery("#mainForm\\:comment").val();
+				if(register == undefined){
+					register == -1;
+				}
+				var flag = true;
+				if(year == null){
+					___msg('温馨提示', "请选择预算年份");
+					flag = false;
+					return ;
+				}
+				if(user == null || user == "" || projectId == "-1"){
+					___msg('温馨提示', "请选择报销人");
+					flag = false;
+					return ;
+				}
+				if(applySn == ""){
+					___msg('温馨提示', "请输入单据编号");
+					flag = false;
+					return ;
+					
+				}
+				if(finaceAccountName == ""){
+					___msg('温馨提示', "请输入账务账名");
+					flag = false;
+					return ;
+					
+				}
+				if(reciveCompany == ""){
+					___msg('温馨提示', "请输入收款公司");
+					flag = false;
+					return ;
+				}
+				if(invoicenum == ""){
+					___msg('温馨提示', "请输入发票号");
+					flag = false;
+					return ;
+				}
+				if(summary == ""){
+					___msg('温馨提示', "请输入摘要");
+					flag = false;
+					return ;
+				}
+				if(applyTime == ""){
+					___msg('温馨提示', "请选择申请时间");
+					flag = false;
+					return ;
+				}
+				if(null == reimbursementer || reimbursementer == ""){
+					reimbursementer = "0";
+				}
+				jQuery("input[name='money']").each(function(){
+					var price = jQuery(this).val();
+					if(price =="" ||  isNaN(price)){
+						___msg('温馨提示', "请输入支出金额");
+						flag = false;
+						return;
+						if(parseFloat(price) < 0 || parseFloat(price) == 0){
+							___msg('温馨提示', "请输入正确的数字");
+							flag = false;
+							return ;
+						}
+					}else{
+						if(parseFloat(price) > parseFloat(jQuery(this).parent().parent().find("td[name='canUseMoney']").text())){
+							___msg('温馨提示', "支出金额不能大于可支出金额");
+							flag = false;
+							return;
+						}
+					}
+				});
+				jQuery("input[name='time']").each(function(){
+					var time = jQuery(this).val();
+					if(time == null || time == ""){
+						___msg('温馨提示', "请选择支出日期");
+						flag = false;
+						return;
+					}
+				});
+				jQuery("input[name='comment']").each(function(){
+					var comment = jQuery(this).val();
+					if(comment.length> 50){
+						___msg('温馨提示', "备注不能大于50字");
+						flag = false;
+						return ;
+					}
+				});
+				var json = getJson();
+				if(json == '{"expend_list":[]}'){
+					___msg('温馨提示', "请选择申请内容");
+					flag = false;
+					return;
+				}
+				if(comment != "" && comment.length >200){
+					___msg('温馨提示', "备注不能大于200字");
+					flag = false;
+					return;
+				}
+				if(flag){
+					save(year,user,applySn,finaceAccountName,reciveCompany,invoicenum,summary,reimbursementer,json,applyTime,registeTime,register,comment);
+				}
+				
+			}
+
+			//保存回调
+			function saveComplete(data){
+				if (data != null && 'INVOKE_SUCCESS' == data.invoke_result) {
+				    ___dynamic_function = function() {
+				    	window.location.href = '../budget/ExpendApplayList.seam';
+					};
+					___msg('温馨提示', data.message, {closed: ___dynamic_function});
+				} else {
+					___msg('温馨提示', data.message);
+				}
+			}
+
+			//提交校验
+			function checkEdit(){
+				var expendInfoId = jQuery("#mainForm\\:expendApplyIdEdit").val();
+				var year = jQuery("#budgetYear").val();
+				var user = jQuery("#user").val();
+				var applySn = jQuery("#mainForm\\:formnum").val();
+				var finaceAccountName = jQuery("#mainForm\\:finaceAccountName").val();
+				var reciveCompany = jQuery("#mainForm\\:reciveCompany").val();
+				var invoicenum = jQuery("#mainForm\\:invoicenum").val();
+				var summary = jQuery("#mainForm\\:summary").val();
+				var reimbursementer = jQuery("#reimbursementer").val();
+				var applyTime = jQuery("#applyTime").val();
+				var registeTime = jQuery("#registeTime").val();
+				var register = jQuery("#register").val();
 				var comment = jQuery("#mainForm\\:comment").val();
 				var flag = true;
 				if(year == null){
@@ -722,7 +918,7 @@
 				jQuery("input[name='time']").each(function(){
 					var time = jQuery(this).val();
 					if(time == null || time == ""){
-						___msg('温馨提示', "请选择日期");
+						___msg('温馨提示', "请选择支出日期");
 						flag = false;
 						return;
 					}
@@ -747,21 +943,9 @@
 					return;
 				}
 				if(flag){
-					save(year,user,applySn,finaceAccountName,reciveCompany,invoicenum,summary,reimbursementer,json,applyTime,registeTime,register,comment);
+					update(expendInfoId,year,user,applySn,finaceAccountName,reciveCompany,invoicenum,summary,reimbursementer,json,applyTime,registeTime,register,comment);
 				}
 				
-			}
-
-			//保存回调
-			function saveComplete(data){
-				if (data != null && 'INVOKE_SUCCESS' == data.invoke_result) {
-				    ___dynamic_function = function() {
-				    	window.location.href = '../budget/ExpendApplication.seam';
-					};
-					___msg('温馨提示', data.message, {closed: ___dynamic_function});
-				} else {
-					___msg('温馨提示', data.message);
-				}
 			}
 			//获取列表json
 			function getJson(){
@@ -799,9 +983,9 @@
 			//部门选择事件
 			function departChange(){
 				var depart = jQuery("#depart").val();
-				if(depart != "-1"){
-					selectDepart(depart);
-				}
+				var fundsSource = jQuery("#fundsSource").val();
+				var projectId = jQuery("#projectId").val();
+				selectDepart(depart,fundsSource,projectId);
 			}
 			//回调初始化下拉列表
 			function huidiao(){
@@ -809,7 +993,8 @@
 			}
 			//添加初始化下拉列表
 			function toAddModel(){
-				modalInit();
+				var year = jQuery("#budgetYear").val();
+				modalInit(year);
 			}
 			function toAddModelComplete(){
 				jQuery("#addModal").modal("show");
@@ -834,6 +1019,40 @@
 				});
 				jQuery("#addModal").modal("hide");
 				huidiao();
+			}
+
+			function fundsSource(){
+				var depart = jQuery("#depart").val();
+				var fundsSource = jQuery("#fundsSource").val();
+				var projectId = jQuery("#projectId").val();
+				selectFoundsSource(depart,fundsSource,projectId);
+			}
+			function totalMoney(){
+				var total = 0;
+				jQuery("input[name='money']").each(function(){
+					var price = jQuery(this).val();
+					if(price == ""){
+						price = "0";
+					}
+					if(isNaN(price)){
+						___msg('温馨提示', "请输入正确的支出金额");
+						flag = false;
+						return;
+						if(parseFloat(price) < 0 || parseFloat(price) == 0){
+							___msg('温馨提示', "请输入正确的支出金额");
+							flag = false;
+							return ;
+						}
+					}else{
+						if(parseFloat(price) > parseFloat(jQuery(this).parent().parent().find("td[name='canUseMoney']").text())){
+							___msg('温馨提示', "支出金额不能大于可支出金额");
+							flag = false;
+							return;
+						}
+					}
+					total += parseFloat(price);
+				});
+				jQuery("#mainForm\\:allMoney").val(total);
 			}
 		//]]>
 		</script>
