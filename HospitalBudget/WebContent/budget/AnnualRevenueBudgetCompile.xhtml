@@ -401,13 +401,13 @@
 			    updateYearOnYear();
 			    
 			    setTimeout(function(){
-			    }, 0);
+				    jQuery('.normal-candidateProject a[name="switch"]').each(function(){
+				    	jQuery(this).click();
+				    });
+				    jQuery('[scrap-tag="1"]').hide();
+			    }, 1);
 				jQuery('#fundsSource').val('1');
 				jQuery('#fundsSource').selectpicker('render');
-			    jQuery('.normal-candidateProject a[name="switch"]').each(function(){
-			    	jQuery(this).click();
-			    });
-			    jQuery('[scrap-tag="1"]').hide();
 			    
 				jQuery('.icheck').iCheck({
 					checkboxClass: 'icheckbox_square-blue',
