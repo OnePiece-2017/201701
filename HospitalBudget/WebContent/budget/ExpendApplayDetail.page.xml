@@ -4,6 +4,6 @@
 	login-required="true">
 
 	<param name="transactExpendFrom" />
-	<param name="expendApplayId" value="#{expendApplayDetailHome.expendApplayId}" />
+	<param name="expendApplayProjectId" value="#{expendApplayDetailHome.expendApplayProjectId}" />
 
 </page>

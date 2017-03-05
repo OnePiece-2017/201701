@@ -6,7 +6,7 @@
 	<param name="from" />
 	<param name="page" value="#{queryExpendApplay.page}" />
 	<param name="departId" value="#{queryExpendApplay.departId}" />
-	<param name="projectId" value="#{queryExpendApplay.projectId}" />
+	<param name="projectName" value="#{queryExpendApplay.projectName}" />
 	<param name="fundsSourceId" value="#{queryExpendApplay.fundsSourceId}" />
 	<param name="expendTime" value="#{queryExpendApplay.expendTime}" />
 </page>

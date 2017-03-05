@@ -99,18 +99,13 @@ public class ExpendApplyConfirmHome extends CriterionEntityHome<ExpendApplyInfo>
 			projectSql.append(" expi.budget_amount_frozen, ");
 			projectSql.append(" expi.budget_amount_surplus, ");
 			projectSql.append(" eap.expend_money, ");
-			projectSql.append(" eap.budget_append_expend, ");//5
-			projectSql.append(" eap.budget_adjustment_append, ");
-			projectSql.append(" eap.budget_adjestment_cut, ");
-			projectSql.append(" eap.append_budget_paid, ");
-			projectSql.append(" eap.append_budget_money, ");
-			projectSql.append(" eap.expend_time, ");//10
-			projectSql.append(" eap.`comment`,ecp.expend_confirm_project_id ");
+			projectSql.append(" ecp.expend_confirm_project_id,fs.the_value AS source_name ");
 			projectSql.append(" FROM expend_confirm_project ecp ");
 			projectSql.append(" LEFT JOIN expend_apply_project eap ON ecp.expend_apply_project_id = eap.expend_apply_project_id ");
 			projectSql.append(" LEFT JOIN usual_project up ON ecp.project_id=up.the_id ");
 			projectSql.append(" LEFT JOIN expend_confirm_info eci on ecp.expend_confirm_info_id=eci.expend_confirm_info_id ");
 			projectSql.append(" LEFT JOIN normal_expend_plan_info expi on expi.`year`=eci.`year` and ecp.project_id=expi.project_id ");
+			projectSql.append(" LEFT JOIN ys_funds_source fs ON up.funds_source_id = fs.the_id ");
 			projectSql.append(" where ecp.expend_confirm_info_id= ").append(expendConfirmId);
 			List<Object[]> list = getEntityManager().createNativeQuery("select * from (" + projectSql.toString() + ") as test").getResultList();
 			if(list.size() > 0){
@@ -121,19 +116,9 @@ public class ExpendApplyConfirmHome extends CriterionEntityHome<ExpendApplyInfo>
 					projectDetail[2] = Float.parseFloat(obj[2].toString()) - Float.parseFloat(obj[4].toString());
 					projectDetail[3] = Float.parseFloat(obj[3].toString()) + Float.parseFloat(obj[4].toString());;
 					projectDetail[4] = obj[4];
-					try {
-						projectDetail[5] = sdf.format(sdf.parse(obj[10].toString()));
-					} catch (ParseException e) {
-						projectDetail[5] = obj[10].toString();
-					}
-					projectDetail[6] = obj[11] == null ? "" : obj[11].toString();
-					projectDetail[7] = "";
-					projectDetail[8] = obj[12];
-					projectDetail[9] = obj[5];
-					projectDetail[10] = obj[6];
-					projectDetail[11] = obj[7];
-					projectDetail[12] = obj[8];
-					projectDetail[13] = obj[9];
+					projectDetail[5] = obj[6];
+					projectDetail[6] = "";
+					projectDetail[7] = obj[5];
 					projectList.add(projectDetail);
 				}
 			}

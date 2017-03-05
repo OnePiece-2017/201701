@@ -25,7 +25,7 @@ public class QueryExpendApplay extends CriterionNativeQuery<Object[]> {
 	private List<Object[]> fundsSourceList;//资金来源列表
 	private List<Object[]> projectList;//项目列表
 	private String expendTime;//支出时间
-	private Integer projectId;
+	private String projectName;
 	private Integer fundsSourceId;
 	private Integer departId;
 	
@@ -37,68 +37,25 @@ public class QueryExpendApplay extends CriterionNativeQuery<Object[]> {
 		fundsSourceList = new ArrayList<Object[]>();
 		departList = new ArrayList<Object[]>();
 		projectList = new ArrayList<Object[]>();
-		
-		boolean privateRole = false;//角色不属于财务 和主任（领导的）
-		String roleSql = "select role_info.role_info_id,user_info.department_info_id,ydi.the_value from user_info LEFT JOIN role_info on role_info.role_info_id=user_info.role_info_id "
-				+ "LEFT JOIN ys_department_info ydi on user_info.department_info_id=ydi.the_id where user_info.user_info_id=" + sessionToken.getUserInfoId();
-		List<Object[]> roleList = getEntityManager().createNativeQuery("select * from (" + roleSql + ") as test").getResultList();
-		int roleId = Integer.parseInt(roleList.get(0)[0].toString());//角色id
-		
-		if(Integer.valueOf(roleId) != 1 && Integer.valueOf(roleId) != FINA_ROLE_ID && Integer.valueOf(roleId) != DIRECTOR_ROLE_ID){
-			privateRole = true;
+		if(null == projectName){
+			projectName = "";
 		}
-		
+		if(null == expendTime){
+			expendTime = "";
+		}
+		if(null == fundsSourceId){
+			fundsSourceId = -1;
+		}
+		if(null == departId){
+			departId = -1;
+		}
+		wireDepartmentInfo();
 		//资金来源
-		Object[] obj = new Object[2];
-		obj[0] = -1;
-		obj[1] = "请选择";
-		fundsSourceList.add(obj);
-		projectList.add(obj);
-		Object[] fundsobj = new Object[2];
-		fundsobj[0] = 1;
-		fundsobj[1] = "自有资金";
-		fundsSourceList.add(fundsobj);
-		StringBuffer projectSql =  new StringBuffer();
-		projectSql.append(" SELECT ");
-		projectSql.append(" ycp.the_id as project_id,");
-		projectSql.append(" ycpe.the_id as sub_id,");
-		projectSql.append(" ycp.the_value as peoject_name, ");//1项目名字
-		projectSql.append(" ycpe.the_value as sub_project_name ");//2项目名字
-		projectSql.append(" FROM expend_apply_info eai ");
-		projectSql.append(" LEFT JOIN normal_expend_budget_order_info neboi on neboi.normal_expend_budget_order_id=eai.normal_expend_budget_order_id ");
-		projectSql.append(" LEFT JOIN ys_convention_project ycp on ycp.the_id=neboi.normal_project_id ");
-		projectSql.append(" LEFT JOIN user_info ui on ui.user_info_id=eai.applay_user_id ");
-		projectSql.append(" LEFT JOIN ys_convention_project_extend ycpe on neboi.sub_project_id=ycpe.the_id ");
-		projectSql.append(" where eai.deleted=0 ");
-		if(privateRole){
-			projectSql.append(" eai.insert_user= ").append(sessionToken.getUserInfoId());
-			projectSql.insert(0, "select * from (").append(") as recordset");
-			
-			Object[] departObj = new Object[2];
-			departObj[0] = roleList.get(0)[1];
-			departObj[1] = roleList.get(0)[2];
-			departList.add(obj);
-			departList.add(departObj);
-		}else{
-			projectSql.insert(0, "select * from (").append(") as recordset");
-			wireDepartmentInfo();
-			
-		}
-		List<Object[]> proList = getEntityManager().createNativeQuery(projectSql.toString()).getResultList();
-		if(proList.size() > 0){
-			for(Object[] pro :proList){
-				if(null == pro[0] && null != pro[1] && null == pro[2] && null != pro[3] ){
-					Object[] pronew = new Object[2];
-					pronew[0] = pro[1];
-					pronew[1] = pro[3];
-					projectList.add(pronew);
-				}else if(null != pro[0] && null == pro[1] && null != pro[2] && null == pro[3]){
-					Object[] pronew = new Object[2];
-					pronew[0] = pro[0];
-					pronew[1] = pro[2];
-					projectList.add(pronew);
-				}
-			}
+		//初始化资金来源
+		String sourceSql = "select yfs.the_id,yfs.the_value from ys_funds_source yfs where yfs.deleted=0";
+		List<Object[]> list = getEntityManager().createNativeQuery(sourceSql).getResultList();
+		if(list.size() > 0){
+			fundsSourceList = list;
 		}
 	}
 	
@@ -117,29 +74,30 @@ public class QueryExpendApplay extends CriterionNativeQuery<Object[]> {
 		}
 		StringBuffer sql = new StringBuffer();
 		sql.append(" SELECT ");
-		sql.append(" eap.expend_apply_project_id, ");//0申请单项目id
-		sql.append(" eai.expend_apply_code, ");//1申请编号
-		sql.append(" di.the_value as department_name, ");//2科室名称
-		sql.append(" fs.the_value as funds_source_name, ");//3资金来源
-		sql.append(" up.the_value as project_name, ");//4项目名字
-		sql.append(" eap.expend_money, ");//5支出金额
-		sql.append(" uie.fullname, ");//6申请人名字
-		sql.append(" eai.apply_time ");//7申请提交时间
-		sql.append(" ycpe.the_value as sub_project_name ");
+		sql.append(" eai.expend_apply_info_id, ");//0申请单id
+		sql.append(" eap.expend_apply_project_id, ");//1申请项目id
+		sql.append(" eai.expend_apply_code, ");//2申请编号
+		sql.append(" ysdi.the_value as depart_name, ");//3科室名称
+		sql.append(" fs.the_value as source_name, ");//4资金来源
+		sql.append(" up.the_value as project_name, ");//5项目名字
+		sql.append(" eap.expend_money, ");//6支出金额
+		sql.append(" uie.fullname, ");//7申请人名字
+		sql.append(" eai.apply_time, ");//8申请提交时间
+		sql.append(" ecp.expend_confirm_project_id ");
 		sql.append(" FROM expend_apply_project eap ");
-		sql.append(" LEFT JOIN expend_apply_info eai ON eai.expend_apply_info_id = eap.expend_apply_info_id ");
-		sql.append(" LEFT JOIN normal_expend_budget_order_info neboi on neboi.normal_expend_budget_order_id=eap.normal_expend_budget_order_id ");
-		sql.append(" LEFT JOIN usual_project up on up.the_id=neboi.normal_project_id ");
-		sql.append(" LEFT JOIN ys_department_info di on di.the_id=up.department_info_id ");
-		sql.append(" LEFT JOIN ys_funds_source fs on fs.the_id=up.funds_source_id ");
-		sql.append(" LEFT JOIN user_info ui on ui.user_info_id=eai.applay_user_id ");
-		sql.append(" LEFT JOIN user_info_extend uie on ui.user_info_extend_id=uie.user_info_extend_id ");
+		sql.append(" LEFT JOIN expend_apply_info eai ON eap.expend_apply_info_id = eai.expend_apply_info_id ");
+		sql.append(" LEFT JOIN expend_confirm_project ecp on eap.expend_apply_project_id=ecp.expend_apply_project_id ");
+		sql.append(" LEFT JOIN usual_project up ON eap.project_id = up.the_id ");
+		sql.append(" LEFT JOIN ys_department_info ysdi on ysdi.the_id=up.department_info_id ");
+		sql.append(" LEFT JOIN ys_funds_source fs ON fs.the_id = up.funds_source_id ");
+		sql.append(" LEFT JOIN user_info ui ON ui.user_info_id = eai.applay_user_id ");
+		sql.append(" LEFT JOIN user_info_extend uie ON ui.user_info_extend_id = uie.user_info_extend_id ");
 		sql.append(" where eap.deleted=0 ");
 		if(privateRole){
 			sql.append(" eap.insert_user= ").append(sessionToken.getUserInfoId());
 		}
-		if(null != projectId && projectId != -1){
-			sql.append(" and neboi.normal_project_id=").append(projectId);
+		if(null != projectName && !projectName.trim().equals("")){
+			sql.append(" up.the_value like '").append(projectName).append("'");
 		}
 		if(null != fundsSourceId && fundsSourceId != -1){
 			sql.append(" and up.funds_source_id= ").append(fundsSourceId);
@@ -300,15 +258,15 @@ public class QueryExpendApplay extends CriterionNativeQuery<Object[]> {
 	}
 
 
-	public Integer getProjectId() {
-		return projectId;
+
+
+	public String getProjectName() {
+		return projectName;
 	}
 
-
-	public void setProjectId(Integer projectId) {
-		this.projectId = projectId;
+	public void setProjectName(String projectName) {
+		this.projectName = projectName;
 	}
-
 
 	public Integer getFundsSourceId() {
 		return fundsSourceId;

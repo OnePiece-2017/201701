@@ -62,7 +62,6 @@ public class ExpendApplyInfoHome extends CriterionEntityHome<ExpendApplyInfo>{
 	private Integer applyUser;//申请人id
 	private String reciveCompany;//收款单位
 	private String invoiceSn;//发票
-	private String finaceAccountName;//财务账名
 	private String summary;//摘要
 	private Integer applayer;//申请人
 	private String totalMoney;//已到账金额
@@ -106,7 +105,6 @@ public class ExpendApplyInfoHome extends CriterionEntityHome<ExpendApplyInfo>{
 			year = Integer.parseInt(eai.getYear());
 			applyUser = eai.getApplyUserId();
 			applySn = eai.getExpendApplyCode();
-			finaceAccountName = eai.getFinaceAccountName();
 			reciveCompany = eai.getReciveCompany();
 			invoiceSn = eai.getInvoiceNum();
 			summary = eai.getSummary();
@@ -140,43 +138,28 @@ public class ExpendApplyInfoHome extends CriterionEntityHome<ExpendApplyInfo>{
 			projectSql.append(" expi.budget_amount_frozen, ");
 			projectSql.append(" expi.budget_amount_surplus, ");
 			projectSql.append(" eap.expend_money, ");
-			projectSql.append(" eap.budget_append_expend, ");//5
-			projectSql.append(" eap.budget_adjustment_append, ");
-			projectSql.append(" eap.budget_adjestment_cut, ");
-			projectSql.append(" eap.append_budget_paid, ");
-			projectSql.append(" eap.append_budget_money, ");
-			projectSql.append(" eap.expend_time, ");//10
-			projectSql.append(" eap.`comment`,eap.project_id ");
+			projectSql.append(" eap.project_id,fs.the_value as source_name ");
 			projectSql.append(" FROM expend_apply_project eap ");
 			projectSql.append(" LEFT JOIN expend_apply_info eai ON eap.expend_apply_info_id = eai.expend_apply_info_id ");
 			projectSql.append(" LEFT JOIN usual_project up on up.the_id=eap.project_id ");
 			projectSql.append(" LEFT JOIN normal_expend_plan_info expi on  expi.project_id=eap.project_id and expi.`year` = eai.`year` ");
+			projectSql.append(" LEFT JOIN ys_funds_source fs on up.funds_source_id=fs.the_id ");
 			projectSql.append(" where eap.deleted=0 ");
 			projectSql.append(" and eai.expend_apply_info_id=").append(expendApplyInfoId);
-			List<Object[]> list = getEntityManager().createNativeQuery(projectSql.toString()).getResultList();
+			List<Object[]> list = getEntityManager().createNativeQuery("select * from (" + projectSql.toString() + ") as test").getResultList();
 			float allMoney = 0f;
 			if(list.size() > 0){
 				for(Object[] obj : list){
-					Object[] projectDetail = new Object[14];
+					Object[] projectDetail = new Object[8];
 					projectDetail[0] = obj[0];
 					projectDetail[1] = obj[1];
 					projectDetail[2] = Float.parseFloat(obj[2].toString()) - Float.parseFloat(obj[4].toString());
 					projectDetail[3] = Float.parseFloat(obj[3].toString()) + Float.parseFloat(obj[4].toString());;
 					projectDetail[4] = obj[4];
 					allMoney += Float.parseFloat(obj[4].toString());
-					try {
-						projectDetail[5] = sdf.format(sdf.parse(obj[10].toString()));
-					} catch (ParseException e) {
-						projectDetail[5] = obj[10].toString();
-					}
-					projectDetail[6] = obj[11] == null ? "" : obj[11].toString();
-					projectDetail[7] = "";
-					projectDetail[8] = obj[12];
-					projectDetail[9] = obj[5];
-					projectDetail[10] = obj[6];
-					projectDetail[11] = obj[7];
-					projectDetail[12] = obj[8];
-					projectDetail[13] = obj[9];
+					projectDetail[5] = obj[6].toString();
+					projectDetail[6] = "";
+					projectDetail[7] = obj[5];
 					expendList.add(projectDetail);
 				}
 				expendAllMoney = allMoney + "";
@@ -414,28 +397,23 @@ public class ExpendApplyInfoHome extends CriterionEntityHome<ExpendApplyInfo>{
 		sql.append(" up.the_value, ");
 		sql.append(" nepi.budget_amount, ");
 		sql.append(" nepi.budget_amount_frozen, ");
-		sql.append(" nepi.budget_amount_surplus,up.the_id ");
+		sql.append(" nepi.budget_amount_surplus,up.the_id,fs.the_value as source_name ");
 		sql.append(" FROM usual_project up ");
 		sql.append(" LEFT JOIN normal_expend_plan_info nepi ON up.the_id = nepi.project_id ");
+		sql.append(" LEFT JOIN ys_funds_source fs on up.funds_source_id=fs.the_id ");
 		sql.append(" WHERE up.the_id = ").append(projectId);
-		List<Object[]> list = getEntityManager().createNativeQuery(sql.toString()).getResultList();
+		List<Object[]> list = getEntityManager().createNativeQuery("select * from (" + sql.toString() + ") as test").getResultList();
 		Object[] project = list.get(0);
 		DecimalFormat df = new DecimalFormat("#.00");
-		Object[] obj = new Object[14];
+		Object[] obj = new Object[8];
 		obj[0] = project[0];
 		obj[1] =  Double.parseDouble(project[1].toString()) == 0 ? "0.00" : df.format(Double.parseDouble(project[1].toString()));
 		obj[2] = Double.parseDouble(project[2].toString()) == 0 ? "0.00" : df.format(Double.parseDouble(project[2].toString()));
 		obj[3] = Double.parseDouble(project[3].toString()) == 0 ? "0.00" : df.format(Double.parseDouble(project[3].toString()));
 		obj[4] = "";
-		obj[5] = "";
+		obj[5] = project[5];
 		obj[6] = "";
-		obj[7] = "";
-		obj[8] = project[4];
-		obj[9] = "";
-		obj[10] = "";
-		obj[11] = "";
-		obj[12] = "";
-		obj[13] = "";
+		obj[7] = project[4];
 		expendList.add(obj);
 	}
 	/**
@@ -449,7 +427,6 @@ public class ExpendApplyInfoHome extends CriterionEntityHome<ExpendApplyInfo>{
 		//申请单
 		ExpendApplyInfo expendApplyInfo = new ExpendApplyInfo();
 		expendApplyInfo.setExpendApplyCode(applySn);
-		expendApplyInfo.setFinaceAccountName(finaceAccountName);
 		expendApplyInfo.setYear(year.toString());
 		expendApplyInfo.setApplyUserId(applyUser);
 		expendApplyInfo.setReciveCompany(reciveCompany);
@@ -546,42 +523,12 @@ public class ExpendApplyInfoHome extends CriterionEntityHome<ExpendApplyInfo>{
 			JSONObject project = expendList.getJSONObject(i);
 			String projectInfoId = project.getString("project_id");
 			String expendMoney = project.getString("expend_money");
-			String expendTime = project.getString("expend_time");
-			String expendComment = project.getString("expend_comment");
-			String addMoney = project.getString("add_money");
-			String budgetAdd = project.getString("budget_add");
-			String budgetCut = project.getString("budget_cut");
-			String appendPaid = project.getString("append_paid");
-			String appendCanpay = project.getString("append_canpay");
 			allMoney += Float.parseFloat(expendMoney);
 			//保存支出申请单详细列表
 			ExpendApplyProject eap = new ExpendApplyProject();
 			eap.setExpendApplyInfoId(expendApplyInfo.getExpendApplyInfoId());
 			eap.setProjectId(Integer.parseInt(projectInfoId));
 			eap.setExpendMoney(Float.parseFloat(expendMoney));
-			if(!addMoney.equals("")){
-				eap.setBudgetAppendExpend(Float.parseFloat(addMoney));
-			}
-			if(!budgetAdd.equals("")){
-				eap.setBudgetAdjustmentAppend(Float.parseFloat(budgetAdd));
-			}
-			if(!budgetCut.equals("")){
-				eap.setBudgetAdjestmentCut(Float.parseFloat(budgetCut));
-			}
-			if(!appendPaid.equals("")){
-				eap.setAppendBudgetPaid(Float.parseFloat(appendPaid));
-			}
-			if(!appendCanpay.equals("")){
-				eap.setAppendBudgetCanCut(Float.parseFloat(appendCanpay));
-			}
-			try {
-				eap.setExpendTime(sdf.parse(expendTime));
-			} catch (ParseException e) {
-				saveResult.element("invoke_result", "INVOKE_FAILURE");
-				saveResult.element("message", "操作失败！时间保存失败！");
-				return  "no";
-			}
-			eap.setComment(expendComment);
 			eap.setInsertUser(sessionToken.getUserInfoId());
 			eap.setInsertTime(new Date());
 			eap.setDeleted(false);
@@ -617,7 +564,6 @@ public class ExpendApplyInfoHome extends CriterionEntityHome<ExpendApplyInfo>{
 		//申请单
 		ExpendApplyInfo expendApplyInfo = getEntityManager().find(ExpendApplyInfo.class, expendApplyInfoId);
 		expendApplyInfo.setExpendApplyCode(applySn);
-		expendApplyInfo.setFinaceAccountName(finaceAccountName);
 		expendApplyInfo.setYear(year.toString());
 		expendApplyInfo.setApplyUserId(applyUser);
 		expendApplyInfo.setReciveCompany(reciveCompany);
@@ -694,13 +640,6 @@ public class ExpendApplyInfoHome extends CriterionEntityHome<ExpendApplyInfo>{
 			JSONObject project = expendList.getJSONObject(i);
 			String projectInfoId = project.getString("project_id");
 			String expendMoney = project.getString("expend_money");
-			String expendTime = project.getString("expend_time");
-			String expendComment = project.getString("expend_comment");
-			String addMoney = project.getString("add_money");
-			String budgetAdd = project.getString("budget_add");
-			String budgetCut = project.getString("budget_cut");
-			String appendPaid = project.getString("append_paid");
-			String appendCanpay = project.getString("append_canpay");
 			allMoney += Float.parseFloat(expendMoney);
 			//编辑支出申请单详细列表
 			ExpendApplyProject eap = null;
@@ -714,39 +653,6 @@ public class ExpendApplyInfoHome extends CriterionEntityHome<ExpendApplyInfo>{
 			}
 			eap.setProjectId(Integer.parseInt(projectInfoId));
 			eap.setExpendMoney(Float.parseFloat(expendMoney));
-			if(!addMoney.equals("")){
-				eap.setBudgetAppendExpend(Float.parseFloat(addMoney));
-			}else{
-				eap.setBudgetAppendExpend(null);
-			}
-			if(!budgetAdd.equals("")){
-				eap.setBudgetAdjustmentAppend(Float.parseFloat(budgetAdd));
-			}else{
-				eap.setBudgetAdjustmentAppend(null);
-			}
-			if(!budgetCut.equals("")){
-				eap.setBudgetAdjestmentCut(Float.parseFloat(budgetCut));
-			}else{
-				eap.setBudgetAdjestmentCut(null);
-			}
-			if(!appendPaid.equals("")){
-				eap.setAppendBudgetPaid(Float.parseFloat(appendPaid));
-			}else{
-				eap.setAppendBudgetPaid(null);
-			}
-			if(!appendCanpay.equals("")){
-				eap.setAppendBudgetCanCut(Float.parseFloat(appendCanpay));
-			}else{
-				eap.setAppendBudgetCanCut(null);
-			}
-			try {
-				eap.setExpendTime(sdf.parse(expendTime));
-			} catch (ParseException e) {
-				saveResult.element("invoke_result", "INVOKE_FAILURE");
-				saveResult.element("message", "操作失败！时间保存失败！");
-				return "no";
-			}
-			eap.setComment(expendComment);
 			if(!editFlag){
 				eap.setInsertUser(sessionToken.getUserInfoId());
 				eap.setInsertTime(new Date());
@@ -771,14 +677,6 @@ public class ExpendApplyInfoHome extends CriterionEntityHome<ExpendApplyInfo>{
 			getEntityManager().merge(nxpi);
 			
 		}
-		//如果没有编辑过就删除
-	/*	for(Integer id : existProject){
-			if(!oldList.contains(id)){
-				ExpendApplyProject delProject = getEntityManager().find(ExpendApplyProject.class, id);
-				delProject.setDeleted(true);
-				getEntityManager().merge(delProject);
-			}
-		}*/
 		for(ExpendApplyProject oldEap : oldList){	
 			boolean existflag = false;
 			for(Integer id : existProject){
@@ -1057,13 +955,6 @@ public class ExpendApplyInfoHome extends CriterionEntityHome<ExpendApplyInfo>{
 		this.saveResult = saveResult;
 	}
 
-	public String getFinaceAccountName() {
-		return finaceAccountName;
-	}
-
-	public void setFinaceAccountName(String finaceAccountName) {
-		this.finaceAccountName = finaceAccountName;
-	}
 
 	public String getSummary() {
 		return summary;

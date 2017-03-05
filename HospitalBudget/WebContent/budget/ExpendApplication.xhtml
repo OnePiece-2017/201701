@@ -158,10 +158,18 @@
 									<table>
 										<tr>
 											<td valign="middle">
-												<span class="field-name mb10">财务账名:</span>
+												<span class="field-name mb10">报销人:</span>
 											</td>
 											<td valign="middle">
-												<h:inputText id="finaceAccountName" value="#{expendApplyInfoHome.finaceAccountName}" styleClass=" mb10 border" style="height:34px;width:220px" maxlength="20"/>
+												<select id="reimbursementer" class="selectpicker" data-live-search="true">
+													<a:repeat value="#{expendApplyInfoHome.applayUserList}" var="_department">
+														<optgroup label="#{_department[0]}" data-subtext="科室">
+															<a:repeat value="#{_department[1]}" var="_user">
+																<option value="#{_user[0]}">#{_user[1]}</option>
+															</a:repeat>
+														</optgroup>
+													</a:repeat>
+												</select>
 											</td>
 											<td valign="middle">
 												<font color="red" style="margin-left: 3px;">*</font>
@@ -213,35 +221,10 @@
 									<table>
 										<tr>
 											<td valign="middle">
-												<span class="field-name mb10">摘要:</span>
+												<span class="field-name mb10">发票张数:</span>
 											</td>
 											<td valign="middle">
 												<h:inputText id="summary" value="#{expendApplyInfoHome.summary}" styleClass=" mb10 border" style="height:34px;width:220px" maxlength="20"/>
-											</td>
-											<td valign="middle">
-												<font color="red" style="margin-left: 3px;">*</font>
-											</td>
-										</tr>
-									</table>
-								</div>
-							</td>
-							<td width="50%">
-								<div class="pb20">
-									<table>
-										<tr>
-											<td valign="middle">
-												<span class="field-name mb10">报销人:</span>
-											</td>
-											<td valign="middle">
-												<select id="reimbursementer" class="selectpicker" data-live-search="true">
-													<a:repeat value="#{expendApplyInfoHome.applayUserList}" var="_department">
-														<optgroup label="#{_department[0]}" data-subtext="科室">
-															<a:repeat value="#{_department[1]}" var="_user">
-																<option value="#{_user[0]}">#{_user[1]}</option>
-															</a:repeat>
-														</optgroup>
-													</a:repeat>
-												</select>
 											</td>
 											<td valign="middle">
 												<font color="red" style="margin-left: 3px;">*</font>
@@ -257,23 +240,17 @@
 					<a class="btn btn-add mr15" onclick="toAddModel()" style="float:right ">添加</a>
 				</div>
 				<rich:panel id="listPanl" style="margin:0; border:none; padding: 0;">
-				<div class="g-data-list-table freeze-candidateProject" style="border: 1px solid #e1e1e1;overflow:auto;width:1900px;">
+				<div class="g-data-list-table freeze-candidateProject" style="border: 1px solid #e1e1e1;overflow:auto;">
 				    <table class="record" width="100%" cellpadding="0" cellspacing="0">
 				        <tr>
-				        	<th width="2%">序号</th>
-				            <th width="6%">项目名称</th>
-				            <th width="7%">年预算金额</th>
-				            <th width="7%">已支出金额</th>
-				            <th width="7%">可支出金额</th>
-				            <th width="7%">本次预算内支出</th>
-				            <th width="7%">本次追加预算支出</th>
-				            <th width="7%">预算调整追加</th>
-				            <th width="7%">预算调整减少</th>
-				            <th width="7%">追加预算已支出</th>
-				            <th width="7%">追加预算可支出</th>
-				            <th width="8%">支出日期</th>
-				            <th width="9%">备注</th>
-				            <th width="10%">附件</th>
+				        	<th width="5%">序号</th>
+				            <th width="15%">项目名称</th>
+				            <th width="10%">资金来源</th>
+				            <th width="13%">年预算金额</th>
+				            <th width="13%">已支出金额</th>
+				            <th width="13%">可支出金额</th>
+				            <th width="13%">本次预算内支出</th>
+				            <th width="13%">附件</th>
 				            <th width="5%">操作</th>
 				            <th style="display:none">id</th>
 				        </tr>
@@ -281,43 +258,20 @@
 				        <tr class="root expendtr" style="font-size: 14px;font-weight: normal;">
 				        	<td >#{_index + 1}</td>
 				            <td >#{_obj[0]}</td>
+				            <td >#{_obj[5]}</td>
 				            <td >#{_obj[1]}</td>
 				            <td >#{_obj[2]}</td>
 				            <td  name="canUseMoney">#{_obj[3]}</td>
-				            <td >
+				             <td >
 				            	<input id="money_#{_index}" name="money" class="form-control row-text-simplify" value="#{_obj[4]}" type="text" onblur="totalMoney()"/>
 				            </td>
-				            <td >
-				            	<input id="add_money_#{_index}" name="add_money" class="form-control row-text-simplify" value="#{_obj[9]}" type="text"/>
-				            </td>
-				            <td>
-				            	<input id="budget_add_#{_index}" name="budget_add" class="form-control row-text-simplify" value="#{_obj[10]}" type="text"/>
-				            </td>
-				            <td >
-				            	<input id="budget_cut_#{_index}" name="budget_cut" class="form-control row-text-simplify" value="#{_obj[11]}" type="text"/>
-				            </td>
-				             <td >
-				            	<input id="append_paid_#{_index}" name="append_paid" class="form-control row-text-simplify" value="#{_obj[12]}" type="text"/>
-				            </td>
-				            <td >
-				            	<input id="append_canpay_#{_index}" name="append_canpay" class="form-control row-text-simplify" value="#{_obj[13]}" type="text"/>
-				            </td>
-				            <td >
-				            	<div class="input-append date form_datetime_second" style="position:relative;" >
-                               		<input id="time_#{_index}" type="text" value="#{_obj[5]}" readonly="readonly" style="width:110px;height:34;" name="time"/> 
-                               		<span class="add-on" style="position:absolute; right:10px; top:3px;"><i class="icon-th" style="margin:0;"><img src="" alt="" /></i></span>
-                               	</div>
-							</td>
-				            <td >
-				            	<input name="comment" id="comment_#{_index}" class="form-control row-text-simplify" value="#{_obj[6]}" type="text"/>
-				            </td>
-				            <td >#{_obj[7]}</td>
+				            <td >#{_obj[6]}</td>
 				            <td >
 				            	<a name="delete" title="删除" style="text-decoration: none; cursor: pointer;" onclick="deleteList()">
 									<img src="../images/icon_delete_16x16.png"/>
 								</a>
 							</td>
-				            <td style="display:none" id="project_id_#{_index}">#{_obj[8]}</td>
+				            <td style="display:none" id="project_id_#{_index}">#{_obj[7]}</td>
 				        </tr>
 				   	</a:repeat>
 				    </table>
@@ -393,7 +347,7 @@
 								</td>
 								<td valign="middle">
 									<div>
-										<h:inputTextarea value="#{expendApplyInfoHome.comment}"  id="comment"/>
+										<h:inputTextarea value="#{expendApplyInfoHome.comment}"  id="comment"  rows="5" cols="60"/>
 									</div>
 								</td>
 							</tr>
@@ -545,7 +499,7 @@
 										</td>
 										<td valign="top" class="modaltd">
 										<rich:panel id="usedMoneyPanl" style="margin:0; border:none; padding: 0;">
-											<h:inputText id="usedMoney" value="#{expendApplyInfoHome.usedMoney}" styleClass=" mb10 border" style="height:34px;width:159px;"  readonly="readonly"/>
+											<input id="usedMoney" value="#{expendApplyInfoHome.usedMoney}" class=" mb10 border" style="height:34px;width:159px;"  readonly="readonly"/>
 										</rich:panel>
 										</td>
 									</tr>
@@ -561,7 +515,7 @@
 										</td>
 										<td valign="middle" class="modaltd">
 										<rich:panel id="canUseMoneyPanl" style="margin:0; border:none; padding: 0;">
-											<h:inputText id="canUseMoney" value="#{expendApplyInfoHome.canUseMoney}" styleClass=" mb10 border" style="height:34px;width:159px;"  readonly="readonly"/>
+											<input id="canUseMoney" value="#{expendApplyInfoHome.canUseMoney}" class=" mb10 border" style="height:34px;width:159px;"  readonly="readonly"/>
 										</rich:panel>
 										</td>
 									</tr>
@@ -593,7 +547,6 @@
 				<a:actionparam name="year" assignTo="#{expendApplyInfoHome.year}" />
 				<a:actionparam name="applyUser" assignTo="#{expendApplyInfoHome.applyUser}" />
 				<a:actionparam name="applySn" assignTo="#{expendApplyInfoHome.applySn}" />
-				<a:actionparam name="finaceAccountName" assignTo="#{expendApplyInfoHome.finaceAccountName}" />
 				<a:actionparam name="reciveCompany" assignTo="#{expendApplyInfoHome.reciveCompany}" />
 				<a:actionparam name="invoiceSn" assignTo="#{expendApplyInfoHome.invoiceSn}" />
 				<a:actionparam name="summary" assignTo="#{expendApplyInfoHome.summary}" />
@@ -609,7 +562,6 @@
 				<a:actionparam name="year" assignTo="#{expendApplyInfoHome.year}" />
 				<a:actionparam name="applyUser" assignTo="#{expendApplyInfoHome.applyUser}" />
 				<a:actionparam name="applySn" assignTo="#{expendApplyInfoHome.applySn}" />
-				<a:actionparam name="finaceAccountName" assignTo="#{expendApplyInfoHome.finaceAccountName}" />
 				<a:actionparam name="reciveCompany" assignTo="#{expendApplyInfoHome.reciveCompany}" />
 				<a:actionparam name="invoiceSn" assignTo="#{expendApplyInfoHome.invoiceSn}" />
 				<a:actionparam name="summary" assignTo="#{expendApplyInfoHome.summary}" />
@@ -713,7 +665,6 @@
 				var year = jQuery("#budgetYear").val();
 				var user = jQuery("#user").val();
 				var applySn = jQuery("#mainForm\\:formnum").val();
-				var finaceAccountName = jQuery("#mainForm\\:finaceAccountName").val();
 				var reciveCompany = jQuery("#mainForm\\:reciveCompany").val();
 				var invoicenum = jQuery("#mainForm\\:invoicenum").val();
 				var summary = jQuery("#mainForm\\:summary").val();
@@ -742,12 +693,6 @@
 					return ;
 					
 				}
-				if(finaceAccountName == ""){
-					___msg('温馨提示', "请输入账务账名");
-					flag = false;
-					return ;
-					
-				}
 				if(reciveCompany == ""){
 					___msg('温馨提示', "请输入收款公司");
 					flag = false;
@@ -759,7 +704,7 @@
 					return ;
 				}
 				if(summary == ""){
-					___msg('温馨提示', "请输入摘要");
+					___msg('温馨提示', "请输入发票张数");
 					flag = false;
 					return ;
 				}
@@ -790,22 +735,6 @@
 						}
 					}
 				});
-				jQuery("input[name='time']").each(function(){
-					var time = jQuery(this).val();
-					if(time == null || time == ""){
-						___msg('温馨提示', "请选择支出日期");
-						flag = false;
-						return;
-					}
-				});
-				jQuery("input[name='comment']").each(function(){
-					var comment = jQuery(this).val();
-					if(comment.length> 50){
-						___msg('温馨提示', "备注不能大于50字");
-						flag = false;
-						return ;
-					}
-				});
 				var json = getJson();
 				if(json == '{"expend_list":[]}'){
 					___msg('温馨提示', "请选择申请内容");
@@ -818,7 +747,7 @@
 					return;
 				}
 				if(flag){
-					save(year,user,applySn,finaceAccountName,reciveCompany,invoicenum,summary,reimbursementer,json,applyTime,registeTime,register,comment);
+					save(year,user,applySn,reciveCompany,invoicenum,summary,reimbursementer,json,applyTime,registeTime,register,comment);
 				}
 				
 			}
@@ -841,7 +770,6 @@
 				var year = jQuery("#budgetYear").val();
 				var user = jQuery("#user").val();
 				var applySn = jQuery("#mainForm\\:formnum").val();
-				var finaceAccountName = jQuery("#mainForm\\:finaceAccountName").val();
 				var reciveCompany = jQuery("#mainForm\\:reciveCompany").val();
 				var invoicenum = jQuery("#mainForm\\:invoicenum").val();
 				var summary = jQuery("#mainForm\\:summary").val();
@@ -867,12 +795,6 @@
 					return ;
 					
 				}
-				if(finaceAccountName == ""){
-					___msg('温馨提示', "请输入账务账名");
-					flag = false;
-					return ;
-					
-				}
 				if(reciveCompany == ""){
 					___msg('温馨提示', "请输入收款公司");
 					flag = false;
@@ -884,7 +806,7 @@
 					return ;
 				}
 				if(summary == ""){
-					___msg('温馨提示', "请输入摘要");
+					___msg('温馨提示', "请输入发票张数");
 					flag = false;
 					return ;
 				}
@@ -915,22 +837,6 @@
 						}
 					}
 				});
-				jQuery("input[name='time']").each(function(){
-					var time = jQuery(this).val();
-					if(time == null || time == ""){
-						___msg('温馨提示', "请选择支出日期");
-						flag = false;
-						return;
-					}
-				});
-				jQuery("input[name='comment']").each(function(){
-					var comment = jQuery(this).val();
-					if(comment.length> 50){
-						___msg('温馨提示', "备注不能大于50字");
-						flag = false;
-						return ;
-					}
-				});
 				var json = getJson();
 				if(json == '{"expend_list":[]}'){
 					___msg('温馨提示', "请选择申请内容");
@@ -943,7 +849,7 @@
 					return;
 				}
 				if(flag){
-					update(expendInfoId,year,user,applySn,finaceAccountName,reciveCompany,invoicenum,summary,reimbursementer,json,applyTime,registeTime,register,comment);
+					update(expendInfoId,year,user,applySn,reciveCompany,invoicenum,summary,reimbursementer,json,applyTime,registeTime,register,comment);
 				}
 				
 			}
@@ -953,22 +859,10 @@
 				jQuery(".expendtr").each(function(i){
 					var projectId= jQuery("#project_id_" + i).text();
 					var money = jQuery("#money_" + i).val();
-					var addMoney = jQuery("#add_money_" + i).val();
-					var budgetAdd = jQuery("#budget_add_" + i).val();
-					var budgetCut = jQuery("#budget_cut_" + i).val();
-					var appendPaid = jQuery("#append_paid_" + i).val();
-					var appendCanpay = jQuery("#append_canpay_" + i).val();
 					var time = jQuery("#time_" + i).val();
 					var comment = jQuery("#comment_" + i).val();
 					json += '{"project_id":"' + projectId + '",';
-					json += '"expend_money":"' + money + '",';
-					json += '"add_money":"' + addMoney + '",';
-					json += '"budget_add":"' + budgetAdd + '",';
-					json += '"budget_cut":"' + budgetCut + '",';
-					json += '"append_paid":"' + appendPaid + '",';
-					json += '"append_canpay":"' + appendCanpay + '",';
-					json += '"expend_time":"' + time + '",';
-					json += '"expend_comment":"' + comment + '"},';
+					json += '"expend_money":"' + money + '"},';
 				});
 				json = json.substring(0,json.length-1);
 				json += "]}"; 

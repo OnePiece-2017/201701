@@ -20,6 +20,18 @@
 			<h:form id="mainForm">
 				<input type="hidden" name="page" value="1" />
 				<div>
+				<div class="fl" style="width: 210px;margin-top: 8px;margin-left: 20px;">
+					<table>
+						<tr>
+							<td valign="middle">
+								<span class="field-name mb10">项目名称</span>
+							</td>
+							<td valign="middle">
+								<input value="#{queryExpendApplay.projectName}"  class="form-control" id="projectName"/>
+							</td>
+						</tr>
+					</table>
+					</div>
 					<div class="fl" style="width: 180px;margin-top: 8px;margin-left:20px;">
 						<table>
 							<tr>
@@ -62,36 +74,16 @@
 						</tr>
 					</table>
 					</div>
-					<div class="fl" style="width: 210px;margin-top: 8px;margin-left: 20px;">
-					<table>
-						<tr>
-							<td valign="middle">
-								<span class="field-name mb10">项目名称</span>
-							</td>
-							<td valign="middle">
-								<select id="project" class="selectpicker">
-									<a:repeat value="#{queryExpendApplay.projectList}" var="_var">
-										<s:fragment rendered="#{queryExpendApplay.projectId eq _var[0]}">
-											<option value="#{_var[0]}" selected="selected">#{_var[1]}</option>
-										</s:fragment>
-										<s:fragment rendered="#{queryExpendApplay.projectId ne _var[0]}">
-											<option value="#{_var[0]}">#{_var[1]}</option>
-										</s:fragment>
-									</a:repeat>
-								</select>
-							</td>
-						</tr>
-					</table>
-					</div>
+					
 					<div class="fl" style="width: 240px;margin-top: 8px;margin-left: 30px;">
 					<table>
 						<tr>
 							<td valign="middle">
-								<span class="field-name mb10">提交时间</span>
+								<span class="field-name mb10">申请时间</span>
 							</td>
 							<td valign="middle">
 								<div class="input-append date form_datetime_second" style="position:relative;" >
-	                               		<input type="text" value="#{queryExpendApplay.expendTime}" readonly="readonly" style="border-radius:4px;width:110px;height:34;" name="time"/> 
+	                               		<input type="text" id="applyTime" value="#{queryExpendApplay.expendTime}" readonly="readonly" style="border-radius:4px;width:110px;height:34;" name="time"/> 
 	                               		<span class="add-on" style="position:absolute; right:10px; top:3px;"><i class="icon-th" style="margin:0;"></i></span>
 	                            </div>
 							</td>
@@ -100,9 +92,10 @@
 					</div>
 				</div>
 				<div class="fl">
-					<h:inputHidden value="#{queryExpendApplay.departId}" id="departIdHidden"/>
-					<h:inputHidden value="#{queryExpendApplay.projectId}" id="projectIdHidden"/>
+					<h:inputHidden value="#{queryExpendApplay.projectName}" id="projectNameHidden"/>
 					<h:inputHidden value="#{queryExpendApplay.fundsSourceId}" id="fundsSourceIdHidden"/>
+					<h:inputHidden value="#{queryExpendApplay.departId}" id="departIdHidden"/>
+					<h:inputHidden value="#{queryExpendApplay.expendTime}" id="expendTimeHidden"/>
 					<h:commandButton styleClass="btn btn-primary mt10 ml20" action="/budget/QueryExpendApplay.xhtml" value="搜索" onclick="searchBefore()"/>
 				</div>
 			</h:form>
@@ -123,14 +116,19 @@
 		        	<tr class="node-record #{_row % 2 eq 0 ? 'odd' : 'even'}">
 			        	<td>#{_row + 1}</td>
 			        	<td>
-			        		<a  href="/HospitalBudget/budget/ExpendApplayDetail.seam?expendApplayId=#{_result[0]}"  title="查看详情">#{_result[1]}</a>
+			        		<s:fragment rendered="#{_result[9] eq null }">
+			        			<a  href="/HospitalBudget/budget/ExpendApplayDetail.seam?expendApplayId=#{_result[0]}"  title="查看详情">#{_result[2]}</a>
+			        		</s:fragment>
+			        		<s:fragment rendered="#{_result[9] ne null }">
+			        			<a  href="/HospitalBudget/budget/ExpendApplayDetail.seam?expendApplayId=#{_result[0]}"  title="查看详情">#{_result[2]}</a>
+			        		</s:fragment>
 			        	</td>
 			        	<td>#{_result[3]}</td>
-			        	<td>#{commonFinder.getMoneySource(_result[2])}</td>
-			        	<td>#{_result[4] == null ? _result[8] : _result[4]}</td>
-			        	<td>#{_result[5]}</td>
+			        	<td>#{_result[4]}</td>
+			        	<td>#{ _result[5]}</td>
 			        	<td>#{_result[6]}</td>
-			        	<td>#{commonFinder.parseDate(_result[7])}</td>
+			        	<td>#{_result[7]}</td>
+			        	<td>#{commonFinder.parseDate(_result[8])}</td>
 		        	</tr>
 		        </a:repeat>
 		    </table>
@@ -220,9 +218,10 @@
 
 			//搜索
 			function searchBefore(){
-				jQuery("#mainForm\\:departIdHidden").val(jQuery("#depart").val());
+				jQuery("#mainForm\\:projectNameHidden").val(jQuery("#projectName").val());
 				jQuery("#mainForm\\:fundsSourceIdHidden").val(jQuery("#fundsSource").val());
-				jQuery("#mainForm\\:projectIdHidden").val(jQuery("#project").val());
+				jQuery("#mainForm\\:departIdHidden").val(jQuery("#depart").val());
+				jQuery("#mainForm\\:expendTimeHidden").val(jQuery("#applyTime").val());
 			}
 		//]]>
 		</script>

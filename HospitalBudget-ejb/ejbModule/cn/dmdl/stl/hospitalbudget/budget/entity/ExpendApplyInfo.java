@@ -25,7 +25,6 @@ public class ExpendApplyInfo implements java.io.Serializable{
 	private String expendApplyCode;//单据编号
 	private Integer taskOrderId;
 	private String orderSn;
-	private String finaceAccountName;
 	private String year;
 	private Integer applyUserId;
 	private String reciveCompany;
@@ -153,14 +152,6 @@ public class ExpendApplyInfo implements java.io.Serializable{
 		this.updateUser = updateUser;
 	}
 	
-	@Column(name = "finace_account_name")
-	@NotNull
-	public String getFinaceAccountName() {
-		return finaceAccountName;
-	}
-	public void setFinaceAccountName(String finaceAccountName) {
-		this.finaceAccountName = finaceAccountName;
-	}
 	
 	@Column(name = "summary")
 	public String getSummary() {

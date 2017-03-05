@@ -28,8 +28,6 @@ public class ExpendApplyProject implements java.io.Serializable{
 	private Float budgetAdjestmentCut;//预算调整减少
 	private Float appendBudgetPaid;//追加预算已支出
 	private Float appendBudgetCanCut;//追加预算可支出
-	private Date expendTime;
-	private String comment;
 	
 	private Date insertTime;
 	private Integer insertUser;
@@ -67,26 +65,6 @@ public class ExpendApplyProject implements java.io.Serializable{
 	public void setExpendMoney(Float expendMoney) {
 		this.expendMoney = expendMoney;
 	}
-	
-	@Temporal(TemporalType.TIMESTAMP)
-	@Column(name = "expend_time", nullable = false, length = 19)
-	@NotNull
-	public Date getExpendTime() {
-		return expendTime;
-	}
-	public void setExpendTime(Date expendTime) {
-		this.expendTime = expendTime;
-	}
-	
-	@Column(name = "comment")
-	public String getComment() {
-		return comment;
-	}
-	public void setComment(String comment) {
-		this.comment = comment;
-	}
-	
-	
 	
 	@Temporal(TemporalType.TIMESTAMP)
 	@Column(name = "insert_time", nullable = false, length = 19)

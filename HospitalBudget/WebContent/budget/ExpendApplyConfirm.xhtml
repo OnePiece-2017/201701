@@ -131,10 +131,10 @@
 									<table>
 										<tr>
 											<td valign="middle">
-												<span class="field-name mb10">财务账名:</span>
+												<span class="field-name mb10">报销人:</span>
 											</td>
 											<td valign="middle">
-												<input  value="#{expendApplyConfirmHome.expendApplyInfo.finaceAccountName}" class=" mb10 border" style="height:34px;width:220px" maxlength="20" readonly="readonly"/>
+												<input value="#{expendApplyConfirmHome.reimbursementer}" class=" mb10 border" style="height:34px;width:220px" maxlength="20" readonly="readonly"/>
 											</td>
 										</tr>
 									</table>
@@ -177,7 +177,7 @@
 									<table>
 										<tr>
 											<td valign="middle">
-												<span class="field-name mb10">摘要:</span>
+												<span class="field-name mb10">发票张数:</span>
 											</td>
 											<td valign="middle">
 												<input value="#{expendApplyConfirmHome.expendApplyInfo.summary}" class=" mb10 border" style="height:34px;width:220px" maxlength="20" readonly="readonly"/>
@@ -186,47 +186,29 @@
 									</table>
 								</div>
 							</td>
-							<td width="50%">
-								<div class="pb20">
-									<table>
-										<tr>
-											<td valign="middle">
-												<span class="field-name mb10">报销人:</span>
-											</td>
-											<td valign="middle">
-												<input value="#{expendApplyConfirmHome.reimbursementer}" class=" mb10 border" style="height:34px;width:220px" maxlength="20" readonly="readonly"/>
-											</td>
-										</tr>
-									</table>
-								</div>
-							</td>
+							
 						</tr>
 					</table>
 				</div>
 				<rich:panel id="listPanl" style="margin:0; border:none; padding: 0;">
-				<div class="g-data-list-table freeze-candidateProject" style="border: 1px solid #e1e1e1;overflow:auto;width:1900px;">
+				<div class="g-data-list-table freeze-candidateProject" style="border: 1px solid #e1e1e1;overflow:auto;">
 				    <table class="record" width="100%" cellpadding="0" cellspacing="0">
 				        <tr>
-				        	<th width="2%">序号</th>
-				            <th width="6%">项目名称</th>
-				            <th width="7%">年预算金额</th>
-				            <th width="7%">已支出金额</th>
-				            <th width="7%">可支出金额</th>
-				            <th width="7%">本次预算内支出</th>
-				            <th width="7%">本次追加预算支出</th>
-				            <th width="7%">预算调整追加</th>
-				            <th width="7%">预算调整减少</th>
-				            <th width="7%">追加预算已支出</th>
-				            <th width="7%">追加预算可支出</th>
-				            <th width="8%">支出日期</th>
-				            <th width="9%">备注</th>
-				            <th width="10%">附件</th>
+				        	<th width="6%">序号</th>
+				            <th width="15%">项目名称</th>
+				            <th width="10%">资金来源</th>
+				            <th width="14%">年预算金额</th>
+				            <th width="14%">已支出金额</th>
+				            <th width="14%">可支出金额</th>
+				            <th width="13%">本次预算内支出</th>
+				            <th width="14%">附件</th>
 				            <th style="display:none">id</th>
 				        </tr>
 				    <a:repeat value="#{expendApplyConfirmHome.projectList}" var="_obj" rowKeyVar="_index">
 				        <tr class="root expendtr" style="font-size: 14px;font-weight: normal;">
 				        	<td >#{_index + 1}</td>
 				            <td >#{_obj[0]}</td>
+				            <td >#{_obj[5]}</td>
 				            <td >#{_obj[1]}</td>
 				            <td >#{_obj[2]}</td>
 				            <td  name="canUseMoney">#{_obj[3]}</td>
@@ -234,28 +216,9 @@
 				            	<input id="money_#{_index}" name="money" class="form-control row-text-simplify" value="#{_obj[4]}" type="text" onblur="totalMoney()"/>
 				            </td>
 				            <td >
-				            	#{_obj[9]}
-				            </td>
-				            <td>
-				            	#{_obj[10]}
-				            </td>
-				            <td >
-				            	#{_obj[11]}
-				            </td>
-				             <td >
-				            	#{_obj[12]}
-				            </td>
-				            <td >
-				            	#{_obj[13]}
-				            </td>
-				            <td >
-                              #{_obj[5]}
-							</td>
-				            <td >
 				            	#{_obj[6]}
 				            </td>
-				            <td >#{_obj[7]}</td>
-				            <td style="display:none" id="project_id_#{_index}">#{_obj[8]}</td>
+				            <td style="display:none" id="project_id_#{_index}">#{_obj[7]}</td>
 				        </tr>
 				   	</a:repeat>
 				    </table>
@@ -338,10 +301,7 @@
 												<span class="allMoney mb10">登记时间:</span>
 											</td>
 											<td valign="middle">
-												<div class="input-append date form_datetime_second" style="position:relative;" >
 				                               		<input  type="text" value="#{expendApplyConfirmHome.expendApplyInfo.registTime}" readonly="readonly" class = "border" style="width:110px;height:34;" /> 
-				                               		<span class="add-on" style="position:absolute; right:10px; top:3px;background-image: url(../images/glyphicons-halflings.png);"><i class="icon-th" style="margin:0;background-image: url(../images/glyphicons-halflings.png);"></i></span>
-				                               	</div> 
 											</td>
 										</tr>
 									</table>
@@ -357,7 +317,7 @@
 								</td>
 								<td valign="middle">
 									<div>
-										<h:inputTextarea value="#{expendApplyConfirmHome.expendApplyInfo.comment}"  />
+										<h:inputTextarea value="#{expendApplyConfirmHome.expendApplyInfo.comment}"  rows="5" cols="60" readonly="readonly"/>
 									</div>
 								</td>
 							</tr>
@@ -369,7 +329,7 @@
 						<tr>
 							<td>
 								<a class="btn btn-primary mr15" onclick="return checkSub();">提交</a>
-								<s:button id="cancel" value="返回" view="/budget/ExpendApplayList.xhtml" propagation="none" styleClass="btn btn-default" />
+								<s:button id="cancel" value="返回" view="/budget/ExpendConfirmList.xhtml" propagation="none" styleClass="btn btn-default" />
 							</td>
 						</tr>
 					</table>
@@ -454,7 +414,7 @@
 			function saveComplete(data){
 				if (data != null && 'INVOKE_SUCCESS' == data.invoke_result) {
 				    ___dynamic_function = function() {
-				    	window.location.href = '../budget/ExpendApplayList.seam';
+				    	window.location.href = '../budget/ExpendConfirmList.seam';
 					};
 					___msg('温馨提示', data.message, {closed: ___dynamic_function});
 				} else {

@@ -35,17 +35,16 @@
 		<div class="g-data-list-table">
 		    <table class="record" width="100%" cellpadding="0" cellspacing="0">
 		        <tr>
-		            <th width="5%">序号</th>
-		            <th width="10%">单据编号</th>
-		            <th width="6%">支出年份</th>
-		            <th width="10%">账务账名</th>
-		            <th width="10%">收款单位</th>
+		            <th width="6%">序号</th>
+		            <th width="13%">单据编号</th>
+		            <th width="7%">支出年份</th>
+		            <th width="11%">总金额</th>
+		            <th width="13%">收款单位</th>
 		            <th width="10%">发票号</th>
-		            <th width="7%">申请人</th>
-		            <th width="10%">申请时间</th>
-		            <th width="10%">摘要</th>
-		            <th width="10%">备注</th>
-		            <th width="5%">操作</th>
+		            <th width="8%">申请人</th>
+		            <th width="11%">申请时间</th>
+		            <th width="8%">发票张数</th>
+		            <th width="6%">操作</th>
 		        </tr>
 		        <a:repeat value="#{expendApplayList.resultList}" var="_result" rowKeyVar="_row">
 		        	<tr class="node-record #{_row % 2 eq 0 ? 'odd' : 'even'}">
@@ -60,7 +59,6 @@
 			        	<td>#{_result[6]}</td>
 			        	<td>#{commonFinder.parseDate(_result[7])}</td>
 			        	<td>#{_result[8]}</td>
-			        	<td>#{_result[9]}</td>
 			        	<td>
 			        		<s:fragment rendered="#{_result[10] eq 0}">
 				        		<s:link title="编辑" view="/budget/ExpendApplication.xhtml" style="text-decoration: none;" >

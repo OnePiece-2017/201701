@@ -179,15 +179,14 @@ public class ExpendExecutHome extends CriterionEntityHome<Object> {
 		dataSql.append(" eai.`year`,");//0执行年份
 		dataSql.append(" uie.fullname as applay_name,");//1申请人
 		dataSql.append(" eai.expend_apply_code,");//2单据编号
-		dataSql.append(" eai.finace_account_name,");//3账务账名
-		dataSql.append(" eai.recive_company,");//4收款单位
-		dataSql.append(" eai.invoice_num,");//5发票号
-		dataSql.append(" eai.summary,");//6摘要
-		dataSql.append(" uie1.fullname,");//7报销人
-		dataSql.append(" eai.apply_time, ");//8申请时间
-		dataSql.append(" eai.register_time, ");//9登记时间
-		dataSql.append(" uie2.fullname as register, ");//10登记人
-		dataSql.append(" eai.`comment`, eai.finace_account_name as totalMoney ");//11  12备注
+		dataSql.append(" eai.recive_company,");//3收款单位
+		dataSql.append(" eai.invoice_num,");//4发票号
+		dataSql.append(" eai.summary,");//5摘要
+		dataSql.append(" uie1.fullname,");//6报销人
+		dataSql.append(" eai.apply_time, ");//7申请时间
+		dataSql.append(" eai.register_time, ");//8登记时间
+		dataSql.append(" uie2.fullname as register, ");//9登记人
+		dataSql.append(" eai.`comment`, eai.total_money as totalMoney ");//10  11备注
 		dataSql.append(" FROM expend_apply_info eai");
 		dataSql.append(" LEFT JOIN user_info ui on eai.applay_user_id=ui.user_info_id ");
 		dataSql.append(" LEFT JOIN user_info_extend uie on uie.user_info_extend_id=ui.user_info_extend_id ");
@@ -200,9 +199,9 @@ public class ExpendExecutHome extends CriterionEntityHome<Object> {
 		List<Object[]> dataList = getEntityManager().createNativeQuery(dataSql.toString()).getResultList();
 		if (dataList != null && dataList.size() > 0) {
 			expendApplyInfo = dataList.get(0);
-			if(null != expendApplyInfo[9] && !expendApplyInfo[9].toString().equals("")){
+			if(null != expendApplyInfo[7] && !expendApplyInfo[7].toString().equals("")){
 				try {
-					expendApplyInfo[9] = sdfday.format(sdfday.parse(expendApplyInfo[9].toString()));
+					expendApplyInfo[7] = sdfday.format(sdfday.parse(expendApplyInfo[7].toString()));
 				} catch (ParseException e) {
 					
 				}
@@ -224,47 +223,31 @@ public class ExpendExecutHome extends CriterionEntityHome<Object> {
 		projectSql.append(" expi.budget_amount_frozen, ");
 		projectSql.append(" expi.budget_amount_surplus, ");
 		projectSql.append(" eap.expend_money, ");
-		projectSql.append(" eap.budget_append_expend, ");//5
-		projectSql.append(" eap.budget_adjustment_append, ");
-		projectSql.append(" eap.budget_adjestment_cut, ");
-		projectSql.append(" eap.append_budget_paid, ");
-		projectSql.append(" eap.append_budget_money, ");
-		projectSql.append(" eap.expend_time, ");//10
-		projectSql.append(" eap.`comment`,eap.project_id ");
+		projectSql.append(" eap.project_id,fs.the_value as source_name ");
 		projectSql.append(" FROM expend_apply_project eap ");
 		projectSql.append(" LEFT JOIN expend_apply_info eai ON eap.expend_apply_info_id = eai.expend_apply_info_id ");
 		projectSql.append(" LEFT JOIN usual_project up on up.the_id=eap.project_id ");
 		projectSql.append(" LEFT JOIN normal_expend_plan_info expi on  expi.project_id=eap.project_id and expi.`year` = eai.`year` ");
+		projectSql.append(" LEFT JOIN ys_funds_source fs on up.funds_source_id=fs.the_id ");
 		projectSql.append(" where eap.deleted=0 ");
 		projectSql.append(" and eai.task_order_id=").append(taskOrderId);
-		List<Object[]> list = getEntityManager().createNativeQuery(projectSql.toString()).getResultList();
+		List<Object[]> list = getEntityManager().createNativeQuery("select * from (" + projectSql.toString() + ") as test").getResultList();
 		float allMoney = 0f;
 		if(list.size() > 0){
 			for(Object[] obj : list){
-				Object[] projectDetail = new Object[14];
+				Object[] projectDetail = new Object[8];
 				projectDetail[0] = obj[0];
 				projectDetail[1] = obj[1];
 				projectDetail[2] = Float.parseFloat(obj[2].toString()) - Float.parseFloat(obj[4].toString());
 				projectDetail[3] = Float.parseFloat(obj[3].toString()) + Float.parseFloat(obj[4].toString());;
 				projectDetail[4] = obj[4];
 				allMoney += Float.parseFloat(projectDetail[4].toString());
-				try {
-					projectDetail[5] = sdfday.format(sdfday.parse(obj[10].toString()));
-				} catch (ParseException e) {
-					projectDetail[5] = obj[10].toString();
-				}
-				projectDetail[6] = obj[11] == null ? "" : obj[11].toString();
-				projectDetail[7] = "";
-				projectDetail[8] = obj[12];
-				projectDetail[9] = obj[5];
-				projectDetail[10] = obj[6];
-				projectDetail[11] = obj[7];
-				projectDetail[12] = obj[8];
-				projectDetail[13] = obj[9];
+				projectDetail[5] = obj[6];
+				projectDetail[6] = "";
+				projectDetail[7] = obj[5];
 				projectList.add(projectDetail);
 			}
 		}
-		expendApplyInfo[12] = allMoney;
 		return resultSet;
 	}
 	

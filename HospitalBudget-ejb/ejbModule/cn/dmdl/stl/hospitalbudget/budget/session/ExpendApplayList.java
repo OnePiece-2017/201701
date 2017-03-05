@@ -59,7 +59,7 @@ public class ExpendApplayList extends CriterionNativeQuery<Object[]> {
 		sql.append(" eai.expend_apply_info_id, ");//0申请单id
 		sql.append(" eai.expend_apply_code, ");//1申请编号
 		sql.append(" eai.`year`,");//2支出年份
-		sql.append(" eai.finace_account_name, ");//3账务账名
+		sql.append(" eai.total_money, ");//3总金额
 		sql.append(" eai.recive_company, ");//4收款单位
 		sql.append(" eai.invoice_num, ");//5发票号
 		sql.append(" uie.fullname, ");//6申请人名字
