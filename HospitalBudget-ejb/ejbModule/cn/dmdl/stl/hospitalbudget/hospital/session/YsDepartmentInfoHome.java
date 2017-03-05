@@ -18,8 +18,6 @@ public class YsDepartmentInfoHome extends CriterionEntityHome<YsDepartmentInfo> 
 	private static final long serialVersionUID = 1L;
 	private List<Object[]> theParentList;// 父级list
 	private Integer theParentValue;// 父级id
-	private List<Object[]> fundsSourceList;// 资金来源list
-	private Integer fundsSourceValue;// 资金来源id
 
 	@Override
 	public String persist() {
@@ -232,18 +230,6 @@ public class YsDepartmentInfoHome extends CriterionEntityHome<YsDepartmentInfo> 
 
 	public void setTheParentValue(Integer theParentValue) {
 		this.theParentValue = theParentValue;
-	}
-
-	public List<Object[]> getFundsSourceList() {
-		return fundsSourceList;
-	}
-
-	public Integer getFundsSourceValue() {
-		return fundsSourceValue;
-	}
-
-	public void setFundsSourceValue(Integer fundsSourceValue) {
-		this.fundsSourceValue = fundsSourceValue;
 	}
 
 }

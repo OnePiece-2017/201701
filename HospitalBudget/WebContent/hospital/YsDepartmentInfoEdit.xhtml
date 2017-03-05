@@ -84,28 +84,6 @@
 									</table>
 								</div>
 							</td>
-							<td width="50%">
-								<div class="pb20">
-									<table>
-										<tr>
-											<td valign="middle">
-												<span class="field-name mb10">资金来源</span>
-											</td>
-											<td valign="middle">
-												<select id="fundsSourceValue" class="selectpicker" data-live-search="true">
-													<a:repeat value="#{ysDepartmentInfoHome.fundsSourceList}" var="_var">
-														<option value="#{_var[0]}">#{_var[1]}</option>
-													</a:repeat>
-												</select>
-												<h:inputHidden id="fundsSourceValueHidden" value="#{ysDepartmentInfoHome.fundsSourceValue}" />
-											</td>
-											<td valign="middle">
-												<font color="red" style="margin-left: 3px;"></font>
-											</td>
-										</tr>
-									</table>
-								</div>
-							</td>
 						</tr>
 						<tr>
 							<td width="50%">
@@ -162,8 +140,6 @@
 			    jQuery('.selectpicker').selectpicker();
 			    jQuery('#theParentValue').val(jQuery('#mainForm\\:theParentValueHidden').val());
 			    jQuery('#theParentValue').selectpicker('render');
-			    jQuery('#fundsSourceValue').val(jQuery('#mainForm\\:fundsSourceValueHidden').val());
-			    jQuery('#fundsSourceValue').selectpicker('render');
 				
 			    var message = '#{ysDepartmentInfoHome.message}';
 			    ___dynamic_function = function() {
@@ -184,8 +160,9 @@
 					___msg('温馨提示', '请填写名称！', {closed: ___dynamic_function});
 					return false;
 				}
+				
 				jQuery('#mainForm\\:theParentValueHidden').val(jQuery('#theParentValue').val());
-				jQuery('#mainForm\\:fundsSourceValueHidden').val(jQuery('#fundsSourceValue').val());
+				
 				var budgetAttribute = '';
 				jQuery('input[name="budgetAttribute"]:checked').each(function(){
 					budgetAttribute += this.value + ',';

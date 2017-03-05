@@ -13,6 +13,7 @@
 		<link rel="stylesheet" type="text/css" href="#{request.contextPath}/stylesheet/template_list.css" />
 		<link rel="stylesheet" type="text/css" href="#{request.contextPath}/common/css/bootstrap.min.css" />
 		<link rel="stylesheet" type="text/css" href="#{request.contextPath}/common/css/bootstrap-select.min.css" />
+		<link rel="stylesheet" type="text/css" href="#{request.contextPath}/icheck/skins/square/blue.css" />
 		<link rel="stylesheet" type="text/css" href="#{request.contextPath}/toastr/toastr.min.css" />
 		<style type="text/css">
 			.row-input {
@@ -52,6 +53,7 @@
 	</ui:define>
 
 	<ui:define name="body">
+		#{usualProjectHome.wire()}
 		<h:form id="mainForm" styleClass="edit" enctype="multipart/form-data">
 			<div class="pd0-10">
 				<div class="pt30 fs14">
@@ -78,11 +80,32 @@
 									</table>
 								</div>
 							</td>
+							<td width="50%">
+								<div class="pb20">
+									<table>
+										<tr>
+											<td valign="middle">
+												<span class="field-name mb10">资金来源</span>
+											</td>
+											<td valign="middle">
+												<select id="fundsSource" class="selectpicker">
+													<a:repeat value="#{usualProjectHome.fundsSourceList}" var="_var">
+														<option value="#{_var[0]}">#{_var[1]}</option>
+													</a:repeat>
+												</select>
+											</td>
+											<td valign="middle">
+												<font color="red" style="margin-left: 3px;"></font>
+											</td>
+										</tr>
+									</table>
+								</div>
+							</td>
 						</tr>
 					</table>
 				</div>
-				<strong style="font-size: 20px;">选择项目</strong>
-				<div class="g-data-list-table freeze-candidateProject" style="height: 43px;">
+				<strong scrap-tag="1" style="font-size: 20px;">选择项目</strong>
+				<div scrap-tag="1" class="g-data-list-table freeze-candidateProject" style="height: 43px;">
 				    <table class="record" width="100%" cellpadding="0" cellspacing="0">
 				        <tr>
 				            <th width="30%">项目名称</th>
@@ -95,14 +118,15 @@
 				        </tr>
 				    </table>
 				</div>
-				<div class="g-data-list-table normal-candidateProject" style="border-radius: 0;height: 229px">
+				<div scrap-tag="1" class="g-data-list-table normal-candidateProject" style="border-radius: 0;height: 229px">
 				    <table class="record" width="100%" cellpadding="0" cellspacing="0">
 				    </table>
 				</div>
-				<br />
-				<br />
+				<br scrap-tag="1" />
+				<br scrap-tag="1" />
 				<strong style="font-size: 20px;">预算编制</strong>
 				<font style="margin-left: 15px;color: #f903ed;">项目金额(合计：<span class="node-totalAmount">--</span>元)</font>
+				<a class="btn btn-primary" style="float: right;line-height: 13px;" onclick="referTo();">参考</a>
 				<div class="g-data-list-table freeze-attendProject" style="height: 44px;">
 				    <table class="record" width="100%" cellpadding="0" cellspacing="0">
 				        <tr>
@@ -127,6 +151,7 @@
 					<table class="normal-btn">
 						<tr>
 							<td>
+								<a class="btn btn-success mr15" onclick="return saveTemporary();">保存</a>
 								<a class="btn btn-primary mr15" onclick="return onSave();">提交</a>
 							</td>
 						</tr>
@@ -146,6 +171,7 @@
 		<script type="text/javascript" src="#{request.contextPath}/common/js/bootstrap.min.js" />
 		<script type="text/javascript" src="#{request.contextPath}/common/js/bootstrap-select.min.js" charset="UTF-8" />
 		<script type="text/javascript" src="#{request.contextPath}/common/js/bootstrap-select-defaults-zh_CN.min.js" charset="UTF-8" />
+		<script type="text/javascript" src="#{request.contextPath}/icheck/js/icheck.min.js" charset="UTF-8" />
 		<script type="text/javascript" src="#{request.contextPath}/toastr/toastr.min.js" />
 		<script type="text/javascript" src="#{request.contextPath}/toolkit/utils.js" charset="UTF-8" />
 		<script type="text/javascript">
@@ -231,6 +257,7 @@
 						html += '		<a name="delete" title="删除" style="text-decoration: none; cursor: pointer;">';
 						html += '			<img src="../images/icon_delete_16x16.png">';
 						html += '		</a>';
+						html += '		<input type="checkbox" class="icheck">';
 						html += '	</td>';
 						html += '</tr>';
 						jQuery('.normal-attendProject .record').append(html);
@@ -265,6 +292,7 @@
 									html += '		<a name="delete" title="删除" style="text-decoration: none; cursor: pointer;">';
 									html += '			<img src="../images/icon_delete_16x16.png">';
 									html += '		</a>';
+									html += '		<input type="checkbox" class="icheck">';
 									html += '	</td>';
 									html += '</tr>';
 								}
@@ -354,7 +382,7 @@
 					cursorwidth : 9,
 					cursoropacitymax : 0.8,
 					touchbehavior : false,
-					autohidemode : false
+					autohidemode : true
 			    });
 
 			    jQuery('.normal-attendProject .record').prepend(jQuery('.freeze-attendProject tbody').html());
@@ -364,13 +392,28 @@
 					cursorwidth : 9,
 					cursoropacitymax : 0.8,
 					touchbehavior : false,
-					autohidemode : false
+					autohidemode : true
 			    });
 
 			    updateTotalAmount();
 			    updateMultilevelTotalAmount();
 			    updateSequenceNumber();
 			    updateYearOnYear();
+			    
+			    setTimeout(function(){
+			    }, 0);
+				jQuery('#fundsSource').val('1');
+				jQuery('#fundsSource').selectpicker('render');
+			    jQuery('.normal-candidateProject a[name="switch"]').each(function(){
+			    	jQuery(this).click();
+			    });
+			    jQuery('[scrap-tag="1"]').hide();
+			    
+				jQuery('.icheck').iCheck({
+					checkboxClass: 'icheckbox_square-blue',
+					radioClass: 'iradio_square-blue',
+					increaseArea: '20%'
+				});
 			});
 			
 			function updateTotalAmount() {
@@ -542,6 +585,14 @@
 				} else {
 					___msg('温馨提示', data.message);
 				}
+			}
+
+			function referTo() {
+				;
+			}
+
+			function saveTemporary() {
+				;
 			}
 		//]]>
 		</script>
