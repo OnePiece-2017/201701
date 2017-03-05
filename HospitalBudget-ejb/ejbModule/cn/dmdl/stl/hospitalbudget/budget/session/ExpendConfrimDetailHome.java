@@ -12,14 +12,15 @@ import org.jboss.seam.annotations.Name;
 
 import cn.dmdl.stl.hospitalbudget.budget.entity.ExpendApplyInfo;
 import cn.dmdl.stl.hospitalbudget.budget.entity.ExpendApplyProject;
+import cn.dmdl.stl.hospitalbudget.budget.entity.ExpendConfirmProject;
 import cn.dmdl.stl.hospitalbudget.common.session.CriterionEntityHome;
 import cn.dmdl.stl.hospitalbudget.util.CommonFinder;
 
-@Name("expendApplayDetailHome")
-public class ExpendApplayDetailHome extends CriterionEntityHome<Object> {
+@Name("expendConfrimDetailHome")
+public class ExpendConfrimDetailHome extends CriterionEntityHome<Object> {
 
 	private static final long serialVersionUID = 1L;
-	private Integer expendApplayProjectId;
+	private Integer expendConfrimProjectId;
 	private JSONObject saveResult;
 	private Object[] expendApplyInfo = new Object[16];
 	private List<Object[]> executeList;
@@ -57,9 +58,11 @@ public class ExpendApplayDetailHome extends CriterionEntityHome<Object> {
 		dataSql.append(" eai.apply_time, ");//7申请时间
 		dataSql.append(" eai.register_time, ");//8登记时间
 		dataSql.append(" uie2.fullname as register, ");//9登记人
-		dataSql.append(" eai.`comment`, eai.total_money as totalMoney,eai.insert_time,uie3.fullname  as insert_name ");//10  11备注
-		dataSql.append(" FROM expend_apply_info eai");
-		dataSql.append(" LEFT JOIN expend_apply_project eap on eai.expend_apply_info_id= eap.expend_apply_info_id ");
+		dataSql.append(" eai.`comment`, eci.total_money as totalMoney,eci.confirm_time,eai.insert_time,uie3.fullname  as insert_name ");//10  11 12备注
+		dataSql.append(" FROM expend_confirm_project ecp ");
+		dataSql.append(" LEFT JOIN expend_apply_project eap ON ecp.expend_apply_project_id = eap.expend_apply_project_id ");
+		dataSql.append(" LEFT JOIN expend_apply_info eai on eap.expend_apply_info_id=eai.expend_apply_info_id ");
+		dataSql.append(" LEFT JOIN expend_confirm_info eci on eci.expend_confirm_info_id= ecp.expend_confirm_info_id ");
 		dataSql.append(" LEFT JOIN user_info ui on eai.applay_user_id=ui.user_info_id ");
 		dataSql.append(" LEFT JOIN user_info_extend uie on uie.user_info_extend_id=ui.user_info_extend_id ");
 		dataSql.append(" LEFT JOIN user_info ui1 on eai.reimbursementer=ui1.user_info_id ");
@@ -68,7 +71,7 @@ public class ExpendApplayDetailHome extends CriterionEntityHome<Object> {
 		dataSql.append(" LEFT JOIN user_info_extend uie2 ON uie2.user_info_extend_id = ui2.user_info_extend_id ");
 		dataSql.append(" LEFT JOIN user_info ui3 ON eai.insert_user = ui3.user_info_id ");
 		dataSql.append(" LEFT JOIN user_info_extend uie3 ON uie3.user_info_extend_id = ui3.user_info_extend_id ");
-		dataSql.append(" where eai.deleted=0 and eap.expend_apply_project_id=").append(expendApplayProjectId);
+		dataSql.append(" where eai.deleted=0 and ecp.expend_confirm_project_id=").append(expendConfrimProjectId);
 		dataSql.insert(0, "select * from (").append(") as recordset");// 解决找不到列
 		List<Object[]> dataList = getEntityManager().createNativeQuery(dataSql.toString()).getResultList();
 		if (dataList != null && dataList.size() > 0) {
@@ -88,16 +91,16 @@ public class ExpendApplayDetailHome extends CriterionEntityHome<Object> {
 				}
 			}
 			try {
-				expendFirst[0] = sdfs.format(sdfs.parse(expendApplyInfo[12].toString()));
+				expendFirst[0] = sdfs.format(sdfs.parse(expendApplyInfo[13].toString()));
 			} catch (ParseException e) {
 				
 			}
-			expendFirst[1] = expendApplyInfo[13];
+			expendFirst[1] = expendApplyInfo[14];
 			expendFirst[2] = "支出申请";
 		}
-		
 		//查询流程
-		ExpendApplyProject eap = getEntityManager().find(ExpendApplyProject.class, expendApplayProjectId);
+		ExpendConfirmProject ecp = getEntityManager().find(ExpendConfirmProject.class, expendConfrimProjectId);
+		ExpendApplyProject eap = getEntityManager().find(ExpendApplyProject.class, ecp.getExpend_apply_project_id());
 		ExpendApplyInfo expendApplyInfo = getEntityManager().find(ExpendApplyInfo.class, eap.getExpendApplyInfoId());
 		String orderSn = expendApplyInfo.getOrderSn();
 		
@@ -127,6 +130,8 @@ public class ExpendApplayDetailHome extends CriterionEntityHome<Object> {
 				executeList.add(stepObj);
 			}
 		}
+
+		//查询项目列表
 		//查询项目列表
 		StringBuffer projectSql = new StringBuffer();
 		projectSql.append(" SELECT ");
@@ -134,15 +139,15 @@ public class ExpendApplayDetailHome extends CriterionEntityHome<Object> {
 		projectSql.append(" expi.budget_amount, ");
 		projectSql.append(" expi.budget_amount_frozen, ");
 		projectSql.append(" expi.budget_amount_surplus, ");
-		projectSql.append(" eap.expend_money, ");
-		projectSql.append(" eap.project_id,fs.the_value as source_name ");
-		projectSql.append(" FROM expend_apply_project eap ");
-		projectSql.append(" LEFT JOIN expend_apply_info eai ON eap.expend_apply_info_id = eai.expend_apply_info_id ");
-		projectSql.append(" LEFT JOIN usual_project up on up.the_id=eap.project_id ");
-		projectSql.append(" LEFT JOIN normal_expend_plan_info expi on  expi.project_id=eap.project_id and expi.`year` = eai.`year` ");
+		projectSql.append(" ecp.confirm_money, ");
+		projectSql.append(" ecp.project_id,fs.the_value as source_name ");
+		projectSql.append(" FROM expend_confirm_project ecp ");
+		projectSql.append(" LEFT JOIN expend_confirm_info eci on eci.expend_confirm_info_id= ecp.expend_confirm_info_id ");
+		projectSql.append(" LEFT JOIN usual_project up on up.the_id=ecp.project_id ");
+		projectSql.append(" LEFT JOIN normal_expend_plan_info expi on  expi.project_id=ecp.project_id and expi.`year` = eci.`year` ");
 		projectSql.append(" LEFT JOIN ys_funds_source fs on up.funds_source_id=fs.the_id ");
-		projectSql.append(" where eap.deleted=0 ");
-		projectSql.append(" and eap.expend_apply_project_id=").append(expendApplayProjectId);
+		projectSql.append(" where  ");
+		projectSql.append(" ecp.expend_confirm_project_id=").append(expendConfrimProjectId);
 		List<Object[]> list = getEntityManager().createNativeQuery("select * from (" + projectSql.toString() + ") as test").getResultList();
 		if(list.size() > 0){
 			for(Object[] obj : list){
@@ -202,14 +207,17 @@ public class ExpendApplayDetailHome extends CriterionEntityHome<Object> {
 
 
 
-	public Integer getExpendApplayProjectId() {
-		return expendApplayProjectId;
+	
+
+
+	public Integer getExpendConfrimProjectId() {
+		return expendConfrimProjectId;
 	}
 
 
 
-	public void setExpendApplayProjectId(Integer expendApplayProjectId) {
-		this.expendApplayProjectId = expendApplayProjectId;
+	public void setExpendConfrimProjectId(Integer expendConfrimProjectId) {
+		this.expendConfrimProjectId = expendConfrimProjectId;
 	}
 
 

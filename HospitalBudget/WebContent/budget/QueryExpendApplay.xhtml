@@ -117,10 +117,10 @@
 			        	<td>#{_row + 1}</td>
 			        	<td>
 			        		<s:fragment rendered="#{_result[9] eq null }">
-			        			<a  href="/HospitalBudget/budget/ExpendApplayDetail.seam?expendApplayId=#{_result[0]}"  title="查看详情">#{_result[2]}</a>
+			        			<a  href="/HospitalBudget/budget/ExpendApplayDetail.seam?expendApplayProjectId=#{_result[1]}"  title="查看详情">#{_result[2]}</a>
 			        		</s:fragment>
 			        		<s:fragment rendered="#{_result[9] ne null }">
-			        			<a  href="/HospitalBudget/budget/ExpendApplayDetail.seam?expendApplayId=#{_result[0]}"  title="查看详情">#{_result[2]}</a>
+			        			<a  href="/HospitalBudget/budget/ExpendConfirmDetail.seam?expendConfrimProjectId=#{_result[9]}"  title="查看详情">#{_result[2]}</a>
 			        		</s:fragment>
 			        	</td>
 			        	<td>#{_result[3]}</td>
