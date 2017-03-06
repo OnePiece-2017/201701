@@ -93,6 +93,16 @@
 		<script type="text/javascript" src="#{request.contextPath}/icheck/js/icheck.min.js" charset="UTF-8" />
 		<script type="text/javascript" src="#{request.contextPath}/toastr/toastr.min.js" />
 		<script type="text/javascript" src="#{request.contextPath}/toolkit/utils.js" charset="UTF-8" />
+		<script type="text/javascript">
+		//<![CDATA[
+		     var res = 0.00;
+		     jQuery('.node-record.root').each(function(){
+		    	 var td = jQuery(this).find('td:eq(5)').html();
+		    	 res += Number(jQuery.trim(td));
+		     });
+		     jQuery('.node-totalAmount').html(Number(res).toFixed(2));
+		//]]>
+		</script>
 	</ui:define>
 
 </ui:composition>
