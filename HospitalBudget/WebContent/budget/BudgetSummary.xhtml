@@ -180,7 +180,8 @@
 								html += '	<td>--</td>';
 								html += '	<td>--</td>';
 								html += '	<td><input type="checkbox" class="icheck"></td>';
-								html += '	<td><a href="../budget/CollectionInfo.seam?year=' + attendProject[i]['year'] + '&amp;amountTypeCode=' + attendProject[i]['amountType'] + '"  title="编辑" style="text-decoration: none;"><img src="../images/icon_view_16x16.png"></a></td>';
+								//html += '	<td><a href="../budget/CollectionInfo.seam?year=' + attendProject[i]['year'] + '&amp;amountTypeCode=' + attendProject[i]['amountType'] + '"  title="编辑" style="text-decoration: none;"><img src="../images/icon_view_16x16.png"></a></td>';
+								html += '	<td><a href="../budget/CollectionInfo.seam?orderSn=' + attendProject[i]['orderSn'] + '"  title="查看" style="text-decoration: none;"><img src="../images/icon_view_16x16.png"></a></td>';
 								html += '</tr>';
 							}else if(attendProject[i]['amountType'] == "2"){
 								expandHtml += '<tr class="data-row">';
@@ -193,7 +194,8 @@
 								expandHtml += '	<td>--</td>';
 								expandHtml += '	<td>--</td>';
 								expandHtml += '	<td><input type="checkbox" class="icheck"></td>';
-								expandHtml += '	<td><a href="../budget/CollectionInfo.seam?year=' + attendProject[i]['year'] + '&amp;amountTypeCode=' + attendProject[i]['amountType'] + '"  title="查看" style="text-decoration: none;"><img src="../images/icon_view_16x16.png"></a></td>';
+								//expandHtml += '	<td><a href="../budget/CollectionInfo.seam?year=' + attendProject[i]['year'] + '&amp;amountTypeCode=' + attendProject[i]['amountType'] + '"  title="查看" style="text-decoration: none;"><img src="../images/icon_view_16x16.png"></a></td>';
+								expandHtml += '	<td><a href="../budget/CollectionInfo.seam?orderSn=' + attendProject[i]['orderSn'] + '"  title="查看" style="text-decoration: none;"><img src="../images/icon_view_16x16.png"></a></td>';
 								expandHtml += '</tr>';
 							}
 						}

@@ -16,31 +16,72 @@
 		<link rel="stylesheet" type="text/css" href="#{request.contextPath}/icheck/skins/square/blue.css" />
 		<link rel="stylesheet" type="text/css" href="#{request.contextPath}/toastr/toastr.min.css" />
 		<style type="text/css">
-			.row-input {
-				width: 100%;
-				height: 100%;
-				text-align: center;
-				position: relative;
-			}
-			
-			.row-text-simplify {
-				position: absolute;
-				top: 2px;
-				text-align: center;
-			}
-			
-			.normal-attendProject .root {
+			.root {
 				background: #add595;
-			}
-			
-			.node-totalAmount {
-				font-weight: bold;
 			}
 		</style>
 	</ui:define>
 
 	<ui:define name="body">
-	
+		<div class="pd0-10 pt30">
+				<strong style="font-size: 20px;">预算汇总</strong>
+				<font style="margin-left: 15px;color: #f903ed;">项目金额(合计：<span class="node-totalAmount">--</span>元)</font>
+				<div class="g-data-list-table freeze-attendProject">
+				    <table class="record" width="100%" cellpadding="0" cellspacing="0">
+				        <tr>
+				            <th width="5%">序<br />号</th>
+				            <th width="10%">项目性质</th>
+				            <th width="10%">部门</th>
+				            <th width="21%">项目名称</th>
+				            <th width="10%">项目来源</th>
+				            <th width="10%">项目金额(元)</th>
+				            <th width="10%">金额计算依据</th>
+				            <th width="13%">与上一年预算<br />同比增减(万元)</th>
+				            <th width="20%">备注</th>
+				        </tr>
+				    <a:repeat value="#{budgetSummaryHome.collectionInfo}" var="_result" rowKeyVar="_row">
+			        	<tr class="node-record #{_result[5] == null ? 'root' : ''}">
+				        	<td>
+				        		<h:outputText value="#{_row + 1}" />
+				        	</td>
+				        	<td>
+				        		<h:outputText value="常规" />
+				        	</td>
+							<td>
+				        		<h:outputText value="#{_result[1]}" />
+				        	</td>
+				        	<td>
+				        		<h:outputText value="#{_result[6]}" />
+				        	</td>
+				        	<td>
+				        		<h:outputText value="#{_result[9] == 1 ? '平移' : '部门惯例'}" />
+				        	</td>
+				        	<td>
+				        		<h:outputText value="#{_result[7]}" />
+				        	</td>
+				        	<td>
+				        		<h:outputText value="#{_result[8]}" />
+				        	</td>
+				        	<td>
+				        		<h:outputText value="--" />
+				        	</td>
+				        	<td>
+				        		<h:outputText value="#{_result[9]}" />
+				        	</td>
+			        	</tr>
+		        </a:repeat>
+				</table>
+			</div>
+			<div class="pt50 pb95">
+				<table class="normal-btn">
+					<tr>
+						<td>
+							<s:button id="cancel" value="返回" view="/budget/BudgetSummary.xhtml" propagation="none" styleClass="btn btn-default" />
+						</td>
+					</tr>
+				</table>
+			</div>
+		</div>
 		<script type="text/javascript" src="#{request.contextPath}/javascript/template_list.js" charset="UTF-8" />
 		<script type="text/javascript" src="#{request.contextPath}/common/js/bootstrap.min.js" />
 		<script type="text/javascript" src="#{request.contextPath}/common/js/bootstrap-select.min.js" charset="UTF-8" />
@@ -48,11 +89,6 @@
 		<script type="text/javascript" src="#{request.contextPath}/icheck/js/icheck.min.js" charset="UTF-8" />
 		<script type="text/javascript" src="#{request.contextPath}/toastr/toastr.min.js" />
 		<script type="text/javascript" src="#{request.contextPath}/toolkit/utils.js" charset="UTF-8" />
-		<script type="text/javascript">
-		//<![CDATA[
-			
-		//]]>
-		</script>
 	</ui:define>
 
 </ui:composition>

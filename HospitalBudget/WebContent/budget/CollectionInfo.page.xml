@@ -6,5 +6,6 @@
 	<param name="collectionInfoFrom" />
 	<param name="year" value="#{budgetSummaryHome.year}" />
 	<param name="amountTypeCode" value="#{budgetSummaryHome.amountType}" />
+	<param name="orderSn" value="#{budgetSummaryHome.orderSn}" />
 
 </page>
