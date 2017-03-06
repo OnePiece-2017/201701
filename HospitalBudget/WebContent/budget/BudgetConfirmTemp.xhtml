@@ -100,16 +100,15 @@
 				    <table class="record" width="100%" cellpadding="0" cellspacing="0">
 				        <tr>
 				            <!-- <th width="9%">ID</th> -->
-				            <th width="5%">预算<br/>年份</th>
-				            <th width="5%">项目<br/>来源</th>
+				            <th width="10%">预算<br/>年份</th>
+				            <th width="10%">项目<br/>来源</th>
 				            <th width="10%">主管科室</th>
 				            <!-- <th width="10%">多级项目</th> -->
-				            <th width="10%">项目名称</th>
+				            <th width="15%">项目名称</th>
 				            <th width="10%">项目性质</th>
-				            <th width="5%">项目金额</th>
-				            <th width="8%">与上一年预算<br />同比增减(元)</th>
-				            <th width="7%">与上一年预算<br />同比增减率</th>
-				            <th width="30%">上会意见</th>
+				            <th width="10%">项目金额</th>
+				            <th width="10%">与上一年预算<br />同比增减(元)</th>
+				            <th width="10%">与上一年预算<br />同比增减率</th>
 				            <th width="15%">操作</th>
 				        </tr>
 				    </table>
@@ -139,6 +138,7 @@
 		<script type="text/javascript">
 		//<![CDATA[
 			var attendProject = #{issueRevenueHome.attendProject};// 已选项目列表
+			console.log(attendProject);
 			jQuery(document).ready(function() {
 			    var message = '#{issueRevenueHome.message}';
 			    if (message != null && message != '') {
@@ -159,35 +159,28 @@
 
 			    var html = '';
 				for (var i = 0; i < attendProject.length; i++) {
-					var isRoot = attendProject[i]['isRoot'];
-					var multilevel = attendProject[i]['multilevel'];
-					html += '<tr' + (isRoot ? ' class="root"' : '') + ' primary-key="' + attendProject[i]['normalBudgetYearId'] + '">';
-					//html += '	<td>' + attendProject[i]['normalBudgetYearId'] + '</td>';
-					html += '	<td>' + attendProject[i]['year'] + '</td>';
-					html += '	<td>' + attendProject[i]['projectSource'] + '</td>';
-					html += '	<td>' + attendProject[i]['departmentName'] + '</td>';
-					//html += '	<td>' + (multilevel ? '是' : '否') + '</td>';
-					html += '	<td>' + attendProject[i]['projectName'] + '</td>';
-					html += '	<td>常规</td>';
-					html += '	<td><input type="text" class="form-control row-text-simplify" value="' + attendProject[i]['budgetAmount'] + '"></td>';
-					html += '	<td>--</td>';
-					html += '	<td>--</td>';
-					html += '	<td><input type="text" class="form-control row-text-simplify"></td>';
-					html += '	<td class="confirm-flag">';
-					if (!multilevel || (multilevel && !isRoot)) {
-					    if (0 == attendProject[i]['confirmFlag']) {
-					    	html += '<a style="color: #000; text-decoration: none; cursor: pointer; outline: none;" onclick="issueTrigger(1, ' + attendProject[i]['normalBudgetYearId'] + ')">通过</a>';
-					    	html += '　';
-					    	html += '<a style="color: #000; text-decoration: none; cursor: pointer; outline: none;" onclick="issueTrigger(2, ' + attendProject[i]['normalBudgetYearId'] + ')">不通过</a>';
-					    } else if (1 == attendProject[i]['confirmFlag']) {
-					    	html += '已通过';
-					    } else if (2 == attendProject[i]['confirmFlag']) {
-					    	html += '<span style="color:red;font-weight:bold;">未通过</span>';
-					    }
+					if(1 == attendProject[i]['confirmFlag']){
+						var isRoot = attendProject[i]['isRoot'];
+						var multilevel = attendProject[i]['multilevel'];
+						html += '<tr' + (isRoot ? ' class="root"' : '') + ' primary-key="' + attendProject[i]['normalBudgetYearId'] + '">';
+						//html += '	<td>' + attendProject[i]['normalBudgetYearId'] + '</td>';
+						html += '	<td>' + attendProject[i]['year'] + '</td>';
+						html += '	<td>' + attendProject[i]['projectSource'] + '</td>';
+						html += '	<td>' + attendProject[i]['departmentName'] + '</td>';
+						//html += '	<td>' + (multilevel ? '是' : '否') + '</td>';
+						html += '	<td>' + attendProject[i]['projectName'] + '</td>';
+						html += '	<td>常规</td>';
+						html += '	<td>' + attendProject[i]['budgetAmount'] + '</td>';
+						html += '	<td>--</td>';
+						html += '	<td>--</td>';
+						html += '	<td class="confirm-flag">';
+						if (!multilevel || (multilevel && !isRoot)) {
+							html += '<a style="color: #000; text-decoration: none; cursor: pointer; outline: none;" onclick="issueTrigger(1, ' + attendProject[i]['normalBudgetYearId'] + ')">待下达</a>';
+						}
+						html += '	</td>';
+						html += '	<td>　</td>';
+						html += '</tr>';
 					}
-					html += '	</td>';
-					html += '	<td>　</td>';
-					html += '</tr>';
 				}
 				jQuery('.normal-attendProject .record').append(html);
 				jQuery('.normal-attendProject').getNiceScroll().resize();
@@ -207,7 +200,7 @@
 				if (data != null && 'INVOKE_SUCCESS' == data.invoke_result) {
 					var confirmFlag = jQuery('.normal-attendProject tr[primary-key="' + data.callback.primaryKey + '"] .confirm-flag');
 					if (data.callback.confirmFlag == 1) {
-						jQuery('.normal-attendProject tr[primary-key="' + data.callback.primaryKey + '"] .confirm-flag').html('已通过');
+						jQuery('.normal-attendProject tr[primary-key="' + data.callback.primaryKey + '"] .confirm-flag').html('已下达');
 					} else {
 						jQuery('.normal-attendProject tr[primary-key="' + data.callback.primaryKey + '"] .confirm-flag').html('未通过');
 					}
