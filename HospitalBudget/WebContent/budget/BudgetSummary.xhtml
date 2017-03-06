@@ -27,6 +27,7 @@
 	</ui:define>
 
 	<ui:define name="body">
+	#{usualProjectHome.wire()}
 		<h:form id="mainForm" styleClass="edit" enctype="multipart/form-data">
 			<div class="pd0-10 pt30">
 				<div class="g-data-list-condition">
@@ -37,6 +38,16 @@
 						<div class="fl">
 							<select id="budgetYear" class="selectpicker">
 								<a:repeat value="#{budgetSummaryHome.budgetYearList}" var="_var">
+									<option value="#{_var[0]}">#{_var[1]}</option>
+								</a:repeat>
+							</select>
+						</div>
+						<div style="float: left; text-align: center; line-height: 36px; width: 70px;">
+							<span>资金来源</span>
+						</div>
+						<div class="fl">
+							<select id="fundsSource" class="selectpicker">
+								<a:repeat value="#{usualProjectHome.fundsSourceList}" var="_var">
 									<option value="#{_var[0]}">#{_var[1]}</option>
 								</a:repeat>
 							</select>

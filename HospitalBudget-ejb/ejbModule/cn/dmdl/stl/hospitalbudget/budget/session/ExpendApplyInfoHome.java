@@ -146,6 +146,7 @@ public class ExpendApplyInfoHome extends CriterionEntityHome<ExpendApplyInfo>{
 			projectSql.append(" LEFT JOIN ys_funds_source fs on up.funds_source_id=fs.the_id ");
 			projectSql.append(" where eap.deleted=0 ");
 			projectSql.append(" and eai.expend_apply_info_id=").append(expendApplyInfoId);
+			System.out.println(projectSql);
 			List<Object[]> list = getEntityManager().createNativeQuery("select * from (" + projectSql.toString() + ") as test").getResultList();
 			float allMoney = 0f;
 			if(list.size() > 0){

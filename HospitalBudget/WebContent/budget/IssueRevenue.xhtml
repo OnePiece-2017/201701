@@ -22,6 +22,72 @@
 	</ui:define>
 
 	<ui:define name="body">
+	#{usualProjectHome.wire()}
+						<table width="100%" cellpadding="0" cellspacing="0" style="margin-top: 30px; margin-left: 25px;">
+						<tr>
+							<td width="30%">
+								<div class="pb20">
+									<table>
+										<tr>
+											<td valign="middle">
+												<span class="field-name mb10">预算年份</span>
+											</td>
+											<td valign="middle">
+												<select id="budgetYear" class="selectpicker">
+													<a:repeat value="#{annualExpendBudgetCompileHome.budgetYearList}" var="_var">
+														<option value="#{_var[0]}">#{_var[1]}</option>
+													</a:repeat>
+												</select>
+											</td>
+										</tr>
+									</table>
+								</div>
+							</td>
+							<td width="30%">
+								<div class="pb20">
+									<table>
+										<tr>
+											<td valign="middle">
+												<span class="field-name mb10">资金来源</span>
+											</td>
+											<td valign="middle">
+												<select id="fundsSource" class="selectpicker">
+													<a:repeat value="#{usualProjectHome.fundsSourceList}" var="_var">
+														<option value="#{_var[0]}">#{_var[1]}</option>
+													</a:repeat>
+												</select>
+											</td>
+											<td valign="middle">
+												<font color="red" style="margin-left: 3px;"></font>
+											</td>
+										</tr>
+									</table>
+								</div>
+							</td>
+							<td width="30%">
+								<div class="pb20">
+									<table>
+										<tr>
+											<td valign="middle">
+												<span class="field-name mb10">主管科室</span>
+											</td>
+											<td valign="middle">
+												<select id="departmentInfoId" class="selectpicker" data-live-search="true">
+													<a:repeat value="#{usualProjectHome.departmentInfoList}" var="_var">
+														<option value="#{_var[0]}">#{_var[1]}</option>
+													</a:repeat>
+												</select>
+												<h:inputHidden id="departmentInfoIdHidden" value="#{usualProjectHome.departmentInfoId}" />
+											</td>
+											<td valign="middle">
+												<font color="red" style="margin-left: 3px;"></font>
+											</td>
+										</tr>
+									</table>
+								</div>
+							</td>
+						</tr>
+					</table>
 		<h:form id="mainForm" styleClass="edit" enctype="multipart/form-data">
 			<div class="pd0-10 pt30 fs14">
 				<strong style="font-size: 20px;">预算上会</strong>
