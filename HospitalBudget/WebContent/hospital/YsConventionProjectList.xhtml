@@ -36,11 +36,10 @@
 		    <table class="record" width="100%" cellpadding="0" cellspacing="0">
 		        <tr>
 		            <th width="5%">ID</th>
-		            <th width="25%">项目名称</th>
+		            <th width="35%">项目名称</th>
 		            <th width="10%">项目类型</th>
 		            <th width="10%">主管科室</th>
 		            <th width="10%">多级项目</th>
-		            <th width="20%">项目<br />总金额(元)</th>
 		            <th width="10%">状态</th>
 		            <th width="10%">操作</th>
 		        </tr>
@@ -57,9 +56,6 @@
 			        		<a style="color: #333333; text-decoration: none; cursor: default; outline: none;" href="javascript:void(0);" title="#{_result.ysDepartmentInfo.theValue}">#{commonTool.abbr(_result.ysDepartmentInfo.theValue, 19)}</a>
 			        	</td>
 			        	<td><h:outputText value="#{_result.multilevel ? '是' : '否'}" /></td>
-			        	<td>
-			        		<a style="color: #333333; text-decoration: none; cursor: default; outline: none;" href="javascript:void(0);" title="#{ysConventionProjectHome.pullTotalAmount(_result.theId)}">#{commonTool.abbr(ysConventionProjectHome.pullTotalAmount(_result.theId), 19)}</a>
-			        	</td>
 			        	<td>
 			        		<h:outputText value="#{1 == _result.theState ? '已打开' : '已关闭'}" />
 			        	</td>
