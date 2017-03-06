@@ -11,51 +11,132 @@
 
 	<ui:define name="head">
 		<link rel="stylesheet" type="text/css" href="#{request.contextPath}/common/css/bootstrap.min.css" />
+		<link rel="stylesheet" type="text/css" href="#{request.contextPath}/common/css/bootstrap-select.min.css" />
+		<link rel="stylesheet" type="text/css" href="#{request.contextPath}/icheck/skins/square/blue.css" />
 	</ui:define>
 	<ui:define name="body">
+	#{usualProjectHome.wire()}
 		<div class="g-data-list-condition">
 			<h:form id="mainForm">
 				<input type="hidden" name="page" value="1" />
-				<div class="fl w300">
+				<!-- <div class="fl w300">
 					<h:inputText id="keyword" value="#{taskUntreatedList.keyword}" styleClass="form-control mt10 ml10" />
 				</div>
 				<div class="fl">
 					<h:commandButton styleClass="btn btn-primary mt10 ml20" action="/budget/TaskUntreatedList.xhtml" value="搜索" />
-				</div>
+				</div> -->
+				<table width="100%" cellpadding="0" cellspacing="0" style="margin-top: 30px; margin-left: 25px;">
+						<tr>
+							<td width="30%">
+								<div class="pb20">
+									<table>
+										<tr>
+											<td valign="middle">
+												<span class="field-name mb10">预算年份</span>
+											</td>
+											<td valign="middle">
+												<select id="budgetYear" class="selectpicker">
+													<a:repeat value="#{annualExpendBudgetCompileHome.budgetYearList}" var="_var">
+														<option value="#{_var[0]}">#{_var[1]}</option>
+													</a:repeat>
+												</select>
+											</td>
+										</tr>
+									</table>
+								</div>
+							</td>
+							<td width="30%">
+								<div class="pb20">
+									<table>
+										<tr>
+											<td valign="middle">
+												<span class="field-name mb10">资金来源</span>
+											</td>
+											<td valign="middle">
+												<select id="fundsSource" class="selectpicker">
+													<a:repeat value="#{usualProjectHome.fundsSourceList}" var="_var">
+														<option value="#{_var[0]}">#{_var[1]}</option>
+													</a:repeat>
+												</select>
+											</td>
+											<td valign="middle">
+												<font color="red" style="margin-left: 3px;"></font>
+											</td>
+										</tr>
+									</table>
+								</div>
+							</td>
+							<td width="30%">
+								<div class="pb20">
+									<table>
+										<tr>
+											<td valign="middle">
+												<span class="field-name mb10">主管科室</span>
+											</td>
+											<td valign="middle">
+												<select id="departmentInfoId" class="selectpicker" data-live-search="true">
+													<a:repeat value="#{usualProjectHome.departmentInfoList}" var="_var">
+														<option value="#{_var[0]}">#{_var[1]}</option>
+													</a:repeat>
+												</select>
+												<h:inputHidden id="departmentInfoIdHidden" value="#{usualProjectHome.departmentInfoId}" />
+											</td>
+											<td valign="middle">
+												<font color="red" style="margin-left: 3px;"></font>
+											</td>
+										</tr>
+									</table>
+								</div>
+							</td>
+							<td width="10%">
+								<div class="pb20">
+									<a class="btn btn-primary" style="line-height: 22px;" >汇总</a>
+								</div>
+							</td>
+						</tr>
+					</table>
 			</h:form>
 		</div>
 		<div class="g-data-list-table">
 		    <table class="record" width="100%" cellpadding="0" cellspacing="0">
 		        <tr>
-		            <th width="10%">ID</th>
+		            <!-- <th width="10%">ID</th> -->
 		            <th width="20%">订单号</th>
-		            <th width="20%">任务名称</th>
+		            <th width="10">年份</th>
+		            <!-- <th width="20%">任务名称</th> -->
 		            <th width="10%">项目主管部门</th>
+		            <th width="20%">预算总金额</th>
 		            <th width="10%">编制人</th>
-		            <th width="10%">任务类型</th>
+		            <!-- <th width="10%">任务类型</th> -->
 		            <th width="10%">订单状态</th>
 		            <th width="10%">操作</th>
 		        </tr>
 		        <a:repeat value="#{taskUntreatedList.resultList}" var="_result" rowKeyVar="_row">
 		        	<tr class="node-record #{_row % 2 eq 0 ? 'odd' : 'even'}">
-			        	<td>
+			        	<!-- <td>
 			        		<h:outputText value="#{_result[0]}" />
-			        	</td>
+			        	</td> -->
 			        	<td>
 			        		<h:outputText value="#{_result[1]}" />
 			        	</td>
 			        	<td>
-			        		<h:outputText value="#{_result[2]}" />
+			        		<h:outputText value="#{_result[9]}" />
 			        	</td>
+			        	<!-- <td>
+			        		<h:outputText value="#{_result[2]}" />
+			        	</td> -->
 			        	<td>
 			        		<h:outputText value="#{_result[3]}" />
 			        	</td>
 			        	<td>
-			        		<h:outputText value="#{_result[4]}" />
+			        		<h:outputText value="#{_result[10]}" />
 			        	</td>
 			        	<td>
-			        		<h:outputText value="#{commonFinder.gainTaskTypeName(_result[5])}" />
+			        		<h:outputText value="#{_result[4]}" />
 			        	</td>
+			        	<!-- <td>
+			        		<h:outputText value="#{commonFinder.gainTaskTypeName(_result[5])}" />
+			        	</td> -->
 			        	<td>
 			        		<h:outputText value="#{commonFinder.gainOrderStatusName(_result[6])}" />
 			        	</td>
@@ -84,6 +165,7 @@
 			        			<f:param name="taskOrderId" value="#{_result[0]}" />
 			        			<img src="../images/icon_pen_16x16.png" />
 			        		</s:link>
+			        		<input type="checkbox" class="icheck" />
 			        	</td>
 		        	</tr>
 		        </a:repeat>
@@ -140,11 +222,21 @@
 		    </s:fragment>
 		</div>
 		<script type="text/javascript" src="#{request.contextPath}/common/js/bootstrap.min.js" />
+		<script type="text/javascript" src="#{request.contextPath}/common/js/bootstrap-select.min.js" charset="UTF-8" />
 		<script type="text/javascript" src="#{request.contextPath}/toolkit/utils.js" />
+		<script type="text/javascript" src="#{request.contextPath}/icheck/js/icheck.min.js" charset="UTF-8" />
 		<script type="text/javascript">
 		//<![CDATA[
 			jQuery(document).ready(function() {
-			    ___textRestrictById('mainForm:keyword', 1024);
+			    //___textRestrictById('mainForm:keyword', 1024);
+
+			    jQuery('.selectpicker').selectpicker();
+
+			    jQuery('.icheck').iCheck({
+					checkboxClass: 'icheckbox_square-blue',
+					radioClass: 'iradio_square-blue',
+					increaseArea: '20%'
+				});
 			});
 		//]]>
 		</script>

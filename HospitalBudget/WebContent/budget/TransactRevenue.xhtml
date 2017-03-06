@@ -48,12 +48,14 @@
 				    <table class="record" width="100%" cellpadding="0" cellspacing="0">
 				        <tr>
 				            <th width="5%">序<br />号</th>
+				            <th width="5%">科室</th>
 				            <th width="10%">项目性质</th>
 				            <th width="21%">项目名称</th>
 				            <th width="10%">项目来源</th>
 				            <th width="10%">项目金额(元)</th>
 				            <th width="10%">金额计算依据</th>
 				            <th width="13%">与上一年预算<br />同比增减(万元)</th>
+				            <th width="13%">与上一年预算<br />同比增减率</th>
 				            <th width="20%">备注</th>
 				            <th width="1%">　</th>
 				        </tr>
@@ -166,6 +168,7 @@
 						var multilevel = attendProject[i]['multilevel'];
 						html += '<tr' + (isRoot ? ' class="root"' : '') + '>';
 						html += '	<td class="sequence-number"></td>';
+						html += '	<td>' + attendProject[i]['dept_name'] + '</td>';
 						html += '	<td>常规</td>';
 						html += '	<td>' + attendProject[i]['projectName'] + '</td>';
 						html += '	<td>部门惯例</td>';
@@ -175,6 +178,7 @@
 							html += '	<td name="totalAmount">' + attendProject[i]['totalAmount'] + '</td>';
 						}
 						html += '	<td>' + attendProject[i]['formula'] + '</td>';
+						html += '	<td>--</td>';
 						html += '	<td>--</td>';
 						html += '	<td>' + attendProject[i]['remark'] + '</td>';
 						html += '	<td>　</td>';
