@@ -203,6 +203,19 @@
 				}
 				jQuery('#income_table_div .record').append(html);
 				jQuery('#expand_table_div .record').append(expandHtml);
+
+				var html2 = '';
+				html2 += '<tr class="data-row">';
+				html2 += '	<td>' + jQuery('#budgetYear').val() + '</td>';
+				html2 += '	<td style="color: red; font-weight: bold;">内科</td>';
+				html2 += '	<td></td>';
+				html2 += '	<td>--</td>';
+				html2 += '	<td>--</td>';
+				html2 += '	<td></td>';
+				html2 += '	<td></td>';
+				html2 += '</tr>';
+				jQuery('#income_table_div .record').append(html2);
+				
 				jQuery('.normal-attendProject .icheck').iCheck({
 					checkboxClass: 'icheckbox_square-blue',
 					radioClass: 'iradio_square-blue',
