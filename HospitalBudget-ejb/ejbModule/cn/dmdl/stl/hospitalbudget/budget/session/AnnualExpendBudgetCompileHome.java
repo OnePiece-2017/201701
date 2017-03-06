@@ -164,6 +164,31 @@ public class AnnualExpendBudgetCompileHome extends CriterionEntityHome<Object> {
 	@SuppressWarnings("unchecked")
 	public JSONArray getCandidateProject() {
 		JSONArray resultSet = new JSONArray();
+		List<Object[]> departmentList = getEntityManager().createNativeQuery("select the_id, the_value from ys_department_info where deleted = 0").getResultList();
+		Map<Object, Object> departmentMap = new HashMap<Object, Object>();
+		if (departmentList != null && departmentList.size() > 0) {
+			for (Object[] department : departmentList) {
+				departmentMap.put(department[0], department[1]);
+			}
+		}
+		String prjSql = "select the_id, the_type, the_state, the_value, total_amount, department_info_id from ys_general_project where deleted = 0 and the_type = 2";// 支出预算
+		if (sessionToken.getDepartmentInfoId() != null) {
+			prjSql += " and department_info_id = " + sessionToken.getDepartmentInfoId();
+		}
+		List<Object[]> prjList = getEntityManager().createNativeQuery(prjSql).getResultList();
+		if (prjList != null && prjList.size() > 0) {
+			for (Object[] prj : prjList) {
+				JSONObject row = new JSONObject();
+				row.accumulate("projectId", prj[0]);
+				row.accumulate("projectName", prj[3]);
+				row.accumulate("departmentName", departmentMap.get(prj[5]));
+				row.accumulate("multilevel", false);
+				row.accumulate("totalAmount", prj[4].toString());// 让BigDecimal显示完整数据，而非科学记数法
+				row.accumulate("theState", Integer.parseInt(prj[1].toString()) == 1 ? "已打开" : "已关闭");
+				row.accumulate("prjFlag", "项目");
+				resultSet.add(row);
+			}
+		}
 		String dataSql = "select the_id, the_type, the_state, the_value, multilevel, total_amount, department_info_id from ys_convention_project where deleted = 0 and the_type = 2";// 支出预算
 		if (sessionToken.getDepartmentInfoId() != null) {
 			dataSql += " and department_info_id = " + sessionToken.getDepartmentInfoId();
@@ -206,13 +231,6 @@ public class AnnualExpendBudgetCompileHome extends CriterionEntityHome<Object> {
 			}
 		}
 		if (dataList != null && dataList.size() > 0) {
-			List<Object[]> departmentList = getEntityManager().createNativeQuery("select the_id, the_value from ys_department_info where deleted = 0").getResultList();
-			Map<Object, Object> departmentMap = new HashMap<Object, Object>();
-			if (departmentList != null && departmentList.size() > 0) {
-				for (Object[] department : departmentList) {
-					departmentMap.put(department[0], department[1]);
-				}
-			}
 			for (Object[] data : dataList) {
 				JSONObject row = new JSONObject();
 				row.accumulate("projectId", data[0]);
@@ -228,6 +246,7 @@ public class AnnualExpendBudgetCompileHome extends CriterionEntityHome<Object> {
 					row.accumulate("subItemArr", new JSONArray());
 				}
 				row.accumulate("theState", Integer.parseInt(data[1].toString()) == 1 ? "已打开" : "已关闭");
+				row.accumulate("prjFlag", "常规");
 				resultSet.add(row);
 			}
 		}

@@ -15,6 +15,7 @@
 		<link rel="stylesheet" type="text/css" href="#{request.contextPath}/common/css/bootstrap-select.min.css" />
 		<link rel="stylesheet" type="text/css" href="#{request.contextPath}/icheck/skins/square/blue.css" />
 		<link rel="stylesheet" type="text/css" href="#{request.contextPath}/toastr/toastr.min.css" />
+		<link rel="stylesheet" type="text/css" href="#{request.contextPath}/sg-fileupload/css/kernel.css" />
 		<style type="text/css">
 			.row-input {
 				width: 100%;
@@ -48,6 +49,15 @@
 			
 			.node-totalAmount {
 				font-weight: bold;
+			}
+			
+			.myatt {
+				width: 13px;
+				height: 24px;
+				font-size: 13px;
+				line-height: 13px;
+				background: none;
+				color: black;
 			}
 		</style>
 	</ui:define>
@@ -102,6 +112,30 @@
 								</div>
 							</td>
 						</tr>
+						<tr>
+							<td width="50%">
+								<div class="pb20">
+									<table>
+										<tr>
+											<td valign="middle">
+												<span class="field-name mb10">主管科室</span>
+											</td>
+											<td valign="middle">
+												<select id="departmentInfoId" class="selectpicker" data-live-search="true">
+													<a:repeat value="#{usualProjectHome.departmentInfoList}" var="_var">
+														<option value="#{_var[0]}">#{_var[1]}</option>
+													</a:repeat>
+												</select>
+												<h:inputHidden id="departmentInfoIdHidden" value="#{usualProjectHome.departmentInfoId}" />
+											</td>
+											<td valign="middle">
+												<font color="red" style="margin-left: 3px;"></font>
+											</td>
+										</tr>
+									</table>
+								</div>
+							</td>
+						</tr>
 					</table>
 				</div>
 				<strong scrap-tag="1" style="font-size: 20px;">选择项目</strong>
@@ -131,8 +165,9 @@
 				    <table class="record" width="100%" cellpadding="0" cellspacing="0">
 				        <tr>
 				            <th width="5%">序<br />号</th>
-				            <th width="10%">项目性质</th>
-				            <th width="22%">项目名称</th>
+				            <th width="5%">科室</th>
+				            <th width="7%">项目性质</th>
+				            <th width="20%">项目名称</th>
 				            <th width="10%">项目来源</th>
 				            <th width="10%">项目金额(元)</th>
 				            <th width="10%">金额计算依据</th>
@@ -172,6 +207,7 @@
 		<script type="text/javascript" src="#{request.contextPath}/common/js/bootstrap-select-defaults-zh_CN.min.js" charset="UTF-8" />
 		<script type="text/javascript" src="#{request.contextPath}/toastr/toastr.min.js" />
 		<script type="text/javascript" src="#{request.contextPath}/icheck/js/icheck.min.js" charset="UTF-8" />
+		<script type="text/javascript" src="#{request.contextPath}/sg-fileupload/js/kernel.js" />
 		<script type="text/javascript" src="#{request.contextPath}/toolkit/utils.js" charset="UTF-8" />
 		<script type="text/javascript">
 		//<![CDATA[
@@ -219,7 +255,8 @@
 						var html = '';
 						html += '<tr class="root" data-index="' + dataIndex + '">';
 						html += '	<td class="sequence-number"></td>';
-						html += '	<td>常规</td>';
+						html += '	<td>' + candidateProject[dataIndex]['departmentName'] + '</td>';
+						html += '	<td>' + candidateProject[dataIndex]['prjFlag'] + '</td>';
 						html += '	<td>' + candidateProject[dataIndex]['projectName'] + '</td>';
 						html += '	<td>部门惯例</td>';
 						if (multilevel) {
@@ -255,6 +292,7 @@
 						html += '			<img src="../images/icon_delete_16x16.png">';
 						html += '		</a>';
 						html += '		<input type="checkbox" class="icheck">';
+						html += '		<span id="attachment-' + dataIndex + '">';
 						html += '	</td>';
 						html += '</tr>';
 						jQuery('.normal-attendProject .record').append(html);
@@ -265,7 +303,8 @@
 								for (var i = 0; i < subItemArr.length; i++) {
 									html += '<tr data-index="' + dataIndex + '" sub-id="' + subItemArr[i]['theId'] + '">';
 									html += '	<td class="sequence-number"></td>';
-									html += '	<td>常规</td>';
+									html += '	<td></td>';
+									html += '	<td></td>';
 									html += '	<td>' + subItemArr[i]['theValue'] + '</td>';
 									html += '	<td>部门惯例</td>';
 									html += '	<td>';
@@ -289,6 +328,7 @@
 									html += '			<img src="../images/icon_delete_16x16.png">';
 									html += '		</a>';
 									html += '		<input type="checkbox" class="icheck">';
+									html += '		<span id="attachment-' + subItemArr[i]['theId'] + '">';
 									html += '	</td>';
 									html += '</tr>';
 								}
@@ -361,6 +401,20 @@
 						radioClass: 'iradio_square-blue',
 						increaseArea: '20%'
 					});
+
+					jQuery('#projectType').selectpicker('render');
+				
+					jQuery('#departmentInfoId').val(jQuery('#mainForm\\:departmentInfoIdHidden').val());
+					jQuery('#departmentInfoId').selectpicker('render');
+					
+				    jQuery('span[id^=attachment]').each(function(){
+						sgFileupload['install']({
+						    'target' : jQuery(this).attr('id'),
+						    'alias' : '附件',
+						    'source' : null,
+						    'class' : [ 'myatt' ]
+						});
+				    });
 			    }, 0);
 			});
 			
