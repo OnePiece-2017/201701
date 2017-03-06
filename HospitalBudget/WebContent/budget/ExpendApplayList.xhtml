@@ -60,6 +60,10 @@
 			        	<td>#{commonFinder.parseDate(_result[7])}</td>
 			        	<td>#{_result[8]}</td>
 			        	<td>
+			        		<s:link title="查看" view="/budget/ExpendInfoDetail.xhtml" style="text-decoration: none;">
+			        			<f:param name="expendApplyInfoId" value="#{_result[0]}" />
+			        			<img src="../images/icon_view_16x16.png" />
+			        		</s:link>
 			        		<s:fragment rendered="#{_result[10] eq 0}">
 				        		<s:link title="编辑" view="/budget/ExpendApplication.xhtml" style="text-decoration: none;" >
 				        			<f:param name="expendApplyInfoId" value="#{_result[0]}" />
