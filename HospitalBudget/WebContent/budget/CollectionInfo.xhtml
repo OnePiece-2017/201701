@@ -30,14 +30,15 @@
 				    <table class="record" width="100%" cellpadding="0" cellspacing="0">
 				        <tr>
 				            <th width="5%">序<br />号</th>
-				            <th width="10%">项目性质</th>
-				            <th width="10%">部门</th>
-				            <th width="21%">项目名称</th>
-				            <th width="10%">项目来源</th>
+				            <th width="7%">项目性质</th>
+				            <th width="8%">部门</th>
+				            <th width="20%">项目名称</th>
+				            <th width="5%">项目来源</th>
 				            <th width="10%">项目金额(元)</th>
 				            <th width="10%">金额计算依据</th>
-				            <th width="13%">与上一年预算<br />同比增减(万元)</th>
-				            <th width="20%">备注</th>
+				            <th width="10%">与上一年预算<br />同比增减(万元)</th>
+				            <th width="10%">与上一年预算<br />同比增减率</th>
+				            <th width="15%">备注</th>
 				        </tr>
 				    <a:repeat value="#{budgetSummaryHome.collectionInfo}" var="_result" rowKeyVar="_row">
 			        	<tr class="node-record #{_result[5] == null ? 'root' : ''}">
@@ -61,6 +62,9 @@
 				        	</td>
 				        	<td>
 				        		<h:outputText value="#{_result[8]}" />
+				        	</td>
+				        	<td>
+				        		<h:outputText value="--" />
 				        	</td>
 				        	<td>
 				        		<h:outputText value="--" />

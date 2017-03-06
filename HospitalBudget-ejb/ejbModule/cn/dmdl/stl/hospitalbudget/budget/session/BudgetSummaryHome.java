@@ -144,6 +144,25 @@ public class BudgetSummaryHome extends CriterionEntityHome<Object> {
 		dataSql.append(" left join ys_convention_project_extend on ys_convention_project_extend.the_id = normal_budget_order_info.sub_project_id");
 		dataSql.append(" LEFT JOIN ys_department_info on ys_convention_project.department_info_id = ys_department_info.the_id");
 		dataSql.append(" where normal_budget_order_info.is_new = 1 and normal_budget_order_info.order_sn = '").append(orderSn).append("' ");
+		dataSql.append(" union all ");
+		dataSql.append(" select");
+		dataSql.append(" normal_expend_budget_order_info.task_order_id,");
+		dataSql.append(" ys_department_info.the_value AS department_name,");
+		dataSql.append(" normal_expend_budget_order_info.`year`,");
+		dataSql.append(" ys_convention_project.multilevel,");
+		dataSql.append(" normal_expend_budget_order_info.normal_project_id,");
+		dataSql.append(" normal_expend_budget_order_info.sub_project_id,");
+		dataSql.append(" ifnull(ys_convention_project_extend.the_value, ys_convention_project.the_value) as project_name,");
+		dataSql.append(" normal_expend_budget_order_info.project_amount,");
+		dataSql.append(" normal_expend_budget_order_info.formula,");
+		dataSql.append(" normal_expend_budget_order_info.remark,");
+		dataSql.append(" normal_expend_budget_order_info.project_source");
+		dataSql.append(" from normal_expend_budget_order_info");
+		dataSql.append(" left join ys_convention_project on ys_convention_project.the_id = normal_expend_budget_order_info.normal_project_id");
+		dataSql.append(" left join ys_convention_project_extend on ys_convention_project_extend.the_id = normal_expend_budget_order_info.sub_project_id");
+		dataSql.append(" LEFT JOIN ys_department_info on ys_convention_project.department_info_id = ys_department_info.the_id");
+		dataSql.append(" where normal_expend_budget_order_info.is_new = 1 and normal_expend_budget_order_info.order_sn = '").append(orderSn).append("' ");
+		System.out.println(dataSql);
 		dataSql.insert(0, "select * from (").append(") as recordset");// 解决找不到列
 		list = getEntityManager().createNativeQuery(dataSql.toString()).getResultList();
 		return list;
