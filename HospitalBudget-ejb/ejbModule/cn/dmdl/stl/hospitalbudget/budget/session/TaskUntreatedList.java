@@ -35,7 +35,7 @@ public class TaskUntreatedList extends CriterionNativeQuery<Object[]> {
 		sql.append(" left join ys_department_info on ys_department_info.the_id = task_order.dept_id");
 		sql.append(" left join user_info on user_info.user_info_id = task_order.edit_user_id");
 		sql.append(" left join user_info_extend on user_info_extend.user_info_extend_id = user_info.user_info_extend_id");
-		sql.append(" LEFT JOIN normal_budget_order_info on task_order.task_order_id = normal_budget_order_info.task_order_id");
+		sql.append(" LEFT JOIN normal_budget_order_info on task_order.task_order_id = normal_budget_order_info.task_order_id and normal_budget_order_info.sub_project_id is null ");
 		sql.append(" where task_order.task_order_id in (select task_order_id from task_user where handle_flg = 0 and user_id = " + sessionToken.getUserInfoId() + " and task_order_id not in (select task_order_id from task_user where handle_flg = 1))");
 		if (keyword != null && !"".equals(keyword)) {
 			sql.append(" and (task_order.order_sn like '%" + keyword + "%'");
