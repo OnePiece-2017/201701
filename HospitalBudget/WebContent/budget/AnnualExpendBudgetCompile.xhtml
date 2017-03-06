@@ -59,12 +59,92 @@
 				background: none;
 				color: black;
 			}
+			
+			.referPanel {
+				display: none;
+				width: 100%;
+				height: 100%;
+				position: absolute;
+				z-index: 3933;
+			}
+			
+			.referPanel-inner {
+				border-radius: 15px;
+				width: 400px;
+				height: 220px;
+				background: #adc7ed;
+				left: 30%;
+				top: 21%;
+				position: fixed;
+			}
+			
+			.switch-refer {
+				width: 24px;
+				height: 24px;
+				float: left;
+			}
+			
+			.switch-refer-icon {
+				margin-top: -18px;
+			}
 		</style>
 	</ui:define>
 
 	<ui:define name="body">
 		#{usualProjectHome.wire()}
 		<h:form id="mainForm" styleClass="edit" enctype="multipart/form-data">
+			<div class="referPanel">
+				<div class="pt30 fs14 referPanel-inner">
+					<table width="100%" cellpadding="0" cellspacing="0">
+						<tr>
+							<td width="50%">
+								<div class="pb20">
+									<table>
+										<tr>
+											<td valign="middle">
+												<span class="field-name mb10">参考开始年份</span>
+											</td>
+											<td valign="middle">
+												<select id="refYearBegin" class="selectpicker">
+													<option value="2016">2016年</option>
+													<option value="2017">2017年</option>
+													<option value="2018">2018年</option>
+												</select>
+											</td>
+											<td valign="middle">
+												<font color="red" style="margin-left: 3px;"></font>
+											</td>
+										</tr>
+										<tr>
+											<td valign="middle">
+												<span class="field-name mb10">参考结束年份</span>
+											</td>
+											<td valign="middle">
+												<select id="refYearEnd" class="selectpicker">
+													<option value="2016">2016年</option>
+													<option value="2017">2017年</option>
+													<option value="2018">2018年</option>
+												</select>
+											</td>
+											<td valign="middle">
+												<font color="red" style="margin-left: 3px;"></font>
+											</td>
+										</tr>
+									</table>
+								</div>
+							</td>
+						</tr>
+					</table>
+					<table class="normal-btn">
+						<tr>
+							<td>
+								<a class="btn btn-primary mr15" onclick="execRefer();">执行参考</a>
+								<a class="btn btn-default" onclick="closeReferPanel();">取消参考</a>
+							</td>
+						</tr>
+					</table>
+				</div>
+			</div>
 			<div class="pd0-10">
 				<div class="pt30 fs14">
 					<table width="100%" cellpadding="0" cellspacing="0">
@@ -164,6 +244,7 @@
 				<div class="g-data-list-table freeze-attendProject" style="height: 44px;">
 				    <table class="record" width="100%" cellpadding="0" cellspacing="0">
 				        <tr>
+				            <th width="16px"></th>
 				            <th width="5%">序<br />号</th>
 				            <th width="5%">科室</th>
 				            <th width="7%">项目性质</th>
@@ -172,8 +253,8 @@
 				            <th width="10%">项目金额(元)</th>
 				            <th width="10%">金额计算依据</th>
 				            <th width="13%">与上一年预算<br />同比增减(元)</th>
-				            <th width="15%">备注</th>
-				            <th width="15%">操作</th>
+				            <th width="10%">备注</th>
+				            <th width="5%">操作</th>
 				        </tr>
 				    </table>
 				</div>
@@ -254,6 +335,7 @@
 						var multilevel = candidateProject[dataIndex]['multilevel'];
 						var html = '';
 						html += '<tr class="root" data-index="' + dataIndex + '">';
+						html += '	<td><img class="bingo" onclick="toggleSwithRefer(this);" src="../images/icon_arrow_carrot_down_16x16.png"></img></td>';
 						html += '	<td class="sequence-number"></td>';
 						html += '	<td>' + candidateProject[dataIndex]['departmentName'] + '</td>';
 						html += '	<td>' + candidateProject[dataIndex]['prjFlag'] + '</td>';
@@ -291,7 +373,7 @@
 						html += '		<a name="delete" title="删除" style="text-decoration: none; cursor: pointer;">';
 						html += '			<img src="../images/icon_delete_16x16.png">';
 						html += '		</a>';
-						html += '		<input type="checkbox" class="icheck">';
+						html += '		<input auto-chk="1" type="checkbox" class="icheck">';
 						html += '		<span id="attachment-' + dataIndex + '">';
 						html += '	</td>';
 						html += '</tr>';
@@ -302,6 +384,7 @@
 								var html = '';
 								for (var i = 0; i < subItemArr.length; i++) {
 									html += '<tr data-index="' + dataIndex + '" sub-id="' + subItemArr[i]['theId'] + '">';
+									html += '	<td><img class="bingo" onclick="toggleSwithRefer(this);" src="../images/icon_arrow_carrot_down_16x16.png"></img></td>';
 									html += '	<td class="sequence-number"></td>';
 									html += '	<td></td>';
 									html += '	<td></td>';
@@ -327,7 +410,7 @@
 									html += '		<a name="delete" title="删除" style="text-decoration: none; cursor: pointer;">';
 									html += '			<img src="../images/icon_delete_16x16.png">';
 									html += '		</a>';
-									html += '		<input type="checkbox" class="icheck">';
+									html += '		<input auto-chk="1" type="checkbox" class="icheck">';
 									html += '		<span id="attachment-' + subItemArr[i]['theId'] + '">';
 									html += '	</td>';
 									html += '</tr>';
@@ -425,8 +508,12 @@
 						sum = 0.00;
 					var augend = jQuery(this).val();
 					if (!___isNumber(augend)) {
-						sum = null;
-						return false;
+						jQuery(this).parents('tr').find('input[auto-chk="1"]').iCheck('uncheck');
+						jQuery(this).parents('tr').find('.bingo').css('opacity', 0);
+						augend = 0.00;
+					} else {
+						jQuery(this).parents('tr').find('input[auto-chk="1"]').iCheck('check');
+						jQuery(this).parents('tr').find('.bingo').css('opacity', 1);
 					}
 					sum += Number(augend);
 				});
@@ -435,6 +522,8 @@
 				else
 					jQuery('.node-totalAmount').html('--');
 				setTimeout("updateTotalAmount()", 100);
+				
+				jQuery('.node-multilevelTotalAmount').parents('tr').find('.bingo').css('opacity', 0);
 			}
 			
 			function updateMultilevelTotalAmount() {
@@ -443,7 +532,7 @@
 					var dataIndex = jQuery(this).attr('data-index');
 					var augend = jQuery(this).find('input[name="totalAmount"]').val();
 					if (!___isNumber(augend))
-						augend = null;
+						augend = 0;
 					if (null == root[dataIndex])
 						root[dataIndex] = [];
 					root[dataIndex].push(augend);
@@ -554,11 +643,70 @@
 			}
 
 			function referTo() {
-				;
+			    jQuery('#refYearBegin').val(new Date().getFullYear());
+			    jQuery('.selectpicker').selectpicker('render');
+			    jQuery('#refYearEnd').val(new Date().getFullYear() + 1);
+			    jQuery('.selectpicker').selectpicker('render');
+				jQuery('.referPanel').show();
+			}
+
+			function closeReferPanel() {
+				jQuery('.referPanel').hide();
 			}
 
 			function saveTemporary() {
 				;
+			}
+
+			function execRefer() {
+				var begin = jQuery('#refYearBegin').val();
+				var end = jQuery('#refYearEnd').val();
+				jQuery('.refer-data').remove();
+				jQuery('input[auto-chk="1"]').each(function(){
+					if (jQuery(this).is(':checked')){
+						var html = '';
+						for(var i = Number(begin); i <= Number(end); i++){
+							html += '<tr class="refer-data">';
+							html += '	<td></td>';
+							html += '	<td></td>';
+							html += '	<td></td>';
+							html += '	<td></td>';
+							html += '	<td></td>';
+							html += '	<td>参考' + i + '年</td>';
+							html += '	<td>' + (Math.random() * 10000).toFixed(2) + '</td>';
+							html += '	<td></td>';
+							html += '	<td></td>';
+							html += '	<td></td>';
+							html += '	<td></td>';
+							html += '</tr>';
+						}
+						jQuery(this).parents('tr').after(html);
+					}
+				});
+				closeReferPanel();
+			}
+			
+			function reFindRd(ref, dis) {
+				if (dis){
+					ref.show();
+				} else {
+					ref.hide();
+				}
+				if (jQuery(ref).next('.refer-data').length > 0){
+					reFindRd(jQuery(ref).next('.refer-data'), dis);
+				}
+			}
+			
+			function toggleSwithRefer(ref) {
+				if (jQuery(ref).hasClass('be-close')) {
+					jQuery(ref).removeClass('be-close');
+					jQuery(ref).attr('src', '../images/icon_arrow_carrot_down_16x16.png');
+					reFindRd(jQuery(ref).parents('tr').next('.refer-data'), true);
+				} else {
+					jQuery(ref).addClass('be-close');
+					jQuery(ref).attr('src', '../images/icon_arrow_carrot_right_16x16.png');
+					reFindRd(jQuery(ref).parents('tr').next('.refer-data'), false);
+				}
 			}
 		//]]>
 		</script>
