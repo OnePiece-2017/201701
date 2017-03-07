@@ -13,6 +13,7 @@
 		<link rel="stylesheet" type="text/css" href="#{request.contextPath}/common/css/bootstrap.min.css" />
 		<link rel="stylesheet" type="text/css" href="#{request.contextPath}/common/css/bootstrap-select.min.css" />
 		<link rel="stylesheet" type="text/css" href="#{request.contextPath}/prompt-message/css/prompt-message.css" />
+		<link rel="stylesheet" type="text/css" href="#{request.contextPath}/prompt-inputbox/css/prompt-inputbox.css" />
 		<style type="text/css">
 			#node-subproject {
 				width: 100%;
@@ -551,6 +552,7 @@
 		<script type="text/javascript" src="#{request.contextPath}/common/js/bootstrap-select-defaults-zh_CN.min.js" charset="UTF-8" />
 		<script type="text/javascript" src="#{request.contextPath}/toolkit/utils.js" />
 		<script type="text/javascript" src="#{request.contextPath}/prompt-message/js/prompt-message.js" />
+		<script type="text/javascript" src="#{request.contextPath}/prompt-inputbox/js/prompt-inputbox.js" />
 		<script type="text/javascript">
 		//<![CDATA[
 			var g_personJson = #{usualProjectHome.personJson};
@@ -612,6 +614,9 @@
 				jQuery('#fundsSourceId').selectpicker('render');
 			
 				setTimeout('subprojectOutputFlush();', 0);//解决Chrome元素渲染速度问题
+				
+				___promptInputbox('mainForm:theDescription');
+				___promptInputbox('subproject_description');
 			});
 			
 			function setSubprojectInteractive(show) {

@@ -1,0 +1,94 @@
+.prompt-inputbox {
+	position: fixed;
+	width: 100%;
+	height: 100%;
+	z-index: 953610236;
+	left: 0;
+	top: 0;
+	background: rgba(0, 0, 0, 0.88);
+	display: none;
+}
+
+.prompt-inputbox-contents {
+	position: fixed;
+	width: 640px;
+	height: 320px;
+	background: rgba(42, 233, 138, 0.7);
+	left: 23%;
+	top: 15%;
+	border-radius: 15px;
+}
+
+.textarea-bd {
+	border: 0;
+	resize: none;
+	outline: 0;
+	color: #333;
+	width: 600px;
+	height: 229px;
+	margin-left: 20px;
+	font-size: 19px;
+	margin-top: 20px;
+	border-radius: 15px;
+	padding: 8px 8px 8px 8px;
+	background: rgba(255, 255, 255, 0.9);
+}
+
+.btn-operation {
+	cursor: pointer;
+}
+
+.btn-operation .img-yes {
+	position: absolute;
+	left: 40%;
+	margin-top: 12px;
+	width: 48px;
+	height: 48px;
+}
+
+.btn-operation .img-no {
+	position: absolute;
+	right: 40%;
+	margin-top: 12px;
+	width: 48px;
+	height: 48px;
+}
+
+.btn-primary-cpybs {
+	color: #fff;
+	background-color: #428bca;
+	border-color: #357ebd;
+}
+
+.btn-default-cpybs {
+	color: #333;
+	background-color: #fff;
+	border-color: #ccc;
+}
+
+.btn-cpybs {
+	display: inline-block;
+	padding: 6px 12px;
+	margin-bottom: 0;
+	font-size: 14px;
+	font-weight: 400;
+	line-height: 1.42857143;
+	text-align: center;
+	white-space: nowrap;
+	vertical-align: middle;
+	cursor: pointer;
+	-webkit-user-select: none;
+	-moz-user-select: none;
+	-ms-user-select: none;
+	user-select: none;
+	background-image: none;
+	border: 1px solid transparent;
+	border-radius: 4px;
+}
+
+.textarea-bd:focus {
+	border: 1px solid #e33030;
+	outline: 0;
+	box-shadow: inset 0 1px 1px rgba(230, 102, 151, 0.65), 0 0 8px
+		rgba(0, 0, 0, 0.72);
+}
