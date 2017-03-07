@@ -22,3 +22,7 @@ body {
 .body-mask-layer img {
 	margin: 10% 35%;
 }
+
+textarea {
+	resize: none;
+}
