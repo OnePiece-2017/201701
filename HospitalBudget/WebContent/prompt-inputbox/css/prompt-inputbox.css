@@ -29,9 +29,14 @@
 	margin-left: 20px;
 	font-size: 19px;
 	margin-top: 20px;
-	border-radius: 15px;
+	border-radius: 5px;
 	padding: 8px 8px 8px 8px;
-	background: rgba(255, 255, 255, 0.9);
+	background: rgba(255, 255, 255, 0.5);
+}
+
+.textarea-bd:focus {
+	outline: 0;
+	box-shadow: inset 0 1px 1px rgba(230, 102, 151, 0.65), 0 0 8px rgb(63, 231, 38);
 }
 
 .btn-operation {
@@ -84,11 +89,4 @@
 	background-image: none;
 	border: 1px solid transparent;
 	border-radius: 4px;
-}
-
-.textarea-bd:focus {
-	border: 1px solid #e33030;
-	outline: 0;
-	box-shadow: inset 0 1px 1px rgba(230, 102, 151, 0.65), 0 0 8px
-		rgba(0, 0, 0, 0.72);
 }
