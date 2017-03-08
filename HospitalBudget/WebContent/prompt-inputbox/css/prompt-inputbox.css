@@ -12,7 +12,7 @@
 .prompt-inputbox-contents {
 	position: fixed;
 	width: 640px;
-	height: 320px;
+	height: 340px;
 	background: rgba(42, 233, 138, 0.7);
 	left: 23%;
 	top: 15%;
@@ -39,6 +39,47 @@
 	box-shadow: inset 0 1px 1px rgba(230, 102, 151, 0.65), 0 0 8px rgb(63, 231, 38);
 }
 
+.prompt-inputbox-contents .progress-bar {
+	position: absolute;
+	width: 100%;
+	height: 5px;
+	margin-top: 15px;
+	background: rgba(5, 5, 5, 0.67);
+}
+
+.prompt-inputbox-contents .be-overflow {
+	background: rgba(218, 30, 30, 0.82);
+}
+
+.prompt-inputbox-contents .progress-bar-details {
+	position: absolute;
+	width: 35%;
+	height: 22px;
+	margin-top: 42px;
+	left: 16px;
+	border: 1px solid rgba(251, 239, 8, 0.3);
+}
+
+.prompt-inputbox-contents .progress-bar-details span.with-current {
+	color: black;
+	float: right;
+	font-size: 19px;
+	line-height: 19px;
+	font-weight: bold;
+}
+
+.prompt-inputbox-contents .progress-bar-details span.with-current-overflow {
+	color: #b10000;
+}
+
+.prompt-inputbox-contents .progress-bar-details span.with-total {
+	float: right;
+	color: black;
+	font-size: 19px;
+	line-height: 19px;
+	font-weight: bold;
+}
+
 .btn-operation {
 	cursor: pointer;
 }
@@ -46,7 +87,7 @@
 .btn-operation .img-yes {
 	position: absolute;
 	left: 40%;
-	margin-top: 12px;
+	margin-top: 30px;
 	width: 48px;
 	height: 48px;
 }
@@ -54,7 +95,7 @@
 .btn-operation .img-no {
 	position: absolute;
 	right: 40%;
-	margin-top: 12px;
+	margin-top: 30px;
 	width: 48px;
 	height: 48px;
 }
@@ -89,4 +130,21 @@
 	background-image: none;
 	border: 1px solid transparent;
 	border-radius: 4px;
+}
+
+.prompt-inputbox-contents .input-hint {
+	position: absolute;
+	width: 35%;
+	height: 22px;
+	margin-top: 42px;
+	right: 16px;
+	border: 1px solid rgba(251, 239, 8, 0.3);
+}
+
+.prompt-inputbox-contents .input-hint span.hint-text {
+	color: black;
+	float: right;
+	font-size: 19px;
+	line-height: 19px;
+	font-weight: bold;
 }
