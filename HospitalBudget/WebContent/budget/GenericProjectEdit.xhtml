@@ -1,0 +1,176 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:s="http://jboss.com/products/seam/taglib"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:a="http://richfaces.org/a4j"
+    xmlns:rich="http://richfaces.org/rich"
+    template="layout/template.xhtml">
+
+<ui:define name="body">
+
+    <h:form id="genericProject" styleClass="edit">
+
+        <rich:panel>
+            <f:facet name="header">#{genericProjectHome.managed ? 'Edit' : 'Add'} Generic project</f:facet>
+
+
+
+            <s:decorate id="thePidField" template="layout/edit.xhtml">
+                <ui:define name="label">The pid</ui:define>
+                <h:inputText id="thePid"
+                          value="#{genericProjectHome.instance.thePid}">
+                    <a:support event="onblur" reRender="thePidField" bypassUpdates="true" ajaxSingle="true"/>
+                </h:inputText>
+            </s:decorate>
+
+
+            <s:decorate id="theValueField" template="layout/edit.xhtml">
+                <ui:define name="label">The value</ui:define>
+                <h:inputTextarea id="theValue"
+                               cols="80"
+                               rows="3"
+                           required="true"
+                              value="#{genericProjectHome.instance.theValue}"/>
+            </s:decorate>
+
+
+            <s:decorate id="projectTypeField" template="layout/edit.xhtml">
+                <ui:define name="label">Project type</ui:define>
+                <h:inputText id="projectType"
+                          value="#{genericProjectHome.instance.projectType}">
+                    <a:support event="onblur" reRender="projectTypeField" bypassUpdates="true" ajaxSingle="true"/>
+                </h:inputText>
+            </s:decorate>
+
+
+            <s:decorate id="departmentInfoIdField" template="layout/edit.xhtml">
+                <ui:define name="label">Department info id</ui:define>
+                <h:inputText id="departmentInfoId"
+                          value="#{genericProjectHome.instance.departmentInfoId}">
+                    <a:support event="onblur" reRender="departmentInfoIdField" bypassUpdates="true" ajaxSingle="true"/>
+                </h:inputText>
+            </s:decorate>
+
+
+            <s:decorate id="fundsSourceIdField" template="layout/edit.xhtml">
+                <ui:define name="label">Funds source id</ui:define>
+                <h:inputText id="fundsSourceId"
+                          value="#{genericProjectHome.instance.fundsSourceId}">
+                    <a:support event="onblur" reRender="fundsSourceIdField" bypassUpdates="true" ajaxSingle="true"/>
+                </h:inputText>
+            </s:decorate>
+
+
+            <s:decorate id="budgetAmountField" template="layout/edit.xhtml">
+                <ui:define name="label">Budget amount</ui:define>
+                <h:inputText id="budgetAmount"
+                          value="#{genericProjectHome.instance.budgetAmount}">
+                    <a:support event="onblur" reRender="budgetAmountField" bypassUpdates="true" ajaxSingle="true"/>
+                </h:inputText>
+            </s:decorate>
+
+
+            <s:decorate id="theDescriptionField" template="layout/edit.xhtml">
+                <ui:define name="label">The description</ui:define>
+                <h:inputTextarea id="theDescription"
+                               cols="80"
+                               rows="10"
+                              value="#{genericProjectHome.instance.theDescription}"/>
+            </s:decorate>
+
+
+            <s:decorate id="theStateField" template="layout/edit.xhtml">
+                <ui:define name="label">The state</ui:define>
+                <h:inputText id="theState"
+                          value="#{genericProjectHome.instance.theState}">
+                    <a:support event="onblur" reRender="theStateField" bypassUpdates="true" ajaxSingle="true"/>
+                </h:inputText>
+            </s:decorate>
+
+
+            <s:decorate id="insertTimeField" template="layout/edit.xhtml">
+                <ui:define name="label">Insert time</ui:define>
+                <rich:calendar id="insertTime"
+                          value="#{genericProjectHome.instance.insertTime}" datePattern="MM/dd/yyyy hh:mm a"/>
+            </s:decorate>
+
+
+            <s:decorate id="insertUserField" template="layout/edit.xhtml">
+                <ui:define name="label">Insert user</ui:define>
+                <h:inputText id="insertUser"
+                          value="#{genericProjectHome.instance.insertUser}">
+                    <a:support event="onblur" reRender="insertUserField" bypassUpdates="true" ajaxSingle="true"/>
+                </h:inputText>
+            </s:decorate>
+
+
+            <s:decorate id="updateTimeField" template="layout/edit.xhtml">
+                <ui:define name="label">Update time</ui:define>
+                <rich:calendar id="updateTime"
+                          value="#{genericProjectHome.instance.updateTime}" datePattern="MM/dd/yyyy hh:mm a"/>
+            </s:decorate>
+
+
+            <s:decorate id="updateUserField" template="layout/edit.xhtml">
+                <ui:define name="label">Update user</ui:define>
+                <h:inputText id="updateUser"
+                          value="#{genericProjectHome.instance.updateUser}">
+                    <a:support event="onblur" reRender="updateUserField" bypassUpdates="true" ajaxSingle="true"/>
+                </h:inputText>
+            </s:decorate>
+
+
+            <s:decorate id="deletedField" template="layout/edit.xhtml">
+                <ui:define name="label">Deleted</ui:define>
+                <h:selectBooleanCheckbox id="deleted"
+                                   required="true"
+                                      value="#{genericProjectHome.instance.deleted}"/>
+            </s:decorate>
+
+            <div style="clear:both">
+                <span class="required">*</span>
+                required fields
+            </div>
+
+        </rich:panel>
+
+        <div class="actionButtons">
+
+            <h:commandButton id="save"
+                          value="Save"
+                         action="#{genericProjectHome.persist}"
+                       disabled="#{!genericProjectHome.wired}"
+                       rendered="#{!genericProjectHome.managed}"/>
+
+            <h:commandButton id="update"
+                          value="Save"
+                         action="#{genericProjectHome.update}"
+                       rendered="#{genericProjectHome.managed}"/>
+
+            <h:commandButton id="delete"
+                          value="Delete"
+                         action="#{genericProjectHome.remove}"
+                      immediate="true"
+                       rendered="#{genericProjectHome.managed}"/>
+
+            <s:button id="cancelEdit"
+                   value="Cancel"
+             propagation="end"
+                    view="/GenericProject.xhtml"
+                rendered="#{genericProjectHome.managed}"/>
+
+            <s:button id="cancelAdd"
+                   value="Cancel"
+             propagation="end"
+                    view="/#{empty genericProjectFrom ? 'GenericProjectList' : genericProjectFrom}.xhtml"
+                rendered="#{!genericProjectHome.managed}"/>
+
+        </div>
+    </h:form>
+
+</ui:define>
+
+</ui:composition>

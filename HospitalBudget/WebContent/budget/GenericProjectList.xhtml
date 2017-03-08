@@ -1,0 +1,269 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:s="http://jboss.com/products/seam/taglib"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:rich="http://richfaces.org/rich"
+    template="layout/template.xhtml">
+
+<ui:define name="body">
+
+    <h:form id="genericProjectSearch" styleClass="edit">
+
+        <rich:simpleTogglePanel label="GenericProject Search Filter" switchType="ajax">
+
+            <s:decorate template="layout/display.xhtml">
+                <ui:define name="label">The value</ui:define>
+                <h:inputText id="theValue" value="#{genericProjectList.genericProject.theValue}"/>
+            </s:decorate>
+
+            <s:decorate template="layout/display.xhtml">
+                <ui:define name="label">The description</ui:define>
+                <h:inputText id="theDescription" value="#{genericProjectList.genericProject.theDescription}"/>
+            </s:decorate>
+
+            <s:decorate template="layout/display.xhtml">
+                <ui:define name="label">Match</ui:define>
+                <h:selectOneRadio id="logic" value="#{genericProjectList.restrictionLogicOperator}" styleClass="radio">
+                    <f:selectItem itemLabel="All" itemValue="and"/>
+                    <f:selectItem itemLabel="Any" itemValue="or"/>
+                </h:selectOneRadio>
+            </s:decorate>
+
+        </rich:simpleTogglePanel>
+
+        <div class="actionButtons">
+            <h:commandButton id="search" value="Search" action="/GenericProjectList.xhtml"/>
+            <s:button id="reset" value="Reset" includePageParams="false"/>
+        </div>
+
+    </h:form>
+
+    <rich:panel>
+        <f:facet name="header">GenericProject Search Results (#{empty genericProjectList.resultList ? 0 : (genericProjectList.paginated ? genericProjectList.resultCount : genericProjectList.resultList.size)})</f:facet>
+    <div class="results" id="genericProjectList">
+
+    <h:outputText value="The genericProject search returned no results."
+               rendered="#{empty genericProjectList.resultList}"/>
+
+    <rich:dataTable id="genericProjectList"
+                var="_genericProject"
+              value="#{genericProjectList.resultList}"
+           rendered="#{not empty genericProjectList.resultList}">
+        <h:column>
+            <f:facet name="header">
+                <ui:include src="layout/sort.xhtml">
+                    <ui:param name="entityList" value="#{genericProjectList}"/>
+                    <ui:param name="propertyLabel" value="The id"/>
+                    <ui:param name="propertyPath" value="genericProject.theId"/>
+                </ui:include>
+            </f:facet>
+            <h:outputText value="#{_genericProject.theId}"/>
+        </h:column>
+        <h:column>
+            <f:facet name="header">
+                <ui:include src="layout/sort.xhtml">
+                    <ui:param name="entityList" value="#{genericProjectList}"/>
+                    <ui:param name="propertyLabel" value="The pid"/>
+                    <ui:param name="propertyPath" value="genericProject.thePid"/>
+                </ui:include>
+            </f:facet>
+            <h:outputText value="#{_genericProject.thePid}"/>
+        </h:column>
+        <h:column>
+            <f:facet name="header">
+                <ui:include src="layout/sort.xhtml">
+                    <ui:param name="entityList" value="#{genericProjectList}"/>
+                    <ui:param name="propertyLabel" value="The value"/>
+                    <ui:param name="propertyPath" value="genericProject.theValue"/>
+                </ui:include>
+            </f:facet>
+            <h:outputText value="#{_genericProject.theValue}"/>
+        </h:column>
+        <h:column>
+            <f:facet name="header">
+                <ui:include src="layout/sort.xhtml">
+                    <ui:param name="entityList" value="#{genericProjectList}"/>
+                    <ui:param name="propertyLabel" value="Project type"/>
+                    <ui:param name="propertyPath" value="genericProject.projectType"/>
+                </ui:include>
+            </f:facet>
+            <h:outputText value="#{_genericProject.projectType}"/>
+        </h:column>
+        <h:column>
+            <f:facet name="header">
+                <ui:include src="layout/sort.xhtml">
+                    <ui:param name="entityList" value="#{genericProjectList}"/>
+                    <ui:param name="propertyLabel" value="Department info id"/>
+                    <ui:param name="propertyPath" value="genericProject.departmentInfoId"/>
+                </ui:include>
+            </f:facet>
+            <h:outputText value="#{_genericProject.departmentInfoId}"/>
+        </h:column>
+        <h:column>
+            <f:facet name="header">
+                <ui:include src="layout/sort.xhtml">
+                    <ui:param name="entityList" value="#{genericProjectList}"/>
+                    <ui:param name="propertyLabel" value="Funds source id"/>
+                    <ui:param name="propertyPath" value="genericProject.fundsSourceId"/>
+                </ui:include>
+            </f:facet>
+            <h:outputText value="#{_genericProject.fundsSourceId}"/>
+        </h:column>
+        <h:column>
+            <f:facet name="header">
+                <ui:include src="layout/sort.xhtml">
+                    <ui:param name="entityList" value="#{genericProjectList}"/>
+                    <ui:param name="propertyLabel" value="Budget amount"/>
+                    <ui:param name="propertyPath" value="genericProject.budgetAmount"/>
+                </ui:include>
+            </f:facet>
+            <h:outputText value="#{_genericProject.budgetAmount}"/>
+        </h:column>
+        <h:column>
+            <f:facet name="header">
+                <ui:include src="layout/sort.xhtml">
+                    <ui:param name="entityList" value="#{genericProjectList}"/>
+                    <ui:param name="propertyLabel" value="The description"/>
+                    <ui:param name="propertyPath" value="genericProject.theDescription"/>
+                </ui:include>
+            </f:facet>
+            <h:outputText value="#{_genericProject.theDescription}"/>
+        </h:column>
+        <h:column>
+            <f:facet name="header">
+                <ui:include src="layout/sort.xhtml">
+                    <ui:param name="entityList" value="#{genericProjectList}"/>
+                    <ui:param name="propertyLabel" value="The state"/>
+                    <ui:param name="propertyPath" value="genericProject.theState"/>
+                </ui:include>
+            </f:facet>
+            <h:outputText value="#{_genericProject.theState}"/>
+        </h:column>
+        <h:column>
+            <f:facet name="header">
+                <ui:include src="layout/sort.xhtml">
+                    <ui:param name="entityList" value="#{genericProjectList}"/>
+                    <ui:param name="propertyLabel" value="Insert time"/>
+                    <ui:param name="propertyPath" value="genericProject.insertTime"/>
+                </ui:include>
+            </f:facet>
+            <h:outputText value="#{_genericProject.insertTime}">
+                <s:convertDateTime type="both" dateStyle="short"/>
+            </h:outputText>
+        </h:column>
+        <h:column>
+            <f:facet name="header">
+                <ui:include src="layout/sort.xhtml">
+                    <ui:param name="entityList" value="#{genericProjectList}"/>
+                    <ui:param name="propertyLabel" value="Insert user"/>
+                    <ui:param name="propertyPath" value="genericProject.insertUser"/>
+                </ui:include>
+            </f:facet>
+            <h:outputText value="#{_genericProject.insertUser}"/>
+        </h:column>
+        <h:column>
+            <f:facet name="header">
+                <ui:include src="layout/sort.xhtml">
+                    <ui:param name="entityList" value="#{genericProjectList}"/>
+                    <ui:param name="propertyLabel" value="Update time"/>
+                    <ui:param name="propertyPath" value="genericProject.updateTime"/>
+                </ui:include>
+            </f:facet>
+            <h:outputText value="#{_genericProject.updateTime}">
+                <s:convertDateTime type="both" dateStyle="short"/>
+            </h:outputText>
+        </h:column>
+        <h:column>
+            <f:facet name="header">
+                <ui:include src="layout/sort.xhtml">
+                    <ui:param name="entityList" value="#{genericProjectList}"/>
+                    <ui:param name="propertyLabel" value="Update user"/>
+                    <ui:param name="propertyPath" value="genericProject.updateUser"/>
+                </ui:include>
+            </f:facet>
+            <h:outputText value="#{_genericProject.updateUser}"/>
+        </h:column>
+        <h:column>
+            <f:facet name="header">
+                <ui:include src="layout/sort.xhtml">
+                    <ui:param name="entityList" value="#{genericProjectList}"/>
+                    <ui:param name="propertyLabel" value="Deleted"/>
+                    <ui:param name="propertyPath" value="genericProject.deleted"/>
+                </ui:include>
+            </f:facet>
+            <h:outputText value="#{_genericProject.deleted}"/>
+        </h:column>
+        <rich:column styleClass="action">
+            <f:facet name="header">Action</f:facet>
+            <s:link view="/#{empty from ? 'GenericProject' : from}.xhtml"
+                   value="#{empty from ? 'View' : 'Select'}"
+             propagation="#{empty from ? 'none' : 'default'}"
+                      id="genericProjectViewId">
+                <f:param name="genericProjectTheId"
+                        value="#{_genericProject.theId}"/>
+            </s:link>
+            #{' '}
+            <s:link view="/GenericProjectEdit.xhtml"
+                   value="Edit"
+             propagation="none"
+                      id="genericProjectEdit"
+                rendered="#{empty from}">
+                <f:param name="genericProjectTheId"
+                        value="#{_genericProject.theId}"/>
+            </s:link>
+        </rich:column>
+    </rich:dataTable>
+
+    </div>
+    </rich:panel>
+
+    <div class="tableControl">
+
+        <s:link view="/GenericProjectList.xhtml"
+            rendered="#{genericProjectList.previousExists}"
+               value="#{messages.left}#{messages.left} First Page"
+                  id="firstPage">
+          <f:param name="firstResult" value="0"/>
+        </s:link>
+
+        <s:link view="/GenericProjectList.xhtml"
+            rendered="#{genericProjectList.previousExists}"
+               value="#{messages.left} Previous Page"
+                  id="previousPage">
+            <f:param name="firstResult"
+                    value="#{genericProjectList.previousFirstResult}"/>
+        </s:link>
+
+        <s:link view="/GenericProjectList.xhtml"
+            rendered="#{genericProjectList.nextExists}"
+               value="Next Page #{messages.right}"
+                  id="nextPage">
+            <f:param name="firstResult"
+                    value="#{genericProjectList.nextFirstResult}"/>
+        </s:link>
+
+        <s:link view="/GenericProjectList.xhtml"
+            rendered="#{genericProjectList.nextExists}"
+               value="Last Page #{messages.right}#{messages.right}"
+                  id="lastPage">
+            <f:param name="firstResult"
+                    value="#{genericProjectList.lastFirstResult}"/>
+        </s:link>
+
+    </div>
+
+    <s:div styleClass="actionButtons" rendered="#{empty from}">
+        <s:button view="/GenericProjectEdit.xhtml"
+                    id="create"
+           propagation="none"
+                 value="Create genericProject">
+            <f:param name="genericProjectTheId"/>
+        </s:button>
+    </s:div>
+
+</ui:define>
+
+</ui:composition>
