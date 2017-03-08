@@ -64,7 +64,7 @@
 			}
 			
 			#node-subproject .row-head,#node-subproject .row-data {
-				width: 1234px;
+				width: 1014px;
 				height: 44px;
 				border-bottom: 2px solid #fff;
 			}
@@ -80,21 +80,16 @@
 			}
 			
 			#node-subproject .row-head>span:nth-child(3),#node-subproject .row-data>span:nth-child(3) {
-				width: 220px;
-				background: #c4b16f;
-			}
-			
-			#node-subproject .row-head>span:nth-child(4),#node-subproject .row-data>span:nth-child(4) {
 				width: 240px;
 				background: #86cef0;
 			}
 			
-			#node-subproject .row-head>span:nth-child(5),#node-subproject .row-data>span:nth-child(5) {
+			#node-subproject .row-head>span:nth-child(4),#node-subproject .row-data>span:nth-child(4) {
 				width: 240px;
 				background: #e91c72;
 			}
 			
-			#node-subproject .row-head>span:nth-child(6),#node-subproject .row-data>span:nth-child(6) {
+			#node-subproject .row-head>span:nth-child(5),#node-subproject .row-data>span:nth-child(5) {
 				width: 180px;
 				background: #e0ecff;
 			}
@@ -318,23 +313,6 @@
 									</table>
 								</div>
 							</td>
-							<td width="50%">
-								<div class="pb20">
-									<table>
-										<tr>
-											<td valign="middle">
-												<span class="field-name mb10">预算金额</span>
-											</td>
-											<td valign="middle">
-												<h:inputText id="budgetAmount" value="#{routineProjectHome.instance.budgetAmount}" styleClass="form-control mb10 fix--w220" />
-											</td>
-											<td valign="middle">
-												<font color="red" style="margin-left: 3px;"></font>
-											</td>
-										</tr>
-									</table>
-								</div>
-							</td>
 						</tr>
 						<tr>
 							<td colspan="2">
@@ -369,7 +347,6 @@
 										<img src="../images/icon_arrow_carrot_down_32x32.png" style="width: 24px;height: 24px;margin: 9px -7px; opacity: 0;" />
 									</span>
 									<span>项目名称</span>
-									<span>预算金额</span>
 									<span>编制人员</span>
 									<span>执行人员</span>
 									<span>操作</span>
@@ -416,23 +393,6 @@
 													<td valign="middle">
 														<select id="subproject_parentId" class="selectpicker" data-live-search="true">
 														</select>
-													</td>
-													<td valign="middle">
-														<font color="red" style="margin-left: 3px;"></font>
-													</td>
-												</tr>
-											</table>
-										</div>
-									</td>
-									<td width="50%">
-										<div class="pb20">
-											<table>
-												<tr>
-													<td valign="middle">
-														<span class="field-name mb10">预算金额</span>
-													</td>
-													<td valign="middle">
-														<input id="subproject_budgetAmount" class="form-control mb10 fix--w220" type="text" />
 													</td>
 													<td valign="middle">
 														<font color="red" style="margin-left: 3px;"></font>
@@ -583,7 +543,6 @@
 				}
 			
 				___textRestrictById('mainForm:theValue', 255);
-				___textRestrictById('mainForm:budgetAmount', 12);
 				___textRestrictById('mainForm:theDescription', 1024);
 			
 				jQuery('.selectpicker').selectpicker();
@@ -638,7 +597,6 @@
 				g_is_create = true;
 				//重置用户输入
 				jQuery('#subproject_projectName').val('');
-				jQuery('#subproject_budgetAmount').val('');
 				jQuery('#subproject_budgetPersonCompilerIds').val('');
 				jQuery('#subproject_budgetPersonCompilerIds').selectpicker('render');
 				jQuery('#subproject_budgetPersonExecutorIds').val('');
@@ -661,7 +619,6 @@
 				jQuery.extend(true, g_edit_itemData, g_subproject_all[dataId]); //深拷贝
 				//恢复用户输入
 				jQuery('#subproject_projectName').val(g_subproject_all[dataId]['name']);
-				jQuery('#subproject_budgetAmount').val(g_subproject_all[dataId]['amount']);
 				jQuery('#subproject_budgetPersonCompilerIds').val(g_subproject_all[dataId]['compiler'].split(','));
 				jQuery('#subproject_budgetPersonCompilerIds').selectpicker('render');
 				jQuery('#subproject_budgetPersonExecutorIds').val(g_subproject_all[dataId]['executor'].split(','));
@@ -694,21 +651,6 @@
 						fadeInCallback: null,
 						fadeOutCallback: function() {
 							jQuery('#subproject_projectName').focus();
-						}
-					});
-					return null;
-				}
-				var amount = jQuery('#subproject_budgetAmount').val();
-				if (!___isNumber(amount)) {
-					___promptMessage({
-						type: 'warning',
-						title: '温馨提示',
-						prompt: '请填写预算有效的金额！',
-						fadeInMillis: 0,
-						fadeOutMillis: 1000 * 0.3,
-						fadeInCallback: null,
-						fadeOutCallback: function() {
-							jQuery('#subproject_budgetAmount').focus();
 						}
 					});
 					return null;
@@ -758,7 +700,6 @@
 					itemData['pid'] = null;
 					itemData['level'] = 2;
 				}
-				itemData['amount'] = amount;
 				itemData['compiler'] = compiler.join(',');
 				itemData['executor'] = executor.join(',');
 				itemData['description'] = jQuery('#subproject_description').val();
@@ -788,7 +729,6 @@
 						jQuery.extend(g_subproject_all[dataId], itemData); //合并
 						var rdRef = jQuery('.row-data[data-id="' + dataId + '"]');
 						rdRef.children('.field-name').html(g_subproject_all[dataId]['name']);
-						rdRef.children('.field-amount').html(g_subproject_all[dataId]['amount']);
 						rdRef.children('.field-compiler').html(___genStdHtml___a_abbr(gainPersonStr(g_subproject_all[dataId]['compiler']), 13));
 						rdRef.children('.field-executor').html(___genStdHtml___a_abbr(gainPersonStr(g_subproject_all[dataId]['executor']), 13));
 						//rdRef.children('.field-description').html(g_subproject_all[dataId]['description']);
@@ -849,7 +789,6 @@
 				rowDataHtml += '		<img src="' + toggleIcon['opened'] + '" class="toggle-child" onclick="toggleChild(this);">';
 				rowDataHtml += '	</span>';
 				rowDataHtml += '	<span class="field-name">' + g_subproject_all[subprojectIndex]['name'] + '</span>';
-				rowDataHtml += '	<span class="field-amount">' + g_subproject_all[subprojectIndex]['amount'] + '</span>';
 				rowDataHtml += '	<span class="field-compiler">' + ___genStdHtml___a_abbr(gainPersonStr(g_subproject_all[subprojectIndex]['compiler']), 13) + '</span>';
 				rowDataHtml += '	<span class="field-executor">' + ___genStdHtml___a_abbr(gainPersonStr(g_subproject_all[subprojectIndex]['executor']), 13) + '</span>';
 				//rowDataHtml += '	<span class="field-description">' + g_subproject_all[subprojectIndex]['description'] + '</span>';
@@ -1036,22 +975,6 @@
 					return false;
 				}
 				jQuery('#mainForm\\:fundsSourceIdHidden').val(fundsSourceId);
-			
-				var budgetAmount = jQuery('#mainForm\\:budgetAmount').val();
-				___dynamic_function = function() {
-					jQuery('#mainForm\\:budgetAmount').focus();
-				};
-				if (budgetAmount == null || budgetAmount == '') {
-					___msg('温馨提示', '请填写预算金额！', {
-						closed: ___dynamic_function
-					});
-					return false;
-				} else if (isNaN(budgetAmount)) {
-					___msg('温馨提示', '预算金额必须是合法的数字！', {
-						closed: ___dynamic_function
-					});
-					return false;
-				}
 			
 				jQuery('#mainForm\\:subprojectInfoHidden').val(JSON.stringify(g_subproject_all));
 			}

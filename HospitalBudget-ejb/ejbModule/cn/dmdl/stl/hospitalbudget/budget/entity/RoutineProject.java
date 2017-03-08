@@ -37,7 +37,6 @@ public class RoutineProject implements java.io.Serializable {
 	private Integer projectType;
 	private YsDepartmentInfo ysDepartmentInfo;
 	private YsFundsSource ysFundsSource;
-	private Double budgetAmount;
 	private String theDescription;
 	private Integer theState;
 	private Date insertTime;
@@ -107,15 +106,6 @@ public class RoutineProject implements java.io.Serializable {
 
 	public void setYsFundsSource(YsFundsSource ysFundsSource) {
 		this.ysFundsSource = ysFundsSource;
-	}
-
-	@Column(name = "budget_amount", precision = 22, scale = 0)
-	public Double getBudgetAmount() {
-		return this.budgetAmount;
-	}
-
-	public void setBudgetAmount(Double budgetAmount) {
-		this.budgetAmount = budgetAmount;
 	}
 
 	@Column(name = "the_description", length = 1024)

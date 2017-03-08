@@ -20,7 +20,6 @@ public class RoutineProjectList extends CriterionNativeQuery<Object[]> {
 		sql.append(" routine_project.project_type,");
 		sql.append(" ys_department_info.the_value as department_name,");
 		sql.append(" ys_funds_source.the_value as funds_source_name,");
-		sql.append(" routine_project.budget_amount,");
 		sql.append(" routine_project.the_state");
 		sql.append(" from routine_project");
 		sql.append(" left join ys_department_info on ys_department_info.the_id = routine_project.department_info_id");

@@ -81,7 +81,6 @@ public class RoutineProjectHome extends CriterionEntityHome<RoutineProject> {
 			JSONObject subprojectInfoOne = subprojectInfoAll.getJSONObject(key.toString());
 			Object pid = subprojectInfoOne.get("pid");
 			String name = subprojectInfoOne.getString("name");
-			Double amount = subprojectInfoOne.getDouble("amount");
 			String compiler = subprojectInfoOne.getString("compiler");
 			String executor = subprojectInfoOne.getString("executor");
 			String description = subprojectInfoOne.getString("description");
@@ -89,7 +88,6 @@ public class RoutineProjectHome extends CriterionEntityHome<RoutineProject> {
 				RoutineProject instance2nd = new RoutineProject();
 				instance2nd.setTheValue(name);
 				instance2nd.setRoutineProject(instance);
-				instance2nd.setBudgetAmount(amount);
 				instance2nd.setTheDescription(description);
 				getEntityManager().persist(instance2nd);
 				if (compiler != null && !"".equals(compiler)) {
@@ -129,14 +127,12 @@ public class RoutineProjectHome extends CriterionEntityHome<RoutineProject> {
 			Object pid3rdPlus = subprojectInfoOne.get("pid");
 			if (!JSONNull.getInstance().equals(pid3rdPlus) && Integer.parseInt(pid3rdPlus.toString()) == pid) {
 				String name = subprojectInfoOne.getString("name");
-				Double amount = subprojectInfoOne.getDouble("amount");
 				String compiler = subprojectInfoOne.getString("compiler");
 				String executor = subprojectInfoOne.getString("executor");
 				String description = subprojectInfoOne.getString("description");
 				RoutineProject instance3rdPlus = new RoutineProject();
 				instance3rdPlus.setTheValue(name);
 				instance3rdPlus.setRoutineProject(parentInstance);
-				instance3rdPlus.setBudgetAmount(amount);
 				instance3rdPlus.setTheDescription(description);
 				getEntityManager().persist(instance3rdPlus);
 				if (compiler != null && !"".equals(compiler)) {
@@ -227,7 +223,6 @@ public class RoutineProjectHome extends CriterionEntityHome<RoutineProject> {
 			JSONObject subprojectInfoOne = subprojectInfoAll.getJSONObject(key.toString());
 			Object pid = subprojectInfoOne.get("pid");
 			String name = subprojectInfoOne.getString("name");
-			Double amount = subprojectInfoOne.getDouble("amount");
 			String compiler = subprojectInfoOne.getString("compiler");
 			String executor = subprojectInfoOne.getString("executor");
 			String description = subprojectInfoOne.getString("description");
@@ -235,7 +230,6 @@ public class RoutineProjectHome extends CriterionEntityHome<RoutineProject> {
 				RoutineProject instance2nd = new RoutineProject();
 				instance2nd.setTheValue(name);
 				instance2nd.setRoutineProject(instance);
-				instance2nd.setBudgetAmount(amount);
 				instance2nd.setTheDescription(description);
 				getEntityManager().persist(instance2nd);
 				if (compiler != null && !"".equals(compiler)) {
@@ -485,10 +479,9 @@ public class RoutineProjectHome extends CriterionEntityHome<RoutineProject> {
 					itemValue.accumulate("name", prj3rdPlus[2]);
 					itemValue.accumulate("pid", host.getJSONObject(pid.toString()).get("id"));
 					itemValue.accumulate("level", host.getJSONObject(pid.toString()).getInt("level") + 1);
-					itemValue.accumulate("amount", prj3rdPlus[3]);
 					itemValue.accumulate("compiler", theCompilerMap.get(id));
 					itemValue.accumulate("executor", theExecutorMap.get(id));
-					itemValue.accumulate("description", prj3rdPlus[4]);
+					itemValue.accumulate("description", prj3rdPlus[3]);
 					host.accumulate(id.toString(), itemValue);
 					parasitic3rdPlus(prj3rdPlusList, theCompilerMap, theExecutorMap, host, id);
 				}
@@ -535,8 +528,8 @@ public class RoutineProjectHome extends CriterionEntityHome<RoutineProject> {
 						theExecutorMap.put(theExecutor[0], theExecutor[1]);
 					}
 				}
-				List<Object[]> prj3rdPlusList = getEntityManager().createNativeQuery("select the_id, the_pid, the_value, budget_amount, the_description from routine_project").getResultList();
-				List<Object[]> prj2ndList = getEntityManager().createNativeQuery("select the_id, the_value, budget_amount, the_description from routine_project where the_pid = " + instance.getTheId()).getResultList();
+				List<Object[]> prj3rdPlusList = getEntityManager().createNativeQuery("select the_id, the_pid, the_value, the_description from routine_project").getResultList();
+				List<Object[]> prj2ndList = getEntityManager().createNativeQuery("select the_id, the_value, the_description from routine_project where the_pid = " + instance.getTheId()).getResultList();
 				if (prj2ndList != null && prj2ndList.size() > 0) {
 					for (Object[] prj2nd : prj2ndList) {
 						Object id = prj2nd[0];
@@ -545,10 +538,9 @@ public class RoutineProjectHome extends CriterionEntityHome<RoutineProject> {
 						itemValue.accumulate("name", prj2nd[1]);
 						itemValue.accumulate("pid", null);
 						itemValue.accumulate("level", 2);
-						itemValue.accumulate("amount", prj2nd[2]);
 						itemValue.accumulate("compiler", theCompilerMap.get(id));
 						itemValue.accumulate("executor", theExecutorMap.get(id));
-						itemValue.accumulate("description", prj2nd[3]);
+						itemValue.accumulate("description", prj2nd[2]);
 						subprojectInfoJson.accumulate(id.toString(), itemValue);
 						parasitic3rdPlus(prj3rdPlusList, theCompilerMap, theExecutorMap, subprojectInfoJson, id);
 					}
