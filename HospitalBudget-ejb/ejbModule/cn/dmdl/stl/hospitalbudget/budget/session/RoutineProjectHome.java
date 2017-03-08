@@ -165,11 +165,6 @@ public class RoutineProjectHome extends CriterionEntityHome<RoutineProject> {
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.jboss.seam.framework.EntityHome#update()
-	 */
 	@SuppressWarnings("unchecked")
 	@Override
 	public String update() {
