@@ -559,7 +559,6 @@ public class RoutineProjectHome extends CriterionEntityHome<RoutineProject> {
 
 			isFirstTime = true;
 		}
-
 	}
 
 	public void setRoutineProjectTheId(Integer id) {
