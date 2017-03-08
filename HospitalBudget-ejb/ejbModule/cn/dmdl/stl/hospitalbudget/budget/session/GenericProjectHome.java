@@ -486,7 +486,7 @@ public class GenericProjectHome extends CriterionEntityHome<GenericProject> {
 					itemValue.accumulate("level", host.getJSONObject(pid.toString()).getInt("level") + 1);
 					itemValue.accumulate("amount", prj3rdPlus[3]);
 					itemValue.accumulate("compiler", theCompilerMap.get(id));
-					itemValue.accumulate("executor", theCompilerMap.get(id));
+					itemValue.accumulate("executor", theExecutorMap.get(id));
 					itemValue.accumulate("description", prj3rdPlus[4]);
 					host.accumulate(id.toString(), itemValue);
 					parasitic3rdPlus(prj3rdPlusList, theCompilerMap, theExecutorMap, host, id);
@@ -546,7 +546,7 @@ public class GenericProjectHome extends CriterionEntityHome<GenericProject> {
 						itemValue.accumulate("level", 2);
 						itemValue.accumulate("amount", prj2nd[2]);
 						itemValue.accumulate("compiler", theCompilerMap.get(id));
-						itemValue.accumulate("executor", theCompilerMap.get(id));
+						itemValue.accumulate("executor", theExecutorMap.get(id));
 						itemValue.accumulate("description", prj2nd[3]);
 						subprojectInfoJson.accumulate(id.toString(), itemValue);
 						parasitic3rdPlus(prj3rdPlusList, theCompilerMap, theExecutorMap, subprojectInfoJson, id);
