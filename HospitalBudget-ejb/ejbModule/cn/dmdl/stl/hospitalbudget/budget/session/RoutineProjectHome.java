@@ -31,7 +31,8 @@ public class RoutineProjectHome extends CriterionEntityHome<RoutineProject> {
 	private String budgetPersonCompilerIds;// 预算相关人员ids 编制人
 	private String budgetPersonExecutorIds;// 预算相关人员ids 执行人
 	private JSONObject personJson;// 人员json
-	private String subprojectInfo;// 子项目（前、后端共享）
+	private String subprojectInfo;// 子项目（前台-->后台）
+	private JSONObject subprojectInfoJson;// 子项目（后台-->前台）
 
 	@Override
 	public String persist() {
@@ -552,9 +553,9 @@ public class RoutineProjectHome extends CriterionEntityHome<RoutineProject> {
 						parasitic3rdPlus(prj3rdPlusList, theCompilerMap, theExecutorMap, subprojectInfoJson, id);
 					}
 				}
-				subprojectInfo = subprojectInfoJson.toString();
+				this.subprojectInfoJson = subprojectInfoJson;// 避免后台toString()到前台使用JSON.parse解析含有回车符文本报错
 			} else {
-				subprojectInfo = new JSONObject().toString();
+				this.subprojectInfoJson = new JSONObject();
 			}
 
 			isFirstTime = true;
@@ -643,6 +644,10 @@ public class RoutineProjectHome extends CriterionEntityHome<RoutineProject> {
 
 	public void setSubprojectInfo(String subprojectInfo) {
 		this.subprojectInfo = subprojectInfo;
+	}
+
+	public JSONObject getSubprojectInfoJson() {
+		return subprojectInfoJson;
 	}
 
 }
