@@ -5,7 +5,7 @@
 
 	<restrict>#{s:hasRole('?')}</restrict>
 	<param name="from" />
-	<param name="page" value="#{usualProjectList.page}" />
-	<param name="keyword" value="#{usualProjectList.keyword}" />
+	<param name="page" value="#{routineProjectList.page}" />
+	<param name="keyword" value="#{routineProjectList.keyword}" />
 
 </page>

@@ -11,15 +11,15 @@ import net.sf.json.JSONObject;
 
 import org.jboss.seam.annotations.Name;
 
-import cn.dmdl.stl.hospitalbudget.budget.entity.UsualProject;
-import cn.dmdl.stl.hospitalbudget.budget.entity.UsualProjectCompiler;
-import cn.dmdl.stl.hospitalbudget.budget.entity.UsualProjectExecutor;
+import cn.dmdl.stl.hospitalbudget.budget.entity.RoutineProject;
+import cn.dmdl.stl.hospitalbudget.budget.entity.RoutineProjectCompiler;
+import cn.dmdl.stl.hospitalbudget.budget.entity.RoutineProjectExecutor;
 import cn.dmdl.stl.hospitalbudget.common.session.CriterionEntityHome;
 import cn.dmdl.stl.hospitalbudget.hospital.entity.YsDepartmentInfo;
 import cn.dmdl.stl.hospitalbudget.hospital.entity.YsFundsSource;
 
-@Name("usualProjectHome")
-public class UsualProjectHome extends CriterionEntityHome<UsualProject> {
+@Name("routineProjectHome")
+public class RoutineProjectHome extends CriterionEntityHome<RoutineProject> {
 
 	private static final long serialVersionUID = 1L;
 	private boolean isFirstTime;// 首次标记（提交表单后返回错误状态重载页面控件，如下拉框。。。）
@@ -56,10 +56,10 @@ public class UsualProjectHome extends CriterionEntityHome<UsualProject> {
 			String[] idArr = budgetPersonCompilerIds.split(",");
 			if (idArr != null && idArr.length > 0) {
 				for (String id : idArr) {
-					UsualProjectCompiler usualProjectCompiler = new UsualProjectCompiler();
-					usualProjectCompiler.setUsualProjectId(instance.getTheId());
-					usualProjectCompiler.setUserInfoId(Integer.valueOf(id));
-					getEntityManager().persist(usualProjectCompiler);
+					RoutineProjectCompiler theCompiler = new RoutineProjectCompiler();
+					theCompiler.setProjectId(instance.getTheId());
+					theCompiler.setUserInfoId(Integer.valueOf(id));
+					getEntityManager().persist(theCompiler);
 				}
 			}
 		}
@@ -67,10 +67,10 @@ public class UsualProjectHome extends CriterionEntityHome<UsualProject> {
 			String[] idArr = budgetPersonExecutorIds.split(",");
 			if (idArr != null && idArr.length > 0) {
 				for (String id : idArr) {
-					UsualProjectExecutor usualProjectExecutor = new UsualProjectExecutor();
-					usualProjectExecutor.setUsualProjectId(instance.getTheId());
-					usualProjectExecutor.setUserInfoId(Integer.valueOf(id));
-					getEntityManager().persist(usualProjectExecutor);
+					RoutineProjectExecutor theExecutor = new RoutineProjectExecutor();
+					theExecutor.setProjectId(instance.getTheId());
+					theExecutor.setUserInfoId(Integer.valueOf(id));
+					getEntityManager().persist(theExecutor);
 				}
 			}
 		}
@@ -85,9 +85,9 @@ public class UsualProjectHome extends CriterionEntityHome<UsualProject> {
 			String executor = subprojectInfoOne.getString("executor");
 			String description = subprojectInfoOne.getString("description");
 			if (JSONNull.getInstance().equals(pid)) {
-				UsualProject instance2nd = new UsualProject();
+				RoutineProject instance2nd = new RoutineProject();
 				instance2nd.setTheValue(name);
-				instance2nd.setUsualProject(instance);
+				instance2nd.setRoutineProject(instance);
 				instance2nd.setBudgetAmount(amount);
 				instance2nd.setTheDescription(description);
 				getEntityManager().persist(instance2nd);
@@ -95,10 +95,10 @@ public class UsualProjectHome extends CriterionEntityHome<UsualProject> {
 					String[] idArr = compiler.split(",");
 					if (idArr != null && idArr.length > 0) {
 						for (String id : idArr) {
-							UsualProjectCompiler usualProjectCompiler = new UsualProjectCompiler();
-							usualProjectCompiler.setUsualProjectId(instance2nd.getTheId());
-							usualProjectCompiler.setUserInfoId(Integer.valueOf(id));
-							getEntityManager().persist(usualProjectCompiler);
+							RoutineProjectCompiler theCompiler = new RoutineProjectCompiler();
+							theCompiler.setProjectId(instance2nd.getTheId());
+							theCompiler.setUserInfoId(Integer.valueOf(id));
+							getEntityManager().persist(theCompiler);
 						}
 					}
 				}
@@ -106,10 +106,10 @@ public class UsualProjectHome extends CriterionEntityHome<UsualProject> {
 					String[] idArr = executor.split(",");
 					if (idArr != null && idArr.length > 0) {
 						for (String id : idArr) {
-							UsualProjectExecutor usualProjectExecutor = new UsualProjectExecutor();
-							usualProjectExecutor.setUsualProjectId(instance2nd.getTheId());
-							usualProjectExecutor.setUserInfoId(Integer.valueOf(id));
-							getEntityManager().persist(usualProjectExecutor);
+							RoutineProjectExecutor theExecutor = new RoutineProjectExecutor();
+							theExecutor.setProjectId(instance2nd.getTheId());
+							theExecutor.setUserInfoId(Integer.valueOf(id));
+							getEntityManager().persist(theExecutor);
 						}
 					}
 				}
@@ -122,7 +122,7 @@ public class UsualProjectHome extends CriterionEntityHome<UsualProject> {
 	}
 
 	/** 处理三级项目+ */
-	public void persist3rdPlus(JSONObject subprojectInfoAll, int pid, UsualProject parentInstance) {
+	public void persist3rdPlus(JSONObject subprojectInfoAll, int pid, RoutineProject parentInstance) {
 		for (Object key : subprojectInfoAll.keySet()) {
 			JSONObject subprojectInfoOne = subprojectInfoAll.getJSONObject(key.toString());
 			Object pid3rdPlus = subprojectInfoOne.get("pid");
@@ -132,9 +132,9 @@ public class UsualProjectHome extends CriterionEntityHome<UsualProject> {
 				String compiler = subprojectInfoOne.getString("compiler");
 				String executor = subprojectInfoOne.getString("executor");
 				String description = subprojectInfoOne.getString("description");
-				UsualProject instance3rdPlus = new UsualProject();
+				RoutineProject instance3rdPlus = new RoutineProject();
 				instance3rdPlus.setTheValue(name);
-				instance3rdPlus.setUsualProject(parentInstance);
+				instance3rdPlus.setRoutineProject(parentInstance);
 				instance3rdPlus.setBudgetAmount(amount);
 				instance3rdPlus.setTheDescription(description);
 				getEntityManager().persist(instance3rdPlus);
@@ -142,10 +142,10 @@ public class UsualProjectHome extends CriterionEntityHome<UsualProject> {
 					String[] idArr = compiler.split(",");
 					if (idArr != null && idArr.length > 0) {
 						for (String id : idArr) {
-							UsualProjectCompiler usualProjectCompiler = new UsualProjectCompiler();
-							usualProjectCompiler.setUsualProjectId(instance3rdPlus.getTheId());
-							usualProjectCompiler.setUserInfoId(Integer.valueOf(id));
-							getEntityManager().persist(usualProjectCompiler);
+							RoutineProjectCompiler theCompiler = new RoutineProjectCompiler();
+							theCompiler.setProjectId(instance3rdPlus.getTheId());
+							theCompiler.setUserInfoId(Integer.valueOf(id));
+							getEntityManager().persist(theCompiler);
 						}
 					}
 				}
@@ -153,10 +153,10 @@ public class UsualProjectHome extends CriterionEntityHome<UsualProject> {
 					String[] idArr = executor.split(",");
 					if (idArr != null && idArr.length > 0) {
 						for (String id : idArr) {
-							UsualProjectExecutor usualProjectExecutor = new UsualProjectExecutor();
-							usualProjectExecutor.setUsualProjectId(instance3rdPlus.getTheId());
-							usualProjectExecutor.setUserInfoId(Integer.valueOf(id));
-							getEntityManager().persist(usualProjectExecutor);
+							RoutineProjectExecutor theExecutor = new RoutineProjectExecutor();
+							theExecutor.setProjectId(instance3rdPlus.getTheId());
+							theExecutor.setUserInfoId(Integer.valueOf(id));
+							getEntityManager().persist(theExecutor);
 						}
 					}
 				}
@@ -165,6 +165,11 @@ public class UsualProjectHome extends CriterionEntityHome<UsualProject> {
 		}
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.jboss.seam.framework.EntityHome#update()
+	 */
 	@SuppressWarnings("unchecked")
 	@Override
 	public String update() {
@@ -183,16 +188,16 @@ public class UsualProjectHome extends CriterionEntityHome<UsualProject> {
 			instance.setYsFundsSource(null);
 		}
 		// 处理一级项目-清理旧数据
-		getEntityManager().createNativeQuery("delete from usual_project_compiler where usual_project_id = " + instance.getTheId()).executeUpdate();
-		getEntityManager().createNativeQuery("delete from usual_project_executor where usual_project_id = " + instance.getTheId()).executeUpdate();
+		getEntityManager().createNativeQuery("delete from routine_project_compiler where project_id = " + instance.getTheId()).executeUpdate();
+		getEntityManager().createNativeQuery("delete from routine_project_executor where project_id = " + instance.getTheId()).executeUpdate();
 		if (budgetPersonCompilerIds != null && !"".equals(budgetPersonCompilerIds)) {
 			String[] idArr = budgetPersonCompilerIds.split(",");
 			if (idArr != null && idArr.length > 0) {
 				for (String id : idArr) {
-					UsualProjectCompiler usualProjectCompiler = new UsualProjectCompiler();
-					usualProjectCompiler.setUsualProjectId(instance.getTheId());
-					usualProjectCompiler.setUserInfoId(Integer.valueOf(id));
-					getEntityManager().persist(usualProjectCompiler);
+					RoutineProjectCompiler theCompiler = new RoutineProjectCompiler();
+					theCompiler.setProjectId(instance.getTheId());
+					theCompiler.setUserInfoId(Integer.valueOf(id));
+					getEntityManager().persist(theCompiler);
 				}
 			}
 		}
@@ -200,10 +205,10 @@ public class UsualProjectHome extends CriterionEntityHome<UsualProject> {
 			String[] idArr = budgetPersonExecutorIds.split(",");
 			if (idArr != null && idArr.length > 0) {
 				for (String id : idArr) {
-					UsualProjectExecutor usualProjectExecutor = new UsualProjectExecutor();
-					usualProjectExecutor.setUsualProjectId(instance.getTheId());
-					usualProjectExecutor.setUserInfoId(Integer.valueOf(id));
-					getEntityManager().persist(usualProjectExecutor);
+					RoutineProjectExecutor theExecutor = new RoutineProjectExecutor();
+					theExecutor.setProjectId(instance.getTheId());
+					theExecutor.setUserInfoId(Integer.valueOf(id));
+					getEntityManager().persist(theExecutor);
 				}
 			}
 		}
@@ -211,14 +216,14 @@ public class UsualProjectHome extends CriterionEntityHome<UsualProject> {
 		instance.setUpdateUser(sessionToken.getUserInfoId());
 		getEntityManager().merge(instance);
 		// 处理二级项目-清理旧数据
-		List<Object[]> nexusList = getEntityManager().createNativeQuery("select the_id, the_pid from usual_project").getResultList();
+		List<Object[]> nexusList = getEntityManager().createNativeQuery("select the_id, the_pid from routine_project").getResultList();
 		List<Object> subProjectIdList = new ArrayList<Object>();
 		findSubProjectIds(nexusList, subProjectIdList, instance.getTheId());// 填充子项目id列表
 		String subProjectIds = subProjectIdList.toString().substring(1, subProjectIdList.toString().length() - 1);// 处理id列表
 		if (subProjectIds != null && !"".equals(subProjectIds)) {
-			getEntityManager().createNativeQuery("delete from usual_project where the_id in (" + subProjectIds + ")").executeUpdate();
-			getEntityManager().createNativeQuery("delete from usual_project_compiler where usual_project_id in (" + subProjectIds + ")").executeUpdate();
-			getEntityManager().createNativeQuery("delete from usual_project_executor where usual_project_id in (" + subProjectIds + ")").executeUpdate();
+			getEntityManager().createNativeQuery("delete from routine_project where the_id in (" + subProjectIds + ")").executeUpdate();
+			getEntityManager().createNativeQuery("delete from routine_project_compiler where project_id in (" + subProjectIds + ")").executeUpdate();
+			getEntityManager().createNativeQuery("delete from routine_project_executor where project_id in (" + subProjectIds + ")").executeUpdate();
 		}
 		// 处理二级项目-创建新数据
 		JSONObject subprojectInfoAll = JSONObject.fromObject(subprojectInfo);
@@ -231,9 +236,9 @@ public class UsualProjectHome extends CriterionEntityHome<UsualProject> {
 			String executor = subprojectInfoOne.getString("executor");
 			String description = subprojectInfoOne.getString("description");
 			if (JSONNull.getInstance().equals(pid)) {
-				UsualProject instance2nd = new UsualProject();
+				RoutineProject instance2nd = new RoutineProject();
 				instance2nd.setTheValue(name);
-				instance2nd.setUsualProject(instance);
+				instance2nd.setRoutineProject(instance);
 				instance2nd.setBudgetAmount(amount);
 				instance2nd.setTheDescription(description);
 				getEntityManager().persist(instance2nd);
@@ -241,10 +246,10 @@ public class UsualProjectHome extends CriterionEntityHome<UsualProject> {
 					String[] idArr = compiler.split(",");
 					if (idArr != null && idArr.length > 0) {
 						for (String id : idArr) {
-							UsualProjectCompiler usualProjectCompiler = new UsualProjectCompiler();
-							usualProjectCompiler.setUsualProjectId(instance2nd.getTheId());
-							usualProjectCompiler.setUserInfoId(Integer.valueOf(id));
-							getEntityManager().persist(usualProjectCompiler);
+							RoutineProjectCompiler theCompiler = new RoutineProjectCompiler();
+							theCompiler.setProjectId(instance2nd.getTheId());
+							theCompiler.setUserInfoId(Integer.valueOf(id));
+							getEntityManager().persist(theCompiler);
 						}
 					}
 				}
@@ -252,10 +257,10 @@ public class UsualProjectHome extends CriterionEntityHome<UsualProject> {
 					String[] idArr = executor.split(",");
 					if (idArr != null && idArr.length > 0) {
 						for (String id : idArr) {
-							UsualProjectExecutor usualProjectExecutor = new UsualProjectExecutor();
-							usualProjectExecutor.setUsualProjectId(instance2nd.getTheId());
-							usualProjectExecutor.setUserInfoId(Integer.valueOf(id));
-							getEntityManager().persist(usualProjectExecutor);
+							RoutineProjectExecutor theExecutor = new RoutineProjectExecutor();
+							theExecutor.setProjectId(instance2nd.getTheId());
+							theExecutor.setUserInfoId(Integer.valueOf(id));
+							getEntityManager().persist(theExecutor);
 						}
 					}
 				}
@@ -287,42 +292,22 @@ public class UsualProjectHome extends CriterionEntityHome<UsualProject> {
 
 		joinTransaction();
 		// 处理一级项目-清理旧数据
-		getEntityManager().createNativeQuery("delete from usual_project_compiler where usual_project_id = " + instance.getTheId()).executeUpdate();
-		getEntityManager().createNativeQuery("delete from usual_project_executor where usual_project_id = " + instance.getTheId()).executeUpdate();
+		getEntityManager().createNativeQuery("delete from routine_project_compiler where project_id = " + instance.getTheId()).executeUpdate();
+		getEntityManager().createNativeQuery("delete from routine_project_executor where project_id = " + instance.getTheId()).executeUpdate();
 		// 处理二级项目-清理旧数据
-		List<Object[]> nexusList = getEntityManager().createNativeQuery("select the_id, the_pid from usual_project").getResultList();
+		List<Object[]> nexusList = getEntityManager().createNativeQuery("select the_id, the_pid from routine_project").getResultList();
 		List<Object> subProjectIdList = new ArrayList<Object>();
 		findSubProjectIds(nexusList, subProjectIdList, instance.getTheId());// 填充子项目id列表
 		String subProjectIds = subProjectIdList.toString().substring(1, subProjectIdList.toString().length() - 1);// 处理id列表
 		if (subProjectIds != null && !"".equals(subProjectIds)) {
-			getEntityManager().createNativeQuery("delete from usual_project where the_id in (" + subProjectIds + ")").executeUpdate();
-			getEntityManager().createNativeQuery("delete from usual_project_compiler where usual_project_id in (" + subProjectIds + ")").executeUpdate();
-			getEntityManager().createNativeQuery("delete from usual_project_executor where usual_project_id in (" + subProjectIds + ")").executeUpdate();
+			getEntityManager().createNativeQuery("delete from routine_project where the_id in (" + subProjectIds + ")").executeUpdate();
+			getEntityManager().createNativeQuery("delete from routine_project_compiler where project_id in (" + subProjectIds + ")").executeUpdate();
+			getEntityManager().createNativeQuery("delete from routine_project_executor where project_id in (" + subProjectIds + ")").executeUpdate();
 		}
 		getEntityManager().remove(instance);
 		getEntityManager().flush();
 		raiseAfterTransactionSuccessEvent();
 		return "removed";
-	}
-
-	public void setUsualProjectTheId(Integer id) {
-		setId(id);
-	}
-
-	public Integer getUsualProjectTheId() {
-		return (Integer) getId();
-	}
-
-	@Override
-	protected UsualProject createInstance() {
-		UsualProject usualProject = new UsualProject();
-		return usualProject;
-	}
-
-	public void load() {
-		if (isIdDefined()) {
-			wire();
-		}
 	}
 
 	/** 递归处理子节点 */
@@ -473,94 +458,6 @@ public class UsualProjectHome extends CriterionEntityHome<UsualProject> {
 	}
 
 	@SuppressWarnings("unchecked")
-	public void wire() {
-		getInstance();
-
-		wireDepartmentInfo();// 主管科室list
-		wireFundsSource();// 资金来源list
-		wireBudgetPerson();// 预算人员list
-		wirePersonJson();// 人员json
-
-		if (!isFirstTime) {
-			departmentInfoId = instance.getYsDepartmentInfo() != null ? instance.getYsDepartmentInfo().getTheId() : null;
-
-			if (isManaged()) {
-				// 加载一级项目编制人
-				List<Object> budgetPersonCompilerIdsList = getEntityManager().createNativeQuery("select IFNULL(GROUP_CONCAT(user_info_id), '') as result from usual_project_compiler where usual_project_id = " + instance.getTheId()).getResultList();
-				if (budgetPersonCompilerIdsList != null && budgetPersonCompilerIdsList.size() > 0) {
-					budgetPersonCompilerIds = budgetPersonCompilerIdsList.get(0).toString();
-				}
-				// 加载一级项目执行人
-				List<Object> budgetPersonExecutorIdsList = getEntityManager().createNativeQuery("select IFNULL(GROUP_CONCAT(user_info_id), '') as result from usual_project_executor where usual_project_id = " + instance.getTheId()).getResultList();
-				if (budgetPersonExecutorIdsList != null && budgetPersonExecutorIdsList.size() > 0) {
-					budgetPersonExecutorIds = budgetPersonExecutorIdsList.get(0).toString();
-				}
-				// 加载二级项目信息
-				JSONObject subprojectInfoJson = new JSONObject();
-				List<Object[]> usualProjectCompilerList = getEntityManager().createNativeQuery("select usual_project_id, IFNULL(GROUP_CONCAT(user_info_id), '') as result from usual_project_compiler group by usual_project_id").getResultList();
-				Map<Object, Object> usualProjectCompilerMap = new HashMap<Object, Object>();
-				if (usualProjectCompilerList != null && usualProjectCompilerList.size() > 0) {
-					for (Object[] usualProjectCompiler : usualProjectCompilerList) {
-						usualProjectCompilerMap.put(usualProjectCompiler[0], usualProjectCompiler[1]);
-					}
-				}
-				List<Object[]> usualProjectExecutorList = getEntityManager().createNativeQuery("select usual_project_id, IFNULL(GROUP_CONCAT(user_info_id), '') as result from usual_project_executor group by usual_project_id").getResultList();
-				Map<Object, Object> usualProjectExecutorMap = new HashMap<Object, Object>();
-				if (usualProjectExecutorList != null && usualProjectExecutorList.size() > 0) {
-					for (Object[] usualProjectExecutor : usualProjectExecutorList) {
-						usualProjectExecutorMap.put(usualProjectExecutor[0], usualProjectExecutor[1]);
-					}
-				}
-				List<Object[]> prj3rdPlusList = getEntityManager().createNativeQuery("select the_id, the_pid, the_value, budget_amount, the_description from usual_project").getResultList();
-				List<Object[]> prj2ndList = getEntityManager().createNativeQuery("select the_id, the_value, budget_amount, the_description from usual_project where the_pid = " + instance.getTheId()).getResultList();
-				if (prj2ndList != null && prj2ndList.size() > 0) {
-					for (Object[] prj2nd : prj2ndList) {
-						Object id = prj2nd[0];
-						JSONObject itemValue = new JSONObject();
-						itemValue.accumulate("id", id);
-						itemValue.accumulate("name", prj2nd[1]);
-						itemValue.accumulate("pid", null);
-						itemValue.accumulate("level", 2);
-						itemValue.accumulate("amount", prj2nd[2]);
-						itemValue.accumulate("compiler", usualProjectCompilerMap.get(id));
-						itemValue.accumulate("executor", usualProjectCompilerMap.get(id));
-						itemValue.accumulate("description", prj2nd[3]);
-						subprojectInfoJson.accumulate(id.toString(), itemValue);
-						parasitic3rdPlus(prj3rdPlusList, usualProjectCompilerMap, usualProjectExecutorMap, subprojectInfoJson, id);
-					}
-				}
-				subprojectInfo = subprojectInfoJson.toString();
-			} else {
-				subprojectInfo = new JSONObject().toString();
-			}
-
-			isFirstTime = true;
-		}
-
-	}
-
-	private void parasitic3rdPlus(List<Object[]> prj3rdPlusList, Map<Object, Object> usualProjectCompilerMap, Map<Object, Object> usualProjectExecutorMap, JSONObject host, Object pid) {
-		if (prj3rdPlusList != null && prj3rdPlusList.size() > 0) {
-			for (Object[] prj3rdPlus : prj3rdPlusList) {
-				if (pid.equals(prj3rdPlus[1])) {
-					Object id = prj3rdPlus[0];
-					JSONObject itemValue = new JSONObject();
-					itemValue.accumulate("id", id);
-					itemValue.accumulate("name", prj3rdPlus[2]);
-					itemValue.accumulate("pid", host.getJSONObject(pid.toString()).get("id"));
-					itemValue.accumulate("level", host.getJSONObject(pid.toString()).getInt("level") + 1);
-					itemValue.accumulate("amount", prj3rdPlus[3]);
-					itemValue.accumulate("compiler", usualProjectCompilerMap.get(id));
-					itemValue.accumulate("executor", usualProjectCompilerMap.get(id));
-					itemValue.accumulate("description", prj3rdPlus[4]);
-					host.accumulate(id.toString(), itemValue);
-					parasitic3rdPlus(prj3rdPlusList, usualProjectCompilerMap, usualProjectExecutorMap, host, id);
-				}
-			}
-		}
-	}
-
-	@SuppressWarnings("unchecked")
 	private void wirePersonJson() {
 		if (personJson != null) {
 			personJson.clear();
@@ -582,11 +479,119 @@ public class UsualProjectHome extends CriterionEntityHome<UsualProject> {
 		}
 	}
 
+	private void parasitic3rdPlus(List<Object[]> prj3rdPlusList, Map<Object, Object> theCompilerMap, Map<Object, Object> theExecutorMap, JSONObject host, Object pid) {
+		if (prj3rdPlusList != null && prj3rdPlusList.size() > 0) {
+			for (Object[] prj3rdPlus : prj3rdPlusList) {
+				if (pid.equals(prj3rdPlus[1])) {
+					Object id = prj3rdPlus[0];
+					JSONObject itemValue = new JSONObject();
+					itemValue.accumulate("id", id);
+					itemValue.accumulate("name", prj3rdPlus[2]);
+					itemValue.accumulate("pid", host.getJSONObject(pid.toString()).get("id"));
+					itemValue.accumulate("level", host.getJSONObject(pid.toString()).getInt("level") + 1);
+					itemValue.accumulate("amount", prj3rdPlus[3]);
+					itemValue.accumulate("compiler", theCompilerMap.get(id));
+					itemValue.accumulate("executor", theCompilerMap.get(id));
+					itemValue.accumulate("description", prj3rdPlus[4]);
+					host.accumulate(id.toString(), itemValue);
+					parasitic3rdPlus(prj3rdPlusList, theCompilerMap, theExecutorMap, host, id);
+				}
+			}
+		}
+	}
+
+	@SuppressWarnings("unchecked")
+	public void wire() {
+		getInstance();
+
+		wireDepartmentInfo();// 主管科室list
+		wireFundsSource();// 资金来源list
+		wireBudgetPerson();// 预算人员list
+		wirePersonJson();// 人员json
+
+		if (!isFirstTime) {
+			departmentInfoId = instance.getYsDepartmentInfo() != null ? instance.getYsDepartmentInfo().getTheId() : null;
+
+			if (isManaged()) {
+				// 加载一级项目编制人
+				List<Object> budgetPersonCompilerIdsList = getEntityManager().createNativeQuery("select IFNULL(GROUP_CONCAT(user_info_id), '') as result from routine_project_compiler where project_id = " + instance.getTheId()).getResultList();
+				if (budgetPersonCompilerIdsList != null && budgetPersonCompilerIdsList.size() > 0) {
+					budgetPersonCompilerIds = budgetPersonCompilerIdsList.get(0).toString();
+				}
+				// 加载一级项目执行人
+				List<Object> budgetPersonExecutorIdsList = getEntityManager().createNativeQuery("select IFNULL(GROUP_CONCAT(user_info_id), '') as result from routine_project_executor where project_id = " + instance.getTheId()).getResultList();
+				if (budgetPersonExecutorIdsList != null && budgetPersonExecutorIdsList.size() > 0) {
+					budgetPersonExecutorIds = budgetPersonExecutorIdsList.get(0).toString();
+				}
+				// 加载二级项目信息
+				JSONObject subprojectInfoJson = new JSONObject();
+				List<Object[]> theCompilerList = getEntityManager().createNativeQuery("select project_id, IFNULL(GROUP_CONCAT(user_info_id), '') as result from routine_project_compiler group by project_id").getResultList();
+				Map<Object, Object> theCompilerMap = new HashMap<Object, Object>();
+				if (theCompilerList != null && theCompilerList.size() > 0) {
+					for (Object[] theCompiler : theCompilerList) {
+						theCompilerMap.put(theCompiler[0], theCompiler[1]);
+					}
+				}
+				List<Object[]> theExecutorList = getEntityManager().createNativeQuery("select project_id, IFNULL(GROUP_CONCAT(user_info_id), '') as result from routine_project_executor group by project_id").getResultList();
+				Map<Object, Object> theExecutorMap = new HashMap<Object, Object>();
+				if (theExecutorList != null && theExecutorList.size() > 0) {
+					for (Object[] theExecutor : theExecutorList) {
+						theExecutorMap.put(theExecutor[0], theExecutor[1]);
+					}
+				}
+				List<Object[]> prj3rdPlusList = getEntityManager().createNativeQuery("select the_id, the_pid, the_value, budget_amount, the_description from routine_project").getResultList();
+				List<Object[]> prj2ndList = getEntityManager().createNativeQuery("select the_id, the_value, budget_amount, the_description from routine_project where the_pid = " + instance.getTheId()).getResultList();
+				if (prj2ndList != null && prj2ndList.size() > 0) {
+					for (Object[] prj2nd : prj2ndList) {
+						Object id = prj2nd[0];
+						JSONObject itemValue = new JSONObject();
+						itemValue.accumulate("id", id);
+						itemValue.accumulate("name", prj2nd[1]);
+						itemValue.accumulate("pid", null);
+						itemValue.accumulate("level", 2);
+						itemValue.accumulate("amount", prj2nd[2]);
+						itemValue.accumulate("compiler", theCompilerMap.get(id));
+						itemValue.accumulate("executor", theCompilerMap.get(id));
+						itemValue.accumulate("description", prj2nd[3]);
+						subprojectInfoJson.accumulate(id.toString(), itemValue);
+						parasitic3rdPlus(prj3rdPlusList, theCompilerMap, theExecutorMap, subprojectInfoJson, id);
+					}
+				}
+				subprojectInfo = subprojectInfoJson.toString();
+			} else {
+				subprojectInfo = new JSONObject().toString();
+			}
+
+			isFirstTime = true;
+		}
+
+	}
+
+	public void setRoutineProjectTheId(Integer id) {
+		setId(id);
+	}
+
+	public Integer getRoutineProjectTheId() {
+		return (Integer) getId();
+	}
+
+	@Override
+	protected RoutineProject createInstance() {
+		RoutineProject routineProject = new RoutineProject();
+		return routineProject;
+	}
+
+	public void load() {
+		if (isIdDefined()) {
+			wire();
+		}
+	}
+
 	public boolean isWired() {
 		return true;
 	}
 
-	public UsualProject getDefinedInstance() {
+	public RoutineProject getDefinedInstance() {
 		return isIdDefined() ? getInstance() : null;
 	}
 

@@ -1,0 +1,104 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:s="http://jboss.com/products/seam/taglib"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:rich="http://richfaces.org/rich"
+    template="layout/template.xhtml">
+
+<ui:define name="body">
+
+    <rich:panel>
+        <f:facet name="header">Routine project Details</f:facet>
+
+
+        <s:decorate id="thePid" template="layout/display.xhtml">
+            <ui:define name="label">The pid</ui:define>
+            <h:outputText value="#{routineProjectHome.instance.thePid}"/>
+        </s:decorate>
+
+        <s:decorate id="theValue" template="layout/display.xhtml">
+            <ui:define name="label">The value</ui:define>
+            <h:outputText value="#{routineProjectHome.instance.theValue}"/>
+        </s:decorate>
+
+        <s:decorate id="projectType" template="layout/display.xhtml">
+            <ui:define name="label">Project type</ui:define>
+            <h:outputText value="#{routineProjectHome.instance.projectType}"/>
+        </s:decorate>
+
+        <s:decorate id="departmentInfoId" template="layout/display.xhtml">
+            <ui:define name="label">Department info id</ui:define>
+            <h:outputText value="#{routineProjectHome.instance.departmentInfoId}"/>
+        </s:decorate>
+
+        <s:decorate id="fundsSourceId" template="layout/display.xhtml">
+            <ui:define name="label">Funds source id</ui:define>
+            <h:outputText value="#{routineProjectHome.instance.fundsSourceId}"/>
+        </s:decorate>
+
+        <s:decorate id="budgetAmount" template="layout/display.xhtml">
+            <ui:define name="label">Budget amount</ui:define>
+            <h:outputText value="#{routineProjectHome.instance.budgetAmount}"/>
+        </s:decorate>
+
+        <s:decorate id="theDescription" template="layout/display.xhtml">
+            <ui:define name="label">The description</ui:define>
+            <h:outputText value="#{routineProjectHome.instance.theDescription}"/>
+        </s:decorate>
+
+        <s:decorate id="theState" template="layout/display.xhtml">
+            <ui:define name="label">The state</ui:define>
+            <h:outputText value="#{routineProjectHome.instance.theState}"/>
+        </s:decorate>
+
+        <s:decorate id="insertTime" template="layout/display.xhtml">
+            <ui:define name="label">Insert time</ui:define>
+            <h:outputText value="#{routineProjectHome.instance.insertTime}">
+                <s:convertDateTime type="both" dateStyle="short"/>
+            </h:outputText>
+        </s:decorate>
+
+        <s:decorate id="insertUser" template="layout/display.xhtml">
+            <ui:define name="label">Insert user</ui:define>
+            <h:outputText value="#{routineProjectHome.instance.insertUser}"/>
+        </s:decorate>
+
+        <s:decorate id="updateTime" template="layout/display.xhtml">
+            <ui:define name="label">Update time</ui:define>
+            <h:outputText value="#{routineProjectHome.instance.updateTime}">
+                <s:convertDateTime type="both" dateStyle="short"/>
+            </h:outputText>
+        </s:decorate>
+
+        <s:decorate id="updateUser" template="layout/display.xhtml">
+            <ui:define name="label">Update user</ui:define>
+            <h:outputText value="#{routineProjectHome.instance.updateUser}"/>
+        </s:decorate>
+
+        <s:decorate id="deleted" template="layout/display.xhtml">
+            <ui:define name="label">Deleted</ui:define>
+            <h:outputText value="#{routineProjectHome.instance.deleted}"/>
+        </s:decorate>
+
+        <div style="clear:both"/>
+
+    </rich:panel>
+
+    <div class="actionButtons">
+
+        <s:button view="/RoutineProjectEdit.xhtml"
+                    id="edit"
+                 value="Edit"/>
+
+        <s:button view="/#{empty routineProjectFrom ? 'RoutineProjectList' : routineProjectFrom}.xhtml"
+                    id="done"
+                 value="Done"/>
+
+    </div>
+
+</ui:define>
+
+</ui:composition>

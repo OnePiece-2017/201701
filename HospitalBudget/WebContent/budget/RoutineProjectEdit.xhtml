@@ -166,7 +166,7 @@
 	</ui:define>
 
 	<ui:define name="body">
-		#{usualProjectHome.wire()}
+		#{routineProjectHome.wire()}
 		<!-- 因嵌套弹窗，故阻止回车键提交表单 -->
 		<h:form id="mainForm" styleClass="edit" enctype="multipart/form-data" onkeydown="if (event.keyCode == 13) return false;">
 			<div class="pd0-10">
@@ -181,7 +181,7 @@
 												<span class="field-name mb10">项目名称</span>
 											</td>
 											<td valign="middle">
-												<h:inputText id="theValue" value="#{usualProjectHome.instance.theValue}" styleClass="form-control mb10 fix--w610" />
+												<h:inputText id="theValue" value="#{routineProjectHome.instance.theValue}" styleClass="form-control mb10 fix--w610" />
 											</td>
 											<td valign="middle">
 												<font color="red" style="margin-left: 3px;"></font>
@@ -205,7 +205,7 @@
 													<option value="1">收入预算</option>
 													<option value="2">支出预算</option>
 												</select>
-												<h:inputHidden id="projectTypeHidden" value="#{usualProjectHome.instance.projectType}" />
+												<h:inputHidden id="projectTypeHidden" value="#{routineProjectHome.instance.projectType}" />
 											</td>
 											<td valign="middle">
 												<font color="red" style="margin-left: 3px;"></font>
@@ -223,11 +223,11 @@
 											</td>
 											<td valign="middle">
 												<select id="departmentInfoId" class="selectpicker" data-live-search="true">
-													<a:repeat value="#{usualProjectHome.departmentInfoList}" var="_var">
+													<a:repeat value="#{routineProjectHome.departmentInfoList}" var="_var">
 														<option value="#{_var[0]}">#{_var[1]}</option>
 													</a:repeat>
 												</select>
-												<h:inputHidden id="departmentInfoIdHidden" value="#{usualProjectHome.departmentInfoId}" />
+												<h:inputHidden id="departmentInfoIdHidden" value="#{routineProjectHome.departmentInfoId}" />
 											</td>
 											<td valign="middle">
 												<font color="red" style="margin-left: 3px;"></font>
@@ -248,7 +248,7 @@
 											<td valign="middle">
 												<div class="bs-w440">
 													<select id="budgetPersonCompilerIds" class="selectpicker" data-live-search="true" multiple="multiple">
-														<a:repeat value="#{usualProjectHome.budgetPersonList}" var="_department">
+														<a:repeat value="#{routineProjectHome.budgetPersonList}" var="_department">
 															<optgroup label="#{_department[0]}" data-subtext="科室">
 																<a:repeat value="#{_department[1]}" var="_user">
 																	<option value="#{_user[0]}">#{_user[1]}</option>
@@ -257,7 +257,7 @@
 														</a:repeat>
 													</select>
 												</div>
-												<h:inputHidden id="budgetPersonCompilerIdsHidden" value="#{usualProjectHome.budgetPersonCompilerIds}" />
+												<h:inputHidden id="budgetPersonCompilerIdsHidden" value="#{routineProjectHome.budgetPersonCompilerIds}" />
 											</td>
 											<td valign="middle">
 												<font color="red" style="margin-left: 3px;"></font>
@@ -276,7 +276,7 @@
 											<td valign="middle">
 												<div class="bs-w440">
 													<select id="budgetPersonExecutorIds" class="selectpicker" data-live-search="true" multiple="multiple">
-														<a:repeat value="#{usualProjectHome.budgetPersonList}" var="_department">
+														<a:repeat value="#{routineProjectHome.budgetPersonList}" var="_department">
 															<optgroup label="#{_department[0]}" data-subtext="科室">
 																<a:repeat value="#{_department[1]}" var="_user">
 																	<option value="#{_user[0]}">#{_user[1]}</option>
@@ -285,7 +285,7 @@
 														</a:repeat>
 													</select>
 												</div>
-												<h:inputHidden id="budgetPersonExecutorIdsHidden" value="#{usualProjectHome.budgetPersonExecutorIds}" />
+												<h:inputHidden id="budgetPersonExecutorIdsHidden" value="#{routineProjectHome.budgetPersonExecutorIds}" />
 											</td>
 											<td valign="middle">
 												<font color="red" style="margin-left: 3px;"></font>
@@ -305,11 +305,11 @@
 											</td>
 											<td valign="middle">
 												<select id="fundsSourceId" class="selectpicker" data-live-search="true">
-													<a:repeat value="#{usualProjectHome.fundsSourceList}" var="_var">
+													<a:repeat value="#{routineProjectHome.fundsSourceList}" var="_var">
 														<option value="#{_var[0]}">#{_var[1]}</option>
 													</a:repeat>
 												</select>
-												<h:inputHidden id="fundsSourceIdHidden" value="#{usualProjectHome.fundsSourceId}" />
+												<h:inputHidden id="fundsSourceIdHidden" value="#{routineProjectHome.fundsSourceId}" />
 											</td>
 											<td valign="middle">
 												<font color="red" style="margin-left: 3px;"></font>
@@ -326,7 +326,7 @@
 												<span class="field-name mb10">预算金额</span>
 											</td>
 											<td valign="middle">
-												<h:inputText id="budgetAmount" value="#{usualProjectHome.instance.budgetAmount}" styleClass="form-control mb10 fix--w220" />
+												<h:inputText id="budgetAmount" value="#{routineProjectHome.instance.budgetAmount}" styleClass="form-control mb10 fix--w220" />
 											</td>
 											<td valign="middle">
 												<font color="red" style="margin-left: 3px;"></font>
@@ -345,7 +345,7 @@
 												<span class="field-name mb10">描述</span>
 											</td>
 											<td valign="middle">
-												<h:inputTextarea id="theDescription" value="#{usualProjectHome.instance.theDescription}" styleClass="form-control mb10 fix--textarea-610x130" />
+												<h:inputTextarea id="theDescription" value="#{routineProjectHome.instance.theDescription}" styleClass="form-control mb10 fix--textarea-610x130" />
 											</td>
 											<td valign="middle">
 												<font color="red" style="margin-left: 3px;"></font>
@@ -453,7 +453,7 @@
 													<td valign="middle">
 														<div class="bs-w440">
 															<select id="subproject_budgetPersonCompilerIds" class="selectpicker" data-live-search="true" multiple="multiple">
-																<a:repeat value="#{usualProjectHome.budgetPersonList}" var="_department">
+																<a:repeat value="#{routineProjectHome.budgetPersonList}" var="_department">
 																	<optgroup label="#{_department[0]}" data-subtext="科室">
 																		<a:repeat value="#{_department[1]}" var="_user">
 																			<option value="#{_user[0]}">#{_user[1]}</option>
@@ -480,7 +480,7 @@
 													<td valign="middle">
 														<div class="bs-w440">
 															<select id="subproject_budgetPersonExecutorIds" class="selectpicker" data-live-search="true" multiple="multiple">
-																<a:repeat value="#{usualProjectHome.budgetPersonList}" var="_department">
+																<a:repeat value="#{routineProjectHome.budgetPersonList}" var="_department">
 																	<optgroup label="#{_department[0]}" data-subtext="科室">
 																		<a:repeat value="#{_department[1]}" var="_user">
 																			<option value="#{_user[0]}">#{_user[1]}</option>
@@ -537,10 +537,10 @@
 					<table class="normal-btn">
 						<tr>
 							<td>
-								<h:inputHidden id="subprojectInfoHidden" value="#{usualProjectHome.subprojectInfo}" />
-								<h:commandButton id="persist" value="提交" onclick="return beforeSubmit();" action="#{usualProjectHome.persist}" disabled="#{!usualProjectHome.wired}" rendered="#{!usualProjectHome.managed}" styleClass="btn btn-primary mr15" />
-								<h:commandButton id="update" value="保存" onclick="return beforeSubmit();" action="#{usualProjectHome.update}" rendered="#{usualProjectHome.managed}" styleClass="btn btn-primary mr15" />
-								<s:button id="cancel" value="返回" view="/budget/UsualProjectList.xhtml" propagation="none" styleClass="btn btn-default" />
+								<h:inputHidden id="subprojectInfoHidden" value="#{routineProjectHome.subprojectInfo}" />
+								<h:commandButton id="persist" value="提交" onclick="return beforeSubmit();" action="#{routineProjectHome.persist}" disabled="#{!routineProjectHome.wired}" rendered="#{!routineProjectHome.managed}" styleClass="btn btn-primary mr15" />
+								<h:commandButton id="update" value="保存" onclick="return beforeSubmit();" action="#{routineProjectHome.update}" rendered="#{routineProjectHome.managed}" styleClass="btn btn-primary mr15" />
+								<s:button id="cancel" value="返回" view="/budget/RoutineProjectList.xhtml" propagation="none" styleClass="btn btn-default" />
 							</td>
 						</tr>
 					</table>
@@ -555,8 +555,8 @@
 		<script type="text/javascript" src="#{request.contextPath}/prompt-inputbox/js/prompt-inputbox.js" />
 		<script type="text/javascript">
 		//<![CDATA[
-			var g_personJson = #{usualProjectHome.personJson};
-			var g_subproject_all = JSON.parse('#{usualProjectHome.subprojectInfo}'); //子项目集合
+			var g_personJson = #{routineProjectHome.personJson};
+			var g_subproject_all = JSON.parse('#{routineProjectHome.subprojectInfo}'); //子项目集合
 			var toggleIcon = {
 				'opened': '../images/icon_arrow_carrot_down_32x32.png',
 				'closed': '../images/icon_arrow_carrot_right_32x32.png'
@@ -588,7 +588,7 @@
 			
 				jQuery('.selectpicker').selectpicker();
 			
-				var message = '#{usualProjectHome.message}';
+				var message = '#{routineProjectHome.message}';
 				___dynamic_function = function() {
 					jQuery('#mainForm\\:theValue').focus();
 				};
@@ -615,8 +615,8 @@
 			
 				setTimeout('subprojectOutputFlush();', 0);//解决Chrome元素渲染速度问题
 				
-				___promptInputbox('mainForm:theDescription');
-				___promptInputbox('subproject_description');
+				___promptInputbox('mainForm:theDescription', 1024);
+				___promptInputbox('subproject_description', 1024);
 			});
 			
 			function setSubprojectInteractive(show) {

@@ -6,31 +6,31 @@
 	<restrict>#{s:hasRole('?')}</restrict>
 	<begin-conversation join="true" flush-mode="MANUAL" />
 
-	<param name="usualProjectFrom" />
-	<param name="usualProjectTheId" value="#{usualProjectHome.usualProjectTheId}" />
+	<param name="routineProjectFrom" />
+	<param name="routineProjectTheId" value="#{routineProjectHome.routineProjectTheId}" />
 
-	<navigation from-action="#{usualProjectHome.persist}">
+	<navigation from-action="#{routineProjectHome.persist}">
 		<rule if-outcome="persisted">
 			<end-conversation />
-			<redirect view-id="/budget/UsualProjectList.xhtml" />
+			<redirect view-id="/budget/RoutineProjectList.xhtml" />
 		</rule>
 	</navigation>
 
-	<navigation from-action="#{usualProjectHome.update}">
+	<navigation from-action="#{routineProjectHome.update}">
 		<rule if-outcome="updated">
 			<end-conversation />
-			<redirect view-id="/budget/UsualProjectList.xhtml" />
+			<redirect view-id="/budget/RoutineProjectList.xhtml" />
 		</rule>
 	</navigation>
 
-	<navigation from-action="#{usualProjectHome.remove}">
+	<navigation from-action="#{routineProjectHome.remove}">
 		<rule if-outcome="removed">
 			<end-conversation />
-			<redirect view-id="/budget/UsualProjectList.xhtml" />
+			<redirect view-id="/budget/RoutineProjectList.xhtml" />
 		</rule>
 		<rule if-outcome="failure">
 			<end-conversation />
-			<redirect view-id="/budget/UsualProjectList.xhtml" />
+			<redirect view-id="/budget/RoutineProjectList.xhtml" />
 		</rule>
 	</navigation>
 
