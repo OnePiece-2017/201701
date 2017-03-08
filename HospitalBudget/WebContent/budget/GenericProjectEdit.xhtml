@@ -1,176 +1,1067 @@
 <!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <ui:composition xmlns="http://www.w3.org/1999/xhtml"
-    xmlns:s="http://jboss.com/products/seam/taglib"
-    xmlns:ui="http://java.sun.com/jsf/facelets"
-    xmlns:f="http://java.sun.com/jsf/core"
-    xmlns:h="http://java.sun.com/jsf/html"
-    xmlns:a="http://richfaces.org/a4j"
-    xmlns:rich="http://richfaces.org/rich"
-    template="layout/template.xhtml">
+	xmlns:s="http://jboss.com/products/seam/taglib"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:a="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich"
+	template="/layout/template_edit.xhtml">
 
-<ui:define name="body">
+	<ui:define name="head">
+		<link rel="stylesheet" type="text/css" href="#{request.contextPath}/common/css/bootstrap.min.css" />
+		<link rel="stylesheet" type="text/css" href="#{request.contextPath}/common/css/bootstrap-select.min.css" />
+		<link rel="stylesheet" type="text/css" href="#{request.contextPath}/prompt-message/css/prompt-message.css" />
+		<link rel="stylesheet" type="text/css" href="#{request.contextPath}/prompt-inputbox/css/prompt-inputbox.css" />
+		<style type="text/css">
+			#node-subproject {
+				width: 100%;
+				height: 310px;
+				border-style: solid;
+				border-width: 2px;
+				border-color: #000;
+				border-radius: 5px;
+				margin-top: 10px;
+				background: #fff;
+				display: none;
+			}
+			
+			#node-subproject-nodata {
+				width: 100%;
+				height: 310px;
+				border-style: solid;
+				border-width: 2px;
+				border-color: #000;
+				border-radius: 5px;
+				margin-top: 10px;
+				background: #fff;
+				display: none;
+			}
+			
+			#node-subproject-nodata .icon {
+				float: left;
+				width: 32px;
+				height: 32px;
+				margin: 135px 42%;
+				opacity: 0.3;
+			}
+			
+			#node-subproject-nodata .message {
+				float: left;
+				margin: 142px -41%;
+				opacity: 0.6;
+			}
+			
+			#node-subproject ul {
+				list-style: none;
+				white-space: nowrap;
+				margin-left: 20px;
+			}
+			
+			.subproject-set {
+				margin-left: -40px !important;
+			}
+			
+			#node-subproject .row-head,#node-subproject .row-data {
+				width: 1234px;
+				height: 44px;
+				border-bottom: 2px solid #fff;
+			}
+			
+			#node-subproject .row-head>span:nth-child(1),#node-subproject .row-data>span:nth-child(1) {
+				width: 42px;
+				background: #add595;
+			}
+			
+			#node-subproject .row-head>span:nth-child(2),#node-subproject .row-data>span:nth-child(2) {
+				width: 310px;
+				background: #add595;
+			}
+			
+			#node-subproject .row-head>span:nth-child(3),#node-subproject .row-data>span:nth-child(3) {
+				width: 220px;
+				background: #c4b16f;
+			}
+			
+			#node-subproject .row-head>span:nth-child(4),#node-subproject .row-data>span:nth-child(4) {
+				width: 240px;
+				background: #86cef0;
+			}
+			
+			#node-subproject .row-head>span:nth-child(5),#node-subproject .row-data>span:nth-child(5) {
+				width: 240px;
+				background: #e91c72;
+			}
+			
+			#node-subproject .row-head>span:nth-child(6),#node-subproject .row-data>span:nth-child(6) {
+				width: 180px;
+				background: #e0ecff;
+			}
+			
+			#node-subproject .row-data span:last-child a:first-child {
+				margin-left: -10px;
+			}
+			
+			#node-subproject .row-data span:last-child a {
+				margin-top: -2px;
+			}
+			
+			#node-subproject .row-head span {
+				float: left;
+				display: block;
+				line-height: 42px;
+				text-align: center;
+				font-size: 15px;
+				font-weight: bold;
+				padding-left: 15px;
+				padding-right: 15px;
+			}
+			
+			#node-subproject .row-data span {
+				float: left;
+				display: block;
+				line-height: 42px;
+				text-align: center;
+				font-size: 15px;
+				padding-left: 15px;
+				padding-right: 15px;
+			}
+			
+			#node-subproject .row-head span:not(:first-child):not(:last-child), #node-subproject .row-data span:not(:first-child):not(:last-child) {
+				border-right: 2px solid #000;
+			}
+			
+			.popup-layer-subproject {
+				position: fixed;
+				width: 100%;
+				height: 100%;
+				z-index: 1024;
+				left: 0;
+				top: 0;
+				background: rgba(0, 0, 0, 0.85);
+				display: none;
+			}
+			
+			.popup-layer-subproject-interactive {
+				position: fixed;
+				width: 780px;
+				height: 430px;
+				background: #86cef0;
+				left: 15%;
+				top: 15%;
+				border-radius: 15px;
+			}
+			
+			.toggle-child {
+				width: 24px;
+				height: 24px;
+				margin: 9px -7px;
+			}
+			
+			.subproject-set .row-data:hover {
+				border-bottom: 2px solid rgb(46, 104, 163) !important;
+			}
+		</style>
+	</ui:define>
 
-    <h:form id="genericProject" styleClass="edit">
+	<ui:define name="body">
+		#{genericProjectHome.wire()}
+		<!-- 因嵌套弹窗，故阻止回车键提交表单 -->
+		<h:form id="mainForm" styleClass="edit" enctype="multipart/form-data" onkeydown="if (event.keyCode == 13) return false;">
+			<div class="pd0-10">
+				<div class="pt30 fs14">
+					<table width="100%" cellpadding="0" cellspacing="0">
+						<tr>
+							<td colspan="2">
+								<div class="pb20">
+									<table>
+										<tr>
+											<td valign="middle">
+												<span class="field-name mb10">项目名称</span>
+											</td>
+											<td valign="middle">
+												<h:inputText id="theValue" value="#{genericProjectHome.instance.theValue}" styleClass="form-control mb10 fix--w610" />
+											</td>
+											<td valign="middle">
+												<font color="red" style="margin-left: 3px;"></font>
+											</td>
+										</tr>
+									</table>
+								</div>
+							</td>
+						</tr>
+						<tr>
+							<td width="50%">
+								<div class="pb20">
+									<table>
+										<tr>
+											<td valign="middle">
+												<span class="field-name mb10">项目类型</span>
+											</td>
+											<td valign="middle">
+												<select id="projectType" class="selectpicker">
+													<option value="#{''}">请选择</option>
+													<option value="1">收入预算</option>
+													<option value="2">支出预算</option>
+												</select>
+												<h:inputHidden id="projectTypeHidden" value="#{genericProjectHome.instance.projectType}" />
+											</td>
+											<td valign="middle">
+												<font color="red" style="margin-left: 3px;"></font>
+											</td>
+										</tr>
+									</table>
+								</div>
+							</td>
+							<td width="50%">
+								<div class="pb20">
+									<table>
+										<tr>
+											<td valign="middle">
+												<span class="field-name mb10">主管科室</span>
+											</td>
+											<td valign="middle">
+												<select id="departmentInfoId" class="selectpicker" data-live-search="true">
+													<a:repeat value="#{genericProjectHome.departmentInfoList}" var="_var">
+														<option value="#{_var[0]}">#{_var[1]}</option>
+													</a:repeat>
+												</select>
+												<h:inputHidden id="departmentInfoIdHidden" value="#{genericProjectHome.departmentInfoId}" />
+											</td>
+											<td valign="middle">
+												<font color="red" style="margin-left: 3px;"></font>
+											</td>
+										</tr>
+									</table>
+								</div>
+							</td>
+						</tr>
+						<tr>
+							<td width="50%">
+								<div class="pb20">
+									<table>
+										<tr>
+											<td valign="middle">
+												<span class="field-name mb10">编制人员</span>
+											</td>
+											<td valign="middle">
+												<div class="bs-w440">
+													<select id="budgetPersonCompilerIds" class="selectpicker" data-live-search="true" multiple="multiple">
+														<a:repeat value="#{genericProjectHome.budgetPersonList}" var="_department">
+															<optgroup label="#{_department[0]}" data-subtext="科室">
+																<a:repeat value="#{_department[1]}" var="_user">
+																	<option value="#{_user[0]}">#{_user[1]}</option>
+																</a:repeat>
+															</optgroup>
+														</a:repeat>
+													</select>
+												</div>
+												<h:inputHidden id="budgetPersonCompilerIdsHidden" value="#{genericProjectHome.budgetPersonCompilerIds}" />
+											</td>
+											<td valign="middle">
+												<font color="red" style="margin-left: 3px;"></font>
+											</td>
+										</tr>
+									</table>
+								</div>
+							</td>
+							<td width="50%">
+								<div class="pb20">
+									<table>
+										<tr>
+											<td valign="middle">
+												<span class="field-name mb10">执行人员</span>
+											</td>
+											<td valign="middle">
+												<div class="bs-w440">
+													<select id="budgetPersonExecutorIds" class="selectpicker" data-live-search="true" multiple="multiple">
+														<a:repeat value="#{genericProjectHome.budgetPersonList}" var="_department">
+															<optgroup label="#{_department[0]}" data-subtext="科室">
+																<a:repeat value="#{_department[1]}" var="_user">
+																	<option value="#{_user[0]}">#{_user[1]}</option>
+																</a:repeat>
+															</optgroup>
+														</a:repeat>
+													</select>
+												</div>
+												<h:inputHidden id="budgetPersonExecutorIdsHidden" value="#{genericProjectHome.budgetPersonExecutorIds}" />
+											</td>
+											<td valign="middle">
+												<font color="red" style="margin-left: 3px;"></font>
+											</td>
+										</tr>
+									</table>
+								</div>
+							</td>
+						</tr>
+						<tr>
+							<td width="50%">
+								<div class="pb20">
+									<table>
+										<tr>
+											<td valign="middle">
+												<span class="field-name mb10">资金来源</span>
+											</td>
+											<td valign="middle">
+												<select id="fundsSourceId" class="selectpicker" data-live-search="true">
+													<a:repeat value="#{genericProjectHome.fundsSourceList}" var="_var">
+														<option value="#{_var[0]}">#{_var[1]}</option>
+													</a:repeat>
+												</select>
+												<h:inputHidden id="fundsSourceIdHidden" value="#{genericProjectHome.fundsSourceId}" />
+											</td>
+											<td valign="middle">
+												<font color="red" style="margin-left: 3px;"></font>
+											</td>
+										</tr>
+									</table>
+								</div>
+							</td>
+							<td width="50%">
+								<div class="pb20">
+									<table>
+										<tr>
+											<td valign="middle">
+												<span class="field-name mb10">预算金额</span>
+											</td>
+											<td valign="middle">
+												<h:inputText id="budgetAmount" value="#{genericProjectHome.instance.budgetAmount}" styleClass="form-control mb10 fix--w220" />
+											</td>
+											<td valign="middle">
+												<font color="red" style="margin-left: 3px;"></font>
+											</td>
+										</tr>
+									</table>
+								</div>
+							</td>
+						</tr>
+						<tr>
+							<td colspan="2">
+								<div class="pb20">
+									<table>
+										<tr>
+											<td valign="middle">
+												<span class="field-name mb10">描述</span>
+											</td>
+											<td valign="middle">
+												<h:inputTextarea id="theDescription" value="#{genericProjectHome.instance.theDescription}" styleClass="form-control mb10 fix--textarea-610x130" />
+											</td>
+											<td valign="middle">
+												<font color="red" style="margin-left: 3px;"></font>
+											</td>
+										</tr>
+									</table>
+								</div>
+							</td>
+						</tr>
+					</table>
+				</div>
+				<div>
+					<strong onclick="debugInfo();" style="font-size: 20px;">以下内容为子项目</strong>
+					<a class="top-level btn btn-success fr" style="margin-top: -6px;" onclick="subprojectAdd(this);">添加</a>
+					<a id="subprojectEmptyBtn" class="btn btn-danger disabled fr" style="margin-top: -6px; margin-right: 10px;" onclick="subprojectEmpty();">清空</a>
+					<div id="node-subproject" class="pb30 fs14">
+						<ul class="subproject-set">
+							<li>
+								<div class="row-head">
+									<span>
+										<img src="../images/icon_arrow_carrot_down_32x32.png" style="width: 24px;height: 24px;margin: 9px -7px; opacity: 0;" />
+									</span>
+									<span>项目名称</span>
+									<span>预算金额</span>
+									<span>编制人员</span>
+									<span>执行人员</span>
+									<span>操作</span>
+								</div>
+							</li>
+						</ul>
+					</div>
+					<div id="node-subproject-nodata" class="pb30 fs14">
+						<img class="icon" src="../images/icon_info_32x32.png" />
+						<strong class="message">暂无数据！</strong>
+					</div>
+				</div>
+				<div class="popup-layer-subproject">
+					<div class="popup-layer-subproject-interactive">
+						<div class="pt30 fs14">
+							<table width="100%" cellpadding="0" cellspacing="0">
+								<tr>
+									<td colspan="2">
+										<div class="pb20">
+											<table>
+												<tr>
+													<td valign="middle">
+														<span class="field-name mb10">项目名称</span>
+													</td>
+													<td valign="middle">
+														<input id="subproject_projectName" class="form-control mb10 fix--w610" type="text" />
+													</td>
+													<td valign="middle">
+														<font color="red" style="margin-left: 3px;"></font>
+													</td>
+												</tr>
+											</table>
+										</div>
+									</td>
+								</tr>
+								<tr>
+									<td width="50%">
+										<div class="pb20">
+											<table>
+												<tr>
+													<td valign="middle">
+														<span class="field-name mb10">上级项目</span>
+													</td>
+													<td valign="middle">
+														<select id="subproject_parentId" class="selectpicker" data-live-search="true">
+														</select>
+													</td>
+													<td valign="middle">
+														<font color="red" style="margin-left: 3px;"></font>
+													</td>
+												</tr>
+											</table>
+										</div>
+									</td>
+									<td width="50%">
+										<div class="pb20">
+											<table>
+												<tr>
+													<td valign="middle">
+														<span class="field-name mb10">预算金额</span>
+													</td>
+													<td valign="middle">
+														<input id="subproject_budgetAmount" class="form-control mb10 fix--w220" type="text" />
+													</td>
+													<td valign="middle">
+														<font color="red" style="margin-left: 3px;"></font>
+													</td>
+												</tr>
+											</table>
+										</div>
+									</td>
+								</tr>
+								<tr>
+									<td width="50%">
+										<div class="pb20">
+											<table>
+												<tr>
+													<td valign="middle">
+														<span class="field-name mb10">编制人员</span>
+													</td>
+													<td valign="middle">
+														<div class="bs-w440">
+															<select id="subproject_budgetPersonCompilerIds" class="selectpicker" data-live-search="true" multiple="multiple">
+																<a:repeat value="#{genericProjectHome.budgetPersonList}" var="_department">
+																	<optgroup label="#{_department[0]}" data-subtext="科室">
+																		<a:repeat value="#{_department[1]}" var="_user">
+																			<option value="#{_user[0]}">#{_user[1]}</option>
+																		</a:repeat>
+																	</optgroup>
+																</a:repeat>
+															</select>
+														</div>
+													</td>
+													<td valign="middle">
+														<font color="red" style="margin-left: 3px;"></font>
+													</td>
+												</tr>
+											</table>
+										</div>
+									</td>
+									<td width="50%">
+										<div class="pb20">
+											<table>
+												<tr>
+													<td valign="middle">
+														<span class="field-name mb10">执行人员</span>
+													</td>
+													<td valign="middle">
+														<div class="bs-w440">
+															<select id="subproject_budgetPersonExecutorIds" class="selectpicker" data-live-search="true" multiple="multiple">
+																<a:repeat value="#{genericProjectHome.budgetPersonList}" var="_department">
+																	<optgroup label="#{_department[0]}" data-subtext="科室">
+																		<a:repeat value="#{_department[1]}" var="_user">
+																			<option value="#{_user[0]}">#{_user[1]}</option>
+																		</a:repeat>
+																	</optgroup>
+																</a:repeat>
+															</select>
+														</div>
+													</td>
+													<td valign="middle">
+														<font color="red" style="margin-left: 3px;"></font>
+													</td>
+												</tr>
+											</table>
+										</div>
+									</td>
+								</tr>
+								<tr>
+									<td colspan="2">
+										<div class="pb20">
+											<table>
+												<tr>
+													<td valign="middle">
+														<span class="field-name mb10">描述</span>
+													</td>
+													<td valign="middle">
+														<textarea id="subproject_description" class="form-control mb10 fix--textarea-610x130" />
+													</td>
+													<td valign="middle">
+														<font color="red" style="margin-left: 3px;"></font>
+													</td>
+												</tr>
+											</table>
+										</div>
+									</td>
+								</tr>
+							</table>
+						</div>
+						<div class="pb95">
+							<table class="normal-btn">
+								<tr>
+									<td>
+										<a class="btn btn-primary mr15" onclick="saveSubprojectItem();">提交</a>
+										<a class="btn btn-default" onclick="setSubprojectInteractive(false);">关闭</a>
+									</td>
+								</tr>
+							</table>
+							<br />
+							<br />
+						</div>
+					</div>
+				</div>
+				<div class="pt50 pb95">
+					<table class="normal-btn">
+						<tr>
+							<td>
+								<h:inputHidden id="subprojectInfoHidden" value="#{genericProjectHome.subprojectInfo}" />
+								<h:commandButton id="persist" value="提交" onclick="return beforeSubmit();" action="#{genericProjectHome.persist}" disabled="#{!genericProjectHome.wired}" rendered="#{!genericProjectHome.managed}" styleClass="btn btn-primary mr15" />
+								<h:commandButton id="update" value="保存" onclick="return beforeSubmit();" action="#{genericProjectHome.update}" rendered="#{genericProjectHome.managed}" styleClass="btn btn-primary mr15" />
+								<s:button id="cancel" value="返回" view="/budget/GenericProjectList.xhtml" propagation="none" styleClass="btn btn-default" />
+							</td>
+						</tr>
+					</table>
+				</div>
+			</div>
+		</h:form>
+		<script type="text/javascript" src="#{request.contextPath}/common/js/bootstrap.min.js" />
+		<script type="text/javascript" src="#{request.contextPath}/common/js/bootstrap-select.min.js" charset="UTF-8" />
+		<script type="text/javascript" src="#{request.contextPath}/common/js/bootstrap-select-defaults-zh_CN.min.js" charset="UTF-8" />
+		<script type="text/javascript" src="#{request.contextPath}/toolkit/utils.js" />
+		<script type="text/javascript" src="#{request.contextPath}/prompt-message/js/prompt-message.js" />
+		<script type="text/javascript" src="#{request.contextPath}/prompt-inputbox/js/prompt-inputbox.js" />
+		<script type="text/javascript">
+		//<![CDATA[
+			var g_personJson = #{genericProjectHome.personJson};
+			var g_subproject_all = JSON.parse('#{genericProjectHome.subprojectInfo}'); //子项目集合
+			var toggleIcon = {
+				'opened': '../images/icon_arrow_carrot_down_32x32.png',
+				'closed': '../images/icon_arrow_carrot_right_32x32.png'
+			};
+			var g_subproject_index = 0; //项目索引，初始值为0
+			var g_is_create = true; //是否为添加模式
+			var g_edit_itemData = {}; //在编辑项目
+			jQuery(document).ready(function() {
+				//提前设置滚动条，后续会引用该对象
+				jQuery('#node-subproject').niceScroll({
+					cursorcolor: '#26c6c6',
+					cursorwidth: 9,
+					cursoropacitymax: 0.8,
+					touchbehavior: false,
+					autohidemode: true
+				});
+			
+				loadSubprojectItem(); //加载子项目
+				//生成下一个项目索引，注意：仅适用于初始化，并且在加载子项目之后执行
+				for (var key in g_subproject_all) {
+					if (Number(key) > g_subproject_index) {
+						g_subproject_index = Number(key);
+					}
+				}
+			
+				___textRestrictById('mainForm:theValue', 255);
+				___textRestrictById('mainForm:budgetAmount', 12);
+				___textRestrictById('mainForm:theDescription', 1024);
+			
+				jQuery('.selectpicker').selectpicker();
+			
+				var message = '#{genericProjectHome.message}';
+				___dynamic_function = function() {
+					jQuery('#mainForm\\:theValue').focus();
+				};
+				if (message != '') {
+					___msg('温馨提示', message, {
+						closed: ___dynamic_function
+					});
+				}
+			
+				jQuery('#projectType').val(jQuery('#mainForm\\:projectTypeHidden').val());
+				jQuery('#projectType').selectpicker('render');
+			
+				jQuery('#departmentInfoId').val(jQuery('#mainForm\\:departmentInfoIdHidden').val());
+				jQuery('#departmentInfoId').selectpicker('render');
+			
+				jQuery('#budgetPersonCompilerIds').val(jQuery('#mainForm\\:budgetPersonCompilerIdsHidden').val().split(','));
+				jQuery('#budgetPersonCompilerIds').selectpicker('render');
+			
+				jQuery('#budgetPersonExecutorIds').val(jQuery('#mainForm\\:budgetPersonExecutorIdsHidden').val().split(','));
+				jQuery('#budgetPersonExecutorIds').selectpicker('render');
+			
+				jQuery('#fundsSourceId').val(jQuery('#mainForm\\:fundsSourceIdHidden').val());
+				jQuery('#fundsSourceId').selectpicker('render');
+			
+				setTimeout('subprojectOutputFlush();', 0);//解决Chrome元素渲染速度问题
+				
+				___promptInputbox('mainForm:theDescription', 1024);
+				___promptInputbox('subproject_description', 1024);
+			});
+			
+			function setSubprojectInteractive(show) {
+				if (show) {
+					jQuery('.popup-layer-subproject').show();
+				} else {
+					jQuery('.popup-layer-subproject').hide();
+				}
+			}
+			
+			function subprojectEmpty() {
+				g_subproject_all = {};
+				jQuery('.subproject-set .row-data').remove();
+				jQuery('.subproject-set .row-data-ul').remove();
+				subprojectOutputFlush();
+			}
+			
+			function subprojectAdd(handle) {
+				g_is_create = true;
+				//重置用户输入
+				jQuery('#subproject_projectName').val('');
+				jQuery('#subproject_budgetAmount').val('');
+				jQuery('#subproject_budgetPersonCompilerIds').val('');
+				jQuery('#subproject_budgetPersonCompilerIds').selectpicker('render');
+				jQuery('#subproject_budgetPersonExecutorIds').val('');
+				jQuery('#subproject_budgetPersonExecutorIds').selectpicker('render');
+				jQuery('#subproject_description').val('');
+				rebuildParentList(null);
+				if (jQuery(handle).hasClass('top-level')) {
+					jQuery('#subproject_parentId').val('0');
+				} else {
+					jQuery('#subproject_parentId').val(jQuery(handle).parents('.row-data').attr('data-id'));
+				}
+				jQuery('#subproject_parentId').selectpicker('render');
+				setSubprojectInteractive(true);
+			}
+			
+			function subprojectEdit(handle) {
+				g_is_create = false;
+				var dataId = jQuery(handle).parents('.row-data').attr('data-id');
+				g_edit_itemData = {};
+				jQuery.extend(true, g_edit_itemData, g_subproject_all[dataId]); //深拷贝
+				//恢复用户输入
+				jQuery('#subproject_projectName').val(g_subproject_all[dataId]['name']);
+				jQuery('#subproject_budgetAmount').val(g_subproject_all[dataId]['amount']);
+				jQuery('#subproject_budgetPersonCompilerIds').val(g_subproject_all[dataId]['compiler'].split(','));
+				jQuery('#subproject_budgetPersonCompilerIds').selectpicker('render');
+				jQuery('#subproject_budgetPersonExecutorIds').val(g_subproject_all[dataId]['executor'].split(','));
+				jQuery('#subproject_budgetPersonExecutorIds').selectpicker('render');
+				jQuery('#subproject_description').val(g_subproject_all[dataId]['description']);
+				rebuildParentList(dataId);
+				var pid = g_subproject_all[dataId]['pid'];
+				jQuery('#subproject_parentId').val(pid != null ? pid: 0);
+				jQuery('#subproject_parentId').selectpicker('render');
+				setSubprojectInteractive(true);
+			}
+			
+			function saveSubprojectItem() {
+				if (g_is_create) {
+					insertSubprojectItem();
+				} else {
+					updateSubprojectItem();
+				}
+			}
+			
+			function validateSubprojectItem() {
+				var name = jQuery('#subproject_projectName').val();
+				if (name == null || name == '') {
+					___promptMessage({
+						type: 'warning',
+						title: '温馨提示',
+						prompt: '请填写项目名称！',
+						fadeInMillis: 0,
+						fadeOutMillis: 1000 * 0.3,
+						fadeInCallback: null,
+						fadeOutCallback: function() {
+							jQuery('#subproject_projectName').focus();
+						}
+					});
+					return null;
+				}
+				var amount = jQuery('#subproject_budgetAmount').val();
+				if (!___isNumber(amount)) {
+					___promptMessage({
+						type: 'warning',
+						title: '温馨提示',
+						prompt: '请填写预算有效的金额！',
+						fadeInMillis: 0,
+						fadeOutMillis: 1000 * 0.3,
+						fadeInCallback: null,
+						fadeOutCallback: function() {
+							jQuery('#subproject_budgetAmount').focus();
+						}
+					});
+					return null;
+				}
+				var compiler = jQuery('#subproject_budgetPersonCompilerIds').val();
+				if (compiler == null || compiler == '') {
+					___promptMessage({
+						type: 'warning',
+						title: '温馨提示',
+						prompt: '请选择编制人员！',
+						fadeInMillis: 0,
+						fadeOutMillis: 1000 * 0.3,
+						fadeInCallback: null,
+						fadeOutCallback: function() {
+							jQuery('button[data-id="subproject_budgetPersonCompilerIds"]').focus().click();
+						}
+					});
+					return null;
+				}
+				var executor = jQuery('#subproject_budgetPersonExecutorIds').val();
+				if (executor == null || executor == '') {
+					___promptMessage({
+						type: 'warning',
+						title: '温馨提示',
+						prompt: '请选择执行人员！',
+						fadeInMillis: 0,
+						fadeOutMillis: 1000 * 0.3,
+						fadeInCallback: null,
+						fadeOutCallback: function() {
+							jQuery('button[data-id="subproject_budgetPersonExecutorIds"]').focus().click();
+						}
+					});
+					return null;
+				}
+				var itemData = {};
+				if (g_is_create) {
+					itemData['id'] = g_subproject_index + 1;
+				} else {
+					itemData['id'] = g_edit_itemData['id'];
+				}
+				itemData['name'] = name;
+				var pid = Number(jQuery('#subproject_parentId').val());
+				if (pid > 0) {
+					itemData['pid'] = pid;
+					itemData['level'] = g_subproject_all[pid]['level'] + 1;
+				} else {
+					itemData['pid'] = null;
+					itemData['level'] = 2;
+				}
+				itemData['amount'] = amount;
+				itemData['compiler'] = compiler.join(',');
+				itemData['executor'] = executor.join(',');
+				itemData['description'] = jQuery('#subproject_description').val();
+				return itemData;
+			}
+			
+			function insertSubprojectItem() {
+				var itemData = validateSubprojectItem();
+				if (itemData != null) {
+					g_subproject_index++; //索引自增
+					g_subproject_all[g_subproject_index] = itemData;
+					setSubprojectInteractive(false);
+					subprojectAdd_handle(g_subproject_index);
+				}
+			}
+			
+			function updateSubprojectItem() {
+				var itemData = validateSubprojectItem();
+				if (itemData != null) {
+					if (g_edit_itemData['pid'] != itemData['pid']) {
+						var dataId = g_edit_itemData['id'];
+						jQuery.extend(g_subproject_all[dataId], itemData); //合并
+						updateSubprojectItemLevel(dataId);
+						loadSubprojectItem();
+					} else {
+						var dataId = g_edit_itemData['id'];
+						jQuery.extend(g_subproject_all[dataId], itemData); //合并
+						var rdRef = jQuery('.row-data[data-id="' + dataId + '"]');
+						rdRef.children('.field-name').html(g_subproject_all[dataId]['name']);
+						rdRef.children('.field-amount').html(g_subproject_all[dataId]['amount']);
+						rdRef.children('.field-compiler').html(___genStdHtml___a_abbr(gainPersonStr(g_subproject_all[dataId]['compiler']), 13));
+						rdRef.children('.field-executor').html(___genStdHtml___a_abbr(gainPersonStr(g_subproject_all[dataId]['executor']), 13));
+						//rdRef.children('.field-description').html(g_subproject_all[dataId]['description']);
+					}
+					setSubprojectInteractive(false);
+				}
+			}
+			
+			function updateSubprojectItemLevel(id) {
+				for (var key in g_subproject_all) {
+					if (id == g_subproject_all[key]['pid']) {
+						g_subproject_all[key]['level'] = g_subproject_all[id]['level'] + 1;
+						updateSubprojectItemLevel(key);
+					}
+				}
+			}
+			
+			function loadSubprojectItem() {
+				//清除节点
+				jQuery('.subproject-set .row-data').remove();
+				jQuery('.subproject-set .row-data-ul').remove();
+				subprojectOutputFlush();
+				//重建节点
+				var recursionCreate = function(pid) {
+					for (var key in g_subproject_all) {
+						if (pid == g_subproject_all[key]['pid']) {
+							subprojectAdd_handle(key);
+							recursionCreate(key);
+						}
+					}
+				};
+				for (var key in g_subproject_all) {
+					if (null == g_subproject_all[key]['pid']) {
+						subprojectAdd_handle(key);
+						recursionCreate(key);
+					}
+				}
+			}
+			
+			function gainPersonStr(ids) {
+				var result = '';
+				if (ids != null && ids != '') {
+					var idArr = ids.split(',');
+					for (var i = 0; i < idArr.length; i++) {
+						result += g_personJson[idArr[i]];
+						if (i < idArr.length - 1) {
+							result += ',';
+						}
+					}
+				}
+				return result;
+			}
+			
+			function subprojectAdd_handle(subprojectIndex) {
+				var rowDataHtml = '';
+				rowDataHtml += '<div class="row-data" data-id="' + g_subproject_all[subprojectIndex]['id'] + '">';
+				rowDataHtml += '	<span>';
+				rowDataHtml += '		<img src="' + toggleIcon['opened'] + '" class="toggle-child" onclick="toggleChild(this);">';
+				rowDataHtml += '	</span>';
+				rowDataHtml += '	<span class="field-name">' + g_subproject_all[subprojectIndex]['name'] + '</span>';
+				rowDataHtml += '	<span class="field-amount">' + g_subproject_all[subprojectIndex]['amount'] + '</span>';
+				rowDataHtml += '	<span class="field-compiler">' + ___genStdHtml___a_abbr(gainPersonStr(g_subproject_all[subprojectIndex]['compiler']), 13) + '</span>';
+				rowDataHtml += '	<span class="field-executor">' + ___genStdHtml___a_abbr(gainPersonStr(g_subproject_all[subprojectIndex]['executor']), 13) + '</span>';
+				//rowDataHtml += '	<span class="field-description">' + g_subproject_all[subprojectIndex]['description'] + '</span>';
+				rowDataHtml += '	<span>';
+				rowDataHtml += '		<a class="btn btn-success" onclick="subprojectAdd(this);">添加</a>';
+				rowDataHtml += '		<a class="btn btn-primary" onclick="subprojectEdit(this);">编辑</a>';
+				rowDataHtml += '		<a class="btn btn-danger" onclick="subprojectDel(this);">删除</a>';
+				rowDataHtml += '	</span>';
+				rowDataHtml += '</div>';
+				var pid = g_subproject_all[subprojectIndex]['pid'];
+				if (pid != null) {
+					var rdRef = jQuery('.row-data[data-id="' + pid + '"]');
+					var child = rdRef.next('ul');
+					if (child.length > 0) {
+						jQuery(child).children('li').append(rowDataHtml);
+						jQuery(child).children('li').children('.row-data:last').find('.toggle-child').css('opacity', '0');
+					} else {
+						rowDataHtml = '<ul class="row-data-ul"><li>' + rowDataHtml + '</li></ul>';
+						rdRef.after(rowDataHtml);
+						rdRef.find('.toggle-child').css('opacity', '1');
+						rdRef.next('ul').children('li').children('.row-data:last').find('.toggle-child').css('opacity', '0');
+					}
+				} else {
+					jQuery('#node-subproject .subproject-set').children('li').append(rowDataHtml);
+					jQuery('#node-subproject .toggle-child:last').css('opacity', '0');
+					jQuery('#node-subproject').getNiceScroll().resize();
+					jQuery('#node-subproject').getNiceScroll(0).doScrollTop(document.getElementById('node-subproject').scrollHeight, 0);
+				}
+				subprojectOutputFlush();
+			}
+			
+			function toggleChild(handle) {
+				var child = jQuery(handle).parents('.row-data').next('ul');
+				if (child.length > 0) {
+					jQuery(handle).attr('src', jQuery(child).is(':visible') ? toggleIcon['closed'] : toggleIcon['opened']);
+					showLayer();
+					jQuery(child).toggle('fast',
+					function() {
+						jQuery('#node-subproject').getNiceScroll().resize();
+						hideLayer();
+					});
+				}
+			}
+			
+			function subprojectDel(handle) {
+				//删除数据结构
+				var dataId = jQuery(handle).parents('.row-data').attr('data-id');
+				var recurrenceDelSubset = function(id) {
+					for (var key in g_subproject_all) {
+						if (id == g_subproject_all[key]['pid']) {
+							recurrenceDelSubset(key);
+						}
+					}
+					delete g_subproject_all[id];
+				};
+				recurrenceDelSubset(dataId);
+				//删除页面元素
+				var child = jQuery(handle).parents('.row-data').next('ul');
+				if (child.length > 0) {
+					jQuery(child).remove();
+				}
+				if (jQuery(handle).parents('.row-data').siblings().length > 0) {
+					jQuery(handle).parents('.row-data').remove();
+				} else {
+					if (jQuery(handle).parents('.row-data').parent().parent().prev('.row-data').length > 0) {
+						jQuery(handle).parents('.row-data').parent().parent().prev('.row-data').find('.toggle-child').css('opacity', '0');
+					}
+					jQuery(handle).parents('.row-data').parent().parent().remove();
+				}
+				subprojectOutputFlush();
+			}
+			
+			function subprojectOutputFlush() {
+				if (jQuery('#node-subproject .row-data').length > 0) {
+					jQuery('#node-subproject-nodata').hide();
+					jQuery('#node-subproject').show();
+					jQuery('#subprojectEmptyBtn').removeClass('disabled');
+				} else {
+					jQuery('#node-subproject').hide();
+					jQuery('#node-subproject-nodata').show();
+					jQuery('#subprojectEmptyBtn').addClass('disabled');
+				}
+			}
+			
+			function rebuildParentList(exceptId) { //添加时传null 编辑时传data-id
+				jQuery('#subproject_parentId').empty();
+				jQuery('#subproject_parentId').selectpicker('refresh');
+				var separatorGenerator = function(size) {
+					var result = '';
+					for (var i = size - 1; i >= 0; i--) {
+						result += '　　';
+					}
+					return result;
+				};
+				var html = '<option value="0">●●●●●●●●顶级</option>';
+				var recurrenceSubset = function(pid) {
+					for (var key in g_subproject_all) {
+						if (exceptId != g_subproject_all[key]['id'] && pid == g_subproject_all[key]['pid']) {
+							html += '<option value="' + key + '">' + separatorGenerator(g_subproject_all[key]['level'] - 1) + g_subproject_all[key]['name'] + '</option>';
+							recurrenceSubset(key);
+						}
+					}
+				};
+				for (var key in g_subproject_all) {
+					if (exceptId != g_subproject_all[key]['id'] && null == g_subproject_all[key]['pid']) {
+						html += '<option value="' + key + '">' + separatorGenerator(g_subproject_all[key]['level'] - 1) + g_subproject_all[key]['name'] + '</option>';
+						recurrenceSubset(key);
+					}
+				}
+				jQuery('#subproject_parentId').append(html);
+				jQuery('#subproject_parentId').selectpicker('refresh');
+			}
+			
+			//提交表单前
+			function beforeSubmit() {
+				var theValue = jQuery('#mainForm\\:theValue').val();
+				jQuery('#mainForm\\:theValue').val(theValue);
+				if (theValue == null || theValue == '') {
+					___dynamic_function = function() {
+						jQuery('#mainForm\\:theValue').focus();
+					};
+					___msg('温馨提示', '请填写名称！', {
+						closed: ___dynamic_function
+					});
+					return false;
+				}
+			
+				var projectType = jQuery('#projectType').val();
+				if (projectType == null || projectType == '') {
+					___dynamic_function = function() {
+						jQuery('button[data-id="projectType"]').focus().click();
+					};
+					___msg('温馨提示', '请选择项目类型！', {
+						closed: ___dynamic_function
+					});
+					return false;
+				}
+				jQuery('#mainForm\\:projectTypeHidden').val(projectType);
+			
+				var departmentInfoId = jQuery('#departmentInfoId').val();
+				if (departmentInfoId == null || departmentInfoId == '') {
+					___dynamic_function = function() {
+						jQuery('button[data-id="departmentInfoId"]').focus().click();
+					};
+					___msg('温馨提示', '请选择主管科室！', {
+						closed: ___dynamic_function
+					});
+					return false;
+				}
+				jQuery('#mainForm\\:departmentInfoIdHidden').val(departmentInfoId);
+			
+				var budgetPersonCompilerIds = jQuery('#budgetPersonCompilerIds').val();
+				if (budgetPersonCompilerIds == null || budgetPersonCompilerIds == '') {
+					___dynamic_function = function() {
+						jQuery('button[data-id="budgetPersonCompilerIds"]').focus().click();
+					};
+					___msg('温馨提示', '请选择编制人员！', {
+						closed: ___dynamic_function
+					});
+					return false;
+				}
+				jQuery('#mainForm\\:budgetPersonCompilerIdsHidden').val(budgetPersonCompilerIds.join(','));
+			
+				var budgetPersonExecutorIds = jQuery('#budgetPersonExecutorIds').val();
+				if (budgetPersonExecutorIds == null || budgetPersonExecutorIds == '') {
+					___dynamic_function = function() {
+						jQuery('button[data-id="budgetPersonExecutorIds"]').focus().click();
+					};
+					___msg('温馨提示', '请选择执行人员！', {
+						closed: ___dynamic_function
+					});
+					return false;
+				}
+				jQuery('#mainForm\\:budgetPersonExecutorIdsHidden').val(budgetPersonExecutorIds.join(','));
+			
+				var fundsSourceId = jQuery('#fundsSourceId').val();
+				if (fundsSourceId == null || fundsSourceId == '') {
+					___dynamic_function = function() {
+						jQuery('button[data-id="fundsSourceId"]').focus().click();
+					};
+					___msg('温馨提示', '请选择资金来源！', {
+						closed: ___dynamic_function
+					});
+					return false;
+				}
+				jQuery('#mainForm\\:fundsSourceIdHidden').val(fundsSourceId);
+			
+				var budgetAmount = jQuery('#mainForm\\:budgetAmount').val();
+				___dynamic_function = function() {
+					jQuery('#mainForm\\:budgetAmount').focus();
+				};
+				if (budgetAmount == null || budgetAmount == '') {
+					___msg('温馨提示', '请填写预算金额！', {
+						closed: ___dynamic_function
+					});
+					return false;
+				} else if (isNaN(budgetAmount)) {
+					___msg('温馨提示', '预算金额必须是合法的数字！', {
+						closed: ___dynamic_function
+					});
+					return false;
+				}
+			
+				jQuery('#mainForm\\:subprojectInfoHidden').val(JSON.stringify(g_subproject_all));
+			}
+			
+			function debugInfo() {
+				___log(JSON.stringify(g_subproject_all));
+			}
 
-        <rich:panel>
-            <f:facet name="header">#{genericProjectHome.managed ? 'Edit' : 'Add'} Generic project</f:facet>
-
-
-
-            <s:decorate id="thePidField" template="layout/edit.xhtml">
-                <ui:define name="label">The pid</ui:define>
-                <h:inputText id="thePid"
-                          value="#{genericProjectHome.instance.thePid}">
-                    <a:support event="onblur" reRender="thePidField" bypassUpdates="true" ajaxSingle="true"/>
-                </h:inputText>
-            </s:decorate>
-
-
-            <s:decorate id="theValueField" template="layout/edit.xhtml">
-                <ui:define name="label">The value</ui:define>
-                <h:inputTextarea id="theValue"
-                               cols="80"
-                               rows="3"
-                           required="true"
-                              value="#{genericProjectHome.instance.theValue}"/>
-            </s:decorate>
-
-
-            <s:decorate id="projectTypeField" template="layout/edit.xhtml">
-                <ui:define name="label">Project type</ui:define>
-                <h:inputText id="projectType"
-                          value="#{genericProjectHome.instance.projectType}">
-                    <a:support event="onblur" reRender="projectTypeField" bypassUpdates="true" ajaxSingle="true"/>
-                </h:inputText>
-            </s:decorate>
-
-
-            <s:decorate id="departmentInfoIdField" template="layout/edit.xhtml">
-                <ui:define name="label">Department info id</ui:define>
-                <h:inputText id="departmentInfoId"
-                          value="#{genericProjectHome.instance.departmentInfoId}">
-                    <a:support event="onblur" reRender="departmentInfoIdField" bypassUpdates="true" ajaxSingle="true"/>
-                </h:inputText>
-            </s:decorate>
-
-
-            <s:decorate id="fundsSourceIdField" template="layout/edit.xhtml">
-                <ui:define name="label">Funds source id</ui:define>
-                <h:inputText id="fundsSourceId"
-                          value="#{genericProjectHome.instance.fundsSourceId}">
-                    <a:support event="onblur" reRender="fundsSourceIdField" bypassUpdates="true" ajaxSingle="true"/>
-                </h:inputText>
-            </s:decorate>
-
-
-            <s:decorate id="budgetAmountField" template="layout/edit.xhtml">
-                <ui:define name="label">Budget amount</ui:define>
-                <h:inputText id="budgetAmount"
-                          value="#{genericProjectHome.instance.budgetAmount}">
-                    <a:support event="onblur" reRender="budgetAmountField" bypassUpdates="true" ajaxSingle="true"/>
-                </h:inputText>
-            </s:decorate>
-
-
-            <s:decorate id="theDescriptionField" template="layout/edit.xhtml">
-                <ui:define name="label">The description</ui:define>
-                <h:inputTextarea id="theDescription"
-                               cols="80"
-                               rows="10"
-                              value="#{genericProjectHome.instance.theDescription}"/>
-            </s:decorate>
-
-
-            <s:decorate id="theStateField" template="layout/edit.xhtml">
-                <ui:define name="label">The state</ui:define>
-                <h:inputText id="theState"
-                          value="#{genericProjectHome.instance.theState}">
-                    <a:support event="onblur" reRender="theStateField" bypassUpdates="true" ajaxSingle="true"/>
-                </h:inputText>
-            </s:decorate>
-
-
-            <s:decorate id="insertTimeField" template="layout/edit.xhtml">
-                <ui:define name="label">Insert time</ui:define>
-                <rich:calendar id="insertTime"
-                          value="#{genericProjectHome.instance.insertTime}" datePattern="MM/dd/yyyy hh:mm a"/>
-            </s:decorate>
-
-
-            <s:decorate id="insertUserField" template="layout/edit.xhtml">
-                <ui:define name="label">Insert user</ui:define>
-                <h:inputText id="insertUser"
-                          value="#{genericProjectHome.instance.insertUser}">
-                    <a:support event="onblur" reRender="insertUserField" bypassUpdates="true" ajaxSingle="true"/>
-                </h:inputText>
-            </s:decorate>
-
-
-            <s:decorate id="updateTimeField" template="layout/edit.xhtml">
-                <ui:define name="label">Update time</ui:define>
-                <rich:calendar id="updateTime"
-                          value="#{genericProjectHome.instance.updateTime}" datePattern="MM/dd/yyyy hh:mm a"/>
-            </s:decorate>
-
-
-            <s:decorate id="updateUserField" template="layout/edit.xhtml">
-                <ui:define name="label">Update user</ui:define>
-                <h:inputText id="updateUser"
-                          value="#{genericProjectHome.instance.updateUser}">
-                    <a:support event="onblur" reRender="updateUserField" bypassUpdates="true" ajaxSingle="true"/>
-                </h:inputText>
-            </s:decorate>
-
-
-            <s:decorate id="deletedField" template="layout/edit.xhtml">
-                <ui:define name="label">Deleted</ui:define>
-                <h:selectBooleanCheckbox id="deleted"
-                                   required="true"
-                                      value="#{genericProjectHome.instance.deleted}"/>
-            </s:decorate>
-
-            <div style="clear:both">
-                <span class="required">*</span>
-                required fields
-            </div>
-
-        </rich:panel>
-
-        <div class="actionButtons">
-
-            <h:commandButton id="save"
-                          value="Save"
-                         action="#{genericProjectHome.persist}"
-                       disabled="#{!genericProjectHome.wired}"
-                       rendered="#{!genericProjectHome.managed}"/>
-
-            <h:commandButton id="update"
-                          value="Save"
-                         action="#{genericProjectHome.update}"
-                       rendered="#{genericProjectHome.managed}"/>
-
-            <h:commandButton id="delete"
-                          value="Delete"
-                         action="#{genericProjectHome.remove}"
-                      immediate="true"
-                       rendered="#{genericProjectHome.managed}"/>
-
-            <s:button id="cancelEdit"
-                   value="Cancel"
-             propagation="end"
-                    view="/GenericProject.xhtml"
-                rendered="#{genericProjectHome.managed}"/>
-
-            <s:button id="cancelAdd"
-                   value="Cancel"
-             propagation="end"
-                    view="/#{empty genericProjectFrom ? 'GenericProjectList' : genericProjectFrom}.xhtml"
-                rendered="#{!genericProjectHome.managed}"/>
-
-        </div>
-    </h:form>
-
-</ui:define>
+		//]]>
+		</script>
+	</ui:define>
 
 </ui:composition>
