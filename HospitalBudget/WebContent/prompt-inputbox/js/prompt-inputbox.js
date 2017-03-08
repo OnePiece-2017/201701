@@ -52,8 +52,19 @@ jQuery(document).ready(function() {
 		______promptInputbox.cache['textarea'].keypress(function() {
 			______promptInputboxNiceScrollResize();
 		});
-		______promptInputbox.cache['textarea'].keydown(function() {
+		______promptInputbox.cache['textarea'].keydown(function(event) {
 			______promptInputboxNiceScrollResize();
+			if (9 == event.which) {
+				if ('?' == 'Shift is holding') {
+					if ('?' == 'Cursor front is Tab') {
+						// TODO: ?
+					} else {
+						// TODO: ?
+					}
+				} else {
+					// TODO: ?
+				}
+			}
 		});
 		______promptInputbox.cache['textarea'].keyup(function() {
 			______promptInputboxNiceScrollResize();
@@ -111,7 +122,7 @@ function ______promptInputboxHide() {
 }
 
 function ______promptInputboxNiceScrollResize() {
-	______promptInputbox.cache['textarea'].getNiceScroll().resize();
+	______promptInputbox.cache['textarea'].getNiceScroll(0).resize();
 }
 
 function ______promptInputboxTracker() {
@@ -136,7 +147,7 @@ function ______promptInputboxTracker() {
 		______promptInputbox.cache['withCurrent'].removeClass('with-current-overflow');
 	}
 	if (threshold > 0 && textLength <= threshold) {
-		______promptInputbox.cache['progressBar'].width(parseInt(textLength / threshold * 100) + '%');
+		______promptInputbox.cache['progressBar'].width((textLength / threshold * 100).toFixed(6) + '%');
 	} else {
 		______promptInputbox.cache['progressBar'].width('100%');
 	}
@@ -159,6 +170,8 @@ function ___promptInputbox(id, threshold) {
 				______promptInputbox.cache['textarea'].val('');
 				______promptInputboxShow();
 				______promptInputbox.cache['textarea'].val(this.value);
+				______promptInputbox.cache['textarea'].getNiceScroll(0).resize();
+				______promptInputbox.cache['textarea'].getNiceScroll(0).doScrollTop(______promptInputbox.cache['textarea'][0].scrollHeight, 0);
 				______promptInputbox.handleCurrent = jQuery(this).attr('prompt-inputbox-handle-index');
 				______promptInputbox.cache['withTotal'].html('/' + threshold);
 				______promptInputbox.cache['progressBar'].hide();
