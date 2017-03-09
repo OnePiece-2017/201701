@@ -71,12 +71,12 @@
 			
 			#node-subproject .row-head>span:nth-child(1),#node-subproject .row-data>span:nth-child(1) {
 				width: 42px;
-				background: #add595;
+				background: #05d380;
 			}
 			
 			#node-subproject .row-head>span:nth-child(2),#node-subproject .row-data>span:nth-child(2) {
 				width: 310px;
-				background: #add595;
+				background: #05d380;
 			}
 			
 			#node-subproject .row-head>span:nth-child(3),#node-subproject .row-data>span:nth-child(3) {
@@ -86,17 +86,17 @@
 			
 			#node-subproject .row-head>span:nth-child(4),#node-subproject .row-data>span:nth-child(4) {
 				width: 240px;
-				background: #86cef0;
+				background: #00cfea;
 			}
 			
 			#node-subproject .row-head>span:nth-child(5),#node-subproject .row-data>span:nth-child(5) {
 				width: 240px;
-				background: #e91c72;
+				background: #dd4ad3;
 			}
 			
 			#node-subproject .row-head>span:nth-child(6),#node-subproject .row-data>span:nth-child(6) {
 				width: 180px;
-				background: #e0ecff;
+				background: #d3d4d7;
 			}
 			
 			#node-subproject .row-data span:last-child a:first-child {
@@ -184,7 +184,7 @@
 												<h:inputText id="theValue" value="#{genericProjectHome.instance.theValue}" styleClass="form-control mb10 fix--w610" />
 											</td>
 											<td valign="middle">
-												<font color="red" style="margin-left: 3px;"></font>
+												<font color="red" style="margin-left: 3px;">*</font>
 											</td>
 										</tr>
 									</table>
@@ -208,7 +208,7 @@
 												<h:inputHidden id="projectTypeHidden" value="#{genericProjectHome.instance.projectType}" />
 											</td>
 											<td valign="middle">
-												<font color="red" style="margin-left: 3px;"></font>
+												<font color="red" style="margin-left: 3px;">*</font>
 											</td>
 										</tr>
 									</table>
@@ -230,7 +230,7 @@
 												<h:inputHidden id="departmentInfoIdHidden" value="#{genericProjectHome.departmentInfoId}" />
 											</td>
 											<td valign="middle">
-												<font color="red" style="margin-left: 3px;"></font>
+												<font color="red" style="margin-left: 3px;">*</font>
 											</td>
 										</tr>
 									</table>
@@ -260,7 +260,7 @@
 												<h:inputHidden id="budgetPersonCompilerIdsHidden" value="#{genericProjectHome.budgetPersonCompilerIds}" />
 											</td>
 											<td valign="middle">
-												<font color="red" style="margin-left: 3px;"></font>
+												<font color="red" style="margin-left: 3px;">*</font>
 											</td>
 										</tr>
 									</table>
@@ -288,7 +288,7 @@
 												<h:inputHidden id="budgetPersonExecutorIdsHidden" value="#{genericProjectHome.budgetPersonExecutorIds}" />
 											</td>
 											<td valign="middle">
-												<font color="red" style="margin-left: 3px;"></font>
+												<font color="red" style="margin-left: 3px;">*</font>
 											</td>
 										</tr>
 									</table>
@@ -312,7 +312,7 @@
 												<h:inputHidden id="fundsSourceIdHidden" value="#{genericProjectHome.fundsSourceId}" />
 											</td>
 											<td valign="middle">
-												<font color="red" style="margin-left: 3px;"></font>
+												<font color="red" style="margin-left: 3px;">*</font>
 											</td>
 										</tr>
 									</table>
@@ -329,7 +329,7 @@
 												<h:inputText id="budgetAmount" value="#{genericProjectHome.instance.budgetAmount}" styleClass="form-control mb10 fix--w220" />
 											</td>
 											<td valign="middle">
-												<font color="red" style="margin-left: 3px;"></font>
+												<font color="red" style="margin-left: 3px;">*</font>
 											</td>
 										</tr>
 									</table>
@@ -398,7 +398,7 @@
 														<input id="subproject_projectName" class="form-control mb10 fix--w610" type="text" />
 													</td>
 													<td valign="middle">
-														<font color="red" style="margin-left: 3px;"></font>
+														<font color="red" style="margin-left: 3px;">*</font>
 													</td>
 												</tr>
 											</table>
@@ -418,7 +418,7 @@
 														</select>
 													</td>
 													<td valign="middle">
-														<font color="red" style="margin-left: 3px;"></font>
+														<font color="red" style="margin-left: 3px;">*</font>
 													</td>
 												</tr>
 											</table>
@@ -435,7 +435,7 @@
 														<input id="subproject_budgetAmount" class="form-control mb10 fix--w220" type="text" />
 													</td>
 													<td valign="middle">
-														<font color="red" style="margin-left: 3px;"></font>
+														<font color="red" style="margin-left: 3px;">*</font>
 													</td>
 												</tr>
 											</table>
@@ -464,7 +464,7 @@
 														</div>
 													</td>
 													<td valign="middle">
-														<font color="red" style="margin-left: 3px;"></font>
+														<font color="red" style="margin-left: 3px;">*</font>
 													</td>
 												</tr>
 											</table>
@@ -491,7 +491,7 @@
 														</div>
 													</td>
 													<td valign="middle">
-														<font color="red" style="margin-left: 3px;"></font>
+														<font color="red" style="margin-left: 3px;">*</font>
 													</td>
 												</tr>
 											</table>
@@ -567,7 +567,7 @@
 			jQuery(document).ready(function() {
 				//提前设置滚动条，后续会引用该对象
 				jQuery('#node-subproject').niceScroll({
-					cursorcolor: '#26c6c6',
+					cursorcolor: '#000',
 					cursorwidth: 9,
 					cursoropacitymax: 0.8,
 					touchbehavior: false,
@@ -581,6 +581,7 @@
 						g_subproject_index = Number(key);
 					}
 				}
+				recalculateAmount();
 			
 				___textRestrictById('mainForm:theValue', 255);
 				___textRestrictById('mainForm:budgetAmount', 12);
@@ -631,6 +632,7 @@
 				g_subproject_all = {};
 				jQuery('.subproject-set .row-data').remove();
 				jQuery('.subproject-set .row-data-ul').remove();
+				recalculateAmount();
 				subprojectOutputFlush();
 			}
 			
@@ -639,6 +641,7 @@
 				//重置用户输入
 				jQuery('#subproject_projectName').val('');
 				jQuery('#subproject_budgetAmount').val('');
+				jQuery('#subproject_budgetAmount').removeAttr('disabled');
 				jQuery('#subproject_budgetPersonCompilerIds').val('');
 				jQuery('#subproject_budgetPersonCompilerIds').selectpicker('render');
 				jQuery('#subproject_budgetPersonExecutorIds').val('');
@@ -654,6 +657,67 @@
 				setSubprojectInteractive(true);
 			}
 			
+			function subprojectHasSubset(handle) {
+				return jQuery(handle).parents('.row-data').next('ul').length > 0;
+			}
+			
+			function hasSubsetById(id) {
+				for (var key in g_subproject_all) {
+					if (id == g_subproject_all[key]['pid']) {
+						return true;
+					}
+				}
+				return false;
+			}
+			
+			function getSubprojectSize() {
+				var size = 0;
+				for (var key in g_subproject_all) {
+					size++;
+				}
+				return size;
+			}
+			
+			function recalculateAmount() {
+				//1、将所有包含子级的节点金额清零，并记录所有不包含子级的节点
+				var noneSetKeys = [];
+				for (var key in g_subproject_all) {
+					if (hasSubsetById(key)) {
+						g_subproject_all[key]['amount'] = 0;
+					} else {
+						noneSetKeys.push(key);
+					}
+				}
+				//2、遍历所有不包含子级的节点，并依次累加到其父节点上，直至顶级
+				var increaseParents = function(id, amount) {
+					var pid = g_subproject_all[id]['pid'];
+					if (pid != null) {
+						g_subproject_all[pid]['amount'] += amount;
+						increaseParents(pid, amount);
+					}
+				};
+				for (var i = noneSetKeys.length - 1; i >= 0; i--) {
+					increaseParents(noneSetKeys[i], g_subproject_all[noneSetKeys[i]]['amount']);
+				}
+				//3、更新页面展示
+				for (var key in g_subproject_all) {
+					jQuery('.row-data[data-id="' + key + '"] span.field-amount').html(g_subproject_all[key]['amount']);
+				}
+				//4、更新顶级金额元素
+				var sum = 0;
+				for (var key in g_subproject_all) {
+					if (null == g_subproject_all[key]['pid']) {
+						sum += g_subproject_all[key]['amount'];
+					}
+				}
+				if (getSubprojectSize() > 0) {
+					jQuery('#mainForm\\:budgetAmount').val(sum);
+					jQuery('#mainForm\\:budgetAmount').attr('disabled', 'disabled');
+				} else {
+					jQuery('#mainForm\\:budgetAmount').removeAttr('disabled');
+				}
+			}
+			
 			function subprojectEdit(handle) {
 				g_is_create = false;
 				var dataId = jQuery(handle).parents('.row-data').attr('data-id');
@@ -662,6 +726,11 @@
 				//恢复用户输入
 				jQuery('#subproject_projectName').val(g_subproject_all[dataId]['name']);
 				jQuery('#subproject_budgetAmount').val(g_subproject_all[dataId]['amount']);
+				if (subprojectHasSubset(handle)) {
+					jQuery('#subproject_budgetAmount').attr('disabled', 'disabled');
+				} else {
+					jQuery('#subproject_budgetAmount').removeAttr('disabled');
+				}
 				jQuery('#subproject_budgetPersonCompilerIds').val(g_subproject_all[dataId]['compiler'].split(','));
 				jQuery('#subproject_budgetPersonCompilerIds').selectpicker('render');
 				jQuery('#subproject_budgetPersonExecutorIds').val(g_subproject_all[dataId]['executor'].split(','));
@@ -680,6 +749,7 @@
 				} else {
 					updateSubprojectItem();
 				}
+				recalculateAmount();
 			}
 			
 			function validateSubprojectItem() {
@@ -758,7 +828,7 @@
 					itemData['pid'] = null;
 					itemData['level'] = 2;
 				}
-				itemData['amount'] = amount;
+				itemData['amount'] = Number(amount);//注意数据类型
 				itemData['compiler'] = compiler.join(',');
 				itemData['executor'] = executor.join(',');
 				itemData['description'] = jQuery('#subproject_description').val();
@@ -919,6 +989,7 @@
 					}
 					jQuery(handle).parents('.row-data').parent().parent().remove();
 				}
+				recalculateAmount();
 				subprojectOutputFlush();
 			}
 			
@@ -1052,6 +1123,7 @@
 					});
 					return false;
 				}
+				jQuery('#mainForm\\:budgetAmount').removeAttr('disabled');//启用后才能成功传入后台
 			
 				jQuery('#mainForm\\:subprojectInfoHidden').val(JSON.stringify(g_subproject_all));
 			}

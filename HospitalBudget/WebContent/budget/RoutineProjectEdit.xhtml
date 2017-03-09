@@ -71,27 +71,27 @@
 			
 			#node-subproject .row-head>span:nth-child(1),#node-subproject .row-data>span:nth-child(1) {
 				width: 42px;
-				background: #add595;
+				background: #05d380;
 			}
 			
 			#node-subproject .row-head>span:nth-child(2),#node-subproject .row-data>span:nth-child(2) {
 				width: 310px;
-				background: #add595;
+				background: #05d380;
 			}
 			
 			#node-subproject .row-head>span:nth-child(3),#node-subproject .row-data>span:nth-child(3) {
 				width: 240px;
-				background: #86cef0;
+				background: #00cfea;
 			}
 			
 			#node-subproject .row-head>span:nth-child(4),#node-subproject .row-data>span:nth-child(4) {
 				width: 240px;
-				background: #e91c72;
+				background: #dd4ad3;
 			}
 			
 			#node-subproject .row-head>span:nth-child(5),#node-subproject .row-data>span:nth-child(5) {
 				width: 180px;
-				background: #e0ecff;
+				background: #d3d4d7;
 			}
 			
 			#node-subproject .row-data span:last-child a:first-child {
@@ -179,7 +179,7 @@
 												<h:inputText id="theValue" value="#{routineProjectHome.instance.theValue}" styleClass="form-control mb10 fix--w610" />
 											</td>
 											<td valign="middle">
-												<font color="red" style="margin-left: 3px;"></font>
+												<font color="red" style="margin-left: 3px;">*</font>
 											</td>
 										</tr>
 									</table>
@@ -203,7 +203,7 @@
 												<h:inputHidden id="projectTypeHidden" value="#{routineProjectHome.instance.projectType}" />
 											</td>
 											<td valign="middle">
-												<font color="red" style="margin-left: 3px;"></font>
+												<font color="red" style="margin-left: 3px;">*</font>
 											</td>
 										</tr>
 									</table>
@@ -225,7 +225,7 @@
 												<h:inputHidden id="departmentInfoIdHidden" value="#{routineProjectHome.departmentInfoId}" />
 											</td>
 											<td valign="middle">
-												<font color="red" style="margin-left: 3px;"></font>
+												<font color="red" style="margin-left: 3px;">*</font>
 											</td>
 										</tr>
 									</table>
@@ -255,7 +255,7 @@
 												<h:inputHidden id="budgetPersonCompilerIdsHidden" value="#{routineProjectHome.budgetPersonCompilerIds}" />
 											</td>
 											<td valign="middle">
-												<font color="red" style="margin-left: 3px;"></font>
+												<font color="red" style="margin-left: 3px;">*</font>
 											</td>
 										</tr>
 									</table>
@@ -283,7 +283,7 @@
 												<h:inputHidden id="budgetPersonExecutorIdsHidden" value="#{routineProjectHome.budgetPersonExecutorIds}" />
 											</td>
 											<td valign="middle">
-												<font color="red" style="margin-left: 3px;"></font>
+												<font color="red" style="margin-left: 3px;">*</font>
 											</td>
 										</tr>
 									</table>
@@ -307,7 +307,7 @@
 												<h:inputHidden id="fundsSourceIdHidden" value="#{routineProjectHome.fundsSourceId}" />
 											</td>
 											<td valign="middle">
-												<font color="red" style="margin-left: 3px;"></font>
+												<font color="red" style="margin-left: 3px;">*</font>
 											</td>
 										</tr>
 									</table>
@@ -375,7 +375,7 @@
 														<input id="subproject_projectName" class="form-control mb10 fix--w610" type="text" />
 													</td>
 													<td valign="middle">
-														<font color="red" style="margin-left: 3px;"></font>
+														<font color="red" style="margin-left: 3px;">*</font>
 													</td>
 												</tr>
 											</table>
@@ -395,7 +395,7 @@
 														</select>
 													</td>
 													<td valign="middle">
-														<font color="red" style="margin-left: 3px;"></font>
+														<font color="red" style="margin-left: 3px;">*</font>
 													</td>
 												</tr>
 											</table>
@@ -424,7 +424,7 @@
 														</div>
 													</td>
 													<td valign="middle">
-														<font color="red" style="margin-left: 3px;"></font>
+														<font color="red" style="margin-left: 3px;">*</font>
 													</td>
 												</tr>
 											</table>
@@ -451,7 +451,7 @@
 														</div>
 													</td>
 													<td valign="middle">
-														<font color="red" style="margin-left: 3px;"></font>
+														<font color="red" style="margin-left: 3px;">*</font>
 													</td>
 												</tr>
 											</table>
@@ -527,7 +527,7 @@
 			jQuery(document).ready(function() {
 				//提前设置滚动条，后续会引用该对象
 				jQuery('#node-subproject').niceScroll({
-					cursorcolor: '#26c6c6',
+					cursorcolor: '#000',
 					cursorwidth: 9,
 					cursoropacitymax: 0.8,
 					touchbehavior: false,
