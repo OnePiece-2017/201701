@@ -1,0 +1,31 @@
+.sg-reminder {
+	position: fixed;
+	width: 100%;
+	height: 100%;
+	z-index: 1370855452;
+	left: 0;
+	top: 0;
+	background: rgba(59, 52, 26, 0.76);
+	display: none;
+}
+
+.sg-reminder-contents {
+	position: fixed;
+	width: 360px;
+	height: 86px;
+	background: rgba(255, 214, 50, 0.9);
+	border-radius: 5px;
+	box-shadow: inset 0 1px 1px rgba(230, 102, 151, 0.65), 0 0 8px rgb(63, 231, 38);
+	right: 15px;
+	top: 15px;
+	cursor: pointer;
+}
+
+.sg-reminder-contents span.the-text {
+	color: #000;
+	font-size: 17px;
+	line-height: 17px;
+	font-family: arial;
+	float: right;
+	margin-top: 5px;
+}

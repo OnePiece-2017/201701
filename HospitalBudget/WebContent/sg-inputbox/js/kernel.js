@@ -1,12 +1,14 @@
 var ______sgInputbox = {
     wired : false,
     alias : {},
+    eType : {},
     cache : {},
     handleIndex : 0,
     handleCurrent : null,
     threshold : {},
     timer : {},
-    allowEnter : {}
+    allowEnter : {},
+    magicBinder : {}
 };
 
 jQuery(document).ready(function() {
@@ -55,7 +57,9 @@ jQuery(document).ready(function() {
 		});
 		______sgInputbox.cache['textarea'].keydown(function(event) {
 			if (!______sgInputbox.allowEnter[______sgInputbox.handleCurrent] && 13 == event.which) {
-				___log('﹝' + ______sgInputbox.alias[______sgInputbox.handleCurrent] + '﹞不支持回车符！');
+				___sgReminder(______gainElementTypeLabel(______sgInputbox.eType[______sgInputbox.handleCurrent]) + '﹝' + ______sgInputbox.alias[______sgInputbox.handleCurrent] + '﹞不支持回车符！', 1024, function() {
+					______sgInputbox.cache['textarea'].focus();
+				});
 				return false;
 			}
 			if (9 == event.which) {
@@ -84,14 +88,21 @@ jQuery(document).ready(function() {
 			} else {
 				clearTimeout(______sgInputbox.timer['tracker']);
 				______hidePanel();
-				jQuery('[sg-inputbox-handle-index="' + ______sgInputbox.handleCurrent + '"]').val(______sgInputbox.cache['textarea'].val()).focus();
+				var refer = jQuery('[sg-inputbox-handle-index="' + ______sgInputbox.handleCurrent + '"]');
+				refer.unbind('focus');
+				refer.val(______sgInputbox.cache['textarea'].val());
+				refer.focus();
+				refer.focus(______sgInputbox.magicBinder[______sgInputbox.handleCurrent]);
 			}
 		});
 		______sgInputbox.cache['imgNo'].click(function() {
 			______hintTextTwinkle(0, 0);// 延迟过长时清除闪烁
 			clearTimeout(______sgInputbox.timer['tracker']);
 			______hidePanel();
-			jQuery('[sg-inputbox-handle-index="' + ______sgInputbox.handleCurrent + '"]').focus();
+			var refer = jQuery('[sg-inputbox-handle-index="' + ______sgInputbox.handleCurrent + '"]');
+			refer.unbind('focus');
+			refer.focus();
+			refer.focus(______sgInputbox.magicBinder[______sgInputbox.handleCurrent]);
 		});
 		// 5. 标记状态
 		______sgInputbox.wired = true;
@@ -159,6 +170,10 @@ function ______typingTracker() {
 	______sgInputbox.timer['tracker'] = setTimeout("______typingTracker()", 128);
 }
 
+function ______gainElementTypeLabel(eType) {
+	return 'input' == eType ? '文本字段' : '文本区';
+}
+
 function ___sgInputbox(id, threshold, alias) {
 	if (null == id || '' == id || 'string' !== typeof id || null == document.getElementById(id)) {
 		alert('sg-inputbox初始化失败，无效的id！');
@@ -175,6 +190,17 @@ function ___sgInputbox(id, threshold, alias) {
 			______sgInputbox.threshold[______sgInputbox.handleIndex] = threshold;
 			______sgInputbox.allowEnter[______sgInputbox.handleIndex] = 'textarea' == eType;
 			______sgInputbox.alias[______sgInputbox.handleIndex] = alias;
+			______sgInputbox.eType[______sgInputbox.handleIndex] = eType;
+			var magicBinder = null;
+			magicBinder = function() {
+				___sgReminder('亲：待提示完全消失后，可双击鼠标左键来打开迷你输入框。<br>' + ______gainElementTypeLabel(eType) + '﹝' + alias + '﹞', 2048, function() {
+					jQuery(element).unbind('focus');
+					jQuery(element).focus();
+					jQuery(element).focus(magicBinder);
+				});
+			};
+			______sgInputbox.magicBinder[______sgInputbox.handleIndex] = magicBinder;
+			jQuery(element).focus(magicBinder);
 			jQuery(element).dblclick(function() {
 				______sgInputbox.cache['textarea'].val('');
 				______showPanel();
