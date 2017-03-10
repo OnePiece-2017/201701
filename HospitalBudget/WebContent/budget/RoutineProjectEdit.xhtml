@@ -576,8 +576,18 @@
 			
 				setTimeout('subprojectOutputFlush();', 0);//解决Chrome元素渲染速度问题
 				
-				___sgInputbox('mainForm:theDescription', 1024, '顶级项目描述');
-				___sgInputbox('subproject_description', 1024, '子级项目描述');
+				___sgInputbox({
+				    id : 'mainForm:theDescription',
+				    alias : '顶级项目描述',
+				    threshold : 1024,
+				    notify : true
+				});
+				___sgInputbox({
+				    id : 'subproject_description',
+				    alias : '子级项目描述',
+				    threshold : 1024,
+				    notify : true
+				});
 			});
 			
 			function setSubprojectInteractive(show) {
