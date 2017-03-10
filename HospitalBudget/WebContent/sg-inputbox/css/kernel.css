@@ -148,3 +148,7 @@
 	line-height: 19px;
 	font-weight: bold;
 }
+
+.sg-inputbox-contents .input-hint span.hint-text.beyond {
+	color: #b10000;
+}

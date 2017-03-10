@@ -1,10 +1,12 @@
 var ______sgInputbox = {
     wired : false,
+    alias : {},
     cache : {},
     handleIndex : 0,
     handleCurrent : null,
     threshold : {},
-    timer : {}
+    timer : {},
+    allowEnter : {}
 };
 
 jQuery(document).ready(function() {
@@ -36,7 +38,6 @@ jQuery(document).ready(function() {
 		______sgInputbox.cache['progressBar'] = jQuery('.sg-inputbox-contents .progress-bar');
 		______sgInputbox.cache['withCurrent'] = jQuery('.sg-inputbox-contents .progress-bar-details .with-current');
 		______sgInputbox.cache['withTotal'] = jQuery('.sg-inputbox-contents .progress-bar-details .with-total');
-		______sgInputbox.cache['inputHint'] = jQuery('.sg-inputbox-contents .input-hint');
 		______sgInputbox.cache['hintText'] = jQuery('.sg-inputbox-contents .input-hint .hint-text');
 		______sgInputbox.cache['imgYes'] = jQuery('.sg-inputbox-contents .btn-operation .img-yes');
 		______sgInputbox.cache['imgNo'] = jQuery('.sg-inputbox-contents .btn-operation .img-no');
@@ -53,7 +54,10 @@ jQuery(document).ready(function() {
 			______resizeNiceScroll();
 		});
 		______sgInputbox.cache['textarea'].keydown(function(event) {
-			______resizeNiceScroll();
+			if (!______sgInputbox.allowEnter[______sgInputbox.handleCurrent] && 13 == event.which) {
+				___log('﹝' + ______sgInputbox.alias[______sgInputbox.handleCurrent] + '﹞不支持回车符！');
+				return false;
+			}
 			if (9 == event.which) {
 				if ('?' == 'Shift is holding') {
 					if ('?' == 'Cursor front is Tab') {
@@ -65,6 +69,7 @@ jQuery(document).ready(function() {
 					// TODO: ?
 				}
 			}
+			______resizeNiceScroll();
 		});
 		______sgInputbox.cache['textarea'].keyup(function() {
 			______resizeNiceScroll();
@@ -130,7 +135,7 @@ function ______typingTracker() {
 	______sgInputbox.cache['withCurrent'].html(textLength);
 	var threshold = ______sgInputbox.threshold[______sgInputbox.handleCurrent];
 	if (textLength > threshold) {
-		______sgInputbox.cache['inputHint'].show();
+		______sgInputbox.cache['hintText'].addClass('beyond');
 		______sgInputbox.cache['progressBar'].addClass('be-overflow');
 		______sgInputbox.cache['withCurrent'].addClass('with-current-overflow');
 		______sgInputbox.cache['hintText'].html('已超出' + (textLength - threshold) + '个字');
@@ -138,13 +143,13 @@ function ______typingTracker() {
 		if (threshold - textLength > 0) {
 			______hintTextTwinkle(0, 0);// 延迟过长时清除闪烁
 			______sgInputbox.cache['hintText'].html('可输入' + (threshold - textLength) + '个字');
-			______sgInputbox.cache['inputHint'].show();
 		} else {
 			______hintTextTwinkle(0, 0);// 延迟过长时清除闪烁
-			______sgInputbox.cache['inputHint'].hide();
+			______sgInputbox.cache['hintText'].html('输入已达到上限');
 		}
 		______sgInputbox.cache['progressBar'].removeClass('be-overflow');
 		______sgInputbox.cache['withCurrent'].removeClass('with-current-overflow');
+		______sgInputbox.cache['hintText'].removeClass('beyond');
 	}
 	if (threshold > 0 && textLength <= threshold) {
 		______sgInputbox.cache['progressBar'].width((textLength / threshold * 100).toFixed(6) + '%');
@@ -154,11 +159,13 @@ function ______typingTracker() {
 	______sgInputbox.timer['tracker'] = setTimeout("______typingTracker()", 128);
 }
 
-function ___sgInputbox(id, threshold) {
-	if (null == id || '' == id || 'string' !== typeof id) {
+function ___sgInputbox(id, threshold, alias) {
+	if (null == id || '' == id || 'string' !== typeof id || null == document.getElementById(id)) {
 		alert('sg-inputbox初始化失败，无效的id！');
 	} else if (null == threshold || '' === threshold || 'number' !== typeof threshold || parseInt(threshold).toString() !== threshold.toString() || threshold < 0 || threshold > 2147483647) {
 		alert('sg-inputbox初始化失败，无效的threshold！');
+	} else if (null == alias || '' == alias || 'string' !== typeof alias) {
+		alert('sg-inputbox初始化失败，无效的alias！');
 	} else {
 		______sgInputbox.handleIndex++;
 		var element = document.getElementById(id);
@@ -166,6 +173,8 @@ function ___sgInputbox(id, threshold) {
 		if ('input' == eType || 'textarea' == eType) {
 			jQuery(element).attr('sg-inputbox-handle-index', ______sgInputbox.handleIndex);
 			______sgInputbox.threshold[______sgInputbox.handleIndex] = threshold;
+			______sgInputbox.allowEnter[______sgInputbox.handleIndex] = 'textarea' == eType;
+			______sgInputbox.alias[______sgInputbox.handleIndex] = alias;
 			jQuery(element).dblclick(function() {
 				______sgInputbox.cache['textarea'].val('');
 				______showPanel();

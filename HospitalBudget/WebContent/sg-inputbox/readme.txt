@@ -8,4 +8,4 @@
 	jQuery v1.8.3
 
 用法：
-	___sgInputbox('mainForm:keyword');
+	___sgInputbox('mainForm:keyword', 1024, '关键词');
