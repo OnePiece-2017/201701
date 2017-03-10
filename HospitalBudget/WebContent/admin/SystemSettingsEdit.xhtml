@@ -13,6 +13,7 @@
 		<link rel="stylesheet" type="text/css" href="#{request.contextPath}/common/css/bootstrap.min.css" />
 		<link rel="stylesheet" type="text/css" href="#{request.contextPath}/common/css/bootstrap-select.min.css" />
 		<link rel="stylesheet" type="text/css" href="#{request.contextPath}/icheck/skins/square/blue.css" />
+		<link rel="stylesheet" type="text/css" href="#{request.contextPath}/sg-messagebox/css/kernel.css" />
 	</ui:define>
 
 	<ui:define name="body">
@@ -335,6 +336,7 @@
 		<script type="text/javascript" src="#{request.contextPath}/common/js/bootstrap-select-defaults-zh_CN.min.js" charset="UTF-8" />
 		<script type="text/javascript" src="#{request.contextPath}/icheck/js/icheck.min.js" charset="UTF-8" />
 		<script type="text/javascript" src="#{request.contextPath}/toolkit/utils.js" charset="UTF-8" />
+		<script type="text/javascript" src="#{request.contextPath}/sg-messagebox/js/kernel.js" />
 		<script type="text/javascript">
 		//<![CDATA[
 			jQuery(document).ready(function() {
@@ -431,10 +433,17 @@
 				if (data != null && data != '') {
 					___msg('温馨提示', data);
 				} else {
-				    ___dynamic_function = function() {
-				    	window.location.href = './SystemSettings.seam';
-					};
-					___msg('温馨提示', '保存成功！', {closed: ___dynamic_function});
+					___sgMessagebox({
+						type: 'success',
+						title: '温馨提示',
+						message: '保存成功！',
+						fadeInMillis: 0,
+						fadeOutMillis: 1000 * 0.3,
+						fadeInCallback: null,
+						fadeOutCallback: function() {
+							window.location.href = './SystemSettings.seam';
+						}
+					});
 				}
 			}
 		//]]>

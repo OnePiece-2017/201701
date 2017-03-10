@@ -12,7 +12,7 @@
 	<ui:define name="head">
 		<link rel="stylesheet" type="text/css" href="#{request.contextPath}/common/css/bootstrap.min.css" />
 		<link rel="stylesheet" type="text/css" href="#{request.contextPath}/common/css/bootstrap-select.min.css" />
-		<link rel="stylesheet" type="text/css" href="#{request.contextPath}/prompt-message/css/prompt-message.css" />
+		<link rel="stylesheet" type="text/css" href="#{request.contextPath}/sg-messagebox/css/kernel.css" />
 		<link rel="stylesheet" type="text/css" href="#{request.contextPath}/prompt-inputbox/css/prompt-inputbox.css" />
 		<style type="text/css">
 			#node-subproject {
@@ -511,7 +511,7 @@
 		<script type="text/javascript" src="#{request.contextPath}/common/js/bootstrap-select.min.js" charset="UTF-8" />
 		<script type="text/javascript" src="#{request.contextPath}/common/js/bootstrap-select-defaults-zh_CN.min.js" charset="UTF-8" />
 		<script type="text/javascript" src="#{request.contextPath}/toolkit/utils.js" />
-		<script type="text/javascript" src="#{request.contextPath}/prompt-message/js/prompt-message.js" />
+		<script type="text/javascript" src="#{request.contextPath}/sg-messagebox/js/kernel.js" />
 		<script type="text/javascript" src="#{request.contextPath}/prompt-inputbox/js/prompt-inputbox.js" />
 		<script type="text/javascript">
 		//<![CDATA[
@@ -642,10 +642,10 @@
 			function validateSubprojectItem() {
 				var name = jQuery('#subproject_projectName').val();
 				if (name == null || name == '') {
-					___promptMessage({
+					___sgMessagebox({
 						type: 'warning',
 						title: '温馨提示',
-						prompt: '请填写项目名称！',
+						message: '请填写项目名称！',
 						fadeInMillis: 0,
 						fadeOutMillis: 1000 * 0.3,
 						fadeInCallback: null,
@@ -657,10 +657,10 @@
 				}
 				var compiler = jQuery('#subproject_budgetPersonCompilerIds').val();
 				if (compiler == null || compiler == '') {
-					___promptMessage({
+					___sgMessagebox({
 						type: 'warning',
 						title: '温馨提示',
-						prompt: '请选择编制人员！',
+						message: '请选择编制人员！',
 						fadeInMillis: 0,
 						fadeOutMillis: 1000 * 0.3,
 						fadeInCallback: null,
@@ -672,10 +672,10 @@
 				}
 				var executor = jQuery('#subproject_budgetPersonExecutorIds').val();
 				if (executor == null || executor == '') {
-					___promptMessage({
+					___sgMessagebox({
 						type: 'warning',
 						title: '温馨提示',
-						prompt: '请选择执行人员！',
+						message: '请选择执行人员！',
 						fadeInMillis: 0,
 						fadeOutMillis: 1000 * 0.3,
 						fadeInCallback: null,

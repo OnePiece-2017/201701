@@ -1,5 +1,5 @@
 名称：
-	可定时关闭的消息框
+	消息框
 
 注意：
 	更多功能可以使用remodal，这个插件只是扩充一个remodal没有的功能，定时关闭
@@ -9,4 +9,4 @@
 	utils.js
 
 用法：
-	最后引入该插件的css和js，参照___promptMessageTiy()
+	最后引入该插件的css和js，参照sgMessageboxTiy()

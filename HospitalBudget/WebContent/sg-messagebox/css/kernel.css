@@ -1,4 +1,4 @@
-.prompt-message {
+.sg-messagebox {
 	position: fixed;
 	width: 100%;
 	height: 100%;
@@ -9,7 +9,7 @@
 	display: none;
 }
 
-.prompt-message-contents {
+.sg-messagebox-contents {
 	position: fixed;
 	width: 640px;
 	height: 320px;
@@ -19,16 +19,7 @@
 	border-radius: 15px;
 }
 
-.sg-fileupload-panel .banner .close-panel {
-	float: right;
-	width: 24px;
-	height: 24px;
-	margin: 20px 20px;
-	opacity: 0.3;
-	cursor: pointer;
-}
-
-.prompt-message-contents .btn-close {
+.sg-messagebox-contents .btn-close {
 	width: 36px;
 	height: 36px;
 	position: absolute;
@@ -38,19 +29,19 @@
 	display: none;
 }
 
-.prompt-message-contents .btn-close img {
+.sg-messagebox-contents .btn-close img {
 	width: 36px;
 	height: 36px;
 	opacity: 0.5;
 }
 
-.prompt-message-contents .btn-close img:hover {
+.sg-messagebox-contents .btn-close img:hover {
 	width: 36px;
 	height: 36px;
 	opacity: 1.0;
 }
 
-.prompt-message-contents .countdown {
+.sg-messagebox-contents .countdown {
 	width: 100%;
 	height: 5px;
 	position: absolute;
@@ -58,25 +49,25 @@
 	background: #0a3d59;
 }
 
-.prompt-message-contents .logo {
+.sg-messagebox-contents .logo {
 	width: 192px;
 	height: 100%;
 	float: left;
 }
 
-.prompt-message-contents .logo img {
+.sg-messagebox-contents .logo img {
 	width: 64px;
 	height: 64px;
 	margin: 128px 64px;
 }
 
-.prompt-message-contents .title {
+.sg-messagebox-contents .title {
 	width: 448px;
 	height: 30%;
 	float: left;
 }
 
-.prompt-message-contents .title span {
+.sg-messagebox-contents .title span {
 	display: block;
 	text-align: center;
 	font-size: 25px;
@@ -85,7 +76,7 @@
 	margin-top: 44px;
 }
 
-.prompt-message-contents .prompt {
+.sg-messagebox-contents .message {
 	width: 448px;
 	height: 70%;
 	float: left;
@@ -93,7 +84,7 @@
 	border-top: 1px solid currentColor;
 }
 
-.prompt-message-contents .prompt span {
+.sg-messagebox-contents .message span {
 	float: left;
 	font-size: 17px;
 	line-height: 32px;
