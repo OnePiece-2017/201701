@@ -13,7 +13,7 @@
 		<link rel="stylesheet" type="text/css" href="#{request.contextPath}/common/css/bootstrap.min.css" />
 		<link rel="stylesheet" type="text/css" href="#{request.contextPath}/common/css/bootstrap-select.min.css" />
 		<link rel="stylesheet" type="text/css" href="#{request.contextPath}/sg-messagebox/css/kernel.css" />
-		<link rel="stylesheet" type="text/css" href="#{request.contextPath}/prompt-inputbox/css/prompt-inputbox.css" />
+		<link rel="stylesheet" type="text/css" href="#{request.contextPath}/sg-inputbox/css/kernel.css" />
 		<style type="text/css">
 			#node-subproject {
 				width: 100%;
@@ -512,7 +512,7 @@
 		<script type="text/javascript" src="#{request.contextPath}/common/js/bootstrap-select-defaults-zh_CN.min.js" charset="UTF-8" />
 		<script type="text/javascript" src="#{request.contextPath}/toolkit/utils.js" />
 		<script type="text/javascript" src="#{request.contextPath}/sg-messagebox/js/kernel.js" />
-		<script type="text/javascript" src="#{request.contextPath}/prompt-inputbox/js/prompt-inputbox.js" />
+		<script type="text/javascript" src="#{request.contextPath}/sg-inputbox/js/kernel.js" />
 		<script type="text/javascript">
 		//<![CDATA[
 			var g_personJson = #{routineProjectHome.personJson};
@@ -574,8 +574,8 @@
 			
 				setTimeout('subprojectOutputFlush();', 0);//解决Chrome元素渲染速度问题
 				
-				___promptInputbox('mainForm:theDescription', 1024);
-				___promptInputbox('subproject_description', 1024);
+				___sgInputbox('mainForm:theDescription', 1024);
+				___sgInputbox('subproject_description', 1024);
 			});
 			
 			function setSubprojectInteractive(show) {

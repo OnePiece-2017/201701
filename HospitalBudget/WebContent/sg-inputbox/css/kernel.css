@@ -1,4 +1,4 @@
-.prompt-inputbox {
+.sg-inputbox {
 	position: fixed;
 	width: 100%;
 	height: 100%;
@@ -9,7 +9,7 @@
 	display: none;
 }
 
-.prompt-inputbox-contents {
+.sg-inputbox-contents {
 	position: fixed;
 	width: 640px;
 	height: 340px;
@@ -19,7 +19,7 @@
 	border-radius: 15px;
 }
 
-.textarea-bd {
+.sg-inputbox-contents .textarea-bd {
 	border: 0;
 	resize: none;
 	outline: 0;
@@ -34,12 +34,12 @@
 	background: rgba(255, 255, 255, 0.5);
 }
 
-.textarea-bd:focus {
+.sg-inputbox-contents .textarea-bd:focus {
 	outline: 0;
 	box-shadow: inset 0 1px 1px rgba(230, 102, 151, 0.65), 0 0 8px rgb(63, 231, 38);
 }
 
-.prompt-inputbox-contents .progress-bar {
+.sg-inputbox-contents .progress-bar {
 	position: absolute;
 	width: 100%;
 	height: 5px;
@@ -47,11 +47,11 @@
 	background: rgba(5, 5, 5, 0.67);
 }
 
-.prompt-inputbox-contents .be-overflow {
+.sg-inputbox-contents .be-overflow {
 	background: rgba(218, 30, 30, 0.82);
 }
 
-.prompt-inputbox-contents .progress-bar-details {
+.sg-inputbox-contents .progress-bar-details {
 	position: absolute;
 	width: 35%;
 	height: 22px;
@@ -60,7 +60,7 @@
 	border: 1px solid rgba(251, 239, 8, 0.3);
 }
 
-.prompt-inputbox-contents .progress-bar-details span.with-current {
+.sg-inputbox-contents .progress-bar-details span.with-current {
 	color: black;
 	float: right;
 	font-size: 19px;
@@ -68,11 +68,11 @@
 	font-weight: bold;
 }
 
-.prompt-inputbox-contents .progress-bar-details span.with-current-overflow {
+.sg-inputbox-contents .progress-bar-details span.with-current-overflow {
 	color: #b10000;
 }
 
-.prompt-inputbox-contents .progress-bar-details span.with-total {
+.sg-inputbox-contents .progress-bar-details span.with-total {
 	float: right;
 	color: black;
 	font-size: 19px;
@@ -80,11 +80,11 @@
 	font-weight: bold;
 }
 
-.btn-operation {
+.sg-inputbox-contents .btn-operation {
 	cursor: pointer;
 }
 
-.btn-operation .img-yes {
+.sg-inputbox-contents .btn-operation .img-yes {
 	position: absolute;
 	left: 40%;
 	margin-top: 30px;
@@ -92,7 +92,7 @@
 	height: 48px;
 }
 
-.btn-operation .img-no {
+.sg-inputbox-contents .btn-operation .img-no {
 	position: absolute;
 	right: 40%;
 	margin-top: 30px;
@@ -100,19 +100,19 @@
 	height: 48px;
 }
 
-.btn-primary-cpybs {
+.sg-inputbox-contents .btn-primary-cpybs {
 	color: #fff;
 	background-color: #428bca;
 	border-color: #357ebd;
 }
 
-.btn-default-cpybs {
+.sg-inputbox-contents .btn-default-cpybs {
 	color: #333;
 	background-color: #fff;
 	border-color: #ccc;
 }
 
-.btn-cpybs {
+.sg-inputbox-contents .btn-cpybs {
 	display: inline-block;
 	padding: 6px 12px;
 	margin-bottom: 0;
@@ -132,7 +132,7 @@
 	border-radius: 4px;
 }
 
-.prompt-inputbox-contents .input-hint {
+.sg-inputbox-contents .input-hint {
 	position: absolute;
 	width: 35%;
 	height: 22px;
@@ -141,7 +141,7 @@
 	border: 1px solid rgba(251, 239, 8, 0.3);
 }
 
-.prompt-inputbox-contents .input-hint span.hint-text {
+.sg-inputbox-contents .input-hint span.hint-text {
 	color: black;
 	float: right;
 	font-size: 19px;
