@@ -2,6 +2,7 @@ var ______sgInputbox = {
     wired : false,
     alias : {},
     eType : {},
+    notify : {},
     cache : {},
     handleIndex : 0,
     handleCurrent : null,
@@ -89,10 +90,14 @@ jQuery(document).ready(function() {
 				clearTimeout(______sgInputbox.timer['tracker']);
 				______hidePanel();
 				var refer = jQuery('[sg-inputbox-handle-index="' + ______sgInputbox.handleCurrent + '"]');
-				refer.unbind('focus');
+				if (______sgInputbox.notify[______sgInputbox.handleCurrent]) {
+					refer.unbind('focus');
+				}
 				refer.val(______sgInputbox.cache['textarea'].val());
 				refer.focus();
-				refer.focus(______sgInputbox.magicBinder[______sgInputbox.handleCurrent]);
+				if (______sgInputbox.notify[______sgInputbox.handleCurrent]) {
+					refer.focus(______sgInputbox.magicBinder[______sgInputbox.handleCurrent]);
+				}
 			}
 		});
 		______sgInputbox.cache['imgNo'].click(function() {
@@ -100,9 +105,13 @@ jQuery(document).ready(function() {
 			clearTimeout(______sgInputbox.timer['tracker']);
 			______hidePanel();
 			var refer = jQuery('[sg-inputbox-handle-index="' + ______sgInputbox.handleCurrent + '"]');
-			refer.unbind('focus');
+			if (______sgInputbox.notify[______sgInputbox.handleCurrent]) {
+				refer.unbind('focus');
+			}
 			refer.focus();
-			refer.focus(______sgInputbox.magicBinder[______sgInputbox.handleCurrent]);
+			if (______sgInputbox.notify[______sgInputbox.handleCurrent]) {
+				refer.focus(______sgInputbox.magicBinder[______sgInputbox.handleCurrent]);
+			}
 		});
 		// 5. 标记状态
 		______sgInputbox.wired = true;
@@ -174,48 +183,67 @@ function ______gainElementTypeLabel(eType) {
 	return 'input' == eType ? '文本字段' : '文本区';
 }
 
-function ___sgInputbox(id, threshold, alias) {
-	if (null == id || '' == id || 'string' !== typeof id || null == document.getElementById(id)) {
-		alert('sg-inputbox初始化失败，无效的id！');
-	} else if (null == threshold || '' === threshold || 'number' !== typeof threshold || parseInt(threshold).toString() !== threshold.toString() || threshold < 0 || threshold > 2147483647) {
-		alert('sg-inputbox初始化失败，无效的threshold！');
-	} else if (null == alias || '' == alias || 'string' !== typeof alias) {
-		alert('sg-inputbox初始化失败，无效的alias！');
-	} else {
-		______sgInputbox.handleIndex++;
-		var element = document.getElementById(id);
-		var eType = element.tagName.toLowerCase();
-		if ('input' == eType || 'textarea' == eType) {
-			jQuery(element).attr('sg-inputbox-handle-index', ______sgInputbox.handleIndex);
-			______sgInputbox.threshold[______sgInputbox.handleIndex] = threshold;
-			______sgInputbox.allowEnter[______sgInputbox.handleIndex] = 'textarea' == eType;
-			______sgInputbox.alias[______sgInputbox.handleIndex] = alias;
-			______sgInputbox.eType[______sgInputbox.handleIndex] = eType;
-			var magicBinder = null;
-			magicBinder = function() {
-				___sgReminder('亲：待提示完全消失后，可双击鼠标左键来打开迷你输入框。<br>' + ______gainElementTypeLabel(eType) + '﹝' + alias + '﹞', 2048, function() {
-					jQuery(element).unbind('focus');
-					jQuery(element).focus();
-					jQuery(element).focus(magicBinder);
-				});
-			};
-			______sgInputbox.magicBinder[______sgInputbox.handleIndex] = magicBinder;
-			jQuery(element).focus(magicBinder);
-			jQuery(element).dblclick(function() {
-				______sgInputbox.cache['textarea'].val('');
-				______showPanel();
-				______sgInputbox.cache['textarea'].val(this.value);
-				______sgInputbox.cache['textarea'].getNiceScroll(0).resize();
-				______sgInputbox.cache['textarea'].getNiceScroll(0).doScrollTop(______sgInputbox.cache['textarea'][0].scrollHeight, 0);
-				______sgInputbox.handleCurrent = jQuery(this).attr('sg-inputbox-handle-index');
-				______sgInputbox.cache['withTotal'].html('/' + threshold);
-				______sgInputbox.cache['progressBar'].hide();
-				______sgInputbox.cache['progressBar'].width(0);
-				______sgInputbox.cache['progressBar'].show();
-				______typingTracker();
-			});
+function ___sgInputbox(arg) {
+	if (arg != null && 'object' === typeof arg && !arg.hasOwnProperty('length') && 'id' in arg && 'alias' in arg && 'threshold' in arg && 'notify' in arg) {
+		var id = arg['id'], alias = arg['alias'], threshold = arg['threshold'], notify = arg['notify'];
+		if (null == id || '' == id || 'string' !== typeof id || null == document.getElementById(id)) {
+			alert('sg-inputbox初始化失败，无效的id！');
+		} else if (null == alias || '' == alias || 'string' !== typeof alias) {
+			alert('sg-inputbox初始化失败，无效的alias！');
+		} else if (null == threshold || '' === threshold || 'number' !== typeof threshold || parseInt(threshold).toString() !== threshold.toString() || threshold < 0 || threshold > 2147483647) {
+			alert('sg-inputbox初始化失败，无效的threshold！');
+		} else if (null == notify || 'boolean' !== typeof notify) {
+			alert('sg-inputbox初始化失败，无效的notify！');
 		} else {
-			alert('sg-inputbox初始化失败，无效元素！' + id);
+			______sgInputbox.handleIndex++;
+			var element = document.getElementById(id);
+			var eType = element.tagName.toLowerCase();
+			if ('input' == eType || 'textarea' == eType) {
+				jQuery(element).attr('sg-inputbox-handle-index', ______sgInputbox.handleIndex);
+				______sgInputbox.alias[______sgInputbox.handleIndex] = alias;
+				______sgInputbox.threshold[______sgInputbox.handleIndex] = threshold;
+				______sgInputbox.notify[______sgInputbox.handleIndex] = notify;
+				______sgInputbox.allowEnter[______sgInputbox.handleIndex] = 'textarea' == eType;
+				______sgInputbox.eType[______sgInputbox.handleIndex] = eType;
+				if (notify) {
+					var magicBinder = null;
+					magicBinder = function() {
+						___sgReminder('亲：待提示完全消失后，可双击鼠标左键来打开迷你输入框。<br>' + ______gainElementTypeLabel(eType) + '﹝' + alias + '﹞', 2048, function() {
+							jQuery(element).unbind('focus');
+							jQuery(element).focus();
+							jQuery(element).focus(magicBinder);
+						});
+					};
+					______sgInputbox.magicBinder[______sgInputbox.handleIndex] = magicBinder;
+					jQuery(element).focus(magicBinder);
+				}
+				jQuery(element).dblclick(function() {
+					______sgInputbox.cache['textarea'].val('');
+					______showPanel();
+					______sgInputbox.cache['textarea'].val(this.value);
+					______sgInputbox.cache['textarea'].getNiceScroll(0).resize();
+					______sgInputbox.cache['textarea'].getNiceScroll(0).doScrollTop(______sgInputbox.cache['textarea'][0].scrollHeight, 0);
+					______sgInputbox.handleCurrent = jQuery(this).attr('sg-inputbox-handle-index');
+					______sgInputbox.cache['withTotal'].html('/' + threshold);
+					______sgInputbox.cache['progressBar'].hide();
+					______sgInputbox.cache['progressBar'].width(0);
+					______sgInputbox.cache['progressBar'].show();
+					______typingTracker();
+				});
+			} else {
+				alert('sg-inputbox初始化失败，无效元素！' + id);
+			}
 		}
+	} else {
+		alert('sg-inputbox初始化失败，参数无效！');
 	}
+}
+
+function sgInputboxTiy() {
+	___sgInputbox({
+	    id : 'mainForm:theDescription',
+	    alias : '描述',
+	    threshold : 1024,
+	    notify : true
+	});
 }
