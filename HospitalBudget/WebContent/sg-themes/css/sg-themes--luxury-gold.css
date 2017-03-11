@@ -1,9 +1,21 @@
 .sg-themes--home-banner {
-	
+	background: #77751c !important;
 }
 
 .sg-themes--home-menu {
-	
+	background: rgba(119, 118, 28, 0.8) !important;
+}
+
+.sg-themes--home-menu-user-info {
+	color: white !important;
+}
+
+.sg-themes--home-menu-remote-clock {
+	color: white !important;
+}
+
+.sg-themes--home-menu-logout-button {
+	color: white !important;
 }
 
 .sg-themes--generic-table-condition {

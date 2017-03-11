@@ -1,9 +1,21 @@
 .sg-themes--home-banner {
-	
+	background: url('../img/the_matrix_1024x768.png');
 }
 
 .sg-themes--home-menu {
-	
+	background: #284d23 !important;
+}
+
+.sg-themes--home-menu-user-info {
+	color: lime !important;
+}
+
+.sg-themes--home-menu-remote-clock {
+	color: lime !important;
+}
+
+.sg-themes--home-menu-logout-button {
+	color: lime !important;
 }
 
 .sg-themes--generic-table-condition {
