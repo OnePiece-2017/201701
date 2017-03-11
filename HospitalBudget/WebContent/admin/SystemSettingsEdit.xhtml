@@ -69,7 +69,7 @@
 												<span class="field-name mb10">项目</span>
 											</td>
 											<td valign="middle">
-												<h:outputText value="#{systemSettingsHome.modifyData.get('system_skin')[0]}" styleClass="form-control mb10 fix--bc-purple" />
+												<h:outputText value="#{systemSettingsHome.modifyData.get('system_theme')[0]}" styleClass="form-control mb10 fix--bc-purple" />
 											</td>
 											<td valign="middle">
 												<font color="red" style="margin-left: 3px;"></font>
@@ -88,12 +88,12 @@
 												<span class="field-name mb10">预设值</span>
 											</td>
 											<td valign="middle">
-												<select id="system_skin" class="selectpicker" data-live-search="true">
-													<option value="normal">常规</option>
-													<option value="luxury_gold">奢华金</option>
-													<option value="hacker">黑客</option>
+												<select id="system_theme" class="selectpicker" data-live-search="true">
+													<a:repeat value="#{commonTool.genA4jRepeatValueForSelectOption('select the_id, the_value from theme where enabled = 1')}" var="_var">
+														<option value="#{_var[0]}">#{_var[1]}</option>
+													</a:repeat>
 												</select>
-												<h:inputHidden id="system_skinHidden" value="#{systemSettingsHome.modifyData.get('system_skin')[1]}" />
+												<h:inputHidden id="system_themeHidden" value="#{systemSettingsHome.modifyData.get('system_theme')[1]}" />
 											</td>
 											<td valign="middle">
 												<font color="red" style="margin-left: 3px;"></font>
@@ -354,8 +354,8 @@
 				___textRestrictById('mainForm:query_max_results', 10);
 
 			    jQuery('.selectpicker').selectpicker();
-			    jQuery('#system_skin').val(jQuery('#mainForm\\:system_skinHidden').val());
-			    jQuery('#system_skin').selectpicker('render');
+			    jQuery('#system_theme').val(jQuery('#mainForm\\:system_themeHidden').val());
+			    jQuery('#system_theme').selectpicker('render');
 
 				var query_order_directionHidden = jQuery('#mainForm\\:query_order_directionHidden').val();
 				jQuery('input[name="query_order_direction_radio"][value="' + query_order_directionHidden + '"]').iCheck('check');
@@ -387,7 +387,7 @@
 					return false;
 				}
 
-				var system_skin = jQuery('#system_skin').val();
+				var system_theme = jQuery('#system_theme').val();
 
 				var ask_on_logout = jQuery('input[name="ask_on_logout_radio"]:checked').val();
 
@@ -417,7 +417,7 @@
 				
 				var argsJson = {};
 				argsJson['system_alias'] = system_alias;
-				argsJson['system_skin'] = system_skin;
+				argsJson['system_theme'] = system_theme;
 				argsJson['ask_on_logout'] = ask_on_logout;
 				argsJson['ask_on_close_label'] = ask_on_close_label;
 				argsJson['reload_page_on_exist'] = reload_page_on_exist;
