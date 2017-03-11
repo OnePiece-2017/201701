@@ -29,6 +29,7 @@ public class SessionToken implements Serializable {
 	private String message;
 	private String userInfoIdMD5;
 	private String nickname;
+	private String theme;
 	private JSONArray menuInfoJsonArray;
 	private Integer departmentInfoId;
 
@@ -86,6 +87,14 @@ public class SessionToken implements Serializable {
 
 	public void setNickname(String nickname) {
 		this.nickname = nickname;
+	}
+
+	public String getTheme() {
+		return theme;
+	}
+
+	public void setTheme(String theme) {
+		this.theme = theme;
 	}
 
 	public JSONArray getMenuInfoJsonArray() {

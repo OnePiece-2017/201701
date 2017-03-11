@@ -18,4 +18,5 @@ public interface CommonToolLocal {
 
 	public Object[] genA4jRepeatValue(int length);
 
+	public List<Object[]> genA4jRepeatValueForSelectOption(String sql);
 }
