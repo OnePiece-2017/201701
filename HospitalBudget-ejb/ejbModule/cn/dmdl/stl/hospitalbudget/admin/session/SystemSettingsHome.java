@@ -95,11 +95,11 @@ public class SystemSettingsHome extends CriterionEntityHome<SystemSettings> {
 	/** 详情页初始化 */
 	@SuppressWarnings("unchecked")
 	public void init() {
-		List<Object[]> themeList = getEntityManager().createNativeQuery("select the_id, the_value from theme where enabled = 1").getResultList();
-		Map<String, Object> themeMap = new HashMap<String, Object>();
-		if (themeList != null && themeList.size() > 0) {
-			for (Object[] theme : themeList) {
-				themeMap.put(theme[0].toString(), theme[1]);
+		List<Object[]> systemThemeList = getEntityManager().createNativeQuery("select the_id, the_value from system_theme where enabled = 1").getResultList();
+		Map<String, Object> systemThemeMap = new HashMap<String, Object>();
+		if (systemThemeList != null && systemThemeList.size() > 0) {
+			for (Object[] systemTheme : systemThemeList) {
+				systemThemeMap.put(systemTheme[0].toString(), systemTheme[1]);
 			}
 		}
 		int itemSize = 2;
@@ -125,7 +125,7 @@ public class SystemSettingsHome extends CriterionEntityHome<SystemSettings> {
 						theValue = "否";
 					}
 				} else if ("system_theme".equalsIgnoreCase(theKey)) {
-					theValue = themeMap.get(theValue) != null ? themeMap.get(theValue).toString() : "";
+					theValue = systemThemeMap.get(theValue) != null ? systemThemeMap.get(theValue).toString() : "";
 				}
 				item[1] = theValue;
 				viewData[index] = item;
