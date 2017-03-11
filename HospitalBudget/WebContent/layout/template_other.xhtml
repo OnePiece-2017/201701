@@ -12,8 +12,8 @@
 			<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 			<title>#{configureCache.getSettingsValue('system_alias')}</title>
 			<link rel="shortcut icon" href="#{request.contextPath}/favicon.ico" />
-			<s:fragment rendered="#{not empty sessionToken.theme}">
-				<link rel="stylesheet" type="text/css" href="#{request.contextPath}#{sessionToken.theme}" />
+			<s:fragment rendered="#{not empty sessionToken.systemThemeCssPath}">
+				<link rel="stylesheet" type="text/css" href="#{request.contextPath}#{sessionToken.systemThemeCssPath}" />
 			</s:fragment>
 			<link rel="stylesheet" type="text/css" href="#{request.contextPath}/remodal/css/remodal.css" />
 			<link rel="stylesheet" type="text/css" href="#{request.contextPath}/remodal/css/remodal-default-theme.css" />
