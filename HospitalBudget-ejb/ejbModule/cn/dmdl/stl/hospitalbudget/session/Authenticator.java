@@ -85,9 +85,9 @@ public class Authenticator implements AuthenticatorLocal {
 
 				// 设置主题（优先级：用户>角色>系统）
 				String systemThemeCssPath = null;
-				if (userInfo.getSystemTheme() != null) {
+				if (userInfo.getSystemTheme() != null && userInfo.getSystemTheme().isEnabled()) {
 					systemThemeCssPath = userInfo.getSystemTheme().getCssPath();
-				} else if (userInfo.getRoleInfo() != null && userInfo.getRoleInfo().getSystemTheme() != null) {
+				} else if (userInfo.getRoleInfo().getSystemTheme() != null && userInfo.getRoleInfo().getSystemTheme().isEnabled()) {
 					systemThemeCssPath = userInfo.getRoleInfo().getSystemTheme().getCssPath();
 				} else {
 					List<Object> systemThemeList = entityManager.createNativeQuery("select system_theme.css_path from system_theme where system_theme.enabled = 1 and system_theme.the_id in (select the_value from system_settings where the_key = 'system_theme')").getResultList();
@@ -207,6 +207,7 @@ public class Authenticator implements AuthenticatorLocal {
 			sessionToken.setUsername(null);
 			sessionToken.setUserInfoIdMD5(null);
 			sessionToken.setNickname(null);
+			sessionToken.setSystemThemeCssPath(null);
 			sessionToken.setMenuInfoJsonArray(null);
 			sessionToken.setDepartmentInfoId(null);
 		}

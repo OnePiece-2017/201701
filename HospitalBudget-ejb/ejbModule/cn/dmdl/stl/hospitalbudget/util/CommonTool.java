@@ -101,10 +101,14 @@ public class CommonTool implements CommonToolLocal {
 		return new Object[length > 0 ? length : 0];
 	}
 
-	/** 生成select option集合 */
-	@SuppressWarnings("unchecked")
-	public List<Object[]> genA4jRepeatValueForSelectOption(String sql) {
+	/** sql查询 */
+	public List<?> sqlQuery(String sql) {
 		return entityManager.createNativeQuery(sql).getResultList();
+	}
+
+	/** hql查询 */
+	public List<?> hqlQuery(String hql) {
+		return entityManager.createQuery(hql).getResultList();
 	}
 
 }
