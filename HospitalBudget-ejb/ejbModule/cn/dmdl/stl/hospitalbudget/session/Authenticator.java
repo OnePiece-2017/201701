@@ -82,23 +82,20 @@ public class Authenticator implements AuthenticatorLocal {
 				sessionToken.setRoleInfoId(userInfo.getRoleInfo().getRoleInfoId());
 				sessionToken.setUsername(userInfo.getUsername());
 				sessionToken.setNickname(userInfo.getUserInfoExtend().getNickname());
+
 				// 设置主题（优先级：用户>角色>系统）
-				String theme = null;
-				List<Object> userThemeList = entityManager.createNativeQuery("select theme.css_path from theme inner join theme_user on theme_user.theme_id = theme.the_id where theme.enabled = 1 and theme_user.user_id = " + userInfo.getUserInfoId()).getResultList();
-				if (userThemeList != null && userThemeList.size() > 0) {
-					theme = userThemeList.get(0).toString();
+				String systemThemeCssPath = null;
+				if (userInfo.getSystemTheme() != null) {
+					systemThemeCssPath = userInfo.getSystemTheme().getCssPath();
+				} else if (userInfo.getRoleInfo() != null && userInfo.getRoleInfo().getSystemTheme() != null) {
+					systemThemeCssPath = userInfo.getRoleInfo().getSystemTheme().getCssPath();
 				} else {
-					List<Object> roleThemeList = entityManager.createNativeQuery("select theme.css_path from theme inner join theme_role on theme_role.theme_id = theme.the_id where theme.enabled = 1 and theme_role.role_id = " + userInfo.getRoleInfo().getRoleInfoId()).getResultList();
-					if (roleThemeList != null && roleThemeList.size() > 0) {
-						theme = roleThemeList.get(0).toString();
-					} else {
-						List<Object> systemThemeList = entityManager.createNativeQuery("select theme.css_path from theme where theme.enabled = 1 and theme.the_id in (select the_value from system_settings where the_key = 'system_theme')").getResultList();
-						if (systemThemeList != null && systemThemeList.size() > 0) {
-							theme = systemThemeList.get(0).toString();
-						}
+					List<Object> systemThemeList = entityManager.createNativeQuery("select system_theme.css_path from system_theme where system_theme.enabled = 1 and system_theme.the_id in (select the_value from system_settings where the_key = 'system_theme')").getResultList();
+					if (systemThemeList != null && systemThemeList.size() > 0) {
+						systemThemeCssPath = systemThemeList.get(0).toString();
 					}
 				}
-				sessionToken.setTheme(theme);
+				sessionToken.setSystemThemeCssPath(systemThemeCssPath);
 
 				// 设置科室
 				sessionToken.setDepartmentInfoId(userInfo.getYsDepartmentInfo() != null ? userInfo.getYsDepartmentInfo().getTheId() : null);
