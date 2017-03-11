@@ -13,6 +13,9 @@
 			<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 			<title>#{configureCache.getSettingsValue('system_alias')}</title>
 			<link rel="shortcut icon" href="#{request.contextPath}/favicon.ico" />
+			<s:fragment rendered="#{not empty sessionToken.theme}">
+				<link rel="stylesheet" type="text/css" href="#{request.contextPath}#{sessionToken.theme}" />
+			</s:fragment>
 			<link rel="stylesheet" type="text/css" href="#{request.contextPath}/stylesheet/general.css" />
 			<script type="text/javascript" src="#{request.contextPath}/common/js/jquery.min.js" charset="UTF-8" />
 			<script type="text/javascript" src="#{request.contextPath}/common/js/jquery.nicescroll.min.js" charset="UTF-8" />
