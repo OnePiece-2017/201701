@@ -8,8 +8,11 @@ import java.util.Date;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -27,6 +30,7 @@ public class RoleInfo implements java.io.Serializable {
 	private static final long serialVersionUID = 1L;
 	private Integer roleInfoId;
 	private String roleName;
+	private SystemTheme systemTheme;
 	private String description;
 	private Date insertTime;
 	private Integer insertUser;
@@ -57,6 +61,16 @@ public class RoleInfo implements java.io.Serializable {
 
 	public void setRoleName(String roleName) {
 		this.roleName = roleName;
+	}
+
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "system_theme_id")
+	public SystemTheme getSystemTheme() {
+		return systemTheme;
+	}
+
+	public void setSystemTheme(SystemTheme systemTheme) {
+		this.systemTheme = systemTheme;
 	}
 
 	@Column(name = "description")

@@ -36,6 +36,7 @@ public class UserInfo implements java.io.Serializable {
 	private YsDepartmentInfo ysDepartmentInfo;// 科室信息
 	private String username;// 用户名
 	private String password;// 密码
+	private SystemTheme systemTheme;
 	private boolean enabled;// 已启用 0否 1是
 	private Date insertTime;// 插入时间
 	private Integer insertUser;// 插入用户
@@ -75,6 +76,16 @@ public class UserInfo implements java.io.Serializable {
 
 	public void setPassword(String password) {
 		this.password = password;
+	}
+
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "system_theme_id")
+	public SystemTheme getSystemTheme() {
+		return systemTheme;
+	}
+
+	public void setSystemTheme(SystemTheme systemTheme) {
+		this.systemTheme = systemTheme;
 	}
 
 	@Column(name = "enabled", nullable = false)
