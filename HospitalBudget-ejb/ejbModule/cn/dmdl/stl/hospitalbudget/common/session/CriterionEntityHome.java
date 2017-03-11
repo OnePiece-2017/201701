@@ -23,6 +23,29 @@ public class CriterionEntityHome<E> extends EntityHome<E> {
 
 	private String message;// 消息
 
+	/**
+	 * 第一次标记
+	 * <p>
+	 * 提交表单后返回错误状态重载页面控件，如下拉框的列表和值
+	 * <p>
+	 * 范例:
+	 * <p>
+	 * <blockquote>
+	 * 
+	 * <pre>
+	 * public void wire() {
+	 * 	getInstance();
+	 * 	if (firstTime) {
+	 * 		// ...
+	 * 		firstTime = false;
+	 * 	}
+	 * }
+	 * </pre>
+	 * 
+	 * </blockquote>
+	 */
+	protected boolean firstTime = true;
+
 	public String getMessage() {
 		return message;
 	}

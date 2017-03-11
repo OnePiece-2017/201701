@@ -15,12 +15,12 @@
 	</ui:define>
 	<ui:define name="body">
 		<div class="div-main">
-			<div class="div-main-top">
+			<div class="div-main-top sg-themes--home-banner">
 				<h:outputLabel value="#{sessionToken.nickname}[#{sessionToken.username}]" style="float: left;margin-left: 18px;color: #2F4F4F;margin-top: 18px;" />
 				<s:link value="退出" view="/logout.xhtml" onclick="return beforeLogout();" rendered="#{identity.loggedIn}" propagation="none" styleClass="fr mr10 mt10" style="color: #333333; text-decoration: none; outline: none; font-size: 25px;" />
 				<label id="remoteClock" style="float: right;margin-right: 28px;color: #2F4F4F;margin-top: 19px;">加载中...</label>
 			</div>
-			<div class="div-main-left">
+			<div class="div-main-left sg-themes--home-menu">
 				<div class="mask-layer">
 					<img src="../images/ani/ajax.gif" />
 				</div>

@@ -11,7 +11,7 @@
 
 	<ui:define name="head">
 		<link rel="stylesheet" type="text/css" href="#{request.contextPath}/common/css/bootstrap.min.css" />
-		<script type="text/javascript" src="#{request.contextPath}/common/js/bootstrap.min.js" />
+		<link rel="stylesheet" type="text/css" href="#{request.contextPath}/common/css/bootstrap-select.min.css" />
 	</ui:define>
 
 	<ui:define name="body">
@@ -33,6 +33,29 @@
 											</td>
 											<td valign="middle">
 												<font color="red" style="margin-left: 3px;">*</font>
+											</td>
+										</tr>
+									</table>
+								</div>
+							</td>
+							<td width="50%">
+								<div class="pb20">
+									<table>
+										<tr>
+											<td valign="middle">
+												<span class="field-name mb10">主题</span>
+											</td>
+											<td valign="middle">
+												<select id="systemThemeId" class="selectpicker" data-live-search="true">
+													<option value="#{''}">请选择</option>
+													<a:repeat value="#{roleInfoHome.systemThemeList}" var="_var">
+														<option value="#{_var[0]}">#{_var[1]}</option>
+													</a:repeat>
+												</select>
+												<h:inputHidden id="systemThemeIdHidden" value="#{roleInfoHome.systemThemeId}" />
+											</td>
+											<td valign="middle">
+												<font color="red" style="margin-left: 3px;"></font>
 											</td>
 										</tr>
 									</table>
@@ -75,6 +98,9 @@
 				</div>
 			</div>
 		</h:form>
+		<script type="text/javascript" src="#{request.contextPath}/common/js/bootstrap.min.js" />
+		<script type="text/javascript" src="#{request.contextPath}/common/js/bootstrap-select.min.js" charset="UTF-8" />
+		<script type="text/javascript" src="#{request.contextPath}/common/js/bootstrap-select-defaults-zh_CN.min.js" charset="UTF-8" />
 		<script type="text/javascript" src="#{request.contextPath}/toolkit/utils.js" />
 		<script type="text/javascript">
 		//<![CDATA[
@@ -87,6 +113,10 @@
 			    if (message != '') {
 					___msg('温馨提示', message);
 			    }
+
+			    jQuery('.selectpicker').selectpicker();
+			    jQuery('#systemThemeId').val(jQuery('#mainForm\\:systemThemeIdHidden').val());
+			    jQuery('#systemThemeId').selectpicker('render');
 			});
 			
 			//提交表单前
@@ -99,6 +129,7 @@
 					___msg('温馨提示', '请填写名称！', {closed: ___dynamic_function});
 					return false;
 				}
+				jQuery('#mainForm\\:systemThemeIdHidden').val(jQuery('#systemThemeId').val());
 			}
 		//]]>
 		</script>

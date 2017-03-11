@@ -1,10 +1,13 @@
 package cn.dmdl.stl.hospitalbudget.admin.session;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 import org.jboss.seam.annotations.Name;
 
 import cn.dmdl.stl.hospitalbudget.admin.entity.RoleInfo;
+import cn.dmdl.stl.hospitalbudget.admin.entity.SystemTheme;
 import cn.dmdl.stl.hospitalbudget.boot.ConfigureCache;
 import cn.dmdl.stl.hospitalbudget.common.session.CriterionEntityHome;
 import cn.dmdl.stl.hospitalbudget.util.Assit;
@@ -14,6 +17,8 @@ import cn.dmdl.stl.hospitalbudget.util.GlobalConstant;
 public class RoleInfoHome extends CriterionEntityHome<RoleInfo> {
 
 	private static final long serialVersionUID = 1L;
+	List<Object[]> systemThemeList;
+	private Integer systemThemeId;
 
 	@Override
 	public String persist() {
@@ -24,6 +29,11 @@ public class RoleInfoHome extends CriterionEntityHome<RoleInfo> {
 			return null;
 		}
 
+		if (systemThemeId != null) {
+			instance.setSystemTheme(getEntityManager().find(SystemTheme.class, systemThemeId));
+		} else {
+			instance.setSystemTheme(null);
+		}
 		instance.setInsertTime(new Date());
 		instance.setInsertUser(sessionToken.getUserInfoId());
 		getEntityManager().persist(instance);
@@ -46,7 +56,11 @@ public class RoleInfoHome extends CriterionEntityHome<RoleInfo> {
 			return null;
 		}
 
-		joinTransaction();
+		if (systemThemeId != null) {
+			instance.setSystemTheme(getEntityManager().find(SystemTheme.class, systemThemeId));
+		} else {
+			instance.setSystemTheme(null);
+		}
 		instance.setUpdateTime(new Date());
 		instance.setUpdateUser(sessionToken.getUserInfoId());
 		getEntityManager().flush();
@@ -79,6 +93,32 @@ public class RoleInfoHome extends CriterionEntityHome<RoleInfo> {
 		return "removed";
 	}
 
+	/** 初始化系统主题 */
+	@SuppressWarnings("unchecked")
+	public void wireSystemThemeList() {
+		if (systemThemeList != null) {
+			systemThemeList.clear();
+		} else {
+			systemThemeList = new ArrayList<Object[]>();
+		}
+		List<Object[]> list = getEntityManager().createNativeQuery("select the_id, the_value from system_theme where enabled = 1").getResultList();
+		if (list != null && list.size() > 0) {
+			systemThemeList.addAll(list);
+		}
+	}
+
+	public void wire() {
+		getInstance();
+
+		if (firstTime) {
+			wireSystemThemeList();
+			systemThemeId = instance.getSystemTheme() != null ? instance.getSystemTheme().getTheId() : null;
+
+			firstTime = false;// 修改首次标记
+		}
+
+	}
+
 	public void setRoleInfoRoleInfoId(Integer id) {
 		setId(id);
 	}
@@ -99,16 +139,24 @@ public class RoleInfoHome extends CriterionEntityHome<RoleInfo> {
 		}
 	}
 
-	public void wire() {
-		getInstance();
-	}
-
 	public boolean isWired() {
 		return true;
 	}
 
 	public RoleInfo getDefinedInstance() {
 		return isIdDefined() ? getInstance() : null;
+	}
+
+	public List<Object[]> getSystemThemeList() {
+		return systemThemeList;
+	}
+
+	public Integer getSystemThemeId() {
+		return systemThemeId;
+	}
+
+	public void setSystemThemeId(Integer systemThemeId) {
+		this.systemThemeId = systemThemeId;
 	}
 
 }
