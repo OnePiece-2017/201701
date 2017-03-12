@@ -96,5 +96,5 @@
 }
 
 .sg-themes--welcome-bg {
-	background: url('../img/the_matrix_1024x768.png');
+	background: url('../img/the_matrix_1024x768.png') !important;
 }

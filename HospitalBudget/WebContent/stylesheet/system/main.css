@@ -94,3 +94,7 @@ body {
 	background-color: #f31ab3;
 	font-weight: bold;
 }
+
+#node_welcome {
+	background: url(../../images/img_welcome_1920x664.jpg);
+}

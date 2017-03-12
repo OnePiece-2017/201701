@@ -1,27 +1,104 @@
 .sg-themes--home-banner {
-	background: #77751c !important;
-}
-
-.sg-themes--home-menu {
-	background: rgba(119, 118, 28, 0.8) !important;
+	background: #d7ca99 !important;
 }
 
 .sg-themes--home-banner-user-info {
-	color: white !important;
+	color: black !important;
 }
 
 .sg-themes--home-banner-remote-clock {
-	color: white !important;
+	color: black !important;
 }
 
 .sg-themes--home-banner-logout-button {
-	color: white !important;
+	color: black !important;
 }
 
-.sg-themes--generic-table-condition {
+.sg-themes--home-menu {
+	background: #d7ca99 !important;
+}
+
+.sg-themes--home-menu .switch-icon {
+	background: goldenrod;
+	border-radius: 8px;
+	cursor: pointer;
+}
+
+.sg-themes--home-menu span.click {
+	color: black !important;
+}
+
+.sg-themes--home-menu span.this-menu-highlight {
+	background-color: goldenrod !important;
+	font-weight: unset !important;
+	font-style: italic;
+}
+
+.sg-themes--home-data-exhibition-area {
 	
 }
 
-.sg-themes--generic-table-contents {
+.sg-themes--home-data-exhibition-area .tabs-header {
+	background: #d7ca99;
+	border-color: black;
+}
+
+.sg-themes--home-data-exhibition-area .tabs-panels {
+	border-color: black;
+}
+
+.sg-themes--home-data-exhibition-area .tabs-header .tabs-wrap .tabs li a.tabs-inner {
+	background: gray;
+}
+
+.sg-themes--home-data-exhibition-area .tabs-header .tabs-wrap .tabs li a.tabs-inner:hover {
+	background: goldenrod;
+}
+
+.sg-themes--home-data-exhibition-area .tabs-header .tabs-wrap .tabs li.tabs-selected a.tabs-inner {
+	background: gold;
+}
+
+.g-data-list-condition {
+	background: #d7ca99;
+}
+
+.g-data-list-condition .keyword {
+	background: gold !important;
+	color: black !important;
+}
+
+.g-data-list-table {
+	background: #d7ca99;
+}
+
+.g-data-list-table table.record {
+	background: #d7ca99;
+}
+
+.g-data-list-table table.record tbody tr:first-child th {
+	background: #dbba68;
+	color: #000;
+	font-weight: bold;
+}
+
+.g-data-list-table table.record tbody tr.node-record td {
+	background: #c29422;
+	color: black;
+}
+
+.g-data-list-table table.record tbody tr.node-record:hover td {
+	background: gold !important;
+}
+
+.g-data-list-table table.record tbody tr.node-record td a {
+	color: blue !important;
+}
+
+.g-data-list-table table.record tbody tr.node-record td img {
 	
+}
+
+.sg-themes--welcome-bg {
+	background: url('../img/luxury_gold_1920x1080.jpg') !important;
 }
