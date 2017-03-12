@@ -1,0 +1,376 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:s="http://jboss.com/products/seam/taglib"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:a="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich"
+	template="/layout/template_edit.xhtml">
+
+	<ui:define name="head">
+		<link rel="stylesheet" type="text/css" href="#{request.contextPath}/common/css/bootstrap.min.css" />
+		<link rel="stylesheet" type="text/css" href="#{request.contextPath}/common/css/bootstrap-select.min.css" />
+		<link rel="stylesheet" type="text/css" href="#{request.contextPath}/common/css/bootstrap-datetimepicker.min.css" />
+		<link rel="stylesheet" type="text/css" href="#{request.contextPath}/icheck/skins/square/blue.css" />
+	</ui:define>
+
+	<ui:define name="body">
+		#{personalCenterHome.wire()}
+		<h:form id="mainForm" styleClass="edit" enctype="multipart/form-data">
+			<div class="pd0-10">
+				<div class="pt30 pb30 fs14">
+					<table width="100%" cellpadding="0" cellspacing="0">
+						<tr>
+							<td width="50%">
+								<div class="pb20">
+									<table>
+										<tr>
+											<td valign="middle">
+												<span class="field-name mb10">用户名</span>
+											</td>
+											<td valign="middle">
+												<h:outputText value="#{personalCenterHome.instance.username}" styleClass="form-control mb10 fix--w220 fix--bc-darkturquoise" />
+											</td>
+											<td valign="middle">
+												<font color="red" style="margin-left: 3px;"></font>
+											</td>
+										</tr>
+									</table>
+								</div>
+							</td>
+							<td width="50%">
+								<div class="pb20">
+									<table>
+										<tr>
+											<td valign="middle">
+												<span class="field-name mb10">角色</span>
+											</td>
+											<td valign="middle">
+												<h:outputText value="#{personalCenterHome.instance.roleInfo.roleName}" styleClass="form-control mb10 fix--w220 fix--bc-darkturquoise" />
+											</td>
+											<td valign="middle">
+												<font color="red" style="margin-left: 3px;"></font>
+											</td>
+										</tr>
+									</table>
+								</div>
+							</td>
+						</tr>
+						<tr>
+							<td width="50%">
+								<div class="pb20">
+									<table>
+										<tr>
+											<td valign="middle">
+												<span class="field-name mb10">昵称</span>
+											</td>
+											<td valign="middle">
+												<h:inputText id="nickname" value="#{personalCenterHome.userInfoExtend.nickname}" styleClass="form-control mb10 fix--w220" />
+											</td>
+											<td valign="middle">
+												<font color="red" style="margin-left: 3px;">*</font>
+											</td>
+										</tr>
+									</table>
+								</div>
+							</td>
+							<td width="50%">
+								<div class="pb20">
+									<table>
+										<tr>
+											<td valign="middle">
+												<span class="field-name mb10">姓名</span>
+											</td>
+											<td valign="middle">
+												<h:inputText id="fullname" value="#{personalCenterHome.userInfoExtend.fullname}" styleClass="form-control mb10 fix--w220" />
+											</td>
+											<td valign="middle">
+												<font color="red" style="margin-left: 3px;">*</font>
+											</td>
+										</tr>
+									</table>
+								</div>
+							</td>
+						</tr>
+						<tr>
+							<td width="50%">
+								<div class="pb20">
+									<table>
+										<tr>
+											<td valign="middle">
+												<span class="field-name mb10">性别</span>
+											</td>
+											<td valign="top">
+												<input type="radio" class="icheck" name="sex_radio" value="1" id="sex_radio__male" />
+												<label for="sex_radio__male"><span>男</span></label>
+												<input type="radio" class="icheck" name="sex_radio" value="2" id="sex_radio__female" />
+												<label for="sex_radio__female"><span>女</span></label>
+												<h:inputHidden id="sexHidden" value="#{personalCenterHome.userInfoExtend.sex}" />
+											</td>
+											<td valign="middle">
+												<font color="red" style="margin-left: 3px;"></font>
+											</td>
+										</tr>
+									</table>
+								</div>
+							</td>
+							<td width="50%">
+								<div class="pb20">
+									<table>
+										<tr>
+											<td valign="middle">
+												<span class="field-name mb10">生日</span>
+											</td>
+											<td valign="middle">
+												<div class="form-group">
+													<div class="input-group date form_date col-md-5">
+														<h:inputText id="birthday" value="#{personalCenterHome.birthday}" styleClass="form-control mb10 fix--w141" readonly="true" />
+														<h:inputHidden id="birthdayHidden" value="#{personalCenterHome.birthday}" />
+														<span class="input-group-addon"><span class="glyphicon glyphicon-remove"></span></span>
+														<span class="input-group-addon"><span class="glyphicon glyphicon-calendar"></span></span>
+													</div>
+												</div>
+											</td>
+											<td valign="middle">
+												<font color="red" style="margin-left: 3px;"></font>
+											</td>
+										</tr>
+									</table>
+								</div>
+							</td>
+						</tr>
+						<tr>
+							<td width="50%">
+								<div class="pb20">
+									<table>
+										<tr>
+											<td valign="middle">
+												<span class="field-name mb10">手机</span>
+											</td>
+											<td valign="middle">
+												<h:inputText id="cellphone" value="#{personalCenterHome.userInfoExtend.cellphone}" styleClass="form-control mb10 fix--w220" />
+											</td>
+											<td valign="middle">
+												<font color="red" style="margin-left: 3px;"></font>
+											</td>
+										</tr>
+									</table>
+								</div>
+							</td>
+							<td width="50%">
+								<div class="pb20">
+									<table>
+										<tr>
+											<td valign="middle">
+												<span class="field-name mb10">电话</span>
+											</td>
+											<td valign="middle">
+												<h:inputText id="telephone" value="#{personalCenterHome.userInfoExtend.telephone}" styleClass="form-control mb10 fix--w220" />
+											</td>
+											<td valign="middle">
+												<font color="red" style="margin-left: 3px;"></font>
+											</td>
+										</tr>
+									</table>
+								</div>
+							</td>
+						</tr>
+						<tr>
+							<td width="50%">
+								<div class="pb20">
+									<table>
+										<tr>
+											<td valign="middle">
+												<span class="field-name mb10">邮箱</span>
+											</td>
+											<td valign="middle">
+												<h:inputText id="mail" value="#{personalCenterHome.userInfoExtend.mail}" styleClass="form-control mb10 fix--w220" />
+											</td>
+											<td valign="middle">
+												<font color="red" style="margin-left: 3px;"></font>
+											</td>
+										</tr>
+									</table>
+								</div>
+							</td>
+							<td width="50%">
+								<div class="pb20">
+									<table>
+										<tr>
+											<td valign="middle">
+												<span class="field-name mb10">地址</span>
+											</td>
+											<td valign="middle">
+												<h:inputText id="address" value="#{personalCenterHome.userInfoExtend.address}" styleClass="form-control mb10 fix--w220" />
+											</td>
+											<td valign="middle">
+												<font color="red" style="margin-left: 3px;"></font>
+											</td>
+										</tr>
+									</table>
+								</div>
+							</td>
+						</tr>
+						<tr>
+							<td width="50%">
+								<div class="pb20">
+									<table>
+										<tr>
+											<td valign="middle">
+												<span class="field-name mb10">兴趣</span>
+											</td>
+											<td valign="middle">
+												<select id="interest" class="selectpicker" multiple="multiple" data-live-search="true">
+													<a:repeat value="#{commonTool.getDictionaryByPid(7)}" var="_var">
+														<option value="#{_var.theId}">#{_var.theValue}</option>
+													</a:repeat>
+												</select>
+												<h:inputHidden id="interestHidden" value="#{personalCenterHome.interest}" />
+											</td>
+											<td valign="middle">
+												<font color="red" style="margin-left: 3px;"></font>
+											</td>
+										</tr>
+									</table>
+								</div>
+							</td>
+							<td width="50%">
+								<div class="pb20">
+									<table>
+										<tr>
+											<td valign="middle">
+												<span class="field-name mb10">我的主题</span>
+											</td>
+											<td valign="middle">
+												<select id="systemThemeId" class="selectpicker" data-live-search="true">
+													<option value="#{''}">请选择</option>
+													<a:repeat value="#{personalCenterHome.systemThemeList}" var="_var">
+														<option value="#{_var[0]}">#{_var[1]}</option>
+													</a:repeat>
+												</select>
+												<h:inputHidden id="systemThemeIdHidden" value="#{personalCenterHome.systemThemeId}" />
+											</td>
+											<td valign="middle">
+												<font color="red" style="margin-left: 3px;"></font>
+											</td>
+										</tr>
+									</table>
+								</div>
+							</td>
+						</tr>
+					</table>
+				</div>
+				<div class="pt50 pb95">
+					<table class="normal-btn">
+						<tr>
+							<td>
+								<h:commandButton id="update" value="保存" onclick="return beforeSubmit();" action="#{personalCenterHome.update}" rendered="#{personalCenterHome.managed}" styleClass="btn btn-primary mr15" />
+								<s:button id="cancel" value="返回" view="/admin/PersonalCenter.xhtml" propagation="none" styleClass="btn btn-default" />
+							</td>
+						</tr>
+					</table>
+					<br />
+					<br />
+				</div>
+			</div>
+		</h:form>
+		<script type="text/javascript" src="#{request.contextPath}/common/js/bootstrap.min.js" />
+		<script type="text/javascript" src="#{request.contextPath}/common/js/bootstrap-select.min.js" />
+		<script type="text/javascript" src="#{request.contextPath}/common/js/bootstrap-select-defaults-zh_CN.min.js" />
+		<script type="text/javascript" src="#{request.contextPath}/common/js/bootstrap-datetimepicker.min.js" />
+		<script type="text/javascript" src="#{request.contextPath}/common/js/bootstrap-datetimepicker.zh-CN.js" />
+		<script type="text/javascript" src="#{request.contextPath}/icheck/js/icheck.min.js" />
+		<script type="text/javascript" src="#{request.contextPath}/toolkit/utils.js" />
+		<script type="text/javascript">
+		//<![CDATA[
+			jQuery(document).ready(function() {
+				
+			    var message = '#{personalCenterHome.message}';
+			    if (message != '') {
+					___msg('温馨提示', message);
+			    }
+
+				jQuery('.form_date').datetimepicker({
+					language: 'zh-CN',
+					format: "yyyy-mm-dd",
+					pickerPosition: "bottom-left",
+					weekStart: 1,
+					todayBtn: 1,
+					autoclose: 1,
+					todayHighlight: 1,
+					startView: 2,
+					minView: 2,
+					forceParse: 0
+				});
+				
+				jQuery('.icheck').iCheck({
+					checkboxClass: 'icheckbox_square-blue',
+					radioClass: 'iradio_square-blue',
+					increaseArea: '20%'
+				});
+				
+			    jQuery('.selectpicker').selectpicker();
+				
+				___textRestrictById('mainForm:nickname', 24);
+				___textRestrictById('mainForm:fullname', 24);
+				___textRestrictById('mainForm:cellphone', 12);
+				___textRestrictById('mainForm:telephone', 20);
+				___textRestrictById('mainForm:mail', 30);
+				___textRestrictById('mainForm:address', 48);
+				
+				var sexHidden = jQuery('#mainForm\\:sexHidden').val();
+				jQuery('input[name="sex_radio"][value="' + sexHidden + '"]').iCheck('check');
+			    jQuery('#roleInfoId').val(jQuery('#mainForm\\:roleInfoIdHidden').val());
+			    jQuery('#roleInfoId').selectpicker('render');
+			    
+			    jQuery('#interest').val(jQuery('#mainForm\\:interestHidden').val().split(','));
+			    jQuery('#interest').selectpicker('render');
+			    
+			    jQuery('#systemThemeId').val(jQuery('#mainForm\\:systemThemeIdHidden').val());
+			    jQuery('#systemThemeId').selectpicker('render');
+
+			});
+			
+			//提交表单前
+			function beforeSubmit() {
+				var nickname = jQuery('#mainForm\\:nickname').val();
+				if (nickname == null || nickname == '') {
+				    ___dynamic_function = function() {
+						jQuery('#mainForm\\:nickname').focus();
+					};
+					___msg('温馨提示', '请填写昵称！', {closed: ___dynamic_function});
+					return false;
+				}
+				
+				var fullname = jQuery('#mainForm\\:fullname').val();
+				if (fullname == null || fullname == '') {
+				    ___dynamic_function = function() {
+						jQuery('#mainForm\\:fullname').focus();
+					};
+					___msg('温馨提示', '请填写姓名！', {closed: ___dynamic_function});
+					return false;
+				}
+
+				var sex = jQuery('input[name="sex_radio"]:checked').val();
+				jQuery('#mainForm\\:sexHidden').val(sex);
+				
+				jQuery('#mainForm\\:birthdayHidden').val(jQuery('#mainForm\\:birthday').val());
+				jQuery('#mainForm\\:enabledHidden').val(jQuery('#enabled:checked').length > 0);
+				
+				var interest = jQuery('#interest').val();
+				if (interest != null && interest != '') {
+					jQuery('#mainForm\\:interestHidden').val(interest.join(','));
+				} else {
+					jQuery('#mainForm\\:interestHidden').val('');
+				}
+				
+				jQuery('#mainForm\\:systemThemeIdHidden').val(jQuery('#systemThemeId').val());
+
+			}
+		//]]>
+		</script>
+	</ui:define>
+
+</ui:composition>

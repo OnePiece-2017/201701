@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<page xmlns="http://jboss.com/products/seam/pages" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://jboss.com/products/seam/pages http://jboss.com/products/seam/pages-2.2.xsd"
+	login-required="true">
+
+	<restrict>#{s:hasRole('?')}</restrict>
+	<begin-conversation join="true" flush-mode="MANUAL" />
+
+	<param name="personalCenterFrom" />
+
+	<navigation from-action="#{personalCenterHome.update}">
+		<rule if-outcome="updated">
+			<end-conversation />
+			<redirect view-id="/admin/PersonalCenter.xhtml" />
+		</rule>
+	</navigation>
+
+</page>
