@@ -80,20 +80,20 @@ public class CommonTool implements CommonToolLocal {
 
 	/** 根据ids获取字典值 */
 	public String getDictionaryValueByIds(String ids) {
-		String result = "";
+		StringBuffer result = new StringBuffer();
 		if (ids != null && !"".equals(ids)) {
 			String[] arr = ids.split(",");
-			for (int i = 0; i < arr.length; i++) {
+			for (int i = 0, len = arr.length; i < len; ++i) {
 				Dictionary dictionary = ConfigureCache.dictionaryMap.get(Integer.valueOf(arr[i]));
 				if (dictionary != null && dictionary.getTheValue() != null && !"".equals(dictionary.getTheValue())) {
-					result += dictionary.getTheValue();
-					if (i < arr.length - 1) {
-						result += ",";
+					result.append(dictionary.getTheValue());
+					if (i < len - 1) {
+						result.append(",");
 					}
 				}
 			}
 		}
-		return result;
+		return result.toString();
 	}
 
 	/** generate http://richfaces.org/a4j a:repeat value */

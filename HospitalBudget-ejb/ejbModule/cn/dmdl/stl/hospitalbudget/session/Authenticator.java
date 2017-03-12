@@ -84,17 +84,22 @@ public class Authenticator implements AuthenticatorLocal {
 				sessionToken.setNickname(userInfo.getUserInfoExtend().getNickname());
 
 				// 设置主题（优先级：用户>角色>系统）
+				String systemThemeName = null;
 				String systemThemeCssPath = null;
 				if (userInfo.getSystemTheme() != null && userInfo.getSystemTheme().isEnabled()) {
+					systemThemeName = userInfo.getSystemTheme().getTheValue();
 					systemThemeCssPath = userInfo.getSystemTheme().getCssPath();
 				} else if (userInfo.getRoleInfo().getSystemTheme() != null && userInfo.getRoleInfo().getSystemTheme().isEnabled()) {
+					systemThemeName = userInfo.getRoleInfo().getSystemTheme().getTheValue();
 					systemThemeCssPath = userInfo.getRoleInfo().getSystemTheme().getCssPath();
 				} else {
-					List<Object> systemThemeList = entityManager.createNativeQuery("select system_theme.css_path from system_theme where system_theme.enabled = 1 and system_theme.the_id in (select the_value from system_settings where the_key = 'system_theme')").getResultList();
+					List<Object[]> systemThemeList = entityManager.createNativeQuery("select the_value, css_path from system_theme where enabled = 1 and the_id in (select the_value from system_settings where the_key = 'system_theme')").getResultList();
 					if (systemThemeList != null && systemThemeList.size() > 0) {
-						systemThemeCssPath = systemThemeList.get(0).toString();
+						systemThemeName = systemThemeList.get(0)[0].toString();
+						systemThemeCssPath = systemThemeList.get(0)[1].toString();
 					}
 				}
+				sessionToken.setSystemThemeName(systemThemeName);
 				sessionToken.setSystemThemeCssPath(systemThemeCssPath);
 
 				// 设置科室
