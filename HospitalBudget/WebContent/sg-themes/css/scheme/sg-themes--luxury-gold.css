@@ -1,35 +1,56 @@
+@import url('../sg-themes--generic.css');
+
+.sg-themes--template-body {
+	
+}
+
+.sg-themes--template-list-body {
+	background: #d7ca99;
+}
+
+.sg-themes--template-view-body {
+	
+}
+
+.sg-themes--template-edit-body {
+	
+}
+
+.sg-themes--template-other-body {
+	
+}
+
 .sg-themes--home-banner {
-	background: #000 !important;
+	background: #d7ca99 !important;
 }
 
 .sg-themes--home-banner-user-info {
-	color: lime !important;
+	color: black !important;
 }
 
 .sg-themes--home-banner-remote-clock {
-	color: lime !important;
+	color: black !important;
 }
 
 .sg-themes--home-banner-logout-button {
-	color: lime !important;
+	color: black !important;
 }
 
 .sg-themes--home-menu {
-	background: #000 !important;
+	background: #d7ca99 !important;
 }
 
 .sg-themes--home-menu .switch-icon {
-	background: rgba(10, 138, 10, 0.76);
+	background: goldenrod;
 	border-radius: 8px;
-	cursor: pointer;
 }
 
 .sg-themes--home-menu span.click {
-	color: lime !important;
+	color: black !important;
 }
 
 .sg-themes--home-menu span.this-menu-highlight {
-	background-color: #79797e !important;
+	background: goldenrod !important;
 	font-weight: unset !important;
 	font-style: italic;
 }
@@ -39,12 +60,12 @@
 }
 
 .sg-themes--home-data-exhibition-area .tabs-header {
-	background: black;
-	border-color: lime;
+	background: #d7ca99;
+	border-color: black;
 }
 
 .sg-themes--home-data-exhibition-area .tabs-panels {
-	border-color: lime;
+	border-color: black;
 }
 
 .sg-themes--home-data-exhibition-area .tabs-header .tabs-wrap .tabs li a.tabs-inner {
@@ -52,39 +73,43 @@
 }
 
 .sg-themes--home-data-exhibition-area .tabs-header .tabs-wrap .tabs li a.tabs-inner:hover {
-	background: limegreen;
+	background: goldenrod;
 }
 
 .sg-themes--home-data-exhibition-area .tabs-header .tabs-wrap .tabs li.tabs-selected a.tabs-inner {
-	background: lime;
+	background: gold;
 }
 
 .g-data-list-condition {
-	background: black;
+	background: #d7ca99;
 }
 
 .g-data-list-condition .keyword {
-	background: black !important;
-	color: lime !important;
+	background: gold !important;
+	color: black !important;
 }
 
 .g-data-list-table {
-	background: black;
+	background: #d7ca99;
 }
 
 .g-data-list-table table.record {
-	background: black;
+	background: #d7ca99;
 }
 
 .g-data-list-table table.record tbody tr:first-child th {
-	background: #b10d0d;
-	color: #fff;
+	background: #dbba68;
+	color: #000;
 	font-weight: bold;
 }
 
 .g-data-list-table table.record tbody tr.node-record td {
-	background: #000;
-	color: lime;
+	background: #c29422;
+	color: black;
+}
+
+.g-data-list-table table.record tbody tr.node-record:hover td {
+	background: gold !important;
 }
 
 .g-data-list-table table.record tbody tr.node-record td a {
@@ -92,9 +117,9 @@
 }
 
 .g-data-list-table table.record tbody tr.node-record td img {
-	background: #fff;
+	
 }
 
 .sg-themes--welcome-bg {
-	background: url('../img/the_matrix_1024x768.png') !important;
+	background: url('../../img/luxury_gold_1920x1080.jpg') !important;
 }
