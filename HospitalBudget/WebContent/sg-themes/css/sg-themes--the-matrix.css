@@ -1,9 +1,5 @@
 .sg-themes--home-banner {
-	background: url('../img/the_matrix_1024x768.png');
-}
-
-.sg-themes--home-menu {
-	background: #284d23 !important;
+	background: #000 !important;
 }
 
 .sg-themes--home-banner-user-info {
@@ -18,10 +14,87 @@
 	color: lime !important;
 }
 
-.sg-themes--generic-table-condition {
+.sg-themes--home-menu {
+	background: #000 !important;
+}
+
+.sg-themes--home-menu .switch-icon {
+	background: rgba(10, 138, 10, 0.76);
+	border-radius: 8px;
+	cursor: pointer;
+}
+
+.sg-themes--home-menu span.click {
+	color: lime !important;
+}
+
+.sg-themes--home-menu span.this-menu-highlight {
+	background-color: #79797e !important;
+	font-weight: unset !important;
+	font-style: italic;
+}
+
+.sg-themes--home-data-exhibition-area {
 	
 }
 
-.sg-themes--generic-table-contents {
-	
+.sg-themes--home-data-exhibition-area .tabs-header {
+	background: black;
+	border-color: lime;
+}
+
+.sg-themes--home-data-exhibition-area .tabs-panels {
+	border-color: lime;
+}
+
+.sg-themes--home-data-exhibition-area .tabs-header .tabs-wrap .tabs li a.tabs-inner {
+	background: gray;
+}
+
+.sg-themes--home-data-exhibition-area .tabs-header .tabs-wrap .tabs li a.tabs-inner:hover {
+	background: limegreen;
+}
+
+.sg-themes--home-data-exhibition-area .tabs-header .tabs-wrap .tabs li.tabs-selected a.tabs-inner {
+	background: lime;
+}
+
+.g-data-list-condition {
+	background: black;
+}
+
+.g-data-list-condition .keyword {
+	background: black !important;
+	color: lime !important;
+}
+
+.g-data-list-table {
+	background: black;
+}
+
+.g-data-list-table table.record {
+	background: black;
+}
+
+.g-data-list-table table.record tbody tr:first-child th {
+	background: #b10d0d;
+	color: #fff;
+	font-weight: bold;
+}
+
+.g-data-list-table table.record tbody tr.node-record td {
+	background: #000;
+	color: lime;
+}
+
+.g-data-list-table table.record tbody tr.node-record td a {
+	color: blue !important;
+}
+
+.g-data-list-table table.record tbody tr.node-record td img {
+	background: #fff;
+}
+
+.sg-themes--welcome-bg {
+	background: url('../img/the_matrix_1024x768.png');
 }

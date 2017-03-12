@@ -185,6 +185,10 @@ jQuery(document).ready(function() {
 		}
 	});
 
+	jQuery('img.switch-icon').click(function() {
+		jQuery(this).prev('.click').click();
+	});
+
 	var nodeCrud = jQuery('#node_crud');
 	nodeCrud.tabs({
 	    onSelect : function(title, index) {

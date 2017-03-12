@@ -2,7 +2,8 @@
 	主题
 
 注意：
-	样式被覆盖时请使用!important来提升指定样式规则的应用优先权
+	样式被覆盖时请使用!important来提升指定样式规则的应用优先权，
+	新规则请使用前缀.sg-themes--
 
 依赖：
 	...
@@ -13,15 +14,9 @@
 			background: #1dacf0 !important;
 		}
 
-class对照表
+	《新规则对照表》
 	主页*横幅
 	.sg-themes--home-banner
 	
 	主页*菜单
 	.sg-themes--home-menu
-	
-	通用表格*条件
-	.sg-themes--generic-table-condition
-	
-	通用表格*内容
-	.sg-themes--generic-table-contents
