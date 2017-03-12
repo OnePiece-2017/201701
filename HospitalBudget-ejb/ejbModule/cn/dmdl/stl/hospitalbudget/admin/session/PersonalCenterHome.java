@@ -19,7 +19,6 @@ public class PersonalCenterHome extends CriterionEntityHome<UserInfo> {
 
 	private static final long serialVersionUID = 1L;
 	private JSONObject viewData;// 查看页数据
-	private UserInfoExtend userInfoExtend;// 用户信息-扩展
 	private String birthday;// 生日
 	private String interest;// 兴趣
 	List<Object[]> systemThemeList;
@@ -49,26 +48,6 @@ public class PersonalCenterHome extends CriterionEntityHome<UserInfo> {
 		getEntityManager().flush();
 		raiseAfterTransactionSuccessEvent();
 		return "updated";
-	}
-
-	public void setUserInfoUserInfoId(Integer id) {
-		setId(id);
-	}
-
-	public Integer getUserInfoUserInfoId() {
-		return (Integer) getId();
-	}
-
-	@Override
-	protected UserInfo createInstance() {
-		UserInfo userInfo = new UserInfo();
-		return userInfo;
-	}
-
-	public void load() {
-		if (isIdDefined()) {
-			wire();
-		}
 	}
 
 	public void initViewPage() {
@@ -114,23 +93,38 @@ public class PersonalCenterHome extends CriterionEntityHome<UserInfo> {
 			wireSystemThemeList();
 			systemThemeId = instance.getSystemTheme() != null ? instance.getSystemTheme().getTheId() : null;
 
+			if (isManaged()) {
+				UserInfoExtend userInfoExtend = instance.getUserInfoExtend();
+				userInfoExtend.setSex(userInfoExtend.getSex() != 0 ? userInfoExtend.getSex() : 1);
+				if (userInfoExtend.getBirthday() != null) {
+					birthday = birthday != null ? birthday : DateTimeHelper.dateToStr(userInfoExtend.getBirthday(), DateTimeHelper.PATTERN_DATE);
+				}
+				interest = interest != null ? interest : userInfoExtend.getInterest();
+			}
+
 			firstTime = false;// 修改首次标记
 		}
 
-		System.out.println(instance.getUsername());
+	}
 
-		if (isManaged()) {
-			userInfoExtend = instance.getUserInfoExtend();
-			userInfoExtend.setSex(userInfoExtend.getSex() != 0 ? userInfoExtend.getSex() : 1);
-			if (instance.getUserInfoExtend().getBirthday() != null) {
-				birthday = birthday != null ? birthday : DateTimeHelper.dateToStr(instance.getUserInfoExtend().getBirthday(), DateTimeHelper.PATTERN_DATE);
-			}
-			interest = interest != null ? interest : instance.getUserInfoExtend().getInterest();
-		} else {
-			userInfoExtend = userInfoExtend != null ? userInfoExtend : new UserInfoExtend();
-			userInfoExtend.setSex(userInfoExtend.getSex() != 0 ? userInfoExtend.getSex() : 1);
+	public void setUserInfoUserInfoId(Integer id) {
+		setId(id);
+	}
+
+	public Integer getUserInfoUserInfoId() {
+		return (Integer) getId();
+	}
+
+	@Override
+	protected UserInfo createInstance() {
+		UserInfo userInfo = new UserInfo();
+		return userInfo;
+	}
+
+	public void load() {
+		if (isIdDefined()) {
+			wire();
 		}
-
 	}
 
 	public boolean isWired() {
@@ -143,14 +137,6 @@ public class PersonalCenterHome extends CriterionEntityHome<UserInfo> {
 
 	public JSONObject getViewData() {
 		return viewData;
-	}
-
-	public UserInfoExtend getUserInfoExtend() {
-		return userInfoExtend;
-	}
-
-	public void setUserInfoExtend(UserInfoExtend userInfoExtend) {
-		this.userInfoExtend = userInfoExtend;
 	}
 
 	public String getBirthday() {
