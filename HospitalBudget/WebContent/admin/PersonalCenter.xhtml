@@ -66,13 +66,15 @@
 					<td class="field-value" colspan="3">#{personalCenterHome.viewData['insertTime']}</td>
 				</tr>
 			</table>
-			<table align="center" cellpadding="0" cellspacing="0" style="clear: both; margin: 35px auto 0;">
-				<tr>
-					<td>
-						<s:link value="编辑" view="/admin/PersonalCenterEdit.xhtml" styleClass="btn btn-success" rendered="#{s:hasRole('?')}" />
-					</td>
-				</tr>
-			</table>
+			<s:fragment rendered="#{s:hasRole('my_space/personal_center/edit')}">
+				<table align="center" cellpadding="0" cellspacing="0" style="clear: both; margin: 35px auto 0;">
+					<tr>
+						<td>
+							<s:link value="编辑" view="/admin/PersonalCenterEdit.xhtml" styleClass="btn btn-success" rendered="#{s:hasRole('?')}" />
+						</td>
+					</tr>
+				</table>
+			</s:fragment>
 			<br />
 			<br />
 		</div>
