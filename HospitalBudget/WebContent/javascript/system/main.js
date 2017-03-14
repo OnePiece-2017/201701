@@ -17,7 +17,7 @@ var tabPanelCtrl = {
 };
 var tempfunction = null;
 var tabIndex = 0;
-var tablKeyPrefix = 'jeasyui_Tabs__';
+var tablKeyPrefix = 'jeasyui_tabs__';
 // ===================jeasyui tabs结束===================
 
 // ===================通行证数据开始===================
@@ -314,6 +314,7 @@ function addTabPanel(key, title, url) {
 			jQuery('#node_welcome').hide();
 			nodeCrud.show();
 		}
+		___log(___wrapStr(key, title, url));
 		var content = "<iframe src='" + url + "' style='width: 100%; height: 100%; border: 0;'></iframe>";// 注意引号的解析
 		var tabPanelIndex = gainTabPanelIndex(key);
 		if (tabPanelIndex > -1) {
