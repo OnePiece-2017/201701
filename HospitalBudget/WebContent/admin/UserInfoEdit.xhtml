@@ -476,14 +476,20 @@
 
 				var roleInfoId = jQuery('#roleInfoId').val();
 				if (roleInfoId == null || roleInfoId == '') {
-					___msg('温馨提示', '请选择角色！');
+				    ___dynamic_function = function() {
+						___selectpickerExpand('roleInfoId');
+					};
+					___msg('温馨提示', '请选择角色！', {closed: ___dynamic_function});
 					return false;
 				}
 				jQuery('#mainForm\\:roleInfoIdHidden').val(roleInfoId);
 
 				var departmentInfoId = jQuery('#departmentInfoId').val();
 				if (departmentInfoId == null || departmentInfoId == '') {
-					___msg('温馨提示', '请选择科室！');
+				    ___dynamic_function = function() {
+						___selectpickerExpand('departmentInfoId');
+					};
+					___msg('温馨提示', '请选择科室！', {closed: ___dynamic_function});
 					return false;
 				}
 				jQuery('#mainForm\\:departmentInfoIdHidden').val(departmentInfoId);

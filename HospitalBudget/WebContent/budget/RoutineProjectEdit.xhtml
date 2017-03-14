@@ -677,7 +677,7 @@
 						fadeOutMillis: 1000 * 0.3,
 						fadeInCallback: null,
 						fadeOutCallback: function() {
-							jQuery('button[data-id="subproject_budgetPersonCompilerIds"]').focus().click();
+							___selectpickerExpand('subproject_budgetPersonCompilerIds');
 						}
 					});
 					return null;
@@ -692,7 +692,7 @@
 						fadeOutMillis: 1000 * 0.3,
 						fadeInCallback: null,
 						fadeOutCallback: function() {
-							jQuery('button[data-id="subproject_budgetPersonExecutorIds"]').focus().click();
+							___selectpickerExpand('subproject_budgetPersonExecutorIds');
 						}
 					});
 					return null;
@@ -931,7 +931,7 @@
 				var projectType = jQuery('#projectType').val();
 				if (projectType == null || projectType == '') {
 					___dynamic_function = function() {
-						jQuery('button[data-id="projectType"]').focus().click();
+						___selectpickerExpand('projectType');
 					};
 					___msg('温馨提示', '请选择项目类型！', {
 						closed: ___dynamic_function
@@ -943,7 +943,7 @@
 				var departmentInfoId = jQuery('#departmentInfoId').val();
 				if (departmentInfoId == null || departmentInfoId == '') {
 					___dynamic_function = function() {
-						jQuery('button[data-id="departmentInfoId"]').focus().click();
+						___selectpickerExpand('departmentInfoId');
 					};
 					___msg('温馨提示', '请选择主管科室！', {
 						closed: ___dynamic_function
@@ -955,7 +955,7 @@
 				var budgetPersonCompilerIds = jQuery('#budgetPersonCompilerIds').val();
 				if (budgetPersonCompilerIds == null || budgetPersonCompilerIds == '') {
 					___dynamic_function = function() {
-						jQuery('button[data-id="budgetPersonCompilerIds"]').focus().click();
+						___selectpickerExpand('budgetPersonCompilerIds');
 					};
 					___msg('温馨提示', '请选择编制人员！', {
 						closed: ___dynamic_function
@@ -967,7 +967,7 @@
 				var budgetPersonExecutorIds = jQuery('#budgetPersonExecutorIds').val();
 				if (budgetPersonExecutorIds == null || budgetPersonExecutorIds == '') {
 					___dynamic_function = function() {
-						jQuery('button[data-id="budgetPersonExecutorIds"]').focus().click();
+						___selectpickerExpand('budgetPersonExecutorIds');
 					};
 					___msg('温馨提示', '请选择执行人员！', {
 						closed: ___dynamic_function
@@ -979,7 +979,7 @@
 				var fundsSourceId = jQuery('#fundsSourceId').val();
 				if (fundsSourceId == null || fundsSourceId == '') {
 					___dynamic_function = function() {
-						jQuery('button[data-id="fundsSourceId"]').focus().click();
+						___selectpickerExpand('fundsSourceId');
 					};
 					___msg('温馨提示', '请选择资金来源！', {
 						closed: ___dynamic_function
