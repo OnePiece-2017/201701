@@ -89,6 +89,7 @@
 											</td>
 											<td valign="middle">
 												<select id="system_theme" class="selectpicker" data-live-search="true">
+													<option value="#{''}">默认</option>
 													<a:repeat value="#{commonTool.sqlQuery('select the_id, the_value from system_theme where enabled = 1')}" var="_var">
 														<option value="#{_var[0]}">#{_var[1]}</option>
 													</a:repeat>

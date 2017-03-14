@@ -19,6 +19,7 @@ import cn.dmdl.stl.hospitalbudget.util.DataSourceManager;
 @Name("systemSettingsHome")
 public class SystemSettingsHome extends CriterionEntityHome<SystemSettings> {
 
+	// TODO: 请勿随意增设属性，务必遵循当前规则，页面如需获取查询结果，建议调用commonTool.sqlQuery
 	private static final long serialVersionUID = 1L;
 	private Object[][] viewData;// 详情页初始化时用
 	private Map<String, Object[]> modifyData;// 编辑页初始化时用
@@ -95,6 +96,7 @@ public class SystemSettingsHome extends CriterionEntityHome<SystemSettings> {
 	/** 详情页初始化 */
 	@SuppressWarnings("unchecked")
 	public void init() {
+		// 系统主题
 		List<Object[]> systemThemeList = getEntityManager().createNativeQuery("select the_id, the_value from system_theme where enabled = 1").getResultList();
 		Map<String, Object> systemThemeMap = new HashMap<String, Object>();
 		if (systemThemeList != null && systemThemeList.size() > 0) {
@@ -102,6 +104,8 @@ public class SystemSettingsHome extends CriterionEntityHome<SystemSettings> {
 				systemThemeMap.put(systemTheme[0].toString(), systemTheme[1]);
 			}
 		}
+
+		// 系统设置
 		int itemSize = 2;
 		List<SystemSettings> systemSettingsList = getEntityManager().createQuery("select systemSettings from SystemSettings systemSettings order by systemSettings.theId").getResultList();
 		if (systemSettingsList != null && systemSettingsList.size() > 0) {
@@ -125,7 +129,7 @@ public class SystemSettingsHome extends CriterionEntityHome<SystemSettings> {
 						theValue = "否";
 					}
 				} else if ("system_theme".equalsIgnoreCase(theKey)) {
-					theValue = systemThemeMap.get(theValue) != null ? systemThemeMap.get(theValue).toString() : "";
+					theValue = "".equals(theValue) ? "默认" : (systemThemeMap.get(theValue) != null ? systemThemeMap.get(theValue).toString() : "#ERROR: data has been lost.");
 				}
 				item[1] = theValue;
 				viewData[index] = item;

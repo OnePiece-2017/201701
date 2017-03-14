@@ -67,8 +67,9 @@ public class PersonalCenterHome extends CriterionEntityHome<UserInfo> {
 		viewData.accumulate("address", userInfoExtend.getAddress() != null ? userInfoExtend.getAddress() : "");
 		viewData.accumulate("interest", userInfoExtend.getInterest() != null ? userInfoExtend.getInterest() : "");
 		viewData.accumulate("insertTime", DateTimeHelper.dateToStr(userInfo.getInsertTime(), DateTimeHelper.PATTERN_DATE_TIME));
-		viewData.accumulate("currentSystemTheme", sessionToken.getSystemThemeName());
-		viewData.accumulate("mySystemTheme", userInfo.getSystemTheme() != null ? userInfo.getSystemTheme().getTheValue() : "未选择");
+		viewData.accumulate("currentSystemTheme", sessionToken.getSystemThemeName() != null ? sessionToken.getSystemThemeName() : "默认");
+		viewData.accumulate("currentSystemThemeSource", sessionToken.getSystemThemeNameSource());
+		viewData.accumulate("mySystemTheme", userInfo.getSystemTheme() != null ? userInfo.getSystemTheme().getTheValue() : "默认");
 	}
 
 	/** 初始化系统主题 */

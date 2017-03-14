@@ -28,12 +28,6 @@ public class SystemSettings implements java.io.Serializable {
 	public SystemSettings() {
 	}
 
-	public SystemSettings(String theLabel, String theKey, String theValue) {
-		this.theLabel = theLabel;
-		this.theKey = theKey;
-		this.theValue = theValue;
-	}
-
 	@Id
 	@GeneratedValue(strategy = IDENTITY)
 	@Column(name = "the_id", unique = true, nullable = false)

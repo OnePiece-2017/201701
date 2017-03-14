@@ -85,12 +85,15 @@ public class Authenticator implements AuthenticatorLocal {
 
 				// 设置主题（优先级：用户>角色>系统）
 				String systemThemeName = null;
+				String systemThemeNameSource = "﹝继承系统﹞";// 默认显示继承系统
 				String systemThemeCssPath = null;
 				if (userInfo.getSystemTheme() != null && userInfo.getSystemTheme().isEnabled()) {
 					systemThemeName = userInfo.getSystemTheme().getTheValue();
+					systemThemeNameSource = "﹝私有﹞";
 					systemThemeCssPath = userInfo.getSystemTheme().getCssPath();
 				} else if (userInfo.getRoleInfo().getSystemTheme() != null && userInfo.getRoleInfo().getSystemTheme().isEnabled()) {
 					systemThemeName = userInfo.getRoleInfo().getSystemTheme().getTheValue();
+					systemThemeNameSource = "﹝继承角色﹞";
 					systemThemeCssPath = userInfo.getRoleInfo().getSystemTheme().getCssPath();
 				} else {
 					List<Object[]> systemThemeList = entityManager.createNativeQuery("select the_value, css_path from system_theme where enabled = 1 and the_id in (select the_value from system_settings where the_key = 'system_theme')").getResultList();
@@ -100,6 +103,7 @@ public class Authenticator implements AuthenticatorLocal {
 					}
 				}
 				sessionToken.setSystemThemeName(systemThemeName);
+				sessionToken.setSystemThemeNameSource(systemThemeNameSource);
 				sessionToken.setSystemThemeCssPath(systemThemeCssPath);
 
 				// 设置科室
@@ -212,6 +216,8 @@ public class Authenticator implements AuthenticatorLocal {
 			sessionToken.setUsername(null);
 			sessionToken.setUserInfoIdMD5(null);
 			sessionToken.setNickname(null);
+			sessionToken.setSystemThemeName(null);
+			sessionToken.setSystemThemeNameSource(null);
 			sessionToken.setSystemThemeCssPath(null);
 			sessionToken.setMenuInfoJsonArray(null);
 			sessionToken.setDepartmentInfoId(null);
