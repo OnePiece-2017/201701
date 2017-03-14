@@ -1,4 +1,4 @@
-package cn.dmdl.stl.hospitalbudget.misc;
+package cn.dmdl.stl.hospitalbudget.admin.session;
 
 import org.jboss.seam.annotations.Name;
 

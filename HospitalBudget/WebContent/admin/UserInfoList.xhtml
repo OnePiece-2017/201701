@@ -77,7 +77,7 @@
 			        			<f:param name="userInfoUserInfoId" value="#{_result.userInfoId}" />
 			        			<img src="../images/icon_edit_16x16.png" />
 			        		</s:link>
-			        		<s:link title="修改密码" view="/admin/ModifyUserPassword.xhtml" style="text-decoration: none;" rendered="#{s:hasRole('user_management/modify_password')}">
+			        		<s:link title="修改密码" view="/admin/ModifyUserPassword.xhtml" style="text-decoration: none;" rendered="#{s:hasRole('user_management/modify_user_password')}">
 			        			<f:param name="userInfoUserInfoId" value="#{_result.userInfoId}" />
 			        			<img src="../images/icon_lock_16x16.png" />
 			        		</s:link>
