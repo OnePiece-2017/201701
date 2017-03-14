@@ -1,6 +1,7 @@
 //===================菜单模块开始===================
 var menuInfoJsonArray = null;
-var menuInfoHtml = '';
+var tabContainer = {};
+var userClickTab = false;
 // ===================菜单模块结束===================
 
 // ===================timeout开始===================
@@ -15,7 +16,7 @@ var tabPanelCtrl = {
     allowClose : true
 };
 var tempfunction = null;
-var tabKeyIndex = 0;
+var tabIndex = 0;
 var tablKeyPrefix = 'jeasyui_Tabs__';
 // ===================jeasyui tabs结束===================
 
@@ -24,8 +25,8 @@ var ______userInfoId = null;// 用户id
 var ______userInfoIdMD5 = null;// 用户idMD5
 var ______reloadPageOnExist = false;// reload_page_on_exist
 var ______askOnCloseLabel = false;// ask_on_close_label
-var ______remoteClock = new Date();// 遠程時鐘
-var ______requestRemoteClockBegin = 0;// 請求遠程時鐘開始毫秒數
+var ______remoteClock = new Date();// 远程时钟
+var ______requestRemoteClockBegin = 0;// 请求远程时钟开始毫秒数
 var ______requestRemoteClockFunction = 0;// 递归调用函数
 // ===================通行证数据结束===================
 
@@ -52,114 +53,76 @@ jQuery(document).ready(function() {
 
 	setTimeout(selfAdaptionScreen, 0);// 异步自适应屏幕（Chrome某些元素渲染顺序不同步）
 
+	var funcCode = '';// 菜单HTML代码
 	var disposeLeaf = function(leaf) {
-		if (leaf.length > 0) {
-			for (var i = 0; i < leaf.length; i++) {
-				var node = leaf[i];
-				menuInfoHtml += '<li>';
-				var iconSrc = node['iconSrc'];
-				if (null == iconSrc || '' == iconSrc) {
-					iconSrc = '../images/icon_plain_folder_16x16.png';
-				}
-				menuInfoHtml += '<img class="function-icon" src="' + iconSrc + '">';
-				menuInfoHtml += '<span class="click"';
-				if (0 == node['leaf'].length) {
-					menuInfoHtml += ' tab-key="' + md5(String(tabKeyIndex++)) + '"';
-					if (node['tabUrl'] != null && node['tabUrl'] != '') {
-						menuInfoHtml += ' tab-url="' + node['tabUrl'] + '"';
-					}
-					if (node['tabTitle'] != null && node['tabTitle'] != '') {
-						menuInfoHtml += ' tab-title="' + node['tabTitle'] + '"';
-					}
-					if (node['theValue'] != null && node['theValue'] != '') {
-						menuInfoHtml += ' the-value="' + node['theValue'] + '"';
-					}
-				}
-				menuInfoHtml += '>' + node['theValue'] + '</span>';
-				if (0 == node['leaf'].length) {
-					if (null == node['tabUrl'] || '' == node['tabUrl']) {
-						menuInfoHtml += '<img class="message-icon" src="../images/icon_exclamation_mark_16x16.png" title="该功能处于停用状态！">';
-					}
-				}
-				if (node['leaf'].length > 0) {
-					menuInfoHtml += '<img class="switch-icon" src="../images/icon_arrow_carrot_right_16x16.png">';
-					menuInfoHtml += '<ul style="display: none;">';
-					disposeLeaf(node['leaf']);
-					menuInfoHtml += '</ul>';
-				}
-				menuInfoHtml += '</li>';
+		for (var i = 0; i < leaf.length; i++) {
+			var node = leaf[i];
+			funcCode += '<li><div class="func-outer"><div class="func-inner">';
+			funcCode += '<span class="func-logo"' + (node['iconSrc'] != null && node['iconSrc'] != '' ? ' style="background: RGBA(0, 0, 0, 0) url(' + node['iconSrc'] + ') no-repeat center;"' : '') + '></span>';
+			funcCode += '<span class="func-name"';
+			if (0 == node['leaf'].length) {
+				tabIndex++;// 索引自增
+				funcCode += ' tab-index="' + tabIndex + '"';
+				tabContainer[tabIndex] = {
+				    'index' : tabIndex,
+				    'key' : md5(String(tabIndex)),
+				    'url' : node['tabUrl'],
+				    'title' : node['tabTitle'],
+				    'value' : node['theValue']
+				};
 			}
+			funcCode += '>' + node['theValue'] + '</span>';
+			if (node['leaf'].length > 0) {
+				funcCode += '<span class="toggle collapse"></span></div></div><ul style="display: none;">';
+				disposeLeaf(node['leaf']);
+				funcCode += '</ul>';
+			} else if (node['tabUrl'] != null && node['tabUrl'] != '') {
+				funcCode += '</div></div>';
+			} else {
+				funcCode += '<span class="func-unopened" title="该功能处于停用状态！"></span></div></div>';
+			}
+			funcCode += '</li>';
 		}
 	};
 	if (menuInfoJsonArray != null) {
-		for (var i = 0; i < menuInfoJsonArray.length; i++) {
-			var node = menuInfoJsonArray[i];
-			menuInfoHtml += '<li>';
-			var iconSrc = node['iconSrc'];
-			if (null == iconSrc || '' == iconSrc) {
-				iconSrc = '../images/icon_plain_folder_16x16.png';
-			}
-			menuInfoHtml += '<img class="function-icon" src="' + iconSrc + '">';
-			menuInfoHtml += '<span class="click"';
-			if (0 == node['leaf'].length) {
-				menuInfoHtml += ' tab-key="' + md5(String(tabKeyIndex++)) + '"';
-				if (node['tabUrl'] != null && node['tabUrl'] != '') {
-					menuInfoHtml += ' tab-url="' + node['tabUrl'] + '"';
-				}
-				if (node['tabTitle'] != null && node['tabTitle'] != '') {
-					menuInfoHtml += ' tab-title="' + node['tabTitle'] + '"';
-				}
-				if (node['theValue'] != null && node['theValue'] != '') {
-					menuInfoHtml += ' the-value="' + node['theValue'] + '"';
-				}
-			}
-			menuInfoHtml += '>' + node['theValue'] + '</span>';
-			if (0 == node['leaf'].length) {
-				if (null == node['tabUrl'] || '' == node['tabUrl']) {
-					menuInfoHtml += '<img class="message-icon" src="../images/icon_exclamation_mark_16x16.png" title="该功能处于停用状态！">';
-				}
-			}
-			if (node['leaf'].length > 0) {
-				menuInfoHtml += '<img class="switch-icon" src="../images/icon_arrow_carrot_right_16x16.png">';
-				menuInfoHtml += '<ul style="display: none;">';
-				disposeLeaf(node['leaf']);
-				menuInfoHtml += '</ul>';
-			}
-			menuInfoHtml += '</li>';
-		}
+		disposeLeaf(menuInfoJsonArray);
 	}
-	jQuery('.div-main-left .node_root').html(menuInfoHtml);
-
-	jQuery('.div-main-left .click').click(function() {
-		var nextUl = jQuery(this).nextAll('ul');
-		var switchIcon = jQuery(this).nextAll('.switch-icon');
-		if (nextUl.length > 0) {
-			if (!jQuery(nextUl).is(':visible')) {
-				switchIcon.attr('src', '../images/icon_arrow_carrot_down_16x16.png');
-			} else {
-				switchIcon.attr('src', '../images/icon_arrow_carrot_right_16x16.png');
-			}
-			jQuery('.div-main-left .mask-layer').show();
-			nextUl.toggle('fast', function() {
+	jQuery('.function-container').html(funcCode);
+	jQuery('.function-container .func-outer').click(function() {
+		jQuery('.div-main-left .mask-layer').show();
+		var cache_ul = jQuery(this).next('ul');
+		if (cache_ul.length > 0) {
+			jQuery(this).find('.toggle').toggleClass(function() {
+				if (jQuery(this).hasClass('collapse')) {
+					jQuery(this).removeClass('collapse');
+					return 'expand';
+				} else {
+					jQuery(this).removeClass('expand');
+					return 'collapse';
+				}
+			});
+			cache_ul.slideToggle(256, function() {
 				jQuery('.div-main-left .mask-layer').hide();
 				jQuery('.div-main-left').getNiceScroll().resize();
 			});
 		} else {
-			var tabKey = jQuery(this).attr('tab-key');
-			var tabUrl = jQuery(this).attr('tab-url');
-			var tabTitle = jQuery(this).attr('tab-title');
-			var theValue = jQuery(this).attr('the-value');
-			if (tabUrl != undefined && tabUrl != null && tabUrl != '') {
-				jQuery('.div-main-left .mask-layer').show();
-				if (tabTitle != undefined && tabTitle != null && tabTitle != '') {
-					addTabPanel(tabKey, ___abbr(tabTitle, 10), tabUrl);
+			var tcRefer = tabContainer[jQuery(this).find('.func-name').attr('tab-index')];
+			var key = tcRefer['key'];// 选项卡键
+			var url = tcRefer['url'];// 选项卡链接
+			var title = tcRefer['title'];// 选项卡标题
+			var value = tcRefer['value'];// 菜单名称
+			if (url != null && url != '') {
+				userClickTab = true;
+				if (title != null && title != '') {
+					addTabPanel(key, ___abbr(title, 10), url);
 				} else {
-					addTabPanel(tabKey, ___abbr(theValue, 10), tabUrl);
+					addTabPanel(key, ___abbr(value, 10), url);
 				}
+				userClickTab = false;
 				setTimeout(function() {
 					jQuery('.div-main-left .mask-layer').hide();
 					jQuery('.div-main-left').getNiceScroll().resize();
-				}, 100);// 目的是减轻服务器压力，防止恶意攻击
+				}, 256);// 防止恶意点击
 			} else {
 				toastr.options = {
 				    'closeButton' : false,
@@ -180,21 +143,37 @@ jQuery(document).ready(function() {
 				    'hideMethod' : 'fadeOut'
 				};
 				toastr['error']('温馨提示', '该功能处于停用状态！');
-				return false;
+				setTimeout(function() {
+					jQuery('.div-main-left .mask-layer').hide();
+				}, 256);// 防止恶意点击
 			}
 		}
-	});
-
-	jQuery('img.switch-icon').click(function() {
-		jQuery(this).prev('.click').click();
 	});
 
 	var nodeCrud = jQuery('#node_crud');
 	nodeCrud.tabs({
 	    onSelect : function(title, index) {
 		    var tabKey = nodeCrud.tabs('getTab', index)[0].id.substring(tablKeyPrefix.length);
-		    jQuery('.div-main-left .click[tab-key!="' + tabKey + '"]').removeClass('this-menu-highlight');
-		    jQuery('.div-main-left .click[tab-key="' + tabKey + '"]').addClass('this-menu-highlight');
+		    jQuery('.div-main-left .function-container .func-inner.highlight').removeClass('highlight');
+		    for ( var key in tabContainer) {
+			    if (tabContainer[key]['key'] == tabKey) {
+				    var activated = jQuery('.div-main-left .function-container .func-name[tab-index="' + tabContainer[key]['index'] + '"]').parents('.func-inner');
+				    activated.addClass('highlight');
+				    var funcOuterRefer = activated.parents('ul').prev('.func-outer');
+				    if (funcOuterRefer != null && funcOuterRefer.length > 0) {
+					    for (var i = funcOuterRefer.length - 1; i >= 0; --i) {
+						    if (jQuery(funcOuterRefer[i]).next('ul').is(':hidden')) {
+							    jQuery(funcOuterRefer[i]).next('ul').show();
+							    jQuery(funcOuterRefer[i]).find('.toggle').removeClass('collapse').addClass('expand');
+						    }
+					    }
+				    }
+				    if (!userClickTab) {
+					    gotoAppropriatePosition();
+				    }
+				    break;
+			    }
+		    }
 	    },
 	    onBeforeClose : function(title, index) {
 		    if (______askOnCloseLabel && !confirm('确定要关闭选项卡（' + title + '）吗？')) {
@@ -215,7 +194,7 @@ jQuery(document).ready(function() {
 			    clearTimeout(timeout_ctrl);
 			    timeout_ctrl = setTimeout("tempfunction();", 0);
 		    } else {
-			    jQuery('.div-main-left .click.this-menu-highlight').removeClass('this-menu-highlight');
+			    jQuery('.div-main-left .function-container .func-inner.highlight').removeClass('highlight');
 			    nodeCrud.hide();
 			    jQuery('#node_welcome').show();
 			    tabPanelCtrl.allowClose = true;
@@ -234,6 +213,16 @@ jQuery(document).ready(function() {
 	setTimeout('requestServerInfoServlet()', 0);// 异步请求远程时钟
 });
 
+function gotoAppropriatePosition() {
+	if (jQuery('.div-main-left .function-container .func-inner.highlight').length > 0) {
+		jQuery('.div-main-left').getNiceScroll().resize();// 重新调整下拉框大小
+		var offsetContainer = jQuery('.div-main-left .function-container .func-outer:first').offset();
+		var offsetHighlight = jQuery('.div-main-left .function-container .func-inner.highlight').parents('.func-outer').offset();
+		jQuery('.div-main-left').getNiceScroll(0).doScrollLeft(offsetHighlight.left - offsetContainer.left, 0);
+		jQuery('.div-main-left').getNiceScroll(0).doScrollTop(offsetHighlight.top - offsetContainer.top, 0); // 定位到最佳位置
+	}
+}
+
 function selfAdaptionScreen() {
 	var mainWidth = jQuery('.div-main').width();
 	var mainHeight = jQuery('.div-main').height();
@@ -246,13 +235,11 @@ function selfAdaptionScreen() {
 	jQuery('body').getNiceScroll().resize();
 	jQuery('body').getNiceScroll(0).doScrollLeft(0, 0);
 	jQuery('body').getNiceScroll(0).doScrollTop(0, 0);
-	jQuery('.div-main-left').getNiceScroll().resize();
-	jQuery('.div-main-left').getNiceScroll(0).doScrollLeft(0, 0);
-	jQuery('.div-main-left').getNiceScroll(0).doScrollTop(0, 0);
+	gotoAppropriatePosition();
 }
 
 function requestServerInfoServlet() {
-	______requestRemoteClockBegin = new Date().getTime();// 設置請求遠程時鐘開始時間毫秒數
+	______requestRemoteClockBegin = new Date().getTime();// 设置请求远程时钟开始时间毫秒数
 	jQuery.ajax({
 	    type : 'POST',
 	    dataType : 'text',
@@ -263,7 +250,7 @@ function requestServerInfoServlet() {
 				    clearTimeout(timeout_serverInfo);
 				    if (new Date().getTime() - ______requestRemoteClockBegin > 1000 * 60) {
 					    jQuery('#remoteClock').html('更新中...');
-					    requestServerInfoServlet();// 為避免受CPU影響而造成誤差，故在一個周期之外再次發起請求。
+					    requestServerInfoServlet();// 为避免受CPU影响而造成误差，故在一个周期之外再次发起请求
 				    } else {
 					    ______remoteClock.setTime(time);
 					    jQuery('#remoteClock').html(______remoteClock.format());
@@ -271,13 +258,13 @@ function requestServerInfoServlet() {
 				    }
 			    };
 			    var delayed = new Date().getTime() - ______requestRemoteClockBegin;
-			    ______requestRemoteClockFunction(Number(result) + delayed);// 計入請求延誤時間
+			    ______requestRemoteClockFunction(Number(result) + delayed);// 计入请求延误时间
 		    } else {
-			    jQuery('#remoteClock').html('加載失敗！');
+			    jQuery('#remoteClock').html('加载失败！');
 		    }
 	    },
 	    error : function(err) {
-		    jQuery('#remoteClock').html('加載失敗！');
+		    jQuery('#remoteClock').html('加载失败！');
 	    }
 	});
 }
@@ -327,7 +314,7 @@ function addTabPanel(key, title, url) {
 			jQuery('#node_welcome').hide();
 			nodeCrud.show();
 		}
-		var content = "<iframe src='" + url + "' style='width: 100%; height: 100%; border: 0;' />";
+		var content = "<iframe src='" + url + "' style='width: 100%; height: 100%; border: 0;'></iframe>";// 注意引号的解析
 		var tabPanelIndex = gainTabPanelIndex(key);
 		if (tabPanelIndex > -1) {
 			nodeCrud.tabs('select', tabPanelIndex);

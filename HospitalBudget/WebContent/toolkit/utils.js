@@ -54,3 +54,17 @@ function ___byTagName(tagname) {
 function ___placeholderSimulate(element) {
 	;
 }
+
+// 展开selectpicker
+function ___selectpickerExpand(id) {
+	var select = ___byId(id);
+	if (select != null) {
+		var div = jQuery(select).next('div.bootstrap-select');
+		if (div != null && div.length > 0) {
+			var button = div.find('button.selectpicker[data-id="' + id + '"]');
+			if (button != null && button.length > 0) {
+				button.focus().click();
+			}
+		}
+	}
+}

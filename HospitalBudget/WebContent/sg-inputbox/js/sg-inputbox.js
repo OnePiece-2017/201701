@@ -147,7 +147,7 @@ function ______hidePanel() {
 }
 
 function ______resizeNiceScroll() {
-	______sgInputbox.cache['textarea'].getNiceScroll(0).resize();
+	______sgInputbox.cache['textarea'].getNiceScroll().resize();
 }
 
 function ______typingTracker() {
@@ -221,7 +221,7 @@ function ___sgInputbox(arg) {
 					______sgInputbox.cache['textarea'].val('');
 					______showPanel();
 					______sgInputbox.cache['textarea'].val(this.value);
-					______sgInputbox.cache['textarea'].getNiceScroll(0).resize();
+					______sgInputbox.cache['textarea'].getNiceScroll().resize();
 					______sgInputbox.cache['textarea'].getNiceScroll(0).doScrollTop(______sgInputbox.cache['textarea'][0].scrollHeight, 0);
 					______sgInputbox.handleCurrent = jQuery(this).attr('sg-inputbox-handle-index');
 					______sgInputbox.cache['withTotal'].html('/' + threshold);

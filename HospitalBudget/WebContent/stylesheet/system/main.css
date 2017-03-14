@@ -38,29 +38,67 @@ body {
 	white-space: nowrap;
 }
 
-.div-main-left .node_root {
+.div-main-left .function-container {
 	margin: 0;
 	padding: 0;
 }
 
-.div-main-left .function-icon {
-	width: 16px;
-	height: 16px;
-}
-
-.div-main-left .message-icon {
-	width: 16px;
-	height: 16px;
-}
-
-.div-main-left .switch-icon {
-	width: 16px;
-	height: 16px;
+.div-main-left .function-container .func-outer {
+	border: 1px dotted rgba(119, 133, 212, 0.37);
+	width: 326px;
+	height: 38px;
+	border-radius: 4px;
 	cursor: pointer;
 }
 
-.div-main-left .click {
-	cursor: pointer;
+.div-main-left .function-container .func-inner {
+	border: 1px solid #9db4e1;
+	width: 320px;
+	height: 32px;
+	border-radius: 4px;
+	margin-top: 2px;
+	margin-left: 2px;
+}
+
+.div-main-left .function-container .func-inner.highlight {
+	background: #41c299;
+}
+
+.div-main-left .function-container .func-inner span.func-logo {
+	width: 32px;
+	height: 32px;
+	background: url(../../images/icon_plain_folder_16x16.png) no-repeat center;
+	float: left;
+}
+
+.div-main-left .function-container .func-inner span.func-name {
+	max-width: 256px;
+	height: 32px;
+	line-height: 32px;
+	font-size: 18px;
+	overflow: hidden;
+	float: left;
+}
+
+.div-main-left .function-container .func-inner span.toggle {
+	width: 32px;
+	height: 32px;
+	float: left;
+}
+
+.div-main-left .function-container .func-inner span.toggle.expand {
+	background: url(../../images/icon_arrow_carrot_down_16x16.png) no-repeat center;
+}
+
+.div-main-left .function-container .func-inner span.toggle.collapse {
+	background: url(../../images/icon_arrow_carrot_right_16x16.png) no-repeat center;
+}
+
+.div-main-left .function-container .func-inner span.func-unopened {
+	width: 32px;
+	height: 32px;
+	background: url(../../images/icon_exclamation_mark_16x16.png) no-repeat center;
+	float: left;
 }
 
 .div-main-left .mask-layer {
@@ -68,21 +106,19 @@ body {
 	background: rgba(255, 255, 255, 0);
 	min-width: 192px;
 	min-height: 530px;
-	float: left;
 	display: none;
 }
 
-.node_leaf {
-	position: fixed;
-}
-
-.div-main-left .mask-layer img {
+.div-main-left .mask-layer span {
 	width: 128px;
 	height: 128px;
 	position: absolute;
 	left: 50%;
 	top: 20%;
 	margin: -84px 0 0 -64px;
+	background: url(../../images/ani/ajax.gif) no-repeat center;
+	background-size: 128px 128px;
+	opacity: 0.321;
 }
 
 .div-main-right {
