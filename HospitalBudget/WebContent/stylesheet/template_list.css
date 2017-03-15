@@ -42,15 +42,15 @@ body {
 	border-radius: 0 10px 0 0;
 }
 
-.g-data-list-table .record tr.odd td {
+.g-data-list-table .record tr.node-record.odd td {
 	background: #F7F7F7;
 }
 
-.g-data-list-table .record tr.even td {
+.g-data-list-table .record tr.node-record.even td {
 	background: #F5FFFA;
 }
 
-.g-data-list-table .record tr.hover td {
+.g-data-list-table .record tr.node-record:hover td {
 	background: #86CEF0;
 }
 
@@ -84,8 +84,7 @@ body {
 	text-decoration: none;
 }
 
-.pagination-model a:link,.pagination-model a:hover,.pagination-model a:focus,.pagination-model a:visited
-	{
+.pagination-model a:link,.pagination-model a:hover,.pagination-model a:focus,.pagination-model a:visited {
 	text-decoration: none;
 }
 
@@ -117,16 +116,27 @@ body {
 	cursor: pointer;
 }
 
-.body-mask-layer {
+.sg-mask-layer-wrapper {
 	position: fixed;
 	width: 100%;
 	height: 100%;
 	z-index: 614616185;
+	background: RGBA(0, 0, 0, 0.8);
 	display: none;
 }
 
-.body-mask-layer img {
-	margin: 10% 35%;
+.sg-mask-layer-wrapper .sg-mask-layer-contents {
+	position: absolute;
+	width: 128px;
+	height: 128px;
+	background-size: 128px 128px !important;
+	left: 40%;
+	top: 30%;
+	opacity: 0.32;
+}
+
+.sg-mask-layer-wrapper .sg-mask-layer-contents.is-loading {
+	background: url(../images/ani/ajax.gif) no-repeat center;
 }
 
 .g-data-list-table .empty-record {

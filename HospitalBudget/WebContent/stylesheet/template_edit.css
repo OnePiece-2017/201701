@@ -11,16 +11,27 @@ body {
 	text-align: right;
 }
 
-.body-mask-layer {
+.sg-mask-layer-wrapper {
 	position: fixed;
 	width: 100%;
 	height: 100%;
 	z-index: 614616185;
+	background: RGBA(0, 0, 0, 0.8);
 	display: none;
 }
 
-.body-mask-layer img {
-	margin: 10% 35%;
+.sg-mask-layer-wrapper .sg-mask-layer-contents {
+	position: absolute;
+	width: 128px;
+	height: 128px;
+	background-size: 128px 128px !important;
+	left: 40%;
+	top: 30%;
+	opacity: 0.32;
+}
+
+.sg-mask-layer-wrapper .sg-mask-layer-contents.is-loading {
+	background: url(../images/ani/ajax.gif) no-repeat center;
 }
 
 textarea {

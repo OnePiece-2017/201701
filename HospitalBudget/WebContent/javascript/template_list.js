@@ -1,13 +1,17 @@
+var ______sgTemplate = {
+    wired : false,
+    cache : {}
+};
+
 jQuery(document).ready(function() {
+	if (!______sgTemplate.wired) {
+		// 1. 创建节点
+		jQuery('body').prepend('<div class="sg-mask-layer-wrapper"><div class="sg-mask-layer-contents"></div></div>');
+		// 2. 标记状态
+		______sgTemplate.wired = true;
+	}
+
 	___trash = 'list';
-
-	jQuery('.g-data-list-table .node-record').mouseover(function() {
-		jQuery(this).addClass('hover');
-	});
-
-	jQuery('.g-data-list-table .node-record').mouseout(function() {
-		jQuery(this).removeClass('hover');
-	});
 });
 
 // 页面跳转
@@ -71,11 +75,13 @@ function trimValObj(object) {
 }
 
 function showLayer() {
-	jQuery('.body-mask-layer').show();
+	jQuery('.sg-mask-layer-wrapper .sg-mask-layer-contents').addClass('is-loading');
+	jQuery('.sg-mask-layer-wrapper').show();
 }
 
 function hideLayer() {
-	jQuery('.body-mask-layer').hide();
+	jQuery('.sg-mask-layer-wrapper .sg-mask-layer-contents').removeClass('is-loading');
+	jQuery('.sg-mask-layer-wrapper').hide();
 }
 
 function wrapQueryResults() {
