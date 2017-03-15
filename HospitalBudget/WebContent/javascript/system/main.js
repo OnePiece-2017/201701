@@ -89,7 +89,7 @@ jQuery(document).ready(function() {
 	}
 	jQuery('.function-container').html(funcCode);
 	jQuery('.function-container .func-outer').click(function() {
-		jQuery('.div-main-left .mask-layer').show();
+		showMenuMaskLayer();
 		var cache_ul = jQuery(this).next('ul');
 		if (cache_ul.length > 0) {
 			jQuery(this).find('.toggle').toggleClass(function() {
@@ -102,7 +102,7 @@ jQuery(document).ready(function() {
 				}
 			});
 			cache_ul.slideToggle(256, function() {
-				jQuery('.div-main-left .mask-layer').hide();
+				hideMenuMaskLayer();
 				jQuery('.div-main-left').getNiceScroll().resize();
 			});
 		} else {
@@ -120,7 +120,7 @@ jQuery(document).ready(function() {
 				}
 				userClickTab = false;
 				setTimeout(function() {
-					jQuery('.div-main-left .mask-layer').hide();
+					hideMenuMaskLayer();
 					jQuery('.div-main-left').getNiceScroll().resize();
 				}, 256);// 防止恶意点击
 			} else {
@@ -144,7 +144,7 @@ jQuery(document).ready(function() {
 				};
 				toastr['error']('温馨提示', '该功能处于停用状态！');
 				setTimeout(function() {
-					jQuery('.div-main-left .mask-layer').hide();
+					hideMenuMaskLayer();
 				}, 256);// 防止恶意点击
 			}
 		}
@@ -236,7 +236,7 @@ function selfAdaptionScreen() {
 	var subtrahendWidth = mainHeight > 600 ? 192 : 202;
 	var subtrahendHeight = mainWidth > 800 ? 60 : 70;
 	jQuery('.div-main-left').css('height', mainHeight - subtrahendHeight);
-	jQuery('.div-main-left .mask-layer').css('height', mainHeight - subtrahendHeight);
+	jQuery('.div-main-left .menu-mask-layer-wrapper').css('height', mainHeight - subtrahendHeight);
 	jQuery('.div-main-right').css('width', mainWidth - subtrahendWidth);
 	jQuery('.div-main-right').css('height', mainHeight - subtrahendHeight);
 	jQuery('body').getNiceScroll().resize();
@@ -365,4 +365,14 @@ function gainTabPanelIndex(key) {
 function jeasyuiTabsLoadedCallback(key) {
 	jQuery('#' + key).removeClass('jeasyui-tabs-loading-wrapper');
 	jQuery('#' + key + ' .jeasyui-tabs-loading-contents').remove();
+}
+
+function showMenuMaskLayer() {
+	jQuery('.menu-mask-layer-wrapper .menu-mask-layer-contents').addClass('is-loading');
+	jQuery('.menu-mask-layer-wrapper').show();
+}
+
+function hideMenuMaskLayer() {
+	jQuery('.menu-mask-layer-wrapper .menu-mask-layer-contents').removeClass('is-loading');
+	jQuery('.menu-mask-layer-wrapper').hide();
 }

@@ -100,7 +100,7 @@ body {
 	float: left;
 }
 
-.div-main-left .mask-layer {
+.div-main-left .menu-mask-layer-wrapper {
 	position: fixed;
 	background: rgba(255, 255, 255, 0);
 	min-width: 192px;
@@ -108,16 +108,19 @@ body {
 	display: none;
 }
 
-.div-main-left .mask-layer span {
+.div-main-left .menu-mask-layer-wrapper .menu-mask-layer-contents {
 	width: 128px;
 	height: 128px;
 	position: absolute;
 	left: 50%;
 	top: 20%;
 	margin: -84px 0 0 -64px;
-	background: url(../../images/ani/ajax.gif) no-repeat center;
-	background-size: 128px 128px;
+	background-size: 128px 128px !important;
 	opacity: 0.321;
+}
+
+.div-main-left .menu-mask-layer-wrapper .menu-mask-layer-contents.is-loading {
+	background: url(../../images/ani/ajax.gif) no-repeat center;
 }
 
 .div-main-right {
