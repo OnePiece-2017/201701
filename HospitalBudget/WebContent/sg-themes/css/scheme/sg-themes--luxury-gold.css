@@ -5,7 +5,7 @@
 }
 
 .sg-themes--template-list-body {
-	background: #d7ca99;
+	background: #c6a045;
 }
 
 .sg-themes--template-view-body {
@@ -21,51 +21,32 @@
 }
 
 .sg-themes--home-banner {
-	background: #d7ca99 !important;
+	background: #c6a045 !important;
 }
 
 .sg-themes--home-banner-user-info {
-	color: black !important;
+	color: #000 !important;
 }
 
 .sg-themes--home-banner-remote-clock {
-	color: black !important;
+	color: #000 !important;
 }
 
 .sg-themes--home-banner-logout-button {
-	color: black !important;
+	color: #000 !important;
 }
 
 .sg-themes--home-menu {
-	background: #d7ca99 !important;
-}
-
-.sg-themes--home-menu .switch-icon {
-	background: goldenrod;
-	border-radius: 8px;
-}
-
-.sg-themes--home-menu span.click {
-	color: black !important;
-}
-
-.sg-themes--home-menu span.this-menu-highlight {
-	background: goldenrod !important;
-	font-weight: unset !important;
-	font-style: italic;
-}
-
-.sg-themes--home-data-exhibition-area {
-	
+	background: #c6a045 !important;
 }
 
 .sg-themes--home-data-exhibition-area .tabs-header {
-	background: #d7ca99;
+	background: #c6a045;
 	border-color: black;
 }
 
 .sg-themes--home-data-exhibition-area .tabs-panels {
-	border-color: black;
+	
 }
 
 .sg-themes--home-data-exhibition-area .tabs-header .tabs-wrap .tabs li a.tabs-inner {
@@ -81,39 +62,42 @@
 }
 
 .g-data-list-condition {
-	background: #d7ca99;
+	background: #c6a045;
 }
 
 .g-data-list-condition .keyword {
-	background: gold !important;
+	background: #c6a045 !important;
 	color: black !important;
 }
 
 .g-data-list-table {
-	background: #d7ca99;
-}
-
-.g-data-list-table table.record {
-	background: #d7ca99;
+	background: #c6a045;
 }
 
 .g-data-list-table table.record tbody tr:first-child th {
-	background: #dbba68;
+	background: #efc258;
 	color: #000;
 	font-weight: bold;
 }
 
 .g-data-list-table table.record tbody tr.node-record td {
-	background: #c29422;
 	color: black;
 }
 
+.g-data-list-table table.record tbody tr.node-record.odd td {
+	background: #d8d859;
+}
+
+.g-data-list-table table.record tbody tr.node-record.even td {
+	background: #c6c654;
+}
+
 .g-data-list-table table.record tbody tr.node-record:hover td {
-	background: gold !important;
+	background: #a2cb5e !important;
 }
 
 .g-data-list-table table.record tbody tr.node-record td a {
-	color: blue !important;
+	color: black;
 }
 
 .g-data-list-table table.record tbody tr.node-record td img {
