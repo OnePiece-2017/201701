@@ -226,7 +226,7 @@ function gotoAppropriatePosition() {
 		var offsetContainer = jQuery('.div-main-left .function-container .func-outer:first').offset();
 		var offsetHighlight = jQuery('.div-main-left .function-container .func-inner.highlight').parents('.func-outer').offset();
 		jQuery('.div-main-left').getNiceScroll(0).doScrollLeft(offsetHighlight.left - offsetContainer.left, 0);
-		jQuery('.div-main-left').getNiceScroll(0).doScrollTop(offsetHighlight.top - offsetContainer.top, 0); // 定位到最佳位置
+		jQuery('.div-main-left').getNiceScroll(0).doScrollTop(offsetHighlight.top - offsetContainer.top - 40, 0); // 定位到最佳位置
 	}
 }
 
