@@ -153,7 +153,8 @@ jQuery(document).ready(function() {
 	var nodeCrud = jQuery('#node_crud');
 	nodeCrud.tabs({
 	    onSelect : function(title, index) {
-		    var tabKey = nodeCrud.tabs('getTab', index)[0].id.substring(tablKeyPrefix.length);
+		    var tabId = nodeCrud.tabs('getTab', index)[0].id;
+		    var tabKey = tabId.substring(tablKeyPrefix.length);
 		    jQuery('.div-main-left .function-container .func-inner.highlight').removeClass('highlight');
 		    for ( var key in tabContainer) {
 			    if (tabContainer[key]['key'] == tabKey) {
@@ -174,6 +175,12 @@ jQuery(document).ready(function() {
 				    break;
 			    }
 		    }
+	    },
+	    onUpdate : function(title, index) {
+		    var tabId = nodeCrud.tabs('getTab', index)[0].id;
+		    var tabRef = jQuery('#' + tabId);
+		    tabRef.addClass('jeasyui-tabs-loading-wrapper');
+		    tabRef.prepend('<div class="jeasyui-tabs-loading-contents"></div>');
 	    },
 	    onBeforeClose : function(title, index) {
 		    if (______askOnCloseLabel && !confirm('确定要关闭选项卡（' + title + '）吗？')) {
@@ -314,8 +321,8 @@ function addTabPanel(key, title, url) {
 			jQuery('#node_welcome').hide();
 			nodeCrud.show();
 		}
-		___log(___wrapStr(key, title, url));
-		var content = "<iframe src='" + url + "' style='width: 100%; height: 100%; border: 0;'></iframe>";// 注意引号的解析
+		___log(___wrapStr(key, title, url));// 打印URL
+		var content = "<iframe name='jeasyuiTabsLoadedCallback:" + key + "' src='" + url + "' style='width: 100%; height: 100%; border: 0;'></iframe>";// 注意引号的解析
 		var tabPanelIndex = gainTabPanelIndex(key);
 		if (tabPanelIndex > -1) {
 			nodeCrud.tabs('select', tabPanelIndex);
@@ -353,4 +360,9 @@ function gainTabPanelIndex(key) {
 		}
 	}
 	return tabPanelIndex;
+}
+
+function jeasyuiTabsLoadedCallback(key) {
+	jQuery('#' + key).removeClass('jeasyui-tabs-loading-wrapper');
+	jQuery('#' + key + ' .jeasyui-tabs-loading-contents').remove();
 }
