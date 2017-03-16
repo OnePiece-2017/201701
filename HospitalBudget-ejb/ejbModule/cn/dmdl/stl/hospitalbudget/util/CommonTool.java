@@ -1,6 +1,7 @@
 package cn.dmdl.stl.hospitalbudget.util;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import javax.ejb.Remove;
@@ -50,7 +51,6 @@ public class CommonTool implements CommonToolLocal {
 	public void destroy() {
 	}
 
-	/** 缩写 */
 	public String abbr(Object source, int length) {
 		String abbreviation = "";
 		if (source != null && !"".equals(source.toString())) {
@@ -65,7 +65,6 @@ public class CommonTool implements CommonToolLocal {
 		return abbreviation;
 	}
 
-	/** 根据父id获取字典列表 */
 	public List<Dictionary> getDictionaryByPid(int pid) {
 		List<Dictionary> dictionaryList = new ArrayList<Dictionary>();
 		if (ConfigureCache.dictionaryList != null) {
@@ -78,7 +77,6 @@ public class CommonTool implements CommonToolLocal {
 		return dictionaryList;
 	}
 
-	/** 根据ids获取字典值 */
 	public String getDictionaryValueByIds(String ids) {
 		StringBuffer result = new StringBuffer();
 		if (ids != null && !"".equals(ids)) {
@@ -96,19 +94,79 @@ public class CommonTool implements CommonToolLocal {
 		return result.toString();
 	}
 
-	/** generate http://richfaces.org/a4j a:repeat value */
 	public Object[] genA4jRepeatValue(int length) {
 		return new Object[length > 0 ? length : 0];
 	}
 
-	/** sql查询 */
 	public List<?> sqlQuery(String sql) {
 		return entityManager.createNativeQuery(sql).getResultList();
 	}
 
-	/** hql查询 */
 	public List<?> hqlQuery(String hql) {
 		return entityManager.createQuery(hql).getResultList();
+	}
+
+	public boolean insertIntermediate(String table, String[] columns, Object[] values) {
+		List<Object[]> valuesList = new ArrayList<Object[]>();
+		valuesList.add(values);
+		return insertIntermediateBatch(table, columns, valuesList);
+	}
+
+	public boolean insertIntermediateBatch(String table, String[] columns, List<Object[]> valuesList) {
+		boolean result = false;
+		try {
+			if (valuesList != null && valuesList.size() > 0) {
+				for (Object[] values : valuesList) {
+					if (values != null && values.length > 0) {
+						entityManager.createNativeQuery("INSERT INTO " + table + " (" + Arrays.toString(columns).replace("[", "").replace("]", "") + ") VALUES (" + Assit.surroundContentsAgile("'", "'", true, values) + ")").executeUpdate();
+					}
+				}
+			}
+			result = true;
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return result;
+	}
+
+	public boolean deleteIntermediate(String table, String where) {
+		boolean result = false;
+		try {
+			entityManager.createNativeQuery("DELETE FROM " + table + " WHERE " + where).executeUpdate();
+			result = true;
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return result;
+	}
+
+	@SuppressWarnings("unchecked")
+	public List<Object[]> selectIntermediate(String table, String[] columns, String where) {
+		List<Object[]> result = null;
+		try {
+			result = entityManager.createNativeQuery("SELECT " + Arrays.toString(columns).replace("[", "").replace("]", "") + " FROM " + table + " WHERE " + where).getResultList();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return result;
+	}
+
+	public String selectIntermediateAsIds(String table, String column, String where) {
+		return selectIntermediateAsIds(table, column, where, ",");
+	}
+
+	public String selectIntermediateAsIds(String table, String column, String where, String separator) {
+		StringBuffer result = new StringBuffer();
+		List<Object[]> list = selectIntermediate(table, new String[] { column }, where);
+		if (list != null && list.size() > 0) {
+			for (int i = 0, size = list.size(); i < size; i++) {
+				result.append(list.get(i));
+				if (i < size - 1) {
+					result.append(separator);
+				}
+			}
+		}
+		return result.toString();
 	}
 
 }

@@ -123,7 +123,7 @@ function ___recursionObject() {
 	// 目標：遞歸一個對象，如果該對象中包含對象，則繼續遞歸該對象，或是調用其方法，或是輸出其屬性等等。。。
 }
 
-function ___wrapStr() {
+function ___surroundContents() {
 	var result = '';
 	for (var i = 0; i < arguments.length; i++) {
 		result += '[' + arguments[i] + ']';

@@ -1,13 +1,9 @@
 package cn.dmdl.stl.hospitalbudget.util;
 
-import java.io.BufferedOutputStream;
-import java.io.File;
-import java.io.FileOutputStream;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.Date;
 
 import org.apache.log4j.Logger;
 
@@ -91,20 +87,43 @@ public class Assit {
 	}
 
 	/**
-	 * 包裹字符串
+	 * 包围内容
 	 * 
 	 * @param contents
 	 *            内容，数组的每个元素都将被toString(),null则原样输出
-	 * @return 包裹后的字符串
+	 * @return 被包围过的内容
 	 */
-	public static String wrapStr(Object... contents) {
+	public static String surroundContents(Object... contents) {
+		return surroundContentsAgile("[", "]", false, contents);
+	}
+
+	/**
+	 * 包围内容（灵活）
+	 * 
+	 * @param leftShell
+	 *            左侧外壳
+	 * @param rightShell
+	 *            右侧外壳
+	 * @param reserveNull
+	 *            是否保留null值
+	 * @param contents
+	 *            预处理内容
+	 * @return 被包围过的内容
+	 */
+	public static String surroundContentsAgile(String leftShell, String rightShell, boolean reserveNull, Object... contents) {
 		StringBuffer result = new StringBuffer();
-		if (contents != null && contents.length > 0)
+		if (contents != null && contents.length > 0) {
 			for (int i = 0; i < contents.length; i++) {
-				result.append("[").append(contents[i]).append("]");
-				if (i < contents.length - 1)
+				if (!reserveNull || contents[i] != null) {
+					result.append(leftShell).append(contents[i]).append(rightShell);
+				} else if (reserveNull) {
+					result.append(contents[i]);
+				}
+				if (i < contents.length - 1) {
 					result.append(",");
+				}
 			}
+		}
 		return result.toString();
 	}
 
@@ -141,72 +160,6 @@ public class Assit {
 	/** 补齐字符串（空缺0） */
 	public static String fillZero(Object source, short width) {
 		return fillChar(source, width, '0');
-	}
-
-	/**
-	 * 创建指定字节数的文件，不同于org.apache.commons.io.FileUtils.touch(File)
-	 * 
-	 * <pre>
-	 * 10G大约需要50s
-	 * 
-	 * <pre>
-	 * String pathname = &quot;D:/.temp/newFile/test.txt&quot;;
-	 * new File(pathname).delete();
-	 * newFile(pathname, 1024L * 1024 * 1024 * 10);
-	 */
-	public static void newFile(String pathname, long length) {
-		System.out.println("准备创建大小为" + 0 + "GB?（" + length + "字节）的文件！");
-		long maxLength = 1024L * 1024 * 1024 * 10;
-		Date beginDate = new Date();
-		System.out.println("开始时间：" + DateTimeHelper.dateToStr(beginDate, DateTimeHelper.PATTERN_DATE_TIME_FULL));
-		String result = null;
-		if (pathname != null && !"".equals(pathname))
-			if (length > -1 && length <= maxLength)
-				try {
-					File file = new File(pathname);
-					if (file.exists())
-						result = file.isFile() ? "文件已存在！" : "文件夹已存在！";
-					else if (!file.createNewFile())
-						result = "创建文件失败！";
-					else {
-						FileOutputStream fileOutputStream = new FileOutputStream(file);
-						BufferedOutputStream bufferedOutputStream = new BufferedOutputStream(fileOutputStream);
-						byte[][] bufferGroup = new byte[20][];
-						for (int i = bufferGroup.length - 1; i > -1; i--)
-							bufferGroup[i] = new byte[1024 * (i + 1)];
-						long writed = 0, remaining = length;
-						int bufferIndex = bufferGroup.length - 1;
-						while (remaining > 0) {
-							for (int i = bufferIndex; i > -1; i--)
-								if (remaining >= bufferGroup[i].length) {
-									bufferIndex = i;
-									break;
-								} else if (0 == i) {
-									bufferIndex = 0;
-									bufferGroup[0] = new byte[(int) remaining];
-								}
-							bufferedOutputStream.write(bufferGroup[bufferIndex]);
-							writed += bufferGroup[bufferIndex].length;
-							remaining = length - writed;
-						}
-						bufferedOutputStream.close();
-						fileOutputStream.close();
-					}
-				} catch (Exception e) {
-					result = e.getMessage();
-					e.printStackTrace();
-				}
-			else
-				result = "字节数为0到" + maxLength + "";
-		else
-			result = "无效的文件路径！";
-		Date endDate = new Date();
-		System.out.println("结束时间：" + DateTimeHelper.dateToStr(endDate, DateTimeHelper.PATTERN_DATE_TIME_FULL));
-		System.out.println(result != null ? result : "恭喜你！创建文件成功！");
-		System.out.println("耗时：" + (endDate.getTime() - beginDate.getTime()) + "毫秒");
-		File file = new File(pathname);
-		if (null == result && (!file.exists() || !file.isFile() || file.length() != length))
-			System.out.println("啊哦！文件异常！");
 	}
 
 	public static String explainTime(long milliseconds) {
@@ -259,18 +212,6 @@ public class Assit {
 			total += temp;
 		}
 		return total;
-	}
-
-	public static void main(String[] args) {
-		String pathname = "D:/.trash/256M.txt";
-		new File(pathname).delete();
-		newFile(pathname, 1024L * 1024 * 256);
-
-		System.out.println(generateMilliseconds(30, 23, 59, 59, 999));
-		System.out.println(explainTime(generateMilliseconds(30, 23, 59, 59, 999)));
-
-		System.out.println(generateByte(0, 1023, 1023, 1023, 1023, 1023, 1023));
-		System.out.println(explainByte(generateByte(0, 1023, 1023, 1023, 1023, 1023, 1023)));
 	}
 
 }

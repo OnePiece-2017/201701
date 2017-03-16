@@ -430,7 +430,7 @@
 					var dataIndex = jQuery(this).parents('tr').attr('data-index');
 					var subId = jQuery(this).parents('tr').attr('sub-id');
 					subId = undefined != subId ? subId : null;
-					var key = ___wrapStr(candidateProject[dataIndex]['departmentId'], Number(jQuery('#budgetYear').val()) - 1, candidateProject[dataIndex]['projectId'], subId);
+					var key = ___surroundContents(candidateProject[dataIndex]['departmentId'], Number(jQuery('#budgetYear').val()) - 1, candidateProject[dataIndex]['projectId'], subId);
 					var value = jQuery(this).val();
 					var lastYearAmount = yearOnYearData[key];
 					if (!___isNumber(value) || null == yearOnYearData[key]) {

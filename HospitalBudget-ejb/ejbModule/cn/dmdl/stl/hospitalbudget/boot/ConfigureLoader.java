@@ -23,7 +23,6 @@ import org.jboss.seam.annotations.Scope;
 import org.jboss.seam.annotations.Startup;
 
 import cn.dmdl.stl.hospitalbudget.admin.entity.Dictionary;
-import cn.dmdl.stl.hospitalbudget.util.Assit;
 import cn.dmdl.stl.hospitalbudget.util.DataSourceManager;
 import cn.dmdl.stl.hospitalbudget.util.MD5;
 
@@ -40,7 +39,6 @@ public class ConfigureLoader {
 
 	@Create
 	public void init() {
-		logger.info("init");
 		initKeyValuePairsMap();
 		initMessageInfoMap();
 		initSystemSettingsMap();
@@ -51,7 +49,6 @@ public class ConfigureLoader {
 
 	/** 初始化键-值对集合 */
 	private void initKeyValuePairsMap() {
-		logger.info("initKeyValuePairsMap");
 		if (ConfigureCache.keyValuePairsMap != null) {
 			ConfigureCache.keyValuePairsMap.clear();
 		} else {
@@ -59,9 +56,7 @@ public class ConfigureLoader {
 		}
 		try {
 			String path = getClass().getResource(".").getPath();
-			logger.info("path-->" + path);
 			String pathname = path + "../resources/" + "key_value_pairs.xml";
-			logger.info("pathname-->" + pathname);
 			File xmlfile = new File(pathname);
 			SAXReader reader = new SAXReader();
 			Document document = reader.read(xmlfile);
@@ -72,7 +67,6 @@ public class ConfigureLoader {
 					Element leafElement = (Element) leaf;
 					if ("true".equals(leafElement.attribute("enabled").getText()) && leafElement.attribute("for").getText().equals(ConfigureCache.getProjectValue(leafElement.attribute("key").getText()))) {
 						ConfigureCache.keyValuePairsMap.put(leafElement.attribute("key").getText(), leafElement.element("value").getText());
-						logger.info(Assit.wrapStr(leafElement.attribute("key").getText(), leafElement.element("value").getText()));
 					}
 				}
 			}
@@ -83,7 +77,6 @@ public class ConfigureLoader {
 
 	/** 初始化消息集合 */
 	public static void initMessageInfoMap() {
-		logger.info("initMessageInfoMap");
 		if (ConfigureCache.messageInfoMap != null) {
 			ConfigureCache.messageInfoMap.clear();
 		} else {
@@ -97,7 +90,6 @@ public class ConfigureLoader {
 			resultSet = preparedStatement.executeQuery();
 			while (resultSet.next()) {
 				ConfigureCache.messageInfoMap.put(resultSet.getString("message_name"), resultSet.getString("message_value"));
-				logger.info(Assit.wrapStr(resultSet.getString("message_name"), resultSet.getString("message_value")));
 			}
 		} catch (SQLException e) {
 			logger.error("initMessageInfoMap", e);
@@ -108,7 +100,6 @@ public class ConfigureLoader {
 
 	/** 初始化系统设置集合 */
 	public static void initSystemSettingsMap() {
-		logger.info("initSystemSettingsMap");
 		if (ConfigureCache.systemSettingsMap != null) {
 			ConfigureCache.systemSettingsMap.clear();
 		} else {
@@ -122,7 +113,6 @@ public class ConfigureLoader {
 			resultSet = preparedStatement.executeQuery();
 			while (resultSet.next()) {
 				ConfigureCache.systemSettingsMap.put(resultSet.getString("the_key"), resultSet.getString("the_value"));
-				logger.info(Assit.wrapStr(resultSet.getString("the_key"), resultSet.getString("the_value")));
 			}
 		} catch (SQLException e) {
 			logger.error("initSystemSettingsMap", e);
@@ -133,7 +123,6 @@ public class ConfigureLoader {
 
 	/** 初始化字典集合 */
 	public static void initDictionary() {
-		logger.info("initDictionary");
 		if (ConfigureCache.dictionaryMap != null) {
 			ConfigureCache.dictionaryMap.clear();
 		} else {
@@ -172,7 +161,6 @@ public class ConfigureLoader {
 
 	/** 初始化用户id集合 */
 	private void initUserInfoIdMD5Map() {
-		logger.info("initUserInfoIdMD5Map");
 		if (ConfigureCache.userInfoIdMD5Map != null) {
 			ConfigureCache.userInfoIdMD5Map.clear();
 		} else {
@@ -186,7 +174,6 @@ public class ConfigureLoader {
 			resultSet = preparedStatement.executeQuery();
 			while (resultSet.next()) {
 				ConfigureCache.userInfoIdMD5Map.put(MD5.getMD5Alpha(resultSet.getInt(1)), resultSet.getInt(1));
-				logger.info(Assit.wrapStr(MD5.getMD5Alpha(resultSet.getInt(1)), resultSet.getInt(1)));
 			}
 		} catch (SQLException e) {
 			logger.error("initUserInfoIdMD5Map", e);
@@ -197,7 +184,6 @@ public class ConfigureLoader {
 
 	/** 初始化版本集合 */
 	private void initVersionMap() {
-		logger.info("initVersionMap");
 		if (ConfigureCache.versionMap != null) {
 			ConfigureCache.versionMap.clear();
 		} else {
@@ -207,9 +193,6 @@ public class ConfigureLoader {
 		ConfigureCache.versionMap.put(1, "ultimate");
 		ConfigureCache.versionMap.put(2, "professional");
 		ConfigureCache.versionMap.put(3, "trial");
-		logger.info(Assit.wrapStr(1, "ultimate"));
-		logger.info(Assit.wrapStr(2, "professional"));
-		logger.info(Assit.wrapStr(3, "trial"));
 	}
 
 }

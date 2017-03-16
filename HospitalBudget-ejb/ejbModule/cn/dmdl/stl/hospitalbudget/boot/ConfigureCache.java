@@ -52,7 +52,7 @@ public class ConfigureCache {
 
 		String path = getClass().getResource(".").getPath();
 		projectName = path.substring(1 + "-ear.ear".length() + path.lastIndexOf("-ear.ear"), path.lastIndexOf("-ejb.jar"));
-		logger.info(Assit.wrapStr("Seam Web Project - Project name", projectName));
+		logger.info(Assit.surroundContents("Seam Web Project - Project name", projectName));
 	}
 
 	/** 获取项目名称 */

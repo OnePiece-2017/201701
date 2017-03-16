@@ -17,7 +17,6 @@ import org.quartz.SchedulerFactory;
 import org.quartz.impl.StdSchedulerFactory;
 
 import cn.dmdl.stl.hospitalbudget.boot.ConfigureCache;
-import cn.dmdl.stl.hospitalbudget.util.Assit;
 
 /**
  * Application Lifecycle Listener implementation class ScheduleJobHandlerListener
@@ -33,19 +32,15 @@ public class ScheduleJobHandlerListener implements ServletContextListener {
 	 * Default constructor.
 	 */
 	public ScheduleJobHandlerListener() {
-		logger.info("ScheduleJobHandlerListener");
 	}
 
 	/**
 	 * @see ServletContextListener#contextInitialized(ServletContextEvent)
 	 */
 	public void contextInitialized(ServletContextEvent arg0) {
-		logger.info("contextInitialized");
 		try {
 			String path = getClass().getResource(".").getPath();
-			logger.info("path\t-->\t" + path);
 			String pathname = path + "../resources/" + "schedule_job.xml";
-			logger.info("pathname\t-->\t" + pathname);
 			File xmlfile = new File(pathname);
 			SAXReader reader = new SAXReader();
 			scheduler = schedulerFactory.getScheduler();
@@ -61,7 +56,6 @@ public class ScheduleJobHandlerListener implements ServletContextListener {
 						Element cronTriggerElement = leafElement.element("cron_trigger");
 						CronTrigger cronTrigger = new CronTrigger(cronTriggerElement.element("name").getText(), cronTriggerElement.element("group").getText(), cronTriggerElement.element("cron_expression").getText());
 						scheduler.scheduleJob(jobDetail, cronTrigger);
-						logger.info("scheduleJob-->" + Assit.joinToStr("", "JobDetail", Assit.wrapStr(jobDetail.getGroup()), Assit.wrapStr(jobDetail.getName()), Assit.wrapStr(jobDetail.getJobClass().getName()), "\tCronTrigger", Assit.wrapStr(cronTrigger.getGroup()), Assit.wrapStr(cronTrigger.getName()), Assit.wrapStr(cronTrigger.getCronExpression())));
 					}
 				}
 			}
@@ -75,7 +69,6 @@ public class ScheduleJobHandlerListener implements ServletContextListener {
 	 * @see ServletContextListener#contextDestroyed(ServletContextEvent)
 	 */
 	public void contextDestroyed(ServletContextEvent arg0) {
-		logger.info("contextDestroyed");
 	}
 
 }

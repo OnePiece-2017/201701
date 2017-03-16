@@ -27,6 +27,7 @@ import cn.dmdl.stl.hospitalbudget.admin.entity.LoginInfo;
 import cn.dmdl.stl.hospitalbudget.admin.entity.MenuInfo;
 import cn.dmdl.stl.hospitalbudget.admin.entity.UserInfo;
 import cn.dmdl.stl.hospitalbudget.boot.ConfigureCache;
+import cn.dmdl.stl.hospitalbudget.util.CommonToolLocal;
 import cn.dmdl.stl.hospitalbudget.util.GlobalConstant;
 import cn.dmdl.stl.hospitalbudget.util.MD5;
 import cn.dmdl.stl.hospitalbudget.util.SessionToken;
@@ -52,6 +53,9 @@ public class Authenticator implements AuthenticatorLocal {
 
 	@In
 	protected FacesMessages facesMessages;
+
+	@In(create = true)
+	private CommonToolLocal commonTool;
 
 	@SuppressWarnings("unchecked")
 	public boolean authenticate() {
@@ -184,19 +188,13 @@ public class Authenticator implements AuthenticatorLocal {
 		}
 	}
 
-	@SuppressWarnings("unchecked")
 	public String login() {
 		String login = identity.login();
 		if (login != null) {
 			// 功能菜单
 			sessionToken.setMenuInfoJsonArray(pullMenuInfo());
 			// 快捷启动
-			String quickStartConfig = null;
-			List<Object> budgetPersonCompilerIdsList = entityManager.createNativeQuery("select IFNULL(GROUP_CONCAT(menu_info_id), '') as result from quick_start where user_info_id = " + sessionToken.getUserInfoId()).getResultList();
-			if (budgetPersonCompilerIdsList != null && budgetPersonCompilerIdsList.size() > 0) {
-				quickStartConfig = budgetPersonCompilerIdsList.get(0).toString();
-			}
-			sessionToken.setQuickStartConfig(quickStartConfig);
+			sessionToken.setQuickStartConfig(commonTool.selectIntermediateAsIds("quick_start", "menu_info_id", "user_info_id = " + sessionToken.getUserInfoId()));
 			// 登录统计
 			LoginInfo loginInfo = new LoginInfo();
 			loginInfo.setUserInfoId(sessionToken.getUserInfoId());

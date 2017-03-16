@@ -240,7 +240,7 @@ public class AnnualRevenueBudgetCompileHome extends CriterionEntityHome<Object> 
 		List<Object[]> dataList = getEntityManager().createNativeQuery(dataSql.toString()).getResultList();
 		if (dataList != null && dataList.size() > 0) {
 			for (Object[] data : dataList) {
-				String key = Assit.wrapStr(data[0], data[1], data[2], data[3]);
+				String key = Assit.surroundContents(data[0], data[1], data[2], data[3]);
 				if (result.get(key) != null) {
 					result.element(key, (Double) result.get(key) + (Double) data[4]);
 				} else {

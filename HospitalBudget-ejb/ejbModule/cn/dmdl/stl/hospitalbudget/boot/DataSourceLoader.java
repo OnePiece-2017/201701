@@ -19,8 +19,6 @@ import org.jboss.seam.annotations.Name;
 import org.jboss.seam.annotations.Scope;
 import org.jboss.seam.annotations.Startup;
 
-import cn.dmdl.stl.hospitalbudget.util.Assit;
-
 /**
  * 数据源加载器
  */
@@ -34,7 +32,6 @@ public class DataSourceLoader {
 
 	@Create
 	public void init() {
-		logger.info("init");
 		if (ConfigureCache.dataSourceMap != null) {
 			ConfigureCache.dataSourceMap.clear();
 		} else {
@@ -42,9 +39,7 @@ public class DataSourceLoader {
 		}
 		try {
 			String path = getClass().getResource(".").getPath();
-			logger.info("path-->" + path);
 			String pathname = path + "../resources/" + "data_source.xml";
-			logger.info("pathname-->" + pathname);
 			File xmlfile = new File(pathname);
 			SAXReader reader = new SAXReader();
 			Document document = reader.read(xmlfile);
@@ -75,7 +70,6 @@ public class DataSourceLoader {
 						}
 						connection.accumulate("url", url);
 						ConfigureCache.pushDataSource(connection.getString("key"), connection);
-						logger.info(Assit.wrapStr(connection.getString("key"), connection));
 					}
 				}
 			}

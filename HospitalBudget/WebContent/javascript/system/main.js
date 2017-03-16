@@ -346,7 +346,7 @@ function addTabPanel(key, title, url) {
 			jQuery('#node_welcome').hide();
 			nodeCrud.show();
 		}
-		___log(___wrapStr(key, title, url));// 输出正在打开的功能菜单
+		___log(___surroundContents(key, title, url));// 输出正在打开的功能菜单
 		var content = "<iframe name='jeasyuiTabsLoadedCallback:" + key + "' src='" + url + "' style='width: 100%; height: 100%; border: 0;'></iframe>";// 注意引号的解析
 		var tabPanelIndex = gainTabPanelIndex(key);
 		if (tabPanelIndex > -1) {

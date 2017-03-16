@@ -15,8 +15,6 @@ import org.jboss.seam.annotations.Name;
 import org.jboss.seam.annotations.Scope;
 import org.jboss.seam.annotations.Startup;
 
-import cn.dmdl.stl.hospitalbudget.util.Assit;
-
 /**
  * 項目信息加载器
  */
@@ -30,16 +28,13 @@ public class ProjectInfoLoader {
 
 	@Create
 	public void init() {
-		logger.info("init");
 		if (ConfigureCache.projectInfoMap != null) {
 			ConfigureCache.projectInfoMap.clear();
 		} else {
 			ConfigureCache.projectInfoMap = new HashMap<String, String>();
 		}
 		String path = getClass().getResource(".").getPath();
-		logger.info("path-->" + path);
 		String pathname = path.substring(0, path.lastIndexOf(ConfigureCache.getProjectName() + "-ear.ear")) + ConfigureCache.getProjectName() + "-project_info.properties";
-		logger.info("pathname-->" + pathname);
 		File profile = new File(pathname);
 		Properties properties = new Properties();
 		FileInputStream fileInputStream;
@@ -53,7 +48,6 @@ public class ProjectInfoLoader {
 		if (properties != null && properties.size() > 0) {
 			for (Object key : properties.keySet()) {
 				ConfigureCache.projectInfoMap.put(key.toString(), properties.getProperty(key.toString()));
-				logger.info(Assit.wrapStr(key.toString(), properties.getProperty(key.toString())));
 			}
 		}
 	}
