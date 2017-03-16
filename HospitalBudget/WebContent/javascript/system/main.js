@@ -260,7 +260,7 @@ function selfAdaptionScreen() {
 	var mainHeight = jQuery('.div-main').height();
 	var subtrahendWidth = mainHeight > 600 ? 192 : 202;
 	var subtrahendHeight = mainWidth > 800 ? 60 : 70;
-	jQuery('.div-main-left').css('height', mainHeight - subtrahendHeight);
+	jQuery('.div-main-left').css('height', mainHeight - subtrahendHeight);// 采用内联样式，拥有最高的优先权，并合并原有style，类似于jQuery.extend
 	jQuery('.div-main-left .menu-mask-layer-wrapper').css('height', mainHeight - subtrahendHeight);
 	jQuery('.div-main-right').css('width', mainWidth - subtrahendWidth);
 	jQuery('.div-main-right').css('height', mainHeight - subtrahendHeight);
