@@ -135,11 +135,10 @@ body {
 	width: 128px;
 	height: 128px;
 	position: absolute;
-	left: 50%;
-	top: 20%;
-	margin: -84px 0 0 -64px;
 	background-size: 128px 128px !important;
 	opacity: 0.321;
+	left: 35px;
+	top: 35px;
 }
 
 .div-main-left .menu-mask-layer-wrapper .menu-mask-layer-contents.is-loading {
@@ -162,7 +161,7 @@ body {
 }
 
 .div-main-right .jeasyui-tabs-loading-wrapper {
-	background: #86cef0;
+	background: url(../../images/img_block_1_8x8.png);
 }
 
 .div-main-right .jeasyui-tabs-loading-contents {
