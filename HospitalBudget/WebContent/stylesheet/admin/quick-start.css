@@ -1,0 +1,105 @@
+ul {
+	list-style: none;
+	white-space: nowrap;
+}
+
+.exhibition-area {
+	background-color: rgba(132, 209, 245, 0.6);
+	width: 666px;
+	height: 520px;
+	min-height: 520px;
+	margin-top: 20px;
+	border-radius: 4px;
+}
+
+.exhibition-area .function-container {
+	margin: 0;
+	padding: 0;
+}
+
+.exhibition-area .function-container .func-outer {
+	border: 1px dotted rgba(119, 133, 212, 0.37);
+	width: 326px;
+	height: 38px;
+	border-radius: 4px;
+	cursor: pointer;
+}
+
+.exhibition-area .function-container .func-outer.no-select {
+	background: url(../../images/img_block_1_8x8.png);
+	cursor: auto;
+}
+
+.exhibition-area .function-container .func-outer.selected {
+	background: url(../../images/img_block_2_8x8.png);
+	cursor: pointer;
+}
+
+.exhibition-area .function-container .func-inner {
+	border: 1px solid #9db4e1;
+	width: 320px;
+	height: 32px;
+	border-radius: 4px;
+	margin-top: 2px;
+	margin-left: 2px;
+}
+
+.exhibition-area .function-container .func-inner span.func-logo {
+	width: 32px;
+	height: 32px;
+	background: url(../../images/icon_browser_earth_globe_world_16x16.png) no-repeat center;
+	float: left;
+}
+
+.exhibition-area .function-container .func-inner span.func-name {
+	max-width: 256px;
+	height: 32px;
+	line-height: 32px;
+	font-size: 18px;
+	overflow: hidden;
+	float: left;
+}
+
+.exhibition-area .function-container .func-inner span.toggle {
+	width: 32px;
+	height: 32px;
+	float: left;
+	display: block;
+}
+
+.exhibition-area .function-container .func-inner span.toggle.expand {
+	background: url(../../images/icon_arrow_carrot_down_16x16.png) no-repeat center;
+}
+
+.exhibition-area .function-container .func-inner span.toggle.collapse {
+	background: url(../../images/icon_arrow_carrot_right_16x16.png) no-repeat center;
+}
+
+.exhibition-area .function-container .func-inner span.func-unopened {
+	width: 32px;
+	height: 32px;
+	background: url(../../images/icon_button_warning_icon_16x16.png) no-repeat center;
+	float: left;
+}
+
+.exhibition-area .menu-mask-layer-wrapper {
+	position: fixed;
+	background: rgba(255, 255, 255, 0);
+	min-width: 666px;
+	min-height: 520px;
+	display: none;
+}
+
+.exhibition-area .menu-mask-layer-wrapper .menu-mask-layer-contents {
+	width: 128px;
+	height: 128px;
+	position: absolute;
+	background-size: 128px 128px !important;
+	opacity: 0.321;
+	left: 35px;
+	top: 35px;
+}
+
+.exhibition-area .menu-mask-layer-wrapper .menu-mask-layer-contents.is-loading {
+	background: url(../../images/ani/ajax.gif) no-repeat center;
+}
