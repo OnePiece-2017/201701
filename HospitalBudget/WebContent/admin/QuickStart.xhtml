@@ -1,0 +1,58 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:s="http://jboss.com/products/seam/taglib"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:a="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich"
+	template="/layout/template_edit.xhtml">
+
+	<ui:define name="head">
+		<link rel="stylesheet" type="text/css" href="#{request.contextPath}/common/css/bootstrap.min.css" />
+		<script type="text/javascript" src="#{request.contextPath}/common/js/bootstrap.min.js" />
+	</ui:define>
+
+	<ui:define name="body">
+		#{quickStartHome.wire()}
+		<h:form id="mainForm" styleClass="edit" enctype="multipart/form-data">
+			<div class="pd0-10">
+				<div class="pt30 pb30 fs14">
+					<div class="data-input" style="background: red;"></div>
+				</div>
+				<div class="pt50 pb95">
+					<table class="normal-btn">
+						<tr>
+							<td>
+								<h:inputHidden id="configureHidden" value="#{quickStartHome.configure}" />
+								<h:commandButton id="update" value="保存" onclick="return beforeSubmit();" action="#{quickStartHome.update}" styleClass="btn btn-primary mr15" />
+							</td>
+						</tr>
+					</table>
+					<br />
+					<br />
+				</div>
+			</div>
+		</h:form>
+		<script type="text/javascript">
+		//<![CDATA[
+			jQuery(document).ready(function() {
+			    var message = '#{quickStartHome.message}';
+			    if (message != '') {
+					___msg('温馨提示', message);
+			    }
+			    
+			});
+			
+			//提交表单前
+			function beforeSubmit() {
+				//获取用户已选择的启动页面元素
+				var configure = jQuery('#mainForm\\:configureHidden').val();
+				jQuery('#mainForm\\:configureHidden').val('69,70,71');
+			}
+		//]]>
+		</script>
+	</ui:define>
+
+</ui:composition>
