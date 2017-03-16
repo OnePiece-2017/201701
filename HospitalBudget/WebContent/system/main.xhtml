@@ -15,17 +15,24 @@
 	</ui:define>
 	<ui:define name="body">
 		<div class="div-main">
+			<!-- 顶级遮罩层 -->
+			<div class="main-mask-layer-wrapper">
+				<div class="main-mask-layer-contents"></div>
+			</div>
+			<!-- 横幅 -->
 			<div class="div-main-top sg-themes--home-banner">
 				<h:outputLabel value="#{sessionToken.username}[#{sessionToken.nickname}]" styleClass="sg-themes--home-banner-user-info" style="float: left;margin-left: 18px;color: #2F4F4F;margin-top: 18px;" />
 				<s:link value="退出" view="/logout.xhtml" onclick="return beforeLogout();" rendered="#{identity.loggedIn}" propagation="none" styleClass="fr mr10 mt10 sg-themes--home-banner-logout-button" style="color: #333333; text-decoration: none; outline: none; font-size: 25px;" />
 				<label id="remoteClock" class="sg-themes--home-banner-remote-clock" style="float: right;margin-right: 28px;color: #2F4F4F;margin-top: 19px;">加载中...</label>
 			</div>
+			<!-- 菜单栏 -->
 			<div class="div-main-left sg-themes--home-menu">
 				<div class="menu-mask-layer-wrapper">
 					<div class="menu-mask-layer-contents"></div>
 				</div>
 				<ul class="function-container"><!-- js填充 --></ul>
 			</div>
+			<!-- 数据展示区域 -->
 			<div class="div-main-right">
 				<div id="node_crud" class="easyui-tabs sg-themes--home-data-exhibition-area" data-options="tabWidth: 150" style="width: 100%; height: 100%; display: none;" />
 				<div id="node_welcome" class="sg-themes--welcome-bg" style="width: 100%; height: 100%; display: none;">
@@ -39,7 +46,8 @@
 		<script type="text/javascript" src="#{request.contextPath}/javascript/system/main.js" />
 		<script type="text/javascript">
 		//<![CDATA[
-			menuInfoJsonArray = #{sessionToken.menuInfoJsonArray};
+			menuInfoJsonArray = #{sessionToken.menuInfoJsonArray};// 功能菜单
+			quickStartConfig = '#{sessionToken.quickStartConfig}';// 快捷启动
 			
 		    var urlKeySet = {};// 声明全局url键集合
 		    

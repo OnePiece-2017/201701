@@ -153,6 +153,7 @@ public class Authenticator implements AuthenticatorLocal {
 		if (rootList != null && rootList.size() > 0) {
 			for (Integer root : rootList) {
 				JSONObject nodeTmp = new JSONObject();
+				nodeTmp.accumulate("theId", valueMap.get(root).getTheId());
 				nodeTmp.accumulate("theValue", valueMap.get(root).getTheValue());
 				nodeTmp.accumulate("iconSrc", valueMap.get(root).getIconSrc());
 				nodeTmp.accumulate("tabTitle", valueMap.get(root).getTabTitle());
@@ -171,6 +172,7 @@ public class Authenticator implements AuthenticatorLocal {
 			for (Integer leaf : leafList) {
 				JSONArray leafArr = node.getJSONArray("leaf");
 				JSONObject leafTmp = new JSONObject();
+				leafTmp.accumulate("theId", valueMap.get(leaf).getTheId());
 				leafTmp.accumulate("theValue", valueMap.get(leaf).getTheValue());
 				leafTmp.accumulate("iconSrc", valueMap.get(leaf).getIconSrc());
 				leafTmp.accumulate("tabTitle", valueMap.get(leaf).getTabTitle());
@@ -182,10 +184,20 @@ public class Authenticator implements AuthenticatorLocal {
 		}
 	}
 
+	@SuppressWarnings("unchecked")
 	public String login() {
 		String login = identity.login();
 		if (login != null) {
+			// 功能菜单
 			sessionToken.setMenuInfoJsonArray(pullMenuInfo());
+			// 快捷启动
+			String quickStartConfig = null;
+			List<Object> budgetPersonCompilerIdsList = entityManager.createNativeQuery("select IFNULL(GROUP_CONCAT(menu_info_id), '') as result from quick_start where user_info_id = " + sessionToken.getUserInfoId()).getResultList();
+			if (budgetPersonCompilerIdsList != null && budgetPersonCompilerIdsList.size() > 0) {
+				quickStartConfig = budgetPersonCompilerIdsList.get(0).toString();
+			}
+			sessionToken.setQuickStartConfig(quickStartConfig);
+			// 登录统计
 			LoginInfo loginInfo = new LoginInfo();
 			loginInfo.setUserInfoId(sessionToken.getUserInfoId());
 			loginInfo.setLoginTime(new Date());
@@ -220,6 +232,7 @@ public class Authenticator implements AuthenticatorLocal {
 			sessionToken.setSystemThemeNameSource(null);
 			sessionToken.setSystemThemeCssPath(null);
 			sessionToken.setMenuInfoJsonArray(null);
+			sessionToken.setQuickStartConfig(null);
 			sessionToken.setDepartmentInfoId(null);
 		}
 	}

@@ -1,6 +1,9 @@
 //===================菜单模块开始===================
 var menuInfoJsonArray = null;
+var quickStartReference = null;
+var quickStartConfig = null;
 var tabContainer = {};
+var tabReflection = {};
 var userClickTab = false;
 // ===================菜单模块结束===================
 
@@ -16,7 +19,6 @@ var tabPanelCtrl = {
     allowClose : true
 };
 var tempfunction = null;
-var tabIndex = 0;
 var tablKeyPrefix = 'jeasyui_tabs__';
 // ===================jeasyui tabs结束===================
 
@@ -61,15 +63,16 @@ jQuery(document).ready(function() {
 			funcCode += '<span class="func-logo"' + (node['iconSrc'] != null && node['iconSrc'] != '' ? ' style="background: RGBA(0, 0, 0, 0) url(' + node['iconSrc'] + ') no-repeat center;"' : '') + '></span>';
 			funcCode += '<span class="func-name"';
 			if (0 == node['leaf'].length) {
-				tabIndex++;// 索引自增
-				funcCode += ' tab-index="' + tabIndex + '"';
-				tabContainer[tabIndex] = {
-				    'index' : tabIndex,
-				    'key' : md5(String(tabIndex)),
+				funcCode += ' tab-index="' + node['theId'] + '"';
+				var key = md5(String(node['theId']));
+				tabContainer[node['theId']] = {
+				    'index' : node['theId'],
+				    'key' : key,
 				    'url' : node['tabUrl'],
 				    'title' : node['tabTitle'],
 				    'value' : node['theValue']
 				};
+				tabReflection[key] = node['theId'];
 			}
 			funcCode += '>' + node['theValue'] + '</span>';
 			if (node['leaf'].length > 0) {
@@ -156,24 +159,19 @@ jQuery(document).ready(function() {
 		    var tabId = nodeCrud.tabs('getTab', index)[0].id;
 		    var tabKey = tabId.substring(tablKeyPrefix.length);
 		    jQuery('.div-main-left .function-container .func-inner.highlight').removeClass('highlight');
-		    for ( var key in tabContainer) {
-			    if (tabContainer[key]['key'] == tabKey) {
-				    var activated = jQuery('.div-main-left .function-container .func-name[tab-index="' + tabContainer[key]['index'] + '"]').parents('.func-inner');
-				    activated.addClass('highlight');
-				    var funcOuterRefer = activated.parents('ul').prev('.func-outer');
-				    if (funcOuterRefer != null && funcOuterRefer.length > 0) {
-					    for (var i = funcOuterRefer.length - 1; i >= 0; --i) {
-						    if (jQuery(funcOuterRefer[i]).next('ul').is(':hidden')) {
-							    jQuery(funcOuterRefer[i]).next('ul').show();
-							    jQuery(funcOuterRefer[i]).find('.toggle').removeClass('collapse').addClass('expand');
-						    }
-					    }
+		    var activated = jQuery('.div-main-left .function-container .func-name[tab-index="' + tabContainer[tabReflection[tabKey]]['index'] + '"]').parents('.func-inner');
+		    activated.addClass('highlight');
+		    var funcOuterRefer = activated.parents('ul').prev('.func-outer');
+		    if (funcOuterRefer != null && funcOuterRefer.length > 0) {
+			    for (var i = funcOuterRefer.length - 1; i >= 0; --i) {
+				    if (jQuery(funcOuterRefer[i]).next('ul').is(':hidden')) {
+					    jQuery(funcOuterRefer[i]).next('ul').show();
+					    jQuery(funcOuterRefer[i]).find('.toggle').removeClass('collapse').addClass('expand');
 				    }
-				    if (!userClickTab) {
-					    gotoAppropriatePosition();
-				    }
-				    break;
 			    }
+		    }
+		    if (!userClickTab) {
+			    gotoAppropriatePosition();
 		    }
 	    },
 	    onUpdate : function(title, index) {
@@ -218,6 +216,33 @@ jQuery(document).ready(function() {
 	// timeout_userFollowing = setTimeout('requestUserFollowingServlet()', 0);
 
 	setTimeout('requestServerInfoServlet()', 0);// 异步请求远程时钟
+
+	// 快捷启动
+	if (quickStartConfig != null && quickStartConfig != '') {
+		var indexArray = quickStartConfig.split(',');
+		if (indexArray != null && indexArray.length > 0) {
+			showMainMaskLayer();// 打开顶级遮罩层
+			quickStartReference = function(index) {
+				var callback = 'quickStartReference(' + (index - 1) + ')';
+				var delay = 0;
+				if (index > -1) {
+					var funcName = jQuery('.div-main-left .function-container .func-name[tab-index="' + indexArray[index] + '"]');
+					if (funcName != null && funcName.length > 0) {
+						var funcOuter = funcName.parents('.func-outer');
+						if (funcOuter != null && funcOuter.length > 0) {
+							funcOuter.click();// 模拟用户点击
+							jQuery(window).resize();// 重绘窗体
+							delay = 1024;// 延长下一次点击时间
+						}
+					}
+					setTimeout(callback, delay);// 提高用户体验度
+				} else {
+					hideMainMaskLayer();// 关闭顶级遮罩层
+				}
+			};
+			quickStartReference(indexArray.length - 1);
+		}
+	}
 });
 
 function gotoAppropriatePosition() {
@@ -321,7 +346,7 @@ function addTabPanel(key, title, url) {
 			jQuery('#node_welcome').hide();
 			nodeCrud.show();
 		}
-		___log(___wrapStr(key, title, url));// 打印URL
+		___log(___wrapStr(key, title, url));// 输出正在打开的功能菜单
 		var content = "<iframe name='jeasyuiTabsLoadedCallback:" + key + "' src='" + url + "' style='width: 100%; height: 100%; border: 0;'></iframe>";// 注意引号的解析
 		var tabPanelIndex = gainTabPanelIndex(key);
 		if (tabPanelIndex > -1) {
@@ -365,6 +390,16 @@ function gainTabPanelIndex(key) {
 function jeasyuiTabsLoadedCallback(key) {
 	jQuery('#' + key).removeClass('jeasyui-tabs-loading-wrapper');
 	jQuery('#' + key + ' .jeasyui-tabs-loading-contents').remove();
+}
+
+function showMainMaskLayer() {
+	jQuery('.main-mask-layer-wrapper .main-mask-layer-contents').addClass('is-loading');
+	jQuery('.main-mask-layer-wrapper').show();
+}
+
+function hideMainMaskLayer() {
+	jQuery('.main-mask-layer-wrapper .main-mask-layer-contents').removeClass('is-loading');
+	jQuery('.main-mask-layer-wrapper').hide();
 }
 
 function showMenuMaskLayer() {

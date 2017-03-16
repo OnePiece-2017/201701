@@ -100,6 +100,29 @@ body {
 	float: left;
 }
 
+.div-main .main-mask-layer-wrapper {
+	position: fixed;
+	width: 100%;
+	height: 100%;
+	background: RGBA(0, 0, 0, 0.8);
+	z-index: 1024;
+	display: none;
+}
+
+.div-main .main-mask-layer-wrapper .main-mask-layer-contents {
+	position: absolute;
+	width: 128px;
+	height: 128px;
+	left: 50%;
+	top: 35%;
+	background-size: 128px 128px !important;
+	opacity: 0.4321;
+}
+
+.div-main .main-mask-layer-wrapper .main-mask-layer-contents.is-loading {
+	background: url(../../images/ani/ajax.gif) no-repeat center;
+}
+
 .div-main-left .menu-mask-layer-wrapper {
 	position: fixed;
 	background: rgba(255, 255, 255, 0);
