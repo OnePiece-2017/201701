@@ -43,7 +43,6 @@ public class ConfigureCache {
 
 	@Create
 	public void init() {
-		logger.info("init");
 		if (ConfigureCache.executingMap != null) {
 			ConfigureCache.executingMap.clear();
 		} else {

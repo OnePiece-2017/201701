@@ -10,27 +10,21 @@ import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.log4j.Logger;
-
 /**
  * Servlet Filter implementation class LogFilter
  */
 public class GeneralFilter implements Filter {
 
-	private static Logger logger = Logger.getLogger(GeneralFilter.class);
-
 	/**
 	 * Default constructor.
 	 */
 	public GeneralFilter() {
-		logger.info("GeneralFilter");
 	}
 
 	/**
 	 * @see Filter#destroy()
 	 */
 	public void destroy() {
-		logger.info("destroy");
 	}
 
 	/**
@@ -46,7 +40,6 @@ public class GeneralFilter implements Filter {
 	 * @see Filter#init(FilterConfig)
 	 */
 	public void init(FilterConfig fConfig) throws ServletException {
-		logger.info("init");
 	}
 
 }
