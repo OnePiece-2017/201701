@@ -11,7 +11,7 @@
 	<navigation from-action="#{quickStartHome.update}">
 		<rule if-outcome="updated">
 			<end-conversation />
-			<redirect view-id="/admin/QuickStart.xhtml" />
+			<redirect view-id="/admin/QuickStartConfigure.xhtml" />
 		</rule>
 	</navigation>
 
