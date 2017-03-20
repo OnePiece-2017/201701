@@ -76,21 +76,16 @@
 			}
 			
 			#node-subproject .row-head>span:nth-child(2),#node-subproject .row-data>span:nth-child(2) {
-				width: 310px;
+				width: 550px;
 				background: #05d380;
 			}
 			
 			#node-subproject .row-head>span:nth-child(3),#node-subproject .row-data>span:nth-child(3) {
 				width: 240px;
-				background: #00cfea;
-			}
-			
-			#node-subproject .row-head>span:nth-child(4),#node-subproject .row-data>span:nth-child(4) {
-				width: 240px;
 				background: #dd4ad3;
 			}
 			
-			#node-subproject .row-head>span:nth-child(5),#node-subproject .row-data>span:nth-child(5) {
+			#node-subproject .row-head>span:nth-child(4),#node-subproject .row-data>span:nth-child(4) {
 				width: 180px;
 				background: #d3d4d7;
 			}
@@ -348,7 +343,6 @@
 										<img src="../images/icon_arrow_carrot_down_32x32.png" style="width: 24px;height: 24px;margin: 9px -7px; opacity: 0;" />
 									</span>
 									<span>项目名称</span>
-									<span>编制人员</span>
 									<span>执行人员</span>
 									<span>操作</span>
 								</div>
@@ -394,35 +388,6 @@
 													<td valign="middle">
 														<select id="subproject_parentId" class="selectpicker" data-live-search="true">
 														</select>
-													</td>
-													<td valign="middle">
-														<font color="red" style="margin-left: 3px;">*</font>
-													</td>
-												</tr>
-											</table>
-										</div>
-									</td>
-								</tr>
-								<tr>
-									<td width="50%">
-										<div class="pb20">
-											<table>
-												<tr>
-													<td valign="middle">
-														<span class="field-name mb10">编制人员</span>
-													</td>
-													<td valign="middle">
-														<div class="bs-w440">
-															<select id="subproject_budgetPersonCompilerIds" class="selectpicker" data-live-search="true" multiple="multiple">
-																<a:repeat value="#{routineProjectHome.budgetPersonList}" var="_department">
-																	<optgroup label="#{_department[0]}" data-subtext="科室">
-																		<a:repeat value="#{_department[1]}" var="_user">
-																			<option value="#{_user[0]}">#{_user[1]}</option>
-																		</a:repeat>
-																	</optgroup>
-																</a:repeat>
-															</select>
-														</div>
 													</td>
 													<td valign="middle">
 														<font color="red" style="margin-left: 3px;">*</font>
@@ -609,8 +574,6 @@
 				g_is_create = true;
 				//重置用户输入
 				jQuery('#subproject_projectName').val('');
-				jQuery('#subproject_budgetPersonCompilerIds').val('');
-				jQuery('#subproject_budgetPersonCompilerIds').selectpicker('render');
 				jQuery('#subproject_budgetPersonExecutorIds').val('');
 				jQuery('#subproject_budgetPersonExecutorIds').selectpicker('render');
 				jQuery('#subproject_description').val('');
@@ -631,8 +594,6 @@
 				jQuery.extend(true, g_edit_itemData, g_subproject_all[dataId]); //深拷贝
 				//恢复用户输入
 				jQuery('#subproject_projectName').val(g_subproject_all[dataId]['name']);
-				jQuery('#subproject_budgetPersonCompilerIds').val(g_subproject_all[dataId]['compiler'].split(','));
-				jQuery('#subproject_budgetPersonCompilerIds').selectpicker('render');
 				jQuery('#subproject_budgetPersonExecutorIds').val(g_subproject_all[dataId]['executor'].split(','));
 				jQuery('#subproject_budgetPersonExecutorIds').selectpicker('render');
 				jQuery('#subproject_description').val(g_subproject_all[dataId]['description']);
@@ -667,21 +628,6 @@
 					});
 					return null;
 				}
-				var compiler = jQuery('#subproject_budgetPersonCompilerIds').val();
-				if (compiler == null || compiler == '') {
-					___sgMessagebox({
-						type: 'warning',
-						title: '温馨提示',
-						message: '请选择编制人员！',
-						fadeInMillis: 0,
-						fadeOutMillis: 1000 * 0.3,
-						fadeInCallback: null,
-						fadeOutCallback: function() {
-							___selectpickerExpand('subproject_budgetPersonCompilerIds');
-						}
-					});
-					return null;
-				}
 				var executor = jQuery('#subproject_budgetPersonExecutorIds').val();
 				if (executor == null || executor == '') {
 					___sgMessagebox({
@@ -712,7 +658,6 @@
 					itemData['pid'] = null;
 					itemData['level'] = 2;
 				}
-				itemData['compiler'] = compiler.join(',');
 				itemData['executor'] = executor.join(',');
 				itemData['description'] = jQuery('#subproject_description').val();
 				return itemData;
@@ -741,9 +686,7 @@
 						jQuery.extend(g_subproject_all[dataId], itemData); //合并
 						var rdRef = jQuery('.row-data[data-id="' + dataId + '"]');
 						rdRef.children('.field-name').html(g_subproject_all[dataId]['name']);
-						rdRef.children('.field-compiler').html(___genStdHtml___a_abbr(gainPersonStr(g_subproject_all[dataId]['compiler']), 13));
 						rdRef.children('.field-executor').html(___genStdHtml___a_abbr(gainPersonStr(g_subproject_all[dataId]['executor']), 13));
-						//rdRef.children('.field-description').html(g_subproject_all[dataId]['description']);
 					}
 					setSubprojectInteractive(false);
 				}
@@ -801,9 +744,7 @@
 				rowDataHtml += '		<img src="' + toggleIcon['opened'] + '" class="toggle-child" onclick="toggleChild(this);">';
 				rowDataHtml += '	</span>';
 				rowDataHtml += '	<span class="field-name">' + g_subproject_all[subprojectIndex]['name'] + '</span>';
-				rowDataHtml += '	<span class="field-compiler">' + ___genStdHtml___a_abbr(gainPersonStr(g_subproject_all[subprojectIndex]['compiler']), 13) + '</span>';
 				rowDataHtml += '	<span class="field-executor">' + ___genStdHtml___a_abbr(gainPersonStr(g_subproject_all[subprojectIndex]['executor']), 13) + '</span>';
-				//rowDataHtml += '	<span class="field-description">' + g_subproject_all[subprojectIndex]['description'] + '</span>';
 				rowDataHtml += '	<span>';
 				rowDataHtml += '		<a class="btn btn-success" onclick="subprojectAdd(this);">添加</a>';
 				rowDataHtml += '		<a class="btn btn-primary" onclick="subprojectEdit(this);">编辑</a>';

@@ -82,7 +82,6 @@ public class GenericProjectHome extends CriterionEntityHome<GenericProject> {
 			Object pid = subprojectInfoOne.get("pid");
 			String name = subprojectInfoOne.getString("name");
 			Double amount = subprojectInfoOne.getDouble("amount");
-			String compiler = subprojectInfoOne.getString("compiler");
 			String executor = subprojectInfoOne.getString("executor");
 			String description = subprojectInfoOne.getString("description");
 			if (JSONNull.getInstance().equals(pid)) {
@@ -92,17 +91,6 @@ public class GenericProjectHome extends CriterionEntityHome<GenericProject> {
 				instance2nd.setBudgetAmount(amount);
 				instance2nd.setTheDescription(description);
 				getEntityManager().persist(instance2nd);
-				if (compiler != null && !"".equals(compiler)) {
-					String[] idArr = compiler.split(",");
-					if (idArr != null && idArr.length > 0) {
-						for (String id : idArr) {
-							GenericProjectCompiler theCompiler = new GenericProjectCompiler();
-							theCompiler.setProjectId(instance2nd.getTheId());
-							theCompiler.setUserInfoId(Integer.valueOf(id));
-							getEntityManager().persist(theCompiler);
-						}
-					}
-				}
 				if (executor != null && !"".equals(executor)) {
 					String[] idArr = executor.split(",");
 					if (idArr != null && idArr.length > 0) {
@@ -130,7 +118,6 @@ public class GenericProjectHome extends CriterionEntityHome<GenericProject> {
 			if (!JSONNull.getInstance().equals(pid3rdPlus) && Integer.parseInt(pid3rdPlus.toString()) == pid) {
 				String name = subprojectInfoOne.getString("name");
 				Double amount = subprojectInfoOne.getDouble("amount");
-				String compiler = subprojectInfoOne.getString("compiler");
 				String executor = subprojectInfoOne.getString("executor");
 				String description = subprojectInfoOne.getString("description");
 				GenericProject instance3rdPlus = new GenericProject();
@@ -139,17 +126,6 @@ public class GenericProjectHome extends CriterionEntityHome<GenericProject> {
 				instance3rdPlus.setBudgetAmount(amount);
 				instance3rdPlus.setTheDescription(description);
 				getEntityManager().persist(instance3rdPlus);
-				if (compiler != null && !"".equals(compiler)) {
-					String[] idArr = compiler.split(",");
-					if (idArr != null && idArr.length > 0) {
-						for (String id : idArr) {
-							GenericProjectCompiler theCompiler = new GenericProjectCompiler();
-							theCompiler.setProjectId(instance3rdPlus.getTheId());
-							theCompiler.setUserInfoId(Integer.valueOf(id));
-							getEntityManager().persist(theCompiler);
-						}
-					}
-				}
 				if (executor != null && !"".equals(executor)) {
 					String[] idArr = executor.split(",");
 					if (idArr != null && idArr.length > 0) {
@@ -218,7 +194,6 @@ public class GenericProjectHome extends CriterionEntityHome<GenericProject> {
 		String subProjectIds = subProjectIdList.toString().substring(1, subProjectIdList.toString().length() - 1);// 处理id列表
 		if (subProjectIds != null && !"".equals(subProjectIds)) {
 			getEntityManager().createNativeQuery("delete from generic_project where the_id in (" + subProjectIds + ")").executeUpdate();
-			getEntityManager().createNativeQuery("delete from generic_project_compiler where project_id in (" + subProjectIds + ")").executeUpdate();
 			getEntityManager().createNativeQuery("delete from generic_project_executor where project_id in (" + subProjectIds + ")").executeUpdate();
 		}
 		// 处理二级项目-创建新数据
@@ -228,7 +203,6 @@ public class GenericProjectHome extends CriterionEntityHome<GenericProject> {
 			Object pid = subprojectInfoOne.get("pid");
 			String name = subprojectInfoOne.getString("name");
 			Double amount = subprojectInfoOne.getDouble("amount");
-			String compiler = subprojectInfoOne.getString("compiler");
 			String executor = subprojectInfoOne.getString("executor");
 			String description = subprojectInfoOne.getString("description");
 			if (JSONNull.getInstance().equals(pid)) {
@@ -238,17 +212,6 @@ public class GenericProjectHome extends CriterionEntityHome<GenericProject> {
 				instance2nd.setBudgetAmount(amount);
 				instance2nd.setTheDescription(description);
 				getEntityManager().persist(instance2nd);
-				if (compiler != null && !"".equals(compiler)) {
-					String[] idArr = compiler.split(",");
-					if (idArr != null && idArr.length > 0) {
-						for (String id : idArr) {
-							GenericProjectCompiler theCompiler = new GenericProjectCompiler();
-							theCompiler.setProjectId(instance2nd.getTheId());
-							theCompiler.setUserInfoId(Integer.valueOf(id));
-							getEntityManager().persist(theCompiler);
-						}
-					}
-				}
 				if (executor != null && !"".equals(executor)) {
 					String[] idArr = executor.split(",");
 					if (idArr != null && idArr.length > 0) {
@@ -297,7 +260,6 @@ public class GenericProjectHome extends CriterionEntityHome<GenericProject> {
 		String subProjectIds = subProjectIdList.toString().substring(1, subProjectIdList.toString().length() - 1);// 处理id列表
 		if (subProjectIds != null && !"".equals(subProjectIds)) {
 			getEntityManager().createNativeQuery("delete from generic_project where the_id in (" + subProjectIds + ")").executeUpdate();
-			getEntityManager().createNativeQuery("delete from generic_project_compiler where project_id in (" + subProjectIds + ")").executeUpdate();
 			getEntityManager().createNativeQuery("delete from generic_project_executor where project_id in (" + subProjectIds + ")").executeUpdate();
 		}
 		getEntityManager().remove(instance);
@@ -475,7 +437,7 @@ public class GenericProjectHome extends CriterionEntityHome<GenericProject> {
 		}
 	}
 
-	private void parasitic3rdPlus(List<Object[]> prj3rdPlusList, Map<Object, Object> theCompilerMap, Map<Object, Object> theExecutorMap, JSONObject host, Object pid) {
+	private void parasitic3rdPlus(List<Object[]> prj3rdPlusList, Map<Object, Object> theExecutorMap, JSONObject host, Object pid) {
 		if (prj3rdPlusList != null && prj3rdPlusList.size() > 0) {
 			for (Object[] prj3rdPlus : prj3rdPlusList) {
 				if (pid.equals(prj3rdPlus[1])) {
@@ -486,11 +448,10 @@ public class GenericProjectHome extends CriterionEntityHome<GenericProject> {
 					itemValue.accumulate("pid", host.getJSONObject(pid.toString()).get("id"));
 					itemValue.accumulate("level", host.getJSONObject(pid.toString()).getInt("level") + 1);
 					itemValue.accumulate("amount", prj3rdPlus[3]);
-					itemValue.accumulate("compiler", theCompilerMap.get(id));
 					itemValue.accumulate("executor", theExecutorMap.get(id));
 					itemValue.accumulate("description", prj3rdPlus[4]);
 					host.accumulate(id.toString(), itemValue);
-					parasitic3rdPlus(prj3rdPlusList, theCompilerMap, theExecutorMap, host, id);
+					parasitic3rdPlus(prj3rdPlusList, theExecutorMap, host, id);
 				}
 			}
 		}
@@ -521,13 +482,6 @@ public class GenericProjectHome extends CriterionEntityHome<GenericProject> {
 				}
 				// 加载二级项目信息
 				JSONObject subprojectInfoJson = new JSONObject();
-				List<Object[]> theCompilerList = getEntityManager().createNativeQuery("select project_id, IFNULL(GROUP_CONCAT(user_info_id), '') as result from generic_project_compiler group by project_id").getResultList();
-				Map<Object, Object> theCompilerMap = new HashMap<Object, Object>();
-				if (theCompilerList != null && theCompilerList.size() > 0) {
-					for (Object[] theCompiler : theCompilerList) {
-						theCompilerMap.put(theCompiler[0], theCompiler[1]);
-					}
-				}
 				List<Object[]> theExecutorList = getEntityManager().createNativeQuery("select project_id, IFNULL(GROUP_CONCAT(user_info_id), '') as result from generic_project_executor group by project_id").getResultList();
 				Map<Object, Object> theExecutorMap = new HashMap<Object, Object>();
 				if (theExecutorList != null && theExecutorList.size() > 0) {
@@ -546,11 +500,10 @@ public class GenericProjectHome extends CriterionEntityHome<GenericProject> {
 						itemValue.accumulate("pid", null);
 						itemValue.accumulate("level", 2);
 						itemValue.accumulate("amount", prj2nd[2]);
-						itemValue.accumulate("compiler", theCompilerMap.get(id));
 						itemValue.accumulate("executor", theExecutorMap.get(id));
 						itemValue.accumulate("description", prj2nd[3]);
 						subprojectInfoJson.accumulate(id.toString(), itemValue);
-						parasitic3rdPlus(prj3rdPlusList, theCompilerMap, theExecutorMap, subprojectInfoJson, id);
+						parasitic3rdPlus(prj3rdPlusList, theExecutorMap, subprojectInfoJson, id);
 					}
 				}
 				this.subprojectInfoJson = subprojectInfoJson;// 避免后台toString()到前台使用JSON.parse解析含有回车符文本报错
