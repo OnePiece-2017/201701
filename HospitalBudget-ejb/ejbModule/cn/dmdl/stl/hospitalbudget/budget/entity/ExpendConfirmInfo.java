@@ -30,7 +30,8 @@ public class ExpendConfirmInfo implements java.io.Serializable{
 	private Integer confirmUser;
 	private Float totalMoney;//总金额
 	private Date confirm_time;//确认时间
-	private Integer confirm_status;//确认单状态 0初始状态 1确认完
+	private Integer confirm_status;//确认单状态 0初始状态 1确认完成 2 确认驳回
+	private boolean deleted;//删除
 	
 	@Id
 	@GeneratedValue(strategy = IDENTITY)
@@ -120,6 +121,14 @@ public class ExpendConfirmInfo implements java.io.Serializable{
 	}
 	public void setYear(String year) {
 		this.year = year;
+	}
+	@Column(name = "deleted")
+	@NotNull
+	public boolean isDeleted() {
+		return deleted;
+	}
+	public void setDeleted(boolean deleted) {
+		this.deleted = deleted;
 	}
 	
 	

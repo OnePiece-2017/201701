@@ -23,6 +23,8 @@ public class ExpendApplyProject implements java.io.Serializable{
 	private Integer expendApplyInfoId;
 	private Integer projectId;
 	private Float expendMoney;//本次预算内支出
+	private Float expendBeforFrozen;//支出之前冻结
+	private Float expendBeforSurplus;//支出之前剩余
 	private Float budgetAppendExpend;//预算追加支出
 	private Float budgetAdjustmentAppend;//预算调整追加
 	private Float budgetAdjestmentCut;//预算调整减少
@@ -157,6 +159,24 @@ public class ExpendApplyProject implements java.io.Serializable{
 	public void setAppendBudgetCanCut(Float appendBudgetCanCut) {
 		this.appendBudgetCanCut = appendBudgetCanCut;
 	}
+	@Column(name = "expend_befor_frozen")
+	@NotNull
+	public Float getExpendBeforFrozen() {
+		return expendBeforFrozen;
+	}
+	public void setExpendBeforFrozen(Float expendBeforFrozen) {
+		this.expendBeforFrozen = expendBeforFrozen;
+	}
+	@Column(name = "expend_befor_surplus")
+	@NotNull
+	public Float getExpendBeforSurplus() {
+		return expendBeforSurplus;
+	}
+	public void setExpendBeforSurplus(Float expendBeforSurplus) {
+		this.expendBeforSurplus = expendBeforSurplus;
+	}
+	
+	
 	
 	
 }

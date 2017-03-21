@@ -328,7 +328,8 @@
 					<table class="normal-btn">
 						<tr>
 							<td>
-								<a class="btn btn-primary mr15" onclick="return checkSub();">提交</a>
+								<a class="btn btn-primary mr15" onclick="return checkSub();">确认通过</a>
+								<a class="btn btn-primary mr15" onclick="return checkReturn();">确认驳回</a>
 								<s:button id="cancel" value="返回" view="/budget/ExpendConfirmList.xhtml" propagation="none" styleClass="btn btn-default" />
 							</td>
 						</tr>
@@ -340,6 +341,12 @@
 		</h:form>
 		<a:form>
 			<a:jsFunction name="save" action="#{expendApplyConfirmHome.save}" data="#{expendApplyConfirmHome.saveResult}" oncomplete="saveComplete(data)">
+				<a:actionparam name="expendConfirmId" assignTo="#{expendApplyConfirmHome.expendConfirmId}" />
+				<a:actionparam name="totalMoney" assignTo="#{expendApplyConfirmHome.totalMoney}" />
+				<a:actionparam name="confirmTime" assignTo="#{expendApplyConfirmHome.confirmTime}" />
+				<a:actionparam name="projectJson" assignTo="#{expendApplyConfirmHome.projectJson}" />
+			</a:jsFunction>
+			<a:jsFunction name="confirmReturn" action="#{expendApplyConfirmHome.confirmReturn}" data="#{expendApplyConfirmHome.saveResult}" oncomplete="saveComplete(data)">
 				<a:actionparam name="expendConfirmId" assignTo="#{expendApplyConfirmHome.expendConfirmId}" />
 				<a:actionparam name="totalMoney" assignTo="#{expendApplyConfirmHome.totalMoney}" />
 				<a:actionparam name="confirmTime" assignTo="#{expendApplyConfirmHome.confirmTime}" />
@@ -409,7 +416,42 @@
 				}
 				
 			}
-
+			//驳回校验
+			function checkReturn(){
+				var flag = true;
+				var expendConfirmId = jQuery("#mainForm\\:expendApplyIdEdit").val();
+				var confirmTime = jQuery("#confirmTime").val();
+				var totalMoney = jQuery("#allMoney").val();
+				if(confirmTime == ""){
+					___msg('温馨提示', "请选择确认时间");
+					flag = false;
+					return ;
+				}
+				jQuery("input[name='money']").each(function(){
+					var price = jQuery(this).val();
+					if(price =="" ||  isNaN(price)){
+						___msg('温馨提示', "请输入支出金额");
+						flag = false;
+						return;
+						if(parseFloat(price) < 0 || parseFloat(price) == 0){
+							___msg('温馨提示', "请输入正确的数字");
+							flag = false;
+							return ;
+						}
+					}else{
+						if(parseFloat(price) > parseFloat(jQuery(this).parent().parent().find("td[name='canUseMoney']").text())){
+							___msg('温馨提示', "支出金额不能大于可支出金额");
+							flag = false;
+							return;
+						}
+					}
+				});
+				var json = getJson();
+				if(flag){
+					confirmReturn(expendConfirmId,totalMoney,confirmTime,json);
+				}
+				
+			}
 			//保存回调
 			function saveComplete(data){
 				if (data != null && 'INVOKE_SUCCESS' == data.invoke_result) {

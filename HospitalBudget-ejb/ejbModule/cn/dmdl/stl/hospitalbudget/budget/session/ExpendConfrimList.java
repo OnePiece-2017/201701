@@ -73,7 +73,7 @@ public class ExpendConfrimList extends CriterionNativeQuery<Object[]> {
 		sql.append(" LEFT JOIN expend_apply_info eai on eci.expend_apply_info_id=eai.expend_apply_info_id ");
 		sql.append(" LEFT JOIN user_info ui ON eai.applay_user_id = ui.user_info_id ");
 		sql.append(" LEFT JOIN user_info_extend uie on ui.user_info_extend_id=uie.user_info_extend_id ");
-		sql.append(" where 1=1");
+		sql.append(" where eci.deleted=0");
 		if(null != departmentId && departmentId != -1){
 			sql.append(" ui.department_info_id= ").append(departmentId);
 		}
@@ -89,6 +89,7 @@ public class ExpendConfrimList extends CriterionNativeQuery<Object[]> {
 		if(null != confirmStatus && confirmStatus != -1){
 			sql.append(" and eci.confirm_status= ").append(confirmStatus);
 		}
+		sql.append(" ORDER BY eci.expend_confirm_info_id desc");
 		sql.insert(0, "select * from (").append(") as recordset");
 		setEjbql(sql.toString());
 		return super.createQuery();

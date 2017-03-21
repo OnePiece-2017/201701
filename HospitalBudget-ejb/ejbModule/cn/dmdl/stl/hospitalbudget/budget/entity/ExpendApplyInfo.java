@@ -41,7 +41,7 @@ public class ExpendApplyInfo implements java.io.Serializable{
 	private Date applyTime;//申请时间
 	private Date registTime;//登记时间
 	private Integer register;//登记人
-	private Integer expendApplyStatus;//申请单状态 0初始状态 1正在审核中 2审核完成
+	private Integer expendApplyStatus;//申请单状态 0初始状态 1确认完成 2 确认驳回
 	
 	@Id
 	@GeneratedValue(strategy = IDENTITY)

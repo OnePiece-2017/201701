@@ -87,12 +87,12 @@ public class QueryExpendApplay extends CriterionNativeQuery<Object[]> {
 		sql.append(" FROM expend_apply_project eap ");
 		sql.append(" LEFT JOIN expend_apply_info eai ON eap.expend_apply_info_id = eai.expend_apply_info_id ");
 		sql.append(" LEFT JOIN expend_confirm_project ecp on eap.expend_apply_project_id=ecp.expend_apply_project_id ");
-		sql.append(" LEFT JOIN usual_project up ON eap.project_id = up.the_id ");
+		sql.append(" LEFT JOIN routine_project up ON eap.project_id = up.the_id ");
 		sql.append(" LEFT JOIN ys_department_info ysdi on ysdi.the_id=up.department_info_id ");
 		sql.append(" LEFT JOIN ys_funds_source fs ON fs.the_id = up.funds_source_id ");
 		sql.append(" LEFT JOIN user_info ui ON ui.user_info_id = eai.applay_user_id ");
 		sql.append(" LEFT JOIN user_info_extend uie ON ui.user_info_extend_id = uie.user_info_extend_id ");
-		sql.append(" where eap.deleted=0 ");
+		sql.append(" where eap.deleted=0 and ecp.deleted=0 ");
 		if(privateRole){
 			sql.append(" eap.insert_user= ").append(sessionToken.getUserInfoId());
 		}

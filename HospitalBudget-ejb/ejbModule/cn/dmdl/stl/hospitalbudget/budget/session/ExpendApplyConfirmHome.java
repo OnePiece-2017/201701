@@ -102,7 +102,7 @@ public class ExpendApplyConfirmHome extends CriterionEntityHome<ExpendApplyInfo>
 			projectSql.append(" ecp.expend_confirm_project_id,fs.the_value AS source_name ");
 			projectSql.append(" FROM expend_confirm_project ecp ");
 			projectSql.append(" LEFT JOIN expend_apply_project eap ON ecp.expend_apply_project_id = eap.expend_apply_project_id ");
-			projectSql.append(" LEFT JOIN usual_project up ON ecp.project_id=up.the_id ");
+			projectSql.append(" LEFT JOIN routine_project up ON ecp.project_id=up.the_id ");
 			projectSql.append(" LEFT JOIN expend_confirm_info eci on ecp.expend_confirm_info_id=eci.expend_confirm_info_id ");
 			projectSql.append(" LEFT JOIN normal_expend_plan_info expi on expi.`year`=eci.`year` and ecp.project_id=expi.project_id ");
 			projectSql.append(" LEFT JOIN ys_funds_source fs ON up.funds_source_id = fs.the_id ");
@@ -129,7 +129,7 @@ public class ExpendApplyConfirmHome extends CriterionEntityHome<ExpendApplyInfo>
 	
 	
 	/**
-	 * 提交保存
+	 * 确认提交保存
 	 * @return
 	 */
 	@SuppressWarnings("unchecked")
@@ -150,8 +150,14 @@ public class ExpendApplyConfirmHome extends CriterionEntityHome<ExpendApplyInfo>
 			saveResult.element("invoke_result", "INVOKE_FAILURE");
 			saveResult.element("message", "操作失败！" + e.getMessage());
 		}
+		//确认单确认完成
 		eci.setConfirm_status(1);
 		getEntityManager().merge(eci);
+		
+		//申请单确认完成
+		ExpendApplyInfo eai = getEntityManager().find(ExpendApplyInfo.class, eci.getExpend_apply_info_id());
+		eai.setExpendApplyStatus(1);
+		getEntityManager().merge(eai);
 		//确认单项目表
 		JSONObject jsonObject = JSONObject.fromObject(projectJson);
 		JSONArray expendList = jsonObject.getJSONArray("expend_list");
@@ -173,7 +179,7 @@ public class ExpendApplyConfirmHome extends CriterionEntityHome<ExpendApplyInfo>
 			StringBuffer moneySql = new StringBuffer();
 			moneySql.append(" SELECT nepi.normal_expend_plan_id,eap.expend_money ");
 			moneySql.append(" FROM expend_confirm_project ecp ");
-			moneySql.append(" LEFT JOIN expend_apply_project eap on ecp.expend_confirm_info_id=eap.expend_apply_project_id ");
+			moneySql.append(" LEFT JOIN expend_apply_project eap on ecp.expend_apply_project_id=eap.expend_apply_project_id ");
 			moneySql.append(" LEFT JOIN expend_confirm_info eci on eci.expend_confirm_info_id=ecp.expend_confirm_info_id ");
 			moneySql.append(" LEFT JOIN normal_expend_plan_info nepi on nepi.`year`=eci.`year` and nepi.project_id=ecp.project_id ");
 			moneySql.append(" where ecp.expend_confirm_project_id= ").append(projectInfoId);
@@ -190,7 +196,55 @@ public class ExpendApplyConfirmHome extends CriterionEntityHome<ExpendApplyInfo>
 	}
 
 
-
+	/**
+	 * 驳回提交保存
+	 * @return
+	 */
+	public String confirmReturn(){
+		saveResult = new JSONObject();
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+		joinTransaction();
+		saveResult.accumulate("invoke_result", "INVOKE_SUCCESS");
+		saveResult.accumulate("message", "驳回成功！");
+		//确认单改为驳回状态并且删除
+		ExpendConfirmInfo eci = getEntityManager().find(ExpendConfirmInfo.class, expendConfirmId);
+		eci.setTotalMoney(totalMoney);
+		eci.setUpdateTime(new Date());
+		eci.setConfirmUser(sessionToken.getUserInfoId());
+		try {
+			eci.setConfirm_time(sdf.parse(confirmTime));
+		} catch (ParseException e) {
+			saveResult.element("invoke_result", "INVOKE_FAILURE");
+			saveResult.element("message", "操作失败！" + e.getMessage());
+		}
+		eci.setConfirm_status(2);
+		eci.setDeleted(true);
+		getEntityManager().merge(eci);
+		
+		//申请单确认驳回
+		ExpendApplyInfo eai = getEntityManager().find(ExpendApplyInfo.class, eci.getExpend_apply_info_id());
+		eai.setExpendApplyStatus(2);
+		getEntityManager().merge(eai);
+		
+		//确认单项目表
+		JSONObject jsonObject = JSONObject.fromObject(projectJson);
+		JSONArray expendList = jsonObject.getJSONArray("expend_list");
+		float allMoney = 0f;
+		for(int i = 0;i < expendList.size();i++){
+			//获取参数
+			JSONObject project = expendList.getJSONObject(i);
+			String projectInfoId = project.getString("project_id");
+			String expendMoney = project.getString("expend_money");
+			//保存支出申请单详细列表
+			ExpendConfirmProject ecp = getEntityManager().find(ExpendConfirmProject.class, Integer.parseInt(projectInfoId));
+			ecp.setConfirm_money(Float.parseFloat(expendMoney));
+			ecp.setDeleted(true);
+			getEntityManager().merge(expendApplyInfo);
+		}
+		getEntityManager().flush();
+		raiseAfterTransactionSuccessEvent();
+		return "ok";
+	}
 
 	public List<Object[]> getProjectList() {
 		return projectList;

@@ -31,11 +31,14 @@ import net.sf.json.JSONObject;
 
 
 
+
 import org.jboss.seam.annotations.Name;
 
 import cn.dmdl.stl.hospitalbudget.admin.entity.UserInfo;
 import cn.dmdl.stl.hospitalbudget.budget.entity.ExpendApplyInfo;
 import cn.dmdl.stl.hospitalbudget.budget.entity.ExpendApplyProject;
+import cn.dmdl.stl.hospitalbudget.budget.entity.ExpendConfirmInfo;
+import cn.dmdl.stl.hospitalbudget.budget.entity.ExpendConfirmProject;
 import cn.dmdl.stl.hospitalbudget.budget.entity.NormalExpendBudgetOrderInfo;
 import cn.dmdl.stl.hospitalbudget.budget.entity.NormalExpendPlantInfo;
 import cn.dmdl.stl.hospitalbudget.budget.entity.TaskOrder;
@@ -135,13 +138,13 @@ public class ExpendApplyInfoHome extends CriterionEntityHome<ExpendApplyInfo>{
 			projectSql.append(" SELECT ");
 			projectSql.append(" up.the_value, ");
 			projectSql.append(" expi.budget_amount, ");
-			projectSql.append(" expi.budget_amount_frozen, ");
-			projectSql.append(" expi.budget_amount_surplus, ");
+			projectSql.append(" eap.expend_befor_frozen, ");
+			projectSql.append(" eap.expend_befor_surplus, ");
 			projectSql.append(" eap.expend_money, ");
 			projectSql.append(" eap.project_id,fs.the_value as source_name ");
 			projectSql.append(" FROM expend_apply_project eap ");
 			projectSql.append(" LEFT JOIN expend_apply_info eai ON eap.expend_apply_info_id = eai.expend_apply_info_id ");
-			projectSql.append(" LEFT JOIN usual_project up on up.the_id=eap.project_id ");
+			projectSql.append(" LEFT JOIN routine_project up on up.the_id=eap.project_id ");
 			projectSql.append(" LEFT JOIN normal_expend_plan_info expi on  expi.project_id=eap.project_id and expi.`year` = eai.`year` ");
 			projectSql.append(" LEFT JOIN ys_funds_source fs on up.funds_source_id=fs.the_id ");
 			projectSql.append(" where eap.deleted=0 ");
@@ -154,8 +157,8 @@ public class ExpendApplyInfoHome extends CriterionEntityHome<ExpendApplyInfo>{
 					Object[] projectDetail = new Object[8];
 					projectDetail[0] = obj[0];
 					projectDetail[1] = obj[1];
-					projectDetail[2] = Float.parseFloat(obj[2].toString()) - Float.parseFloat(obj[4].toString());
-					projectDetail[3] = Float.parseFloat(obj[3].toString()) + Float.parseFloat(obj[4].toString());;
+					projectDetail[2] = obj[2];
+					projectDetail[3] = obj[3];
 					projectDetail[4] = obj[4];
 					allMoney += Float.parseFloat(obj[4].toString());
 					projectDetail[5] = obj[6].toString();
@@ -355,8 +358,8 @@ public class ExpendApplyInfoHome extends CriterionEntityHome<ExpendApplyInfo>{
 			sql.append(" nepi.budget_amount_frozen, ");
 			sql.append(" nepi.budget_amount_surplus ");
 			sql.append(" FROM normal_expend_plan_info nepi ");
-			sql.append(" LEFT JOIN usual_project up ON nepi.project_id = up.the_id ");
-			sql.append(" LEFT JOIN ys_funds_source fs on up.funds_source_id=fs.the_id ");
+			sql.append(" LEFT JOIN routine_project rp ON nepi.project_id = rp.the_id ");
+			sql.append(" LEFT JOIN ys_funds_source fs on rp.funds_source_id=fs.the_id ");
 			sql.append(" WHERE nepi.project_id= ").append(projectId);
 			@SuppressWarnings("unchecked")
 			List<Object[]> list = getEntityManager().createNativeQuery(sql.toString()).getResultList();
@@ -399,7 +402,7 @@ public class ExpendApplyInfoHome extends CriterionEntityHome<ExpendApplyInfo>{
 		sql.append(" nepi.budget_amount, ");
 		sql.append(" nepi.budget_amount_frozen, ");
 		sql.append(" nepi.budget_amount_surplus,up.the_id,fs.the_value as source_name ");
-		sql.append(" FROM usual_project up ");
+		sql.append(" FROM routine_project up ");
 		sql.append(" LEFT JOIN normal_expend_plan_info nepi ON up.the_id = nepi.project_id ");
 		sql.append(" LEFT JOIN ys_funds_source fs on up.funds_source_id=fs.the_id ");
 		sql.append(" WHERE up.the_id = ").append(projectId);
@@ -509,6 +512,17 @@ public class ExpendApplyInfoHome extends CriterionEntityHome<ExpendApplyInfo>{
 		expendApplyInfo.setTaskOrderId(taskOrder.getTaskOrderId());
 		expendApplyInfo.setOrderSn(taskOrder.getOrderSn());
 		getEntityManager().persist(expendApplyInfo);
+		//生成确认单
+		ExpendConfirmInfo eci = new ExpendConfirmInfo();
+		eci.setExpend_apply_info_id(expendApplyInfo.getExpendApplyInfoId());
+		eci.setInsertUser(sessionToken.getUserInfoId());
+		eci.setInsertTime(new Date());
+		eci.setTotalMoney(0f);
+		eci.setConfirm_status(0);
+		eci.setYear(expendApplyInfo.getYear());
+		eci.setDeleted(false);
+		getEntityManager().persist(eci);
+		
 		if (saveResult != null) {
 			saveResult.clear();
 		} else {
@@ -516,27 +530,39 @@ public class ExpendApplyInfoHome extends CriterionEntityHome<ExpendApplyInfo>{
 		}
 		saveResult.accumulate("invoke_result", "INVOKE_SUCCESS");
 		saveResult.accumulate("message", "提交成功！");
+	
 		JSONObject jsonObject = JSONObject.fromObject(projectJson);
 		JSONArray expendList = jsonObject.getJSONArray("expend_list");
 		float allMoney = 0f;
+		//生成申请项目单和项目确认单
 		for(int i = 0;i < expendList.size();i++){
 			//获取参数
 			JSONObject project = expendList.getJSONObject(i);
 			String projectInfoId = project.getString("project_id");
 			String expendMoney = project.getString("expend_money");
+			String frozenMoney = project.getString("frozen_money");
+			String surplusMoney = project.getString("project_surplus");
 			allMoney += Float.parseFloat(expendMoney);
 			//保存支出申请单详细列表
 			ExpendApplyProject eap = new ExpendApplyProject();
 			eap.setExpendApplyInfoId(expendApplyInfo.getExpendApplyInfoId());
 			eap.setProjectId(Integer.parseInt(projectInfoId));
+			eap.setExpendBeforFrozen(Float.parseFloat(frozenMoney));
+			eap.setExpendBeforSurplus(Float.parseFloat(surplusMoney));
 			eap.setExpendMoney(Float.parseFloat(expendMoney));
 			eap.setInsertUser(sessionToken.getUserInfoId());
 			eap.setInsertTime(new Date());
 			eap.setDeleted(false);
 			getEntityManager().persist(eap);
-			expendApplyInfo.setTotalMoney(allMoney);
-			getEntityManager().merge(expendApplyInfo);
 			
+			
+			//项目确认单
+			ExpendConfirmProject efp = new ExpendConfirmProject();
+			efp.setExpend_confirm_info_id(eci.getExpend_confirm_info_id());
+			efp.setExpend_apply_project_id(eap.getExpendApplyProjectId());
+			efp.setProjectId(eap.getProjectId());
+			efp.setDeleted(false);
+			getEntityManager().persist(efp);
 			//to-do 预算下达金额减去支出金额
 			
 			//执行申请后再减掉金额
@@ -549,6 +575,11 @@ public class ExpendApplyInfoHome extends CriterionEntityHome<ExpendApplyInfo>{
 			nxpi.setBudgetAmountSurplus(nxpi.getBudgetAmountSurplus() - Float.parseFloat(expendMoney));
 			getEntityManager().merge(nxpi);
 		}
+		//保存申请单和确认单的总金额
+		expendApplyInfo.setTotalMoney(allMoney);
+		getEntityManager().merge(expendApplyInfo);
+		eci.setTotalMoney(expendApplyInfo.getTotalMoney());
+		getEntityManager().merge(eci);
 		getEntityManager().flush();
 		raiseAfterTransactionSuccessEvent();
 		return "ok";
@@ -564,6 +595,11 @@ public class ExpendApplyInfoHome extends CriterionEntityHome<ExpendApplyInfo>{
 		joinTransaction();
 		//申请单
 		ExpendApplyInfo expendApplyInfo = getEntityManager().find(ExpendApplyInfo.class, expendApplyInfoId);
+		//记录是否为驳回状态
+		boolean isReturnFlag = false;
+		if(expendApplyInfo.getExpendApplyStatus() == 2){
+			isReturnFlag = true;
+		}
 		expendApplyInfo.setExpendApplyCode(applySn);
 		expendApplyInfo.setYear(year.toString());
 		expendApplyInfo.setApplyUserId(applyUser);
@@ -599,6 +635,31 @@ public class ExpendApplyInfoHome extends CriterionEntityHome<ExpendApplyInfo>{
 			expendApplyInfo.setRegister(register);
 		}
 		getEntityManager().merge(expendApplyInfo);
+		//如果为驳回状态就重新创建一个确认单，如果不是驳回状态则修改确认单、
+		ExpendConfirmInfo eci = null;
+		if(isReturnFlag){
+			eci = new ExpendConfirmInfo();
+			eci.setExpend_apply_info_id(expendApplyInfo.getExpendApplyInfoId());
+			eci.setInsertUser(sessionToken.getUserInfoId());
+			eci.setInsertTime(new Date());
+			eci.setTotalMoney(0f);
+			eci.setConfirm_status(0);
+			eci.setYear(expendApplyInfo.getYear());
+			eci.setDeleted(false);
+			getEntityManager().persist(eci);
+		}else{
+			String confrimInfoSql = "select expendConfirmInfo from ExpendConfirmInfo expendConfirmInfo where expendConfirmInfo.deleted = 0 and expendConfirmInfo.expend_apply_info_id = " + expendApplyInfo;
+			List<ExpendConfirmInfo> confirmList = getEntityManager().createQuery(confrimInfoSql).getResultList();
+			eci = confirmList.get(0);
+			eci.setExpend_apply_info_id(expendApplyInfo.getExpendApplyInfoId());
+			eci.setInsertUser(sessionToken.getUserInfoId());
+			eci.setInsertTime(new Date());
+			eci.setTotalMoney(0f);
+			eci.setConfirm_status(0);
+			eci.setYear(expendApplyInfo.getYear());
+			eci.setDeleted(false);
+			getEntityManager().merge(eci);
+		}
 		if (saveResult != null) {
 			saveResult.clear();
 		} else {
@@ -640,6 +701,8 @@ public class ExpendApplyInfoHome extends CriterionEntityHome<ExpendApplyInfo>{
 			//获取参数
 			JSONObject project = expendList.getJSONObject(i);
 			String projectInfoId = project.getString("project_id");
+			String frozenMoney = project.getString("frozen_money");
+			String surplusMoney = project.getString("project_surplus");
 			String expendMoney = project.getString("expend_money");
 			allMoney += Float.parseFloat(expendMoney);
 			//编辑支出申请单详细列表
@@ -653,6 +716,8 @@ public class ExpendApplyInfoHome extends CriterionEntityHome<ExpendApplyInfo>{
 				editFlag = false;
 			}
 			eap.setProjectId(Integer.parseInt(projectInfoId));
+			eap.setExpendBeforFrozen(Float.parseFloat(frozenMoney));
+			eap.setExpendBeforSurplus(Float.parseFloat(surplusMoney));
 			eap.setExpendMoney(Float.parseFloat(expendMoney));
 			if(!editFlag){
 				eap.setInsertUser(sessionToken.getUserInfoId());
@@ -663,8 +728,35 @@ public class ExpendApplyInfoHome extends CriterionEntityHome<ExpendApplyInfo>{
 				eap.setUpdateTime(new Date());
 				getEntityManager().merge(eap);
 			}
-			expendApplyInfo.setTotalMoney(allMoney);
-			getEntityManager().merge(expendApplyInfo);
+			
+			//如果为驳回状态就重新创建一个确认单，如果不是驳回状态则修改确认单、
+			ExpendConfirmProject efp = null;
+			if(isReturnFlag){
+				efp = new ExpendConfirmProject();
+				efp.setExpend_confirm_info_id(eci.getExpend_confirm_info_id());
+				efp.setExpend_apply_project_id(eap.getExpendApplyProjectId());
+				efp.setProjectId(eap.getProjectId());
+				efp.setDeleted(false);
+				getEntityManager().persist(efp);
+			}else{
+				if(editFlag){
+					String efpHql = "select expendConfirmProject from ExpendConfirmProject expendConfirmProject where expendConfirmProject.expend_apply_project_id=" + eap.getExpendApplyProjectId(); 
+					List<ExpendConfirmProject> efpList = getEntityManager().createQuery(efpHql).getResultList();
+					efp = efpList.get(0);
+					efp.setExpend_confirm_info_id(eci.getExpend_confirm_info_id());
+					efp.setExpend_apply_project_id(eap.getExpendApplyProjectId());
+					efp.setProjectId(eap.getProjectId());
+					efp.setDeleted(false);
+					getEntityManager().merge(efp);
+				}else{
+					efp = new ExpendConfirmProject();
+					efp.setExpend_confirm_info_id(eci.getExpend_confirm_info_id());
+					efp.setExpend_apply_project_id(eap.getExpendApplyProjectId());
+					efp.setProjectId(eap.getProjectId());
+					efp.setDeleted(false);
+					getEntityManager().persist(efp);
+				}
+			}
 			
 			//to-do 预算下达金额减去支出金额
 			//执行申请后再减掉金额
@@ -678,6 +770,10 @@ public class ExpendApplyInfoHome extends CriterionEntityHome<ExpendApplyInfo>{
 			getEntityManager().merge(nxpi);
 			
 		}
+		expendApplyInfo.setTotalMoney(allMoney);
+		getEntityManager().merge(expendApplyInfo);
+		eci.setTotalMoney(expendApplyInfo.getTotalMoney());
+		getEntityManager().merge(eci);
 		for(ExpendApplyProject oldEap : oldList){	
 			boolean existflag = false;
 			for(Integer id : existProject){
@@ -796,12 +892,12 @@ public class ExpendApplyInfoHome extends CriterionEntityHome<ExpendApplyInfo>{
 		StringBuffer projectSql = new StringBuffer();
 		projectSql.append(" SELECT ");
 		projectSql.append(" nepi.normal_expend_plan_id, ");
-		projectSql.append(" up.the_id, ");
-		projectSql.append(" up.the_value ");
+		projectSql.append(" rp.the_id, ");
+		projectSql.append(" rp.the_value ");
 		projectSql.append(" FROM normal_expend_plan_info nepi ");
-		projectSql.append(" LEFT JOIN usual_project up ON nepi.project_id = up.the_id ");
-		projectSql.append(" LEFT JOIN usual_project_executor upx ON upx.usual_project_id = up.the_id ");
-		projectSql.append(" WHERE upx.user_info_id =  ");
+		projectSql.append(" LEFT JOIN routine_project rp ON nepi.project_id = rp.the_id ");
+		projectSql.append(" LEFT JOIN routine_project_executor rpe ON rpe.project_id = rp.the_id ");
+		projectSql.append(" WHERE rpe.user_info_id =  ");
 		projectSql.append(sessionToken.getUserInfoId());
 		projectSql.append(" and nepi.`year` =");
 		projectSql.append(year);
@@ -809,7 +905,7 @@ public class ExpendApplyInfoHome extends CriterionEntityHome<ExpendApplyInfo>{
 			projectSql.append(" and nepi.dept_id= ").append(departId);
 		}
 		if(-1 != sourceId){
-			projectSql.append(" and up.funds_source_id =  ").append(sourceId);
+			projectSql.append(" and rp.funds_source_id =  ").append(sourceId);
 		}
 		List<Object[]> list = getEntityManager().createNativeQuery(projectSql.toString()).getResultList();
 		if(list.size() > 0 ){

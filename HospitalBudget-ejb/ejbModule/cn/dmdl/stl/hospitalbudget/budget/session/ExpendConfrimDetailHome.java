@@ -143,7 +143,7 @@ public class ExpendConfrimDetailHome extends CriterionEntityHome<Object> {
 		projectSql.append(" ecp.project_id,fs.the_value as source_name ");
 		projectSql.append(" FROM expend_confirm_project ecp ");
 		projectSql.append(" LEFT JOIN expend_confirm_info eci on eci.expend_confirm_info_id= ecp.expend_confirm_info_id ");
-		projectSql.append(" LEFT JOIN usual_project up on up.the_id=ecp.project_id ");
+		projectSql.append(" LEFT JOIN routine_project up on up.the_id=ecp.project_id ");
 		projectSql.append(" LEFT JOIN normal_expend_plan_info expi on  expi.project_id=ecp.project_id and expi.`year` = eci.`year` ");
 		projectSql.append(" LEFT JOIN ys_funds_source fs on up.funds_source_id=fs.the_id ");
 		projectSql.append(" where  ");

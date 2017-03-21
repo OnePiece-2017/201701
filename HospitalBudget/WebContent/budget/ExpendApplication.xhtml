@@ -260,8 +260,8 @@
 				            <td >#{_obj[0]}</td>
 				            <td >#{_obj[5]}</td>
 				            <td >#{_obj[1]}</td>
-				            <td >#{_obj[2]}</td>
-				            <td  name="canUseMoney">#{_obj[3]}</td>
+				            <td id="projectFrozen_#{_index}">#{_obj[2]}</td>
+				            <td  name="canUseMoney" id="canUseMoney_#{_index}">#{_obj[3]}</td>
 				             <td >
 				            	<input id="money_#{_index}" name="money" class="form-control row-text-simplify" value="#{_obj[4]}" type="text" onblur="totalMoney()"/>
 				            </td>
@@ -858,10 +858,12 @@
 				var json = '{"expend_list":[';
 				jQuery(".expendtr").each(function(i){
 					var projectId= jQuery("#project_id_" + i).text();
+					var projectFrozen = jQuery("#projectFrozen_" + i).text();
+					var projectSurplus = jQuery("#canUseMoney_" + i).text();
 					var money = jQuery("#money_" + i).val();
-					var time = jQuery("#time_" + i).val();
-					var comment = jQuery("#comment_" + i).val();
 					json += '{"project_id":"' + projectId + '",';
+					json += '"frozen_money":"' + projectFrozen + '",';
+					json += '"project_surplus":"' + projectSurplus + '",';
 					json += '"expend_money":"' + money + '"},';
 				});
 				json = json.substring(0,json.length-1);

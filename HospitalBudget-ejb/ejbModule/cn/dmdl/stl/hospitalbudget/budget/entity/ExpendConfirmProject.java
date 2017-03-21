@@ -26,6 +26,7 @@ public class ExpendConfirmProject implements java.io.Serializable{
 	private Integer expend_apply_project_id;//申请单项目表
 	private Integer projectId;
 	private Float confirm_money;//确认金额
+	private boolean deleted;//删除
 	
 	
 	@Id
@@ -71,6 +72,14 @@ public class ExpendConfirmProject implements java.io.Serializable{
 	}
 	public void setProjectId(Integer projectId) {
 		this.projectId = projectId;
+	}
+	@Column(name = "deleted")
+	@NotNull
+	public boolean isDeleted() {
+		return deleted;
+	}
+	public void setDeleted(boolean deleted) {
+		this.deleted = deleted;
 	}
 
 }
