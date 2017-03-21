@@ -1,0 +1,35 @@
+.draft-table-head {
+	float: left;
+	width: 100%;
+	height: 34px;
+	line-height: 34px;
+	margin-bottom: 5px;
+	border-radius: 10px;
+	border: 1px dotted #e7cece;
+	font-size: 16px;
+}
+
+.draft-table-body {
+	width: 100%;
+	height: 370px;
+	float: left;
+	margin-bottom: 10px;
+	border-radius: 10px;
+	border: 1px dotted #e7cece;
+}
+
+.task-name {
+	float: left;
+	width: 128px;
+	margin-left: 5px;
+}
+
+.total-amount-label {
+	float: left;
+	width: 64px;
+}
+
+.total-amount-value {
+	float: left;
+	color: #e65f72;
+}

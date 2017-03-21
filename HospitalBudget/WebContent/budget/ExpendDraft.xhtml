@@ -1,0 +1,116 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:s="http://jboss.com/products/seam/taglib"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:a="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich"
+	template="/layout/template_edit.xhtml">
+
+	<ui:define name="head">
+		<link rel="stylesheet" type="text/css" href="#{request.contextPath}/common/css/bootstrap.min.css" />
+		<link rel="stylesheet" type="text/css" href="#{request.contextPath}/common/css/bootstrap-select.min.css" />
+		<style type="text/css">
+			.field-name {
+				float: left;
+				width: 85px;
+				padding-right: 15px;
+				font-family: '微软雅黑';
+				text-align: right;
+				line-height: 34px;
+				display: block;
+			}
+			
+			.bs-budget-year .bootstrap-select:not([class*="span"]):not([class*="col-"]):not([class*="form-control"]):not(.input-group-btn) {
+				width: 128px;
+			}
+			
+			.bs-funds-source .bootstrap-select:not([class*="span"]):not([class*="col-"]):not([class*="form-control"]):not(.input-group-btn) {
+				width: 192px;
+			}
+		</style>
+		<link rel="stylesheet" type="text/css" href="#{request.contextPath}/stylesheet/budget/expend-draft.css" />
+	</ui:define>
+
+	<ui:define name="body">
+		#{expendDraftHome.wire()}
+		<h:form id="mainForm" styleClass="edit" enctype="multipart/form-data">
+			<div class="pd0-10">
+				<div class="pt30 fs14">
+					<div style="width: 100%; height: 34px;">
+						<div class="fl bs-budget-year">
+							<span class="field-name mb10">预算年份</span>
+							<select id="budgetYear" class="selectpicker">
+								<a:repeat value="#{expendDraftHome.budgetYearList}" var="_var">
+									<option value="#{_var[0]}">#{_var[1]}</option>
+								</a:repeat>
+							</select>
+						</div>
+						<div class="fl bs-funds-source">
+							<span class="field-name mb10">资金来源</span>
+							<select id="fundsSourceId" class="selectpicker" data-live-search="true">
+								<a:repeat value="#{expendDraftHome.fundsSourceList}" var="_var">
+									<option value="#{_var[0]}">#{_var[1]}</option>
+								</a:repeat>
+							</select>
+						</div>
+						<div class="fl">
+							<span class="field-name mb10">主管科室</span>
+							<select id="departmentInfoId" class="selectpicker" data-live-search="true">
+								<a:repeat value="#{expendDraftHome.departmentInfoList}" var="_var">
+									<option value="#{_var[0]}">#{_var[1]}</option>
+								</a:repeat>
+							</select>
+						</div>
+					</div>
+				</div>
+				<div class="draft-table-head">
+					<div class="task-name">
+						<span>支出预算编制</span>
+					</div>
+					<div class="total-amount-label">
+						<span>总金额</span>
+					</div>
+					<div class="total-amount-value">
+						<span>1000</span>
+					</div>
+				</div>
+				<div class="draft-table-body">
+				</div>
+				<div class="pt50 pb95">
+					<table class="normal-btn">
+						<tr>
+							<td>
+								<h:inputHidden id="budgetYearHidden" value="#{expendDraftHome.budgetYear}" />
+								<h:inputHidden id="fundsSourceIdHidden" value="#{expendDraftHome.fundsSourceId}" />
+								<h:inputHidden id="departmentInfoIdHidden" value="#{expendDraftHome.departmentInfoId}" />
+								<h:commandButton id="draft" value="保存" onclick="return check_draft();" action="#{expendDraftHome.draft}" styleClass="btn btn-primary mr15" />
+								<h:commandButton id="submit" value="提交" onclick="return check_submit();" action="#{expendDraftHome.submit}" styleClass="btn btn-primary mr15" />
+							</td>
+						</tr>
+					</table>
+					<br />
+					<br />
+				</div>
+			</div>
+		</h:form>
+		<script type="text/javascript" src="#{request.contextPath}/common/js/bootstrap.min.js" />
+		<script type="text/javascript" src="#{request.contextPath}/common/js/bootstrap-select.min.js" charset="UTF-8" />
+		<script type="text/javascript" src="#{request.contextPath}/common/js/bootstrap-select-defaults-zh_CN.min.js" charset="UTF-8" />
+		<script type="text/javascript" src="#{request.contextPath}/javascript/budget/expend-draft.js" />
+		<script type="text/javascript" src="#{request.contextPath}/toolkit/utils.js" />
+		<script type="text/javascript">
+		//<![CDATA[
+			jQuery(document).ready(function() {
+			    var message = '#{expendDraftHome.message}';
+			    if (message != '') {
+					___msg('温馨提示', message);
+			    }
+			});
+		//]]>
+		</script>
+	</ui:define>
+
+</ui:composition>
