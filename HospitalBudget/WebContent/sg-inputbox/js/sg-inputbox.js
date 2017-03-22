@@ -9,7 +9,8 @@ var ______sgInputbox = {
     threshold : {},
     timer : {},
     allowEnter : {},
-    magicBinder : {}
+    magicBinder : {},
+    reminderService : true
 };
 
 jQuery(document).ready(function() {
@@ -183,6 +184,14 @@ function ______gainElementTypeLabel(eType) {
 	return 'input' == eType ? '文本字段' : '文本区';
 }
 
+function ___sgInputboxStartReminderService() {
+	______sgInputbox.reminderService = true;
+}
+
+function ___sgInputboxStopReminderService() {
+	______sgInputbox.reminderService = false;
+}
+
 function ___sgInputbox(arg) {
 	if (arg != null && 'object' === typeof arg && !arg.hasOwnProperty('length') && 'id' in arg && 'alias' in arg && 'threshold' in arg && 'notify' in arg) {
 		var id = arg['id'], alias = arg['alias'], threshold = arg['threshold'], notify = arg['notify'];
@@ -208,11 +217,13 @@ function ___sgInputbox(arg) {
 				if (notify) {
 					var magicBinder = null;
 					magicBinder = function() {
-						___sgReminder('亲：待提示完全消失后，可双击鼠标左键来打开迷你输入框。<br>' + ______gainElementTypeLabel(eType) + '﹝' + alias + '﹞', 2048, function() {
-							jQuery(element).unbind('focus');
-							jQuery(element).focus();
-							jQuery(element).focus(magicBinder);
-						});
+						if (______sgInputbox.reminderService) {
+							___sgReminder('亲：待提示完全消失后，可双击鼠标左键来打开迷你输入框。<br>' + ______gainElementTypeLabel(eType) + '﹝' + alias + '﹞', 2048, function() {
+								jQuery(element).unbind('focus');
+								jQuery(element).focus();
+								jQuery(element).focus(magicBinder);
+							});
+						}
 					};
 					______sgInputbox.magicBinder[______sgInputbox.handleIndex] = magicBinder;
 					jQuery(element).focus(magicBinder);

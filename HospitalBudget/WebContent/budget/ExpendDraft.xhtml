@@ -31,6 +31,8 @@
 				width: 192px;
 			}
 		</style>
+		<link rel="stylesheet" type="text/css" href="#{request.contextPath}/sg-reminder/css/sg-reminder.css" />
+		<link rel="stylesheet" type="text/css" href="#{request.contextPath}/sg-inputbox/css/sg-inputbox.css" />
 		<link rel="stylesheet" type="text/css" href="#{request.contextPath}/stylesheet/budget/expend-draft.css" />
 	</ui:define>
 
@@ -71,13 +73,60 @@
 						<span>支出预算编制</span>
 					</div>
 					<div class="total-amount-label">
-						<span>总金额</span>
+						<span>总金额（单位：万元）</span>
 					</div>
 					<div class="total-amount-value">
-						<span>1000</span>
+						<span>0.00</span>
+					</div>
+					<div class="btn-reference">
+						<span>参考</span>
+					</div>
+					<div class="btn-reminder-service running">
+						<span>提示</span>
 					</div>
 				</div>
+				<div class="draft-table-title">
+					<ul class="data-container">
+						<li>
+							<div class="item-outer">
+								<div class="item-inner">
+									<div class="toggle">
+										<span></span>
+									</div>
+									<div class="generic-field edge-end field-id">
+										<span>ID</span>
+									</div>
+									<div class="generic-field edge-end field-project-nature">
+										<span>项目性质</span>
+									</div>
+									<div class="generic-field edge-end field-funds-source">
+										<span>资金来源</span>
+									</div>
+									<div class="generic-field edge-end field-department-name">
+										<span>主管科室</span>
+									</div>
+									<div class="generic-field edge-end field-project-name">
+										<span>项目名称</span>
+									</div>
+									<div class="generic-field edge-end field-project-source">
+										<span>项目来源</span>
+									</div>
+									<div class="generic-field edge-end field-project-amount">
+										<span>预算金额</span>
+									</div>
+									<div class="generic-field field-formula-remark">
+										<span>金额计算依据及备注</span>
+									</div>
+									<div class="generic-field field-function">
+										<span class="the-label">操作</span>
+									</div>
+								</div>
+							</div>
+						</li>
+					</ul>
+				</div>
 				<div class="draft-table-body">
+					<ul class="data-container"><!-- js填充 --></ul>
 				</div>
 				<div class="pt50 pb95">
 					<table class="normal-btn">
@@ -86,7 +135,7 @@
 								<h:inputHidden id="budgetYearHidden" value="#{expendDraftHome.budgetYear}" />
 								<h:inputHidden id="fundsSourceIdHidden" value="#{expendDraftHome.fundsSourceId}" />
 								<h:inputHidden id="departmentInfoIdHidden" value="#{expendDraftHome.departmentInfoId}" />
-								<h:commandButton id="draft" value="保存" onclick="return check_draft();" action="#{expendDraftHome.draft}" styleClass="btn btn-primary mr15" />
+								<h:commandButton id="draft" value="保存" onclick="return check_draft();" action="#{expendDraftHome.draft}" styleClass="btn btn-success mr15" />
 								<h:commandButton id="submit" value="提交" onclick="return check_submit();" action="#{expendDraftHome.submit}" styleClass="btn btn-primary mr15" />
 							</td>
 						</tr>
@@ -99,6 +148,8 @@
 		<script type="text/javascript" src="#{request.contextPath}/common/js/bootstrap.min.js" />
 		<script type="text/javascript" src="#{request.contextPath}/common/js/bootstrap-select.min.js" charset="UTF-8" />
 		<script type="text/javascript" src="#{request.contextPath}/common/js/bootstrap-select-defaults-zh_CN.min.js" charset="UTF-8" />
+		<script type="text/javascript" src="#{request.contextPath}/sg-reminder/js/sg-reminder.js" />
+		<script type="text/javascript" src="#{request.contextPath}/sg-inputbox/js/sg-inputbox.js" />
 		<script type="text/javascript" src="#{request.contextPath}/javascript/budget/expend-draft.js" />
 		<script type="text/javascript" src="#{request.contextPath}/toolkit/utils.js" />
 		<script type="text/javascript">
