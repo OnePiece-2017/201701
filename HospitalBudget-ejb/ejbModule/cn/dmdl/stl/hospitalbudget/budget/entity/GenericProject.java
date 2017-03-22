@@ -32,6 +32,8 @@ public class GenericProject implements java.io.Serializable {
 
 	private static final long serialVersionUID = 1L;
 	private Integer theId;
+	private int theLevel;
+	private boolean bottomLevel;
 	private GenericProject genericProject;
 	private String theValue;
 	private Integer projectType;
@@ -58,6 +60,24 @@ public class GenericProject implements java.io.Serializable {
 
 	public void setTheId(Integer theId) {
 		this.theId = theId;
+	}
+
+	@Column(name = "the_level", nullable = false)
+	public int getTheLevel() {
+		return theLevel;
+	}
+
+	public void setTheLevel(int theLevel) {
+		this.theLevel = theLevel;
+	}
+
+	@Column(name = "bottom_level", nullable = false)
+	public boolean isBottomLevel() {
+		return bottomLevel;
+	}
+
+	public void setBottomLevel(boolean bottomLevel) {
+		this.bottomLevel = bottomLevel;
 	}
 
 	@ManyToOne(fetch = FetchType.LAZY)

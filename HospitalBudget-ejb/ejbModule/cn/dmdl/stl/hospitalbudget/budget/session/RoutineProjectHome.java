@@ -50,6 +50,8 @@ public class RoutineProjectHome extends CriterionEntityHome<RoutineProject> {
 		} else {
 			instance.setYsFundsSource(null);
 		}
+		instance.setTheLevel(1);// 级别为1
+		instance.setBottomLevel(true);// 假定最底级
 		instance.setInsertTime(new Date());
 		instance.setInsertUser(sessionToken.getUserInfoId());
 		getEntityManager().persist(instance);
@@ -87,6 +89,9 @@ public class RoutineProjectHome extends CriterionEntityHome<RoutineProject> {
 				RoutineProject instance2nd = new RoutineProject();
 				instance2nd.setTheValue(name);
 				instance2nd.setRoutineProject(instance);
+				instance.setBottomLevel(false);// 驳回假定最底级
+				instance2nd.setTheLevel(2);// 级别为2
+				instance2nd.setBottomLevel(true);// 假定最底级
 				instance2nd.setTheDescription(description);
 				getEntityManager().persist(instance2nd);
 				if (executor != null && !"".equals(executor)) {
@@ -120,6 +125,9 @@ public class RoutineProjectHome extends CriterionEntityHome<RoutineProject> {
 				RoutineProject instance3rdPlus = new RoutineProject();
 				instance3rdPlus.setTheValue(name);
 				instance3rdPlus.setRoutineProject(parentInstance);
+				parentInstance.setBottomLevel(false);// 驳回假定最底级
+				instance3rdPlus.setTheLevel(parentInstance.getTheLevel() + 1);// 级别为3+
+				instance3rdPlus.setBottomLevel(true);// 假定最底级
 				instance3rdPlus.setTheDescription(description);
 				getEntityManager().persist(instance3rdPlus);
 				if (executor != null && !"".equals(executor)) {
@@ -180,6 +188,8 @@ public class RoutineProjectHome extends CriterionEntityHome<RoutineProject> {
 				}
 			}
 		}
+		instance.setTheLevel(1);// 级别为1
+		instance.setBottomLevel(true);// 假定最底级
 		instance.setUpdateTime(new Date());
 		instance.setUpdateUser(sessionToken.getUserInfoId());
 		getEntityManager().merge(instance);
@@ -204,6 +214,9 @@ public class RoutineProjectHome extends CriterionEntityHome<RoutineProject> {
 				RoutineProject instance2nd = new RoutineProject();
 				instance2nd.setTheValue(name);
 				instance2nd.setRoutineProject(instance);
+				instance.setBottomLevel(false);// 驳回假定最底级
+				instance2nd.setTheLevel(2);// 级别为2
+				instance2nd.setBottomLevel(true);// 假定最底级
 				instance2nd.setTheDescription(description);
 				getEntityManager().persist(instance2nd);
 				if (executor != null && !"".equals(executor)) {
