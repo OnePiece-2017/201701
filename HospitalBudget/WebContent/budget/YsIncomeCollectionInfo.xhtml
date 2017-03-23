@@ -1,0 +1,109 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:s="http://jboss.com/products/seam/taglib"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:a="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich"
+	template="/layout/template_edit.xhtml">
+
+	<ui:define name="head">
+		<link rel="stylesheet" type="text/css" href="#{request.contextPath}/stylesheet/template_list.css" />
+		<link rel="stylesheet" type="text/css" href="#{request.contextPath}/common/css/bootstrap.min.css" />
+		<link rel="stylesheet" type="text/css" href="#{request.contextPath}/common/css/bootstrap-select.min.css" />
+		<link rel="stylesheet" type="text/css" href="#{request.contextPath}/common/css/jquery.treegrid.css" />
+		<link rel="stylesheet" type="text/css" href="#{request.contextPath}/icheck/skins/square/blue.css" />
+		<link rel="stylesheet" type="text/css" href="#{request.contextPath}/toastr/toastr.min.css" />
+		<style type="text/css">
+			.root {
+				background: #add595;
+			}
+			.treegrid-indent{
+				width:32px;
+			}
+		</style>
+	</ui:define>
+
+	<ui:define name="body">
+		<div class="pd0-10 pt30">
+			<strong style="font-size: 20px;">预算汇总</strong>
+			<font style="margin-left: 15px;color: #f903ed;">项目金额(合计：<span class="node-totalAmount">--</span>元)</font>
+			<strong style="font-size: 28px;position:relative;left:30%;">内科</strong>
+			<div class="g-data-list-table freeze-attendProject">
+			    <table class="record" width="100%" cellpadding="0" cellspacing="0">
+			        <tr>
+			            <th width="20%">项目名称</th>
+			            <th width="5%">项目性质</th>
+			            <th width="10%">项目来源</th>
+			            <th width="10%">项目金额(元)</th>
+			            <th width="10%">与上一年预算<br />同比增减(万元)</th>
+			            <th width="10%">与上一年预算<br />同比增减率</th>
+			            <th width="30%">金额计算依据及备注</th>
+			            <th width="5%">附件</th>
+			        </tr>
+				</table>
+			</div>
+			<div class="pt50 pb95">
+				<table class="normal-btn">
+					<tr>
+						<td>
+							<s:button id="cancel" value="返回" view="/budget/YsBudgetCollectionDeptList.seam" propagation="none" styleClass="btn btn-default" />
+						</td>
+					</tr>
+				</table>
+			</div>
+		</div>
+		<a:form>
+			<a:queue requestDelay="100" ignoreDupResponses="true" />
+			<a:jsFunction name="getCollectionInfoAction"  data="#{ysIncomeCollectionInfoHome.collectionIncomeInfo}" oncomplete="wirePage(data);">
+			</a:jsFunction>
+		</a:form>
+		<script type="text/javascript" src="#{request.contextPath}/javascript/template_list.js" charset="UTF-8" />
+		<script type="text/javascript" src="#{request.contextPath}/common/js/bootstrap.min.js" />
+		<script type="text/javascript" src="#{request.contextPath}/common/js/bootstrap-select.min.js" charset="UTF-8" />
+		<script type="text/javascript" src="#{request.contextPath}/common/js/bootstrap-select-defaults-zh_CN.min.js" charset="UTF-8" />
+		<script type="text/javascript" src="#{request.contextPath}/common/js/jquery.treegrid.js" charset="UTF-8" />
+		<script type="text/javascript" src="#{request.contextPath}/icheck/js/icheck.min.js" charset="UTF-8" />
+		<script type="text/javascript" src="#{request.contextPath}/toastr/toastr.min.js" />
+		<script type="text/javascript" src="#{request.contextPath}/toolkit/utils.js" charset="UTF-8" />
+		<script type="text/javascript">
+		//<![CDATA[
+		jQuery(document).ready(function(){
+			getCollectionInfoAction();
+		});
+
+		function wirePage(data){
+		    var jsonArr= data.collection_info;
+		    var html = "";
+		    jQuery(jsonArr).each(function(index, val){
+			    if(val.the_pid){
+			    	html += "<tr class='treegrid-" + val.project_id + " treegrid-parent-" + val.the_pid + "'>";
+				}else{
+					html += "<tr class='root treegrid-" + val.project_id + "'>";
+					console.log(1);
+				}
+			  	html += "<td>" + val.project_name + "</td>";
+			  	if(val.is_usual == 1){
+				  	html += "<td>常规</td>";
+				}else{
+					html += "<td>项目</td>";
+				}
+			  	html += "<td>" + val.project_source + "</td>";
+			  	html += "<td>" + val.project_amount + "</td>";
+			  	html += "<td>--</td>";
+			  	html += "<td>--</td>";
+			  	html += "<td>" + val.formula_remark + "</td>";
+			  	html += "<td>附件</td>";
+			  	html += "</tr>";
+			});
+			jQuery(".record").append(html);
+			jQuery('.record').treegrid();
+			jQuery(".node-totalAmount").html(data.total_amount);
+			
+		}
+		//]]>
+		</script>
+	</ui:define>
+</ui:composition>

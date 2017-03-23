@@ -1,0 +1,87 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:s="http://jboss.com/products/seam/taglib"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:rich="http://richfaces.org/rich"
+    template="layout/template.xhtml">
+
+<ui:define name="body">
+
+    <rich:panel>
+        <f:facet name="header">Ys expend collection info Details</f:facet>
+
+
+        <s:decorate id="budgetCollectionDeptId" template="layout/display.xhtml">
+            <ui:define name="label">Budget collection dept id</ui:define>
+            <h:outputText value="#{ysExpendCollectionInfoHome.instance.budgetCollectionDeptId}"/>
+        </s:decorate>
+
+        <s:decorate id="year" template="layout/display.xhtml">
+            <ui:define name="label">Year</ui:define>
+            <h:outputText value="#{ysExpendCollectionInfoHome.instance.year}"/>
+        </s:decorate>
+
+        <s:decorate id="projectSource" template="layout/display.xhtml">
+            <ui:define name="label">Project source</ui:define>
+            <h:outputText value="#{ysExpendCollectionInfoHome.instance.projectSource}"/>
+        </s:decorate>
+
+        <s:decorate id="routineProjectId" template="layout/display.xhtml">
+            <ui:define name="label">Routine project id</ui:define>
+            <h:outputText value="#{ysExpendCollectionInfoHome.instance.routineProjectId}"/>
+        </s:decorate>
+
+        <s:decorate id="genericProjectId" template="layout/display.xhtml">
+            <ui:define name="label">Generic project id</ui:define>
+            <h:outputText value="#{ysExpendCollectionInfoHome.instance.genericProjectId}"/>
+        </s:decorate>
+
+        <s:decorate id="projectAmount" template="layout/display.xhtml">
+            <ui:define name="label">Project amount</ui:define>
+            <h:outputText value="#{ysExpendCollectionInfoHome.instance.projectAmount}"/>
+        </s:decorate>
+
+        <s:decorate id="formulaRemark" template="layout/display.xhtml">
+            <ui:define name="label">Formula remark</ui:define>
+            <h:outputText value="#{ysExpendCollectionInfoHome.instance.formulaRemark}"/>
+        </s:decorate>
+
+        <s:decorate id="insertTime" template="layout/display.xhtml">
+            <ui:define name="label">Insert time</ui:define>
+            <h:outputText value="#{ysExpendCollectionInfoHome.instance.insertTime}">
+                <s:convertDateTime type="both" dateStyle="short"/>
+            </h:outputText>
+        </s:decorate>
+
+        <s:decorate id="insertUser" template="layout/display.xhtml">
+            <ui:define name="label">Insert user</ui:define>
+            <h:outputText value="#{ysExpendCollectionInfoHome.instance.insertUser}"/>
+        </s:decorate>
+
+        <s:decorate id="delete" template="layout/display.xhtml">
+            <ui:define name="label">Delete</ui:define>
+            <h:outputText value="#{ysExpendCollectionInfoHome.instance.delete}"/>
+        </s:decorate>
+
+        <div style="clear:both"/>
+
+    </rich:panel>
+
+    <div class="actionButtons">
+
+        <s:button view="/YsExpendCollectionInfoEdit.xhtml"
+                    id="edit"
+                 value="Edit"/>
+
+        <s:button view="/#{empty ysExpendCollectionInfoFrom ? 'YsExpendCollectionInfoList' : ysExpendCollectionInfoFrom}.xhtml"
+                    id="done"
+                 value="Done"/>
+
+    </div>
+
+</ui:define>
+
+</ui:composition>

@@ -1,0 +1,279 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:s="http://jboss.com/products/seam/taglib"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:a="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich"
+	template="/layout/template_edit.xhtml">
+
+	<ui:define name="head">
+		<link rel="stylesheet" type="text/css" href="#{request.contextPath}/stylesheet/template_list.css" />
+		<link rel="stylesheet" type="text/css" href="#{request.contextPath}/common/css/bootstrap.min.css" />
+		<link rel="stylesheet" type="text/css" href="#{request.contextPath}/common/css/bootstrap-select.min.css" />
+		<link rel="stylesheet" type="text/css" href="#{request.contextPath}/icheck/skins/square/blue.css" />
+		<style type="text/css">
+			
+			.normal-attendProject .root {
+				background: #add595;
+			}
+			
+			.node-summaryInfo {
+				font-weight: bold;
+			}
+		</style>
+	</ui:define>
+
+	<ui:define name="body">
+		<div class="pd0-10 pt30">
+			<div class="g-data-list-condition">
+				<div class="fl">
+					<div style="float: left; text-align: center; line-height: 36px; width: 70px;">
+						<span>年份</span>
+					</div>
+					<div class="fl">
+						<select id="budgetYear" class="selectpicker">
+							<a:repeat value="#{commonDaoHome.recentYearList}" var="_var">
+								<option value="#{_var[0]}">#{_var[1]}</option>
+							</a:repeat>
+						</select>
+					</div>
+					<div style="float: left; text-align: center; line-height: 36px; width: 70px;">
+						<span>科室</span>
+					</div>
+					<div class="fl">
+						<select id="departmentIds" class="selectpicker" multiple="multiple" data-live-search="true" title="全部科室">
+							<a:repeat value="#{commonDaoHome.departmentInfoList}" var="_var">
+								<option value="#{_var[0]}">#{_var[1]}</option>
+							</a:repeat>
+						</select>
+					</div>
+				</div>
+				<div style="float: right;">
+					<table class="normal-btn">
+						<tr>
+							<td>
+								<a class="btn btn-primary mr15" onclick="return onSave();">导出</a>
+							</td>
+							<td>
+								<a class="btn btn-primary mr15" onclick="return onSubmit();">下达</a>
+							</td>
+						</tr>
+					</table>
+				</div>
+			</div>
+			<strong style="font-size: 20px;">收入预算</strong>
+			<font style="margin-left: 15px;color: #f903ed;">(共<span id="income_rows" class="node-summaryInfo">0</span>元)</font>
+			<div class="g-data-list-table freeze-attendProject" >
+			    <table class="record" id="income_table" width="100%" cellpadding="0" cellspacing="0">
+			        <tr>
+			            <th width="5%">年份</th>
+			            <th width="15%">科室</th>
+			            <th width="20%">预算金额(元)</th>
+			            <th width="20%">与上一年预算同比增减金额</th>
+			            <th width="20%">与上一年预算同比增减率</th>
+			            <th width="5%">状态</th>
+			            <th width="5%">选择</th>
+			            <th width="10%">操作</th>
+			        </tr>
+			    </table>
+			</div>
+
+			
+			<strong style="font-size: 20px;">支出预算</strong>
+			<font style="margin-left: 15px;color: #f903ed;">(共<span id="expend_rows" class="node-summaryInfo">0</span>元)</font>
+			<div class="g-data-list-table freeze-attendProject" id="expend_freez_head" >
+			    <table class="record" id="expend_table" width="100%" cellpadding="0" cellspacing="0">
+			        <tr>
+			            <th width="5%">年份</th>
+			            <th width="15%">科室</th>
+			            <th width="20%">预算金额(元)</th>
+			            <th width="20%">与上一年预算同比增减金额</th>
+			            <th width="20%">与上一年预算同比增减率</th>
+			            <th width="5%">状态</th>
+			            <th width="5%">选择</th>
+			            <th width="10%">操作</th>
+			        </tr>
+			    </table>
+			</div>
+			
+			<div class="pt50 pb95">
+				<table class="normal-btn">
+					<tr>
+						<td>
+							<a class="btn btn-primary mr15" onclick="return onSubmit();">下达</a>
+						</td>
+					</tr>
+				</table>
+				<br />
+				<br />
+			</div>
+		</div>
+		<a:form>
+			<a:queue requestDelay="100" ignoreDupResponses="true" />
+			<a:jsFunction name="filterCollectionAction" action="#{ysBudgetCollectionDeptHome.filterBudgetCollectionInfo()}" data="#{ysBudgetCollectionDeptHome.budgetCollectionInfo}" oncomplete="wirePage(data);">
+				<a:actionparam name="year" assignTo="#{ysBudgetCollectionDeptHome.year}" />
+				<a:actionparam name="deptId" assignTo="#{ysBudgetCollectionDeptHome.deptIds}" />
+			</a:jsFunction>
+			<a:jsFunction name="submitCollectionAction"  data="#{ysBudgetCollectionDeptHome.submitCollection()}" oncomplete="submitComplete(data);">
+				<a:actionparam name="collectionDeptIds" assignTo="#{ysBudgetCollectionDeptHome.budgetCollectionDeptIds}" />
+			</a:jsFunction>
+		</a:form>
+		<script type="text/javascript" src="#{request.contextPath}/javascript/template_list.js" charset="UTF-8" />
+		<script type="text/javascript" src="#{request.contextPath}/common/js/bootstrap.min.js" />
+		<script type="text/javascript" src="#{request.contextPath}/common/js/bootstrap-select.min.js" charset="UTF-8" />
+		<script type="text/javascript" src="#{request.contextPath}/common/js/bootstrap-select-defaults-zh_CN.min.js" charset="UTF-8" />
+		<script type="text/javascript" src="#{request.contextPath}/icheck/js/icheck.min.js" charset="UTF-8" />
+		<script type="text/javascript" src="#{request.contextPath}/toolkit/utils.js" charset="UTF-8" />
+		<script type="text/javascript">
+		//<![CDATA[
+			jQuery(document).ready(function() {
+				//获取当前年
+			    var date=new Date;
+			    var yearStr=date.getFullYear();
+			    jQuery("#budgetYear").val(yearStr)
+			    
+			    jQuery('.selectpicker').selectpicker();
+			    jQuery('.normal-attendProject').niceScroll({
+					cursorcolor : '#5cb85c',
+					cursorwidth : 9,
+					cursoropacitymax : 0.8,
+					touchbehavior : false,
+					autohidemode : false
+			    });
+
+			    filterCollection();
+			    jQuery('#budgetYear, #departmentIds').change(filterCollection);
+			});
+
+			//筛选编制信息
+			function filterCollection(){
+				var year = jQuery("#budgetYear").val();
+			    var deptIds = jQuery("#departmentIds").val();
+			    if(deptIds){
+			    	deptIds = deptIds.toString(); 
+				}
+			    filterCollectionAction(year, deptIds);
+			}
+
+			//装载页面
+			function wirePage(data){
+				var json = eval(data);
+				//页面加载已提交编制数据
+				jQuery("#income_table  tr:not(:first)").html("");
+				var incomeJsonArr = json.income;
+				var incomeHtml = "";
+				jQuery(incomeJsonArr).each(function(index, val){
+					incomeHtml += '<tr class="data-row">';
+					incomeHtml += '	<td>' + val.year + '</td>';
+					incomeHtml += '	<td>' + val.dept_name + '</td>';
+					incomeHtml += '	<td>' + val.total_amount + '</td>';
+					incomeHtml += '	<td>--</td>';
+					incomeHtml += '	<td>--</td>';
+					incomeHtml += '	<td>' + val.status_name + '</td>';
+					incomeHtml += '	<td><input type="checkbox" class="icheck" id="id_' + val.budget_collection_dept_id + '"></td>';
+					incomeHtml += '	<td><a href="../budget/YsIncomeCollectionInfo.seam?collectionDeptId=' + val.budget_collection_dept_id + '"  title="查看" style="text-decoration: none;"><img src="../images/icon_view_16x16.png"></a></td>';
+					incomeHtml += '</tr>';
+				});
+
+				//页面加载未提交编制数据
+				var incomeUnfinishedJsonArr = json.income_unfinished;
+				jQuery(incomeUnfinishedJsonArr).each(function(index, val){
+					incomeHtml += '<tr class="data-row" style="background-color: pink;">';
+					incomeHtml += '	<td>' + val.year + '</td>';
+					incomeHtml += '	<td>' + val.dept_name + '</td>';
+					incomeHtml += '	<td></td>';
+					incomeHtml += '	<td>--</td>';
+					incomeHtml += '	<td>--</td>';
+					incomeHtml += '	<td>' + val.status_name + '</td>';
+					incomeHtml += '	<td></td>';
+					incomeHtml += '	<td></td>';
+					incomeHtml += '</tr>';
+				});
+				jQuery("#income_table").append(incomeHtml);
+				jQuery("#income_rows").html(json.total_income);
+
+				//支出
+				jQuery("#expend_table  tr:not(:first)").html("");
+				var expendJsonArr = json.expend;
+				var expendHtml = "";
+				jQuery(expendJsonArr).each(function(index, val){
+					expendHtml += '<tr class="data-row">';
+					expendHtml += '	<td>' + val.year + '</td>';
+					expendHtml += '	<td>' + val.dept_name + '</td>';
+					expendHtml += '	<td>' + val.total_amount + '</td>';
+					expendHtml += '	<td>--</td>';
+					expendHtml += '	<td>--</td>';
+					expendHtml += '	<td>' + val.status_name + '</td>';
+					expendHtml += '	<td><input type="checkbox" class="icheck" id="id_' + val.budget_collection_dept_id + '"></td>';
+					expendHtml += '	<td><a href="../budget/YsExpendCollectionInfo.seam?collectionDeptId=' + val.budget_collection_dept_id + '"  title="查看" style="text-decoration: none;"><img src="../images/icon_view_16x16.png"></a></td>';
+					expendHtml += '</tr>';
+				});
+
+				//页面加载未提交编制数据
+				var expendUnfinishedJsonArr = json.expend_unfinished;
+				jQuery(expendUnfinishedJsonArr).each(function(index, val){
+					expendHtml += '<tr class="data-row" style="background-color: pink;">';
+					expendHtml += '	<td>' + val.year + '</td>';
+					expendHtml += '	<td>' + val.dept_name + '</td>';
+					expendHtml += '	<td></td>';
+					expendHtml += '	<td>--</td>';
+					expendHtml += '	<td>--</td>';
+					expendHtml += '	<td>' + val.status_name + '</td>';
+					expendHtml += '	<td></td>';
+					expendHtml += '	<td></td>';
+					expendHtml += '</tr>';
+				});
+				jQuery("#expend_table").append(expendHtml);
+				jQuery("#expend_rows").html(json.total_expend);
+				
+				jQuery('.icheck').iCheck({
+					checkboxClass: 'icheckbox_square-blue',
+					radioClass: 'iradio_square-blue',
+					increaseArea: '20%'
+				});
+				
+			}
+
+
+			/**
+			*下达
+			*/
+			function onSubmit(){
+				var checkArr = jQuery(".icheck:checked");
+				if(checkArr.length <= 0){
+					___msg('温馨提示', '请选择具体的科室下达！', {
+						closed: ___dynamic_function
+					});
+					return false;
+				}
+				if(confirm("是否要下达选中的科室预算")){
+					var idArr = new Array();
+					jQuery(checkArr).each(function(index, val){
+						idArr.push(jQuery(val).attr("id").split("_")[1]);
+					});
+					var collectionDeptIds = idArr.join(",");
+					submitCollectionAction(collectionDeptIds);
+				}
+			}
+
+
+			/**
+			* 下达完成
+			*/
+			function submitComplete(data){
+				if(data.invoke_result == "ok"){
+					filterCollection();
+				}else{
+					___msg('温馨提示', '预算下达失败！', {
+						closed: ___dynamic_function
+					});
+				}
+			}
+		//]]>
+		</script>
+	</ui:define>
+
+</ui:composition>
