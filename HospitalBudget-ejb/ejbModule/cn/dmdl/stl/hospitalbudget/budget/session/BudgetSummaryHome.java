@@ -236,22 +236,18 @@ public class BudgetSummaryHome extends CriterionEntityHome<Object> {
 	}
 	
 	public String getYear() {
-		System.out.println(year);
 		return year;
 	}
 
 	public void setYear(String year) {
-		System.out.println("set " + year);
 		this.year = year;
 	}
 
 	public Integer getAmountType() {
-		System.out.println(amountType);
 		return amountType;
 	}
 
 	public void setAmountType(Integer amountType) {
-		System.out.println("set " + amountType);
 		this.amountType = amountType;
 	}
 	
