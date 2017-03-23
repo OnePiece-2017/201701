@@ -63,6 +63,7 @@ public class ScheduleJobHandlerListener implements ServletContextListener {
 		} catch (Exception e) {
 			logger.error("contextInitialized", e);
 		}
+		logger.info("系统启动完成");// 因为定时器是最后被执行的，所以理论上在这个时间节点上，应用程序应该可以正常通信了。
 	}
 
 	/**

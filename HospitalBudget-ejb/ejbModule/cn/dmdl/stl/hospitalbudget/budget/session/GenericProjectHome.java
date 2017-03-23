@@ -95,6 +95,9 @@ public class GenericProjectHome extends CriterionEntityHome<GenericProject> {
 				instance2nd.setBottomLevel(true);// 假定最底级
 				instance2nd.setBudgetAmount(amount);
 				instance2nd.setTheDescription(description);
+				instance2nd.setProjectType(instance.getProjectType());// 继承顶级项目类型
+				instance2nd.setYsFundsSource(instance.getYsFundsSource());// 继承顶级资金来源
+				instance2nd.setYsDepartmentInfo(instance.getYsDepartmentInfo());// 继承顶级主管科室
 				getEntityManager().persist(instance2nd);
 				if (executor != null && !"".equals(executor)) {
 					String[] idArr = executor.split(",");
@@ -133,6 +136,9 @@ public class GenericProjectHome extends CriterionEntityHome<GenericProject> {
 				instance3rdPlus.setBottomLevel(true);// 假定最底级
 				instance3rdPlus.setBudgetAmount(amount);
 				instance3rdPlus.setTheDescription(description);
+				instance3rdPlus.setProjectType(instance.getProjectType());// 继承顶级项目类型
+				instance3rdPlus.setYsFundsSource(instance.getYsFundsSource());// 继承顶级资金来源
+				instance3rdPlus.setYsDepartmentInfo(instance.getYsDepartmentInfo());// 继承顶级主管科室
 				getEntityManager().persist(instance3rdPlus);
 				if (executor != null && !"".equals(executor)) {
 					String[] idArr = executor.split(",");
@@ -224,6 +230,9 @@ public class GenericProjectHome extends CriterionEntityHome<GenericProject> {
 				instance2nd.setBottomLevel(true);// 假定最底级
 				instance2nd.setBudgetAmount(amount);
 				instance2nd.setTheDescription(description);
+				instance2nd.setProjectType(instance.getProjectType());// 继承顶级项目类型
+				instance2nd.setYsFundsSource(instance.getYsFundsSource());// 继承顶级资金来源
+				instance2nd.setYsDepartmentInfo(instance.getYsDepartmentInfo());// 继承顶级主管科室
 				getEntityManager().persist(instance2nd);
 				if (executor != null && !"".equals(executor)) {
 					String[] idArr = executor.split(",");

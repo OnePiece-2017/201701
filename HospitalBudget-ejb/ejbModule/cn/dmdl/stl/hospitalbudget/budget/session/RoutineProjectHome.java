@@ -93,6 +93,9 @@ public class RoutineProjectHome extends CriterionEntityHome<RoutineProject> {
 				instance2nd.setTheLevel(2);// 级别为2
 				instance2nd.setBottomLevel(true);// 假定最底级
 				instance2nd.setTheDescription(description);
+				instance2nd.setProjectType(instance.getProjectType());// 继承顶级项目类型
+				instance2nd.setYsFundsSource(instance.getYsFundsSource());// 继承顶级资金来源
+				instance2nd.setYsDepartmentInfo(instance.getYsDepartmentInfo());// 继承顶级主管科室
 				getEntityManager().persist(instance2nd);
 				if (executor != null && !"".equals(executor)) {
 					String[] idArr = executor.split(",");
@@ -129,6 +132,9 @@ public class RoutineProjectHome extends CriterionEntityHome<RoutineProject> {
 				instance3rdPlus.setTheLevel(parentInstance.getTheLevel() + 1);// 级别为3+
 				instance3rdPlus.setBottomLevel(true);// 假定最底级
 				instance3rdPlus.setTheDescription(description);
+				instance3rdPlus.setProjectType(instance.getProjectType());// 继承顶级项目类型
+				instance3rdPlus.setYsFundsSource(instance.getYsFundsSource());// 继承顶级资金来源
+				instance3rdPlus.setYsDepartmentInfo(instance.getYsDepartmentInfo());// 继承顶级主管科室
 				getEntityManager().persist(instance3rdPlus);
 				if (executor != null && !"".equals(executor)) {
 					String[] idArr = executor.split(",");
@@ -218,6 +224,9 @@ public class RoutineProjectHome extends CriterionEntityHome<RoutineProject> {
 				instance2nd.setTheLevel(2);// 级别为2
 				instance2nd.setBottomLevel(true);// 假定最底级
 				instance2nd.setTheDescription(description);
+				instance2nd.setProjectType(instance.getProjectType());// 继承顶级项目类型
+				instance2nd.setYsFundsSource(instance.getYsFundsSource());// 继承顶级资金来源
+				instance2nd.setYsDepartmentInfo(instance.getYsDepartmentInfo());// 继承顶级主管科室
 				getEntityManager().persist(instance2nd);
 				if (executor != null && !"".equals(executor)) {
 					String[] idArr = executor.split(",");
