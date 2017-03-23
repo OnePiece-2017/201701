@@ -145,6 +145,12 @@
 				</div>
 			</div>
 		</h:form>
+		<a:form>
+			<a:queue requestDelay="100" ignoreDupResponses="true" />
+			<a:jsFunction name="callRenewDataContainer" action="#{expendDraftHome.renewDataContainer}" data="#{expendDraftHome.dataContainer}" oncomplete="completedRenewDataContainer(data);">
+				<a:actionparam name="renewDataContainerArgs" assignTo="#{expendDraftHome.renewDataContainerArgs}" />
+			</a:jsFunction>
+		</a:form>
 		<script type="text/javascript" src="#{request.contextPath}/common/js/bootstrap.min.js" />
 		<script type="text/javascript" src="#{request.contextPath}/common/js/bootstrap-select.min.js" charset="UTF-8" />
 		<script type="text/javascript" src="#{request.contextPath}/common/js/bootstrap-select-defaults-zh_CN.min.js" charset="UTF-8" />

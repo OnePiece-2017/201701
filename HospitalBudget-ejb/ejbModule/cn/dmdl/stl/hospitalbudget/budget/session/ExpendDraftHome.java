@@ -6,8 +6,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import net.sf.json.JSONArray;
+import net.sf.json.JSONObject;
+
 import org.jboss.seam.annotations.Name;
 
+import cn.dmdl.stl.hospitalbudget.budget.entity.GenericProject;
 import cn.dmdl.stl.hospitalbudget.common.session.CriterionEntityHome;
 
 @Name("expendDraftHome")
@@ -20,6 +24,8 @@ public class ExpendDraftHome extends CriterionEntityHome<Object> {
 	private Integer departmentInfoId;// 科室id
 	private List<Object[]> fundsSourceList;// 资金来源list
 	private Integer fundsSourceId;// 资金来源id
+	private JSONObject dataContainer;// 数据容器
+	private String renewDataContainerArgs;
 
 	public String draft() {
 
@@ -113,6 +119,86 @@ public class ExpendDraftHome extends CriterionEntityHome<Object> {
 		}
 	}
 
+	public void renewDataContainer() {
+		if (dataContainer != null) {
+			dataContainer.clear();
+		} else {
+			dataContainer = new JSONObject();
+		}
+		System.out.println("renewDataContainerArgs:" + renewDataContainerArgs);
+
+		dataContainer.accumulate("generic", pullProjectArray());
+		dataContainer.accumulate("routine", new JSONArray());
+
+	}
+
+	/** 拉取项目设置 */
+	@SuppressWarnings("unchecked")
+	public JSONArray pullProjectArray() {
+		JSONArray result = new JSONArray();
+		Map<Integer, List<Integer>> nexusMap = new HashMap<Integer, List<Integer>>();// 上下级关系集合
+		Map<Integer, Integer> levelMap = new HashMap<Integer, Integer>();// 级别集合
+		final Map<Integer, GenericProject> valueMap = new HashMap<Integer, GenericProject>();// 值集合
+		String dataSql = "select genericProject from GenericProject genericProject where genericProject.deleted = 0";
+		List<GenericProject> genericProjectList = getEntityManager().createQuery(dataSql).getResultList();
+		if (genericProjectList != null && genericProjectList.size() > 0) {
+			for (GenericProject genericProject : genericProjectList) {
+				Integer theId = genericProject.getTheId();
+				Integer thePid = genericProject.getGenericProject() != null ? genericProject.getGenericProject().getTheId() : null;
+				levelMap.put(theId, thePid);
+				valueMap.put(theId, genericProject);
+				List<Integer> leafList = nexusMap.get(thePid);
+				if (leafList != null) {
+					leafList.add(theId);
+				} else {
+					leafList = new ArrayList<Integer>();
+					leafList.add(theId);
+					nexusMap.put(thePid, leafList);
+				}
+			}
+		}
+
+		List<Integer> rootList = nexusMap.get(null);
+		if (rootList != null && rootList.size() > 0) {
+			for (Integer root : rootList) {
+				JSONObject nodeTmp = new JSONObject();
+				nodeTmp.accumulate("id", valueMap.get(root).getTheId());
+				nodeTmp.accumulate("projectName", valueMap.get(root).getTheValue());
+				Integer topLevelId = valueMap.get(root).getTheId();
+				while (levelMap.get(topLevelId) != null) {
+					topLevelId = levelMap.get(topLevelId);
+				}
+				nodeTmp.accumulate("fundsSource", valueMap.get(topLevelId).getYsFundsSource().getTheValue());
+				nodeTmp.accumulate("departmentName", valueMap.get(topLevelId).getYsDepartmentInfo().getTheValue());
+				nodeTmp.accumulate("subset", new JSONArray());
+				result.add(nodeTmp);
+				disposeLeaf(result.getJSONObject(result.size() - 1), nexusMap, levelMap, valueMap, nexusMap.get(root));
+			}
+		}
+		return result;
+	}
+
+	/** 递归处理子节点 */
+	private void disposeLeaf(JSONObject node, Map<Integer, List<Integer>> nexusMap, Map<Integer, Integer> levelMap, Map<Integer, GenericProject> valueMap, List<Integer> leafList) {
+		if (leafList != null && leafList.size() > 0) {
+			for (Integer leaf : leafList) {
+				JSONArray leafArr = node.getJSONArray("subset");
+				JSONObject leafTmp = new JSONObject();
+				leafTmp.accumulate("id", valueMap.get(leaf).getTheId());
+				leafTmp.accumulate("projectName", valueMap.get(leaf).getTheValue());
+				Integer topLevelId = valueMap.get(leaf).getTheId();
+				while (levelMap.get(topLevelId) != null) {
+					topLevelId = levelMap.get(topLevelId);
+				}
+				leafTmp.accumulate("fundsSource", valueMap.get(topLevelId).getYsFundsSource().getTheValue());
+				leafTmp.accumulate("departmentName", valueMap.get(topLevelId).getYsDepartmentInfo().getTheValue());
+				leafTmp.accumulate("subset", new JSONArray());
+				leafArr.add(leafTmp);
+				disposeLeaf(leafArr.getJSONObject(leafArr.size() - 1), nexusMap, levelMap, valueMap, nexusMap.get(leaf));
+			}
+		}
+	}
+
 	public void wire() {
 		getInstance();
 		if (firstTime) {
@@ -162,6 +248,18 @@ public class ExpendDraftHome extends CriterionEntityHome<Object> {
 
 	public void setFundsSourceId(Integer fundsSourceId) {
 		this.fundsSourceId = fundsSourceId;
+	}
+
+	public JSONObject getDataContainer() {
+		return dataContainer;
+	}
+
+	public String getRenewDataContainerArgs() {
+		return renewDataContainerArgs;
+	}
+
+	public void setRenewDataContainerArgs(String renewDataContainerArgs) {
+		this.renewDataContainerArgs = renewDataContainerArgs;
 	}
 
 }

@@ -48,7 +48,7 @@
 	border-radius: 4px;
 	height: 28px;
 	line-height: 27px;
-	margin-right: 50px;
+	margin-right: 10px;
 	margin-top: 2px;
 	width: 55px;
 	text-align: center;
@@ -57,12 +57,10 @@
 
 .draft-table-head .btn-reminder-service.running {
 	background: #05d380;
-	border: 1px solid rgba(0, 0, 0, 0);
 }
 
 .draft-table-head .btn-reminder-service.stopped {
-	background: #fff;
-	border: 1px solid #000;
+	background: #e9e9e9;
 }
 
 .draft-table-head .btn-reference:hover,.draft-table-head .btn-reference:focus,.draft-table-head .btn-reference:active {
@@ -107,6 +105,10 @@ ul {
 	height: 40px;
 	border-radius: 4px;
 	cursor: pointer;
+}
+
+.data-container .item-outer.locking {
+	background: url(../../images/img_block_1_8x8.png);
 }
 
 .draft-table-body .data-container .item-outer:hover {
