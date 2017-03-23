@@ -127,11 +127,8 @@ public class ExpendDraftHome extends CriterionEntityHome<Object> {
 		} else {
 			dataContainer = new JSONObject();
 		}
-		System.out.println("renewDataContainerArgs:" + renewDataContainerArgs);
-
 		dataContainer.accumulate("generic", pullGenericProject());
 		dataContainer.accumulate("routine", pullRoutineProject());
-
 	}
 
 	@SuppressWarnings("unchecked")

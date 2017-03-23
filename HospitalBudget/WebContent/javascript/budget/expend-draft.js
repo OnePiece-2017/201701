@@ -37,8 +37,19 @@ jQuery(document).ready(function() {
 	    autohidemode : true
 	});
 
+	refreshVisualPannel();// 立即刷新
 	triggerRenewDataContainer();// 触发更新数据容器函数
 });
+
+function refreshVisualPannel() {
+	if (jQuery('.draft-table-body .data-container .item-outer').length > 0) {
+		jQuery('.draft-table-body .no-data').hide();
+		jQuery('.draft-table-body .data-container').show();
+	} else {
+		jQuery('.draft-table-body .data-container').hide();
+		jQuery('.draft-table-body .no-data').show();
+	}
+}
 
 function triggerRenewDataContainer() {
 	var budgetYear = jQuery('#budgetYear').val();
@@ -61,6 +72,7 @@ function completedRenewDataContainer(data) {
 	jQuery('.draft-table-body').getNiceScroll().resize();// 6、重绘滚动条
 	setTimeout(function() {
 		hideLayer();
+		refreshVisualPannel();// 7、刷新可视化面板
 	}, 128);// 防止恶意点击
 }
 
