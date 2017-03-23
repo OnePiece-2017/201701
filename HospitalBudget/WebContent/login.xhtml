@@ -64,10 +64,16 @@
 				if (message != '') {
 					___msg('温馨提示', message, {closed: ___dynamic_function});
 				}
+				var forTest = false;
+				if (forTest) {
+					jQuery('#mainForm\\:username').val('zhangjie');
+					jQuery('#mainForm\\:submit').click();
+				}
 			});
 			
 			//提交表单前
 			function beforeSubmit() {
+				var username = jQuery('#mainForm\\:username').val();
 				var username = jQuery('#mainForm\\:username').val();
 				if (username == null || username == '') {
 					___dynamic_function = function() {
