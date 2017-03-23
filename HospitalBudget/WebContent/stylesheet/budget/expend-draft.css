@@ -121,7 +121,7 @@ ul {
 
 .data-container .item-outer {
 	border: 1px dotted rgba(119, 133, 212, 0.37);
-	width: 1438px;
+	width: 1358px;
 	height: 40px;
 	border-radius: 4px;
 	cursor: pointer;
@@ -137,7 +137,7 @@ ul {
 
 .data-container .item-inner {
 	border: 1px solid #9db4e1;
-	width: 1432px;
+	width: 1352px;
 	height: 34px;
 	border-radius: 4px;
 	margin-top: 2px;
@@ -149,16 +149,16 @@ ul {
 	width: 32px;
 	height: 32px;
 	float: left;
-	background: #e0ecff;
+	background: #05d380;
 }
 
 .data-container .item-inner .toggle.expand {
-	background: #e0ecff url(../../images/icon_arrow_carrot_down_16x16.png) no-repeat center;
+	background: #05d380 url(../../images/icon_arrow_carrot_down_16x16.png) no-repeat center;
 	opacity: 1;
 }
 
 .data-container .item-inner .toggle.collapse {
-	background: #e0ecff url(../../images/icon_arrow_carrot_right_16x16.png) no-repeat center;
+	background: #05d380 url(../../images/icon_arrow_carrot_right_16x16.png) no-repeat center;
 	opacity: 1;
 }
 
@@ -183,10 +183,20 @@ ul {
 .data-container .item-inner .field-id {
 	width: 80px;
 	background: #e0ecff;
+	display: none;
 }
 
 .data-container .item-inner .field-id span {
 	width: 70px;
+}
+
+.data-container .item-inner .field-project-name {
+	width: 310px;
+	background: #05d380;
+}
+
+.data-container .item-inner .field-project-name span {
+	width: 300px;
 }
 
 .data-container .item-inner .field-project-nature {
@@ -214,15 +224,6 @@ ul {
 
 .data-container .item-inner .field-department-name span {
 	width: 180px;
-}
-
-.data-container .item-inner .field-project-name {
-	width: 310px;
-	background: #05d380;
-}
-
-.data-container .item-inner .field-project-name span {
-	width: 300px;
 }
 
 .data-container .item-inner .field-project-source {

@@ -92,6 +92,9 @@ function parseProject(projectArray, namespace, projectNature) {
 				html += '			<div class="generic-field edge-end field-id">';
 				html += '				<span>' + node['id'] + '</span>';
 				html += '			</div>';
+				html += '			<div class="generic-field edge-end field-project-name">';
+				html += '				<span>' + node['projectName'] + '</span>';
+				html += '			</div>';
 				html += '			<div class="generic-field edge-end field-project-nature">';
 				html += '				<span>' + projectNature + '</span>';
 				html += '			</div>';
@@ -100,9 +103,6 @@ function parseProject(projectArray, namespace, projectNature) {
 				html += '			</div>';
 				html += '			<div class="generic-field edge-end field-department-name">';
 				html += '				<span>' + node['departmentName'] + '</span>';
-				html += '			</div>';
-				html += '			<div class="generic-field edge-end field-project-name">';
-				html += '				<span>' + node['projectName'] + '</span>';
 				html += '			</div>';
 				html += '			<div class="generic-field edge-end field-project-source">';
 				html += '				<span>' + (hasSub ? '#禁止编辑' : '<textarea id="' + (namespace + '_projectSource_' + node['id']) + '" class="form-control"></textarea>') + '</span>';
