@@ -1,6 +1,7 @@
 package cn.dmdl.stl.hospitalbudget.util;
 
 import java.util.List;
+import java.util.Map;
 
 import cn.dmdl.stl.hospitalbudget.admin.entity.Dictionary;
 
@@ -156,5 +157,18 @@ public interface CommonToolLocal {
 	 * @return 以指定分隔符分隔的值
 	 */
 	public String selectIntermediateAsIds(String table, String column, String where, String separator);
+
+	/**
+	 * 更新中间表数据
+	 * 
+	 * @param table
+	 *            表名称
+	 * @param columnToValue
+	 *            列名称:新值
+	 * @param where
+	 *            标准
+	 * @return 成功或失败
+	 */
+	public boolean updateIntermediate(String table, Map<String, Object> columnToValue, String where);
 
 }

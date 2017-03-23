@@ -46,12 +46,12 @@ jQuery(document).ready(function() {
 	triggerRenewDataContainer();// 触发更新数据容器函数
 	computeTotalAmount();// 实时计算总金额
 
-	var forTest = false; // TODO: 仅供测试
+	var forTest = !false; // TODO: 仅供测试
 	if (forTest) {
 		setTimeout(function() {
 			jQuery('#fundsSourceId').val('1');
 			jQuery('#fundsSourceId').selectpicker('render');
-			jQuery('#departmentInfoId').val('1');
+			jQuery('#departmentInfoId').val('2');
 			jQuery('#departmentInfoId').selectpicker('render');
 			triggerRenewDataContainer();
 		}, 256);
@@ -84,12 +84,13 @@ function triggerRenewDataContainer() {
 }
 
 function completedRenewDataContainer(data) {
-	parseProject(data['generic'], 'generic', '项目');// 4、解析项目并放入数据容器
-	parseProject(data['routine'], 'routine', '常规');// 5、解析常规并放入数据容器
-	jQuery('.draft-table-body').getNiceScroll().resize();// 6、重绘滚动条
+	parseProject(data['new_generic'], 'generic', '项目');// 4、解析项目并放入数据容器
+	parseProject(data['new_routine'], 'routine', '常规');// 5、解析常规并放入数据容器
+	recoverProject(data['old_generic'], 'generic');// 6、恢复项目并修改数据容器
+	jQuery('.draft-table-body').getNiceScroll().resize();// 8、重绘滚动条
 	setTimeout(function() {
 		hideLayer();
-		refreshVisualPannel();// 7、刷新可视化面板
+		refreshVisualPannel();// 9、刷新可视化面板
 	}, 128);// 防止恶意点击
 }
 
@@ -101,7 +102,7 @@ function parseProject(projectArray, namespace, projectNature) {
 				var node = leaf[i];
 				var hasSub = node['subset'].length > 0;
 				html += '<li>';
-				html += '	<div class="item-outer' + (hasSub ? ' read-only' : ' write-able') + '" namespace="' + namespace + '" project-nature="' + projectNature + '">';
+				html += '	<div class="item-outer' + (hasSub ? ' read-only' : ' write-able') + '" namespace="' + namespace + '" project-id="' + node['id'] + '" project-nature="' + projectNature + '">';
 				html += '		<div class="item-inner">';
 				html += '			<div class="toggle' + (hasSub ? ' expand' : '') + '">';
 				html += '				<span></span>';
@@ -206,6 +207,21 @@ function parseProject(projectArray, namespace, projectNature) {
 	}
 }
 
+function recoverProject(projectArray, namespace) {
+	if (projectArray != null && projectArray.length > 0) {
+		for (var i = 0, len = projectArray.length; i < len; i++) {
+			var itemOuter = jQuery('.draft-table-body .data-container .item-outer[namespace="' + namespace + '"][project-id="' + projectArray[i]['projectId'] + '"]');
+			if (itemOuter.length > 0) {
+				if (itemOuter.hasClass('read-only')) {
+					itemOuter.find('.field-project-amount span').html(projectArray[i]['projectAmount']);
+				} else {
+					itemOuter.find('.field-project-amount input').val(projectArray[i]['projectAmount']);
+				}
+			}
+		}
+	}
+}
+
 function computeTotalAmount() {
 	var result = 0;
 	jQuery('.draft-table-body .data-container .write-able:not(.locking)').each(function() {
@@ -221,12 +237,55 @@ function computeTotalAmount() {
 	setTimeout(computeTotalAmount, 256);// 间隔一个周期再次进行计算
 }
 
-function check_draft() {
-	jQuery('.draft-table-body .data-container .write-able:not(.locking)').each(function() {
-		alert(jQuery(this).find('.field-project-amount input').val());
+function triggerSaveDataContainer() {
+	showLayer();
+	var allowExec = false;
+	var args = {
+	    'generic' : [],
+	    'routine' : []
+	};
+	var callback = null;// 提示框回调函数
+	// 数据采集（项目、常规）
+	jQuery('.draft-table-body .data-container .item-outer.write-able:not(.locking)').each(function() {
+		var projectAmount = jQuery(this).find('.field-project-amount input').val();
+		var tempRefer = jQuery(this).find('.field-project-amount input');
+		if (!jQuery.isNumeric(projectAmount)) {
+			callback = function() {
+				tempRefer.focus();// 让临时节点获得焦点
+			};
+			allowExec = false;// 不允许执行
+			return false;// 结束遍历
+		}
+
+		args[jQuery(this).attr('namespace')].push({
+		    'budgetYear' : jQuery('#budgetYear').val(),
+		    'projectId' : jQuery(this).attr('project-id'),
+		    'projectAmount' : Number(projectAmount).toFixed(2) * 1E4
+		});
+		allowExec = true;// 允许执行
 	});
 
-	return true;
+	if (allowExec) {
+		callSaveDataContainer(JSON.stringify(args));// 调用保存数据容器AJAX
+	} else {
+		hideLayer();
+		if (callback != null) {
+			___msg('温馨提示', '数据不完整，不能执行保存操作！', {
+				closed : callback
+			});
+		} else {
+			___msg('温馨提示', '无可保存的条目！');
+		}
+	}
+}
+
+function completedSaveDataContainer(data) {
+	hideLayer();
+	if (data != null && 'INVOKE_SUCCESS' == data.invoke_result) {
+		___msg('温馨提示', data.result_message);
+	} else {
+		___msg('错误提示', data.result_message);
+	}
 }
 
 function check_submit() {

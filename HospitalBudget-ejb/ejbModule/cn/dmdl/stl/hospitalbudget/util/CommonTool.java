@@ -3,6 +3,7 @@ package cn.dmdl.stl.hospitalbudget.util;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 
 import javax.ejb.Remove;
 import javax.ejb.Stateful;
@@ -167,6 +168,27 @@ public class CommonTool implements CommonToolLocal {
 			}
 		}
 		return result.toString();
+	}
+
+	public boolean updateIntermediate(String table, Map<String, Object> columnToValue, String where) {
+		boolean result = false;
+		try {
+			StringBuffer setPart = new StringBuffer();
+			if (columnToValue != null && columnToValue.size() > 0) {
+				for (String column : columnToValue.keySet()) {
+					setPart.append(column).append(" = ").append(columnToValue.get(column) != null ? "'" + columnToValue.get(column) + "'" : null).append(", ");
+				}
+				if (!"".equals(setPart.toString())) {
+					setPart.delete(setPart.length() - 2, setPart.length());
+					entityManager.createNativeQuery("UPDATE " + table + " SET " + setPart.toString() + " WHERE " + where).executeUpdate();
+				}
+			}
+
+			result = true;
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return result;
 	}
 
 }

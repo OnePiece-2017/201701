@@ -139,7 +139,7 @@
 								<h:inputHidden id="budgetYearHidden" value="#{expendDraftHome.budgetYear}" />
 								<h:inputHidden id="fundsSourceIdHidden" value="#{expendDraftHome.fundsSourceId}" />
 								<h:inputHidden id="departmentInfoIdHidden" value="#{expendDraftHome.departmentInfoId}" />
-								<h:commandButton id="draft" value="保存" onclick="return check_draft();" action="#{expendDraftHome.draft}" styleClass="btn btn-success mr15" />
+								<a class="btn btn-success mr15" onclick="triggerSaveDataContainer();">保存</a>
 								<h:commandButton id="submit" value="提交" onclick="return check_submit();" action="#{expendDraftHome.submit}" styleClass="btn btn-primary mr15" />
 							</td>
 						</tr>
@@ -153,6 +153,9 @@
 			<a:queue requestDelay="100" ignoreDupResponses="true" />
 			<a:jsFunction name="callRenewDataContainer" action="#{expendDraftHome.renewDataContainer}" data="#{expendDraftHome.dataContainer}" oncomplete="completedRenewDataContainer(data);">
 				<a:actionparam name="renewDataContainerArgs" assignTo="#{expendDraftHome.renewDataContainerArgs}" />
+			</a:jsFunction>
+			<a:jsFunction name="callSaveDataContainer" action="#{expendDraftHome.saveDataContainer}" data="#{expendDraftHome.saveDataContainerResult}" oncomplete="completedSaveDataContainer(data);">
+				<a:actionparam name="saveDataContainerArgs" assignTo="#{expendDraftHome.saveDataContainerArgs}" />
 			</a:jsFunction>
 		</a:form>
 		<script type="text/javascript" src="#{request.contextPath}/common/js/bootstrap.min.js" />
