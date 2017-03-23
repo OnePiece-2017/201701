@@ -55,6 +55,7 @@ public class GenericProjectHome extends CriterionEntityHome<GenericProject> {
 		instance.setInsertTime(new Date());
 		instance.setInsertUser(sessionToken.getUserInfoId());
 		getEntityManager().persist(instance);
+		instance.setTopLevelProjectId(instance.getTheId());// 顶级条目的顶级项目id为自身
 		if (budgetPersonCompilerIds != null && !"".equals(budgetPersonCompilerIds)) {
 			String[] idArr = budgetPersonCompilerIds.split(",");
 			if (idArr != null && idArr.length > 0) {
@@ -98,6 +99,7 @@ public class GenericProjectHome extends CriterionEntityHome<GenericProject> {
 				instance2nd.setProjectType(instance.getProjectType());// 继承顶级项目类型
 				instance2nd.setYsFundsSource(instance.getYsFundsSource());// 继承顶级资金来源
 				instance2nd.setYsDepartmentInfo(instance.getYsDepartmentInfo());// 继承顶级主管科室
+				instance2nd.setTopLevelProjectId(instance.getTheId());// 绑定顶级项目id
 				getEntityManager().persist(instance2nd);
 				if (executor != null && !"".equals(executor)) {
 					String[] idArr = executor.split(",");
@@ -139,6 +141,7 @@ public class GenericProjectHome extends CriterionEntityHome<GenericProject> {
 				instance3rdPlus.setProjectType(instance.getProjectType());// 继承顶级项目类型
 				instance3rdPlus.setYsFundsSource(instance.getYsFundsSource());// 继承顶级资金来源
 				instance3rdPlus.setYsDepartmentInfo(instance.getYsDepartmentInfo());// 继承顶级主管科室
+				instance3rdPlus.setTopLevelProjectId(instance.getTheId());// 绑定顶级项目id
 				getEntityManager().persist(instance3rdPlus);
 				if (executor != null && !"".equals(executor)) {
 					String[] idArr = executor.split(",");
@@ -203,6 +206,7 @@ public class GenericProjectHome extends CriterionEntityHome<GenericProject> {
 		instance.setUpdateTime(new Date());
 		instance.setUpdateUser(sessionToken.getUserInfoId());
 		getEntityManager().merge(instance);
+		instance.setTopLevelProjectId(instance.getTheId());// 顶级条目的顶级项目id为自身（修复老数据）
 		// 处理二级项目-清理旧数据
 		List<Object[]> nexusList = getEntityManager().createNativeQuery("select the_id, the_pid from generic_project").getResultList();
 		List<Object> subProjectIdList = new ArrayList<Object>();
@@ -233,6 +237,7 @@ public class GenericProjectHome extends CriterionEntityHome<GenericProject> {
 				instance2nd.setProjectType(instance.getProjectType());// 继承顶级项目类型
 				instance2nd.setYsFundsSource(instance.getYsFundsSource());// 继承顶级资金来源
 				instance2nd.setYsDepartmentInfo(instance.getYsDepartmentInfo());// 继承顶级主管科室
+				instance2nd.setTopLevelProjectId(instance.getTheId());// 绑定顶级项目id
 				getEntityManager().persist(instance2nd);
 				if (executor != null && !"".equals(executor)) {
 					String[] idArr = executor.split(",");
