@@ -2,10 +2,11 @@ package cn.dmdl.stl.hospitalbudget.budget.entity;
 
 // Generated 2017-3-8 15:38:50 by Hibernate Tools 3.4.0.CR1
 
+import static javax.persistence.GenerationType.IDENTITY;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
-import static javax.persistence.GenerationType.IDENTITY;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
@@ -16,16 +17,12 @@ import javax.persistence.Table;
 @Table(name = "generic_project_executor", catalog = "hospital_budget")
 public class GenericProjectExecutor implements java.io.Serializable {
 
+	private static final long serialVersionUID = 1L;
 	private Integer theId;
 	private int projectId;
 	private int userInfoId;
 
 	public GenericProjectExecutor() {
-	}
-
-	public GenericProjectExecutor(int projectId, int userInfoId) {
-		this.projectId = projectId;
-		this.userInfoId = userInfoId;
 	}
 
 	@Id

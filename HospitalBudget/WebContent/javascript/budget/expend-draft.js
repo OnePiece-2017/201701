@@ -1,3 +1,5 @@
+var ___cache = {};
+
 jQuery(document).ready(function() {
 
 	jQuery('.selectpicker').selectpicker();
@@ -28,6 +30,9 @@ jQuery(document).ready(function() {
 			hideLayer();
 		}, 128);// 防止恶意点击
 	});
+	___sgInputboxStopReminderService();// 默认停止服务
+
+	___cache['total-amount-value'] = jQuery('.draft-table-head .total-amount-value span');// 缓存节点（总金额）
 
 	jQuery('.draft-table-title, .draft-table-body').niceScroll({
 	    cursorcolor : '#4d0acf',
@@ -37,8 +42,31 @@ jQuery(document).ready(function() {
 	    autohidemode : true
 	});
 
+	refreshVisualPannel();// 立即刷新
 	triggerRenewDataContainer();// 触发更新数据容器函数
+	computeTotalAmount();// 实时计算总金额
+
+	var forTest = false; // TODO: 仅供测试
+	if (forTest) {
+		setTimeout(function() {
+			jQuery('#fundsSourceId').val('1');
+			jQuery('#fundsSourceId').selectpicker('render');
+			jQuery('#departmentInfoId').val('1');
+			jQuery('#departmentInfoId').selectpicker('render');
+			triggerRenewDataContainer();
+		}, 256);
+	}
 });
+
+function refreshVisualPannel() {
+	if (jQuery('.draft-table-body .data-container .item-outer').length > 0) {
+		jQuery('.not-exist-data-panel').hide();
+		jQuery('.exist-data-panel').show();
+	} else {
+		jQuery('.exist-data-panel').hide();
+		jQuery('.not-exist-data-panel').show();
+	}
+}
 
 function triggerRenewDataContainer() {
 	var budgetYear = jQuery('#budgetYear').val();
@@ -61,6 +89,7 @@ function completedRenewDataContainer(data) {
 	jQuery('.draft-table-body').getNiceScroll().resize();// 6、重绘滚动条
 	setTimeout(function() {
 		hideLayer();
+		refreshVisualPannel();// 7、刷新可视化面板
 	}, 128);// 防止恶意点击
 }
 
@@ -72,13 +101,16 @@ function parseProject(projectArray, namespace, projectNature) {
 				var node = leaf[i];
 				var hasSub = node['subset'].length > 0;
 				html += '<li>';
-				html += '	<div class="item-outer" namespace="' + namespace + '" project-nature="' + projectNature + '">';
+				html += '	<div class="item-outer' + (hasSub ? ' read-only' : ' write-able') + '" namespace="' + namespace + '" project-nature="' + projectNature + '">';
 				html += '		<div class="item-inner">';
 				html += '			<div class="toggle' + (hasSub ? ' expand' : '') + '">';
 				html += '				<span></span>';
 				html += '			</div>';
 				html += '			<div class="generic-field edge-end field-id">';
 				html += '				<span>' + node['id'] + '</span>';
+				html += '			</div>';
+				html += '			<div class="generic-field edge-end field-project-name">';
+				html += '				<span>' + node['projectName'] + '</span>';
 				html += '			</div>';
 				html += '			<div class="generic-field edge-end field-project-nature">';
 				html += '				<span>' + projectNature + '</span>';
@@ -89,17 +121,14 @@ function parseProject(projectArray, namespace, projectNature) {
 				html += '			<div class="generic-field edge-end field-department-name">';
 				html += '				<span>' + node['departmentName'] + '</span>';
 				html += '			</div>';
-				html += '			<div class="generic-field edge-end field-project-name">';
-				html += '				<span>' + node['projectName'] + '</span>';
-				html += '			</div>';
 				html += '			<div class="generic-field edge-end field-project-source">';
-				html += '				<span>' + (hasSub ? '#禁止编辑' : '<textarea id="' + (namespace + '_projectSource_' + node['id']) + '" class="form-control"></textarea>') + '</span>';
+				html += '				<span>' + (hasSub ? '' : '<textarea id="' + (namespace + '_projectSource_' + node['id']) + '" class="form-control"></textarea>') + '</span>';
 				html += '			</div>';
 				html += '			<div class="generic-field edge-end field-project-amount">';
 				html += '				<span>' + (hasSub ? '' : '<input id="' + (namespace + '_projectAmount_' + node['id']) + '" class="form-control"></input>') + '</span>';
 				html += '			</div>';
 				html += '			<div class="generic-field edge-end field-formula-remark">';
-				html += '				<span>' + (hasSub ? '#禁止编辑' : '<textarea id="' + (namespace + '_formulaRemark_' + node['id']) + '" class="form-control"></textarea>') + '</span>';
+				html += '				<span>' + (hasSub ? '' : '<textarea id="' + (namespace + '_formulaRemark_' + node['id']) + '" class="form-control"></textarea>') + '</span>';
 				html += '			</div>';
 				html += '			<div class="generic-field field-function">';
 				html += '				<span class="operation-item opr-attachment activated' + (hasSub ? ' not-enabled' : '') + '"></span>';
@@ -177,43 +206,25 @@ function parseProject(projectArray, namespace, projectNature) {
 	}
 }
 
+function computeTotalAmount() {
+	var result = 0;
+	jQuery('.draft-table-body .data-container .write-able:not(.locking)').each(function() {
+		var temp = jQuery(this).find('.field-project-amount input').val();
+		if (jQuery.isNumeric(temp)) {
+			temp = Number(temp);
+		} else {
+			temp = 0;
+		}
+		result += temp;
+	});
+	___cache['total-amount-value'].html(result.toFixed(2));
+	setTimeout(computeTotalAmount, 256);// 间隔一个周期再次进行计算
+}
+
 function check_draft() {
-	// TODO: 最后需要将这里的资金来源、主管科室验证删除，转而验证是否有待保存、待提交的内容
-	var budgetYear = jQuery('#budgetYear').val();
-	if (budgetYear == null || budgetYear == '') {
-		___dynamic_function = function() {
-			___selectpickerExpand('budgetYear');
-		};
-		___msg('温馨提示', '请选择预算年份！', {
-			closed : ___dynamic_function
-		});
-		return false;
-	}
-	jQuery('#mainForm\\:budgetYearHidden').val(budgetYear);
-
-	var fundsSourceId = jQuery('#fundsSourceId').val();
-	if (fundsSourceId == null || fundsSourceId == '') {
-		___dynamic_function = function() {
-			___selectpickerExpand('fundsSourceId');
-		};
-		___msg('温馨提示', '请选择资金来源！', {
-			closed : ___dynamic_function
-		});
-		return false;
-	}
-	jQuery('#mainForm\\:fundsSourceIdHidden').val(fundsSourceId);
-
-	var departmentInfoId = jQuery('#departmentInfoId').val();
-	if (departmentInfoId == null || departmentInfoId == '') {
-		___dynamic_function = function() {
-			___selectpickerExpand('departmentInfoId');
-		};
-		___msg('温馨提示', '请选择主管科室！', {
-			closed : ___dynamic_function
-		});
-		return false;
-	}
-	jQuery('#mainForm\\:departmentInfoIdHidden').val(departmentInfoId);
+	jQuery('.draft-table-body .data-container .write-able:not(.locking)').each(function() {
+		alert(jQuery(this).find('.field-project-amount input').val());
+	});
 
 	return true;
 }
