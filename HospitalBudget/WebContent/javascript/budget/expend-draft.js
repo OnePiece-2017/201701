@@ -46,7 +46,7 @@ jQuery(document).ready(function() {
 	triggerRenewDataContainer();// 触发更新数据容器函数
 	computeTotalAmount();// 实时计算总金额
 
-	var forTest = !false; // TODO: 仅供测试
+	var forTest = false; // TODO: 仅供测试
 	if (forTest) {
 		setTimeout(function() {
 			jQuery('#fundsSourceId').val('1');
