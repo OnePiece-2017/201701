@@ -143,8 +143,8 @@ public class YsExpandDraft implements java.io.Serializable {
 		this.withLastYearPercent = withLastYearPercent;
 	}
 
-	@Column(name = "attachment", length = 500)
-	@Length(max = 500)
+	@Column(name = "attachment", length = 32)
+	@Length(max = 32)
 	public String getAttachment() {
 		return this.attachment;
 	}
