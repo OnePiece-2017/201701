@@ -69,8 +69,8 @@ public class YsExpandDraft implements java.io.Serializable {
 		this.year = year;
 	}
 
-	@Column(name = "project_source", length = 45)
-	@Length(max = 45)
+	@Column(name = "project_source", length = 1024)
+	@Length(max = 1024)
 	public String getProjectSource() {
 		return this.projectSource;
 	}
@@ -115,8 +115,8 @@ public class YsExpandDraft implements java.io.Serializable {
 		this.projectAmount = projectAmount;
 	}
 
-	@Column(name = "formula_remark", length = 300)
-	@Length(max = 300)
+	@Column(name = "formula_remark", length = 1024)
+	@Length(max = 1024)
 	public String getFormulaRemark() {
 		return this.formulaRemark;
 	}
