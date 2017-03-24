@@ -1,5 +1,7 @@
 package cn.dmdl.stl.hospitalbudget.budget.session;
 
+import java.net.URLDecoder;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -37,6 +39,7 @@ public class ExpendDraftHome extends CriterionEntityHome<Object> {
 	private String renewDataContainerArgs;
 	private String saveDataContainerArgs;
 	private JSONObject saveDataContainerResult;// 保存数据容器返回结果
+	Map<String, Map<Object, Object>> projectLevelMap = new HashMap<String, Map<Object, Object>>();// 级别集合（项目、常规）实时更新
 
 	public String draft() {
 
@@ -130,6 +133,19 @@ public class ExpendDraftHome extends CriterionEntityHome<Object> {
 		}
 	}
 
+	public Object backtrackTopId(String type, Object id) {
+		Object result = id;
+		if (projectLevelMap != null) {
+			Map<Object, Object> levelMap = projectLevelMap.get(type);
+			if (levelMap != null) {
+				while (levelMap.get(result) != null) {
+					result = levelMap.get(result);
+				}
+			}
+		}
+		return result;
+	}
+
 	public void renewDataContainer() {
 		if (dataContainer != null) {
 			dataContainer.clear();
@@ -138,12 +154,14 @@ public class ExpendDraftHome extends CriterionEntityHome<Object> {
 		}
 		dataContainer.accumulate("new_generic", pullNewGenericProject());
 		dataContainer.accumulate("new_routine", pullNewRoutineProject());
-		dataContainer.accumulate("old_generic", pullOldGenericProject());
+		dataContainer.accumulate("old_generic", pullOldProject("generic_project_id", "generic_project", "generic_project_compiler"));
+		dataContainer.accumulate("old_routine", pullOldProject("routine_project_id", "routine_project", "routine_project_compiler"));
 	}
 
 	@SuppressWarnings("unchecked")
 	public JSONArray pullNewGenericProject() {
 		JSONArray result = new JSONArray();
+		Map<Object, Object> levelMap = new HashMap<Object, Object>();// 创建候选级别集合
 		Map<Integer, List<Integer>> nexusMap = new HashMap<Integer, List<Integer>>();// 上下级关系集合
 		final Map<Integer, GenericProject> valueMap = new HashMap<Integer, GenericProject>();// 值集合
 		StringBuffer dataSql = new StringBuffer("select data from GenericProject data where deleted = 0");
@@ -170,6 +188,7 @@ public class ExpendDraftHome extends CriterionEntityHome<Object> {
 			for (GenericProject data : dataList) {
 				Integer theId = data.getTheId();
 				Integer thePid = data.getGenericProject() != null ? data.getGenericProject().getTheId() : null;
+				levelMap.put(theId, thePid);// 填充候选级别集合
 				valueMap.put(theId, data);
 				List<Integer> leafList = nexusMap.get(thePid);
 				if (leafList != null) {
@@ -195,6 +214,7 @@ public class ExpendDraftHome extends CriterionEntityHome<Object> {
 				processGenericProjectLeaf(result.getJSONObject(result.size() - 1), nexusMap, valueMap, nexusMap.get(root));
 			}
 		}
+		projectLevelMap.put("generic", levelMap);// 更新候选级别集合
 		return result;
 	}
 
@@ -217,8 +237,8 @@ public class ExpendDraftHome extends CriterionEntityHome<Object> {
 	@SuppressWarnings("unchecked")
 	public JSONArray pullNewRoutineProject() {
 		JSONArray result = new JSONArray();
+		Map<Object, Object> levelMap = new HashMap<Object, Object>();// 创建候选级别集合
 		Map<Integer, List<Integer>> nexusMap = new HashMap<Integer, List<Integer>>();// 上下级关系集合
-		Map<Integer, Integer> levelMap = new HashMap<Integer, Integer>();// 级别集合
 		final Map<Integer, RoutineProject> valueMap = new HashMap<Integer, RoutineProject>();// 值集合
 		StringBuffer dataSql = new StringBuffer("select data from RoutineProject data where deleted = 0");
 		dataSql.append(" and projectType = 2");// 支出预算
@@ -244,7 +264,7 @@ public class ExpendDraftHome extends CriterionEntityHome<Object> {
 			for (RoutineProject data : dataList) {
 				Integer theId = data.getTheId();
 				Integer thePid = data.getRoutineProject() != null ? data.getRoutineProject().getTheId() : null;
-				levelMap.put(theId, thePid);
+				levelMap.put(theId, thePid);// 填充候选级别集合
 				valueMap.put(theId, data);
 				List<Integer> leafList = nexusMap.get(thePid);
 				if (leafList != null) {
@@ -263,46 +283,85 @@ public class ExpendDraftHome extends CriterionEntityHome<Object> {
 				JSONObject nodeTmp = new JSONObject();
 				nodeTmp.accumulate("id", valueMap.get(root).getTheId());
 				nodeTmp.accumulate("projectName", valueMap.get(root).getTheValue());
-				Integer topLevelId = valueMap.get(root).getTheId();
-				while (levelMap.get(topLevelId) != null) {
-					topLevelId = levelMap.get(topLevelId);
-				}
-				nodeTmp.accumulate("fundsSource", valueMap.get(topLevelId).getYsFundsSource().getTheValue());
-				nodeTmp.accumulate("departmentName", valueMap.get(topLevelId).getYsDepartmentInfo().getTheValue());
+				nodeTmp.accumulate("fundsSource", valueMap.get(valueMap.get(root).getTopLevelProjectId()).getYsFundsSource().getTheValue());
+				nodeTmp.accumulate("departmentName", valueMap.get(valueMap.get(root).getTopLevelProjectId()).getYsDepartmentInfo().getTheValue());
 				nodeTmp.accumulate("subset", new JSONArray());
 				result.add(nodeTmp);
-				processRoutineProjectLeaf(result.getJSONObject(result.size() - 1), nexusMap, levelMap, valueMap, nexusMap.get(root));
+				processRoutineProjectLeaf(result.getJSONObject(result.size() - 1), nexusMap, valueMap, nexusMap.get(root));
 			}
 		}
+		projectLevelMap.put("routine", levelMap);// 更新候选级别集合
 		return result;
 	}
 
-	private void processRoutineProjectLeaf(JSONObject node, Map<Integer, List<Integer>> nexusMap, Map<Integer, Integer> levelMap, Map<Integer, RoutineProject> valueMap, List<Integer> leafList) {
+	private void processRoutineProjectLeaf(JSONObject node, Map<Integer, List<Integer>> nexusMap, Map<Integer, RoutineProject> valueMap, List<Integer> leafList) {
 		if (leafList != null && leafList.size() > 0) {
 			for (Integer leaf : leafList) {
 				JSONArray leafArr = node.getJSONArray("subset");
 				JSONObject leafTmp = new JSONObject();
 				leafTmp.accumulate("id", valueMap.get(leaf).getTheId());
 				leafTmp.accumulate("projectName", valueMap.get(leaf).getTheValue());
-				Integer topLevelId = valueMap.get(leaf).getTheId();
-				while (levelMap.get(topLevelId) != null) {
-					topLevelId = levelMap.get(topLevelId);
-				}
-				leafTmp.accumulate("fundsSource", valueMap.get(topLevelId).getYsFundsSource().getTheValue());
-				leafTmp.accumulate("departmentName", valueMap.get(topLevelId).getYsDepartmentInfo().getTheValue());
+				leafTmp.accumulate("fundsSource", valueMap.get(valueMap.get(leaf).getTopLevelProjectId()).getYsFundsSource().getTheValue());
+				leafTmp.accumulate("departmentName", valueMap.get(valueMap.get(leaf).getTopLevelProjectId()).getYsDepartmentInfo().getTheValue());
 				leafTmp.accumulate("subset", new JSONArray());
 				leafArr.add(leafTmp);
-				processRoutineProjectLeaf(leafArr.getJSONObject(leafArr.size() - 1), nexusMap, levelMap, valueMap, nexusMap.get(leaf));
+				processRoutineProjectLeaf(leafArr.getJSONObject(leafArr.size() - 1), nexusMap, valueMap, nexusMap.get(leaf));
 			}
 		}
 	}
 
-	public JSONArray pullOldGenericProject() {
+	public JSONArray pullOldProject(String projectIdField, String projectTable, String projectCompilerTable) {
 		JSONArray result = new JSONArray();
-		JSONObject value = new JSONObject();
-		value.accumulate("projectId", "61");// TODO: 从库中查询数据
-		value.accumulate("projectAmount", 321);
-		result.add(value);
+		if (renewDataContainerArgs != null) {
+			JSONObject argsJson = JSONObject.fromObject(renewDataContainerArgs);
+			if (argsJson != null && argsJson.has("budgetYear")) {
+				List<Object[]> list = commonTool.selectIntermediate("ys_expand_draft", new String[] { projectIdField, "project_amount", "project_source", "formula_remark", "attachment" }, "status = 0" + " and year = " + argsJson.get("budgetYear") + " and insert_user = " + sessionToken.getUserInfoId() + " and " + projectIdField + " in (select the_id from " + projectTable + " where project_type = 2 and top_level_project_id in (select project_id from " + projectCompilerTable + " where user_info_id = " + sessionToken.getUserInfoId() + "))");
+				if (list != null && list.size() > 0) {
+					for (Object[] objects : list) {
+						JSONObject value = new JSONObject();
+						value.accumulate("projectId", objects[0]);
+						value.accumulate("projectAmount", objects[1]);
+						String projectSource = "", formulaRemark = "";
+						try {
+							projectSource = URLDecoder.decode(objects[2] != null ? objects[2].toString() : "", "UTF-8");// 解码
+							formulaRemark = URLDecoder.decode(objects[3] != null ? objects[3].toString() : "", "UTF-8");// 解码
+						} catch (Exception e) {
+							e.printStackTrace();
+						}
+						value.accumulate("projectSource", projectSource);
+						value.accumulate("formulaRemark", formulaRemark);
+						result.add(value);
+					}
+				}
+			}
+		}
+		return result;
+	}
+
+	public boolean saveBySection(JSONArray projectArray, String projectIdField, String btType) {
+		boolean result = true;
+		try {
+			for (int i = 0; i < projectArray.size(); i++) {
+				JSONObject data = projectArray.getJSONObject(i);
+				List<Object[]> list = commonTool.selectIntermediate("ys_expand_draft", new String[] { "ys_expand_draft_id" }, "`year` = " + data.get("budgetYear") + " and " + projectIdField + " = " + data.get("projectId") + " and insert_user = " + sessionToken.getUserInfoId());
+				String projectSource = URLEncoder.encode(data.get("projectSource") != null ? data.getString("projectSource") : "", "UTF-8");// 编码
+				String formulaRemark = URLEncoder.encode(data.get("formulaRemark") != null ? data.getString("formulaRemark") : "", "UTF-8");// 编码
+				int projectId = data.getInt("projectId");// 注意类型，否则无法查找顶级项目id
+				if (list.size() > 0) {
+					Map<String, Object> columnToValue = new HashMap<String, Object>();
+					columnToValue.put("project_amount", data.get("projectAmount"));
+					columnToValue.put("project_source", projectSource);
+					columnToValue.put("formula_remark", formulaRemark);
+					columnToValue.put("top_level_project_id", backtrackTopId(btType, projectId));
+					commonTool.updateIntermediate("ys_expand_draft", columnToValue, "ys_expand_draft_id = " + list.get(0));// 理论上只应有一条匹配记录
+				} else {
+					commonTool.insertIntermediate("ys_expand_draft", new String[] { projectIdField, "year", "project_amount", "project_source", "formula_remark", "top_level_project_id", "with_last_year_num", "with_last_year_percent", "attachment", "insert_time", "insert_user", "status" }, new Object[] { data.get("projectId"), data.get("budgetYear"), data.get("projectAmount"), projectSource, formulaRemark, backtrackTopId(btType, projectId), 0.1, 0.2, "093f65e080a295f8076b1c5722a46aa2", DateTimeHelper.dateToStr(new Date(), DateTimeHelper.PATTERN_DATE_TIME), sessionToken.getUserInfoId(), 0 });
+				}
+			}
+		} catch (Exception e) {
+			result = false;
+			e.printStackTrace();
+		}
 		return result;
 	}
 
@@ -318,24 +377,10 @@ public class ExpendDraftHome extends CriterionEntityHome<Object> {
 			try {
 				JSONObject argsJson = JSONObject.fromObject(saveDataContainerArgs);
 				if (argsJson != null && argsJson.has("generic") && argsJson.has("routine")) {
-					JSONArray genericArr = argsJson.getJSONArray("generic");
-					JSONArray routineArr = argsJson.getJSONArray("routine");
-					// 处理项目
-					for (int i = 0; i < genericArr.size(); i++) {
-						System.out.println(genericArr);
-						JSONObject data = genericArr.getJSONObject(i);
-						List<Object[]> list = commonTool.selectIntermediate("ys_expand_draft", new String[] { "ys_expand_draft_id" }, "`year` = " + data.get("budgetYear") + " and generic_project_id = " + data.get("projectId") + " and insert_user = " + sessionToken.getUserInfoId());
-						if (list.size() > 0) {
-							Map<String, Object> columnToValue = new HashMap<String, Object>();
-							columnToValue.put("project_amount", data.get("projectAmount"));
-							commonTool.updateIntermediate("ys_expand_draft", columnToValue, "ys_expand_draft_id = " + list.get(0));// 理论上只应有一条匹配记录
-						} else {
-							commonTool.insertIntermediate("ys_expand_draft", new String[] { "year", "project_source", "top_level_project_id", "generic_project_id", "project_amount", "formula_remark", "with_last_year_num", "with_last_year_percent", "attachment", "insert_time", "insert_user", "status" }, new Object[] { data.get("budgetYear"), "project_source", 1024, data.get("projectId"), data.get("projectAmount"), "formula_remark", 0.1, 0.2, "093f65e080a295f8076b1c5722a46aa2", DateTimeHelper.dateToStr(new Date(), DateTimeHelper.PATTERN_DATE_TIME), sessionToken.getUserInfoId(), 0 });
-						}
-					}
-					// 处理常规
-					for (int i = 0; i < routineArr.size(); i++) {
-						System.out.println(routineArr);
+					// TODO: test field error
+					if (!saveBySection(argsJson.getJSONArray("generic"), "generic_project_id", "generic") || !saveBySection(argsJson.getJSONArray("routine"), "routine_project_id4", "routine")) {
+						saveDataContainerResult.element("invoke_result", "INVOKE_FAILURE");
+						saveDataContainerResult.element("result_message", "保存失败（处理项目、常规时发生内部错误）！");
 					}
 				}
 			} catch (Exception e) {
