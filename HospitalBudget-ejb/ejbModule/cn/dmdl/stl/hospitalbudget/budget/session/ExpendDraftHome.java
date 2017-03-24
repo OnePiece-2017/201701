@@ -377,8 +377,7 @@ public class ExpendDraftHome extends CriterionEntityHome<Object> {
 			try {
 				JSONObject argsJson = JSONObject.fromObject(saveDataContainerArgs);
 				if (argsJson != null && argsJson.has("generic") && argsJson.has("routine")) {
-					// TODO: test field error
-					if (!saveBySection(argsJson.getJSONArray("generic"), "generic_project_id", "generic") || !saveBySection(argsJson.getJSONArray("routine"), "routine_project_id4", "routine")) {
+					if (!saveBySection(argsJson.getJSONArray("generic"), "generic_project_id", "generic") || !saveBySection(argsJson.getJSONArray("routine"), "routine_project_id", "routine")) {
 						saveDataContainerResult.element("invoke_result", "INVOKE_FAILURE");
 						saveDataContainerResult.element("result_message", "保存失败（处理项目、常规时发生内部错误）！");
 					}
