@@ -41,14 +41,7 @@ public class ExpendDraftHome extends CriterionEntityHome<Object> {
 	private JSONObject saveDataContainerResult;// 保存数据容器返回结果
 	Map<String, Map<Object, Object>> projectLevelMap = new HashMap<String, Map<Object, Object>>();// 级别集合（项目、常规）实时更新
 
-	public String draft() {
-
-		setMessage("保存成功！");
-		return "drafted";
-	}
-
 	public String submit() {
-
 		setMessage("提交成功！");
 		return "submitted";
 	}

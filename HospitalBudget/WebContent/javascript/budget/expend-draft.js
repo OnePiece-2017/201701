@@ -224,7 +224,7 @@ function recoverProject(projectArray, namespace) {
 		for (var i = 0, len = projectArray.length; i < len; i++) {
 			var itemOuter = jQuery('.draft-table-body .data-container .item-outer[namespace="' + namespace + '"][project-id="' + projectArray[i]['projectId'] + '"]');
 			if (itemOuter.length > 0) {
-				var projectAmount = (projectArray[i]['projectAmount'] * 1E-4);
+				var projectAmount = (projectArray[i]['projectAmount'] * 1E-4).toFixed(2);
 				if (itemOuter.hasClass('read-only')) {
 					itemOuter.find('.field-project-amount span').html(projectAmount);
 				} else {
@@ -325,42 +325,5 @@ function completedSaveDataContainer(data) {
 }
 
 function check_submit() {
-	// TODO: 最后需要将这里的资金来源、主管科室验证删除，转而验证是否有待保存、待提交的内容
-	var budgetYear = jQuery('#budgetYear').val();
-	if (budgetYear == null || budgetYear == '') {
-		___dynamic_function = function() {
-			___selectpickerExpand('budgetYear');
-		};
-		___msg('温馨提示', '请选择预算年份！', {
-			closed : ___dynamic_function
-		});
-		return false;
-	}
-	jQuery('#mainForm\\:budgetYearHidden').val(budgetYear);
-
-	var fundsSourceId = jQuery('#fundsSourceId').val();
-	if (fundsSourceId == null || fundsSourceId == '') {
-		___dynamic_function = function() {
-			___selectpickerExpand('fundsSourceId');
-		};
-		___msg('温馨提示', '请选择资金来源！', {
-			closed : ___dynamic_function
-		});
-		return false;
-	}
-	jQuery('#mainForm\\:fundsSourceIdHidden').val(fundsSourceId);
-
-	var departmentInfoId = jQuery('#departmentInfoId').val();
-	if (departmentInfoId == null || departmentInfoId == '') {
-		___dynamic_function = function() {
-			___selectpickerExpand('departmentInfoId');
-		};
-		___msg('温馨提示', '请选择主管科室！', {
-			closed : ___dynamic_function
-		});
-		return false;
-	}
-	jQuery('#mainForm\\:departmentInfoIdHidden').val(departmentInfoId);
-
 	return true;
 }
