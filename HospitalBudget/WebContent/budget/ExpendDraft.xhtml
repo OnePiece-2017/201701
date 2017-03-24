@@ -38,7 +38,6 @@
 
 	<ui:define name="body">
 		#{expendDraftHome.wire()}
-		<h:form id="mainForm" styleClass="edit" enctype="multipart/form-data">
 			<div class="pd0-10">
 				<div class="pt30 fs14">
 					<div style="width: 100%; height: 34px;">
@@ -148,7 +147,6 @@
 					<br />
 				</div>
 			</div>
-		</h:form>
 		<a:form>
 			<a:queue requestDelay="100" ignoreDupResponses="true" />
 			<a:jsFunction name="callRenewDataContainer" action="#{expendDraftHome.renewDataContainer}" data="#{expendDraftHome.dataContainer}" oncomplete="completedRenewDataContainer(data);">

@@ -386,13 +386,12 @@ public class ExpendDraftHome extends CriterionEntityHome<Object> {
 	public void wire() {
 		getInstance();
 		if (firstTime) {
-
 			wireBudgetYearList();// 预算年份list
 			budgetYear = Calendar.getInstance().get(Calendar.YEAR);
-			wireDepartmentInfo();// 主管科室list
-			departmentInfoId = null;
 			wireFundsSource();// 资金来源list
 			fundsSourceId = null;
+			wireDepartmentInfo();// 主管科室list
+			departmentInfoId = null;
 
 			firstTime = false;
 		}

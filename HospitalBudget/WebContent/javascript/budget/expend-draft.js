@@ -4,13 +4,13 @@ jQuery(document).ready(function() {
 
 	jQuery('.selectpicker').selectpicker();
 
-	jQuery('#budgetYear').val(jQuery('#mainForm\\:budgetYearHidden').val());
+	jQuery('#budgetYear').val(jQuery('#budgetYearHidden').val());
 	jQuery('#budgetYear').selectpicker('render');
 
-	jQuery('#departmentInfoId').val(jQuery('#mainForm\\:departmentInfoIdHidden').val());
+	jQuery('#departmentInfoId').val(jQuery('#departmentInfoIdHidden').val());
 	jQuery('#departmentInfoId').selectpicker('render');
 
-	jQuery('#fundsSourceId').val(jQuery('#mainForm\\:fundsSourceIdHidden').val());
+	jQuery('#fundsSourceId').val(jQuery('#fundsSourceIdHidden').val());
 	jQuery('#fundsSourceId').selectpicker('render');
 
 	jQuery('#budgetYear, #fundsSourceId, #departmentInfoId').change(triggerRenewDataContainer);
