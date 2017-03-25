@@ -340,17 +340,18 @@ public class ExpendDraftHome extends CriterionEntityHome<Object> {
 				List<Object[]> list = commonTool.selectIntermediate("ys_expand_draft", new String[] { "ys_expand_draft_id" }, "`year` = " + data.get("budgetYear") + " and " + projectIdField + " = " + data.get("projectId") + " and insert_user = " + sessionToken.getUserInfoId());
 				String projectSource = URLEncoder.encode(data.get("projectSource") != null ? data.getString("projectSource") : "", "UTF-8");// 编码
 				String formulaRemark = URLEncoder.encode(data.get("formulaRemark") != null ? data.getString("formulaRemark") : "", "UTF-8");// 编码
+				Object attachment = !JSONNull.getInstance().equals(data.get("attachment")) && !"".equals(data.get("attachment")) ? data.get("attachment") : null;
 				int projectId = data.getInt("projectId");// 注意类型，否则无法查找顶级项目id
 				if (list.size() > 0) {
 					Map<String, Object> columnToValue = new HashMap<String, Object>();
 					columnToValue.put("project_amount", data.get("projectAmount"));
 					columnToValue.put("project_source", projectSource);
 					columnToValue.put("formula_remark", formulaRemark);
-					columnToValue.put("attachment", !JSONNull.getInstance().equals(data.get("attachment")) && !"".equals(data.get("attachment")) ? data.get("attachment") : null);
+					columnToValue.put("attachment", attachment);
 					columnToValue.put("top_level_project_id", backtrackTopId(btType, projectId));
 					commonTool.updateIntermediate("ys_expand_draft", columnToValue, "ys_expand_draft_id = " + list.get(0));// 理论上只应有一条匹配记录
 				} else {
-					commonTool.insertIntermediate("ys_expand_draft", new String[] { projectIdField, "year", "project_amount", "project_source", "formula_remark", "top_level_project_id", "with_last_year_num", "with_last_year_percent", "attachment", "insert_time", "insert_user", "status" }, new Object[] { data.get("projectId"), data.get("budgetYear"), data.get("projectAmount"), projectSource, formulaRemark, backtrackTopId(btType, projectId), 0.1, 0.2, "093f65e080a295f8076b1c5722a46aa2", DateTimeHelper.dateToStr(new Date(), DateTimeHelper.PATTERN_DATE_TIME), sessionToken.getUserInfoId(), 0 });
+					commonTool.insertIntermediate("ys_expand_draft", new String[] { projectIdField, "year", "project_amount", "project_source", "formula_remark", "attachment", "top_level_project_id", "with_last_year_num", "with_last_year_percent", "insert_time", "insert_user", "status" }, new Object[] { data.get("projectId"), data.get("budgetYear"), data.get("projectAmount"), projectSource, formulaRemark, attachment, backtrackTopId(btType, projectId), 0.1, 0.2, DateTimeHelper.dateToStr(new Date(), DateTimeHelper.PATTERN_DATE_TIME), sessionToken.getUserInfoId(), 0 });
 				}
 			}
 		} catch (Exception e) {
