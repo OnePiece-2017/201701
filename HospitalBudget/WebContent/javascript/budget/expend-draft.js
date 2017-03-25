@@ -203,7 +203,6 @@ function parseProject(projectArray, namespace, projectNature) {
 					hideLayer();
 				}
 			});
-			// 绑定附件插件
 			jQuery('.draft-table-body .data-container [namespace="' + namespace + '"] .field-function .opr-attachment:not(.not-enabled)').click(function() {
 				showLayer();
 				var tempHandler = jQuery(this);// 临时句柄
@@ -212,16 +211,16 @@ function parseProject(projectArray, namespace, projectNature) {
 						hideLayer();
 					}, 512);// 防止恶意点击
 				} else {
-					sgFileupload['install']({
+					sgFileupload['reinstall']({
 					    'target' : this.id,
-					    'alias' : '',
-					    'source' : 'jjjjjjjjjjjjjjjjjjjjjjjjjj',
+					    'alias' : jQuery(this).parents('.item-outer').find('.field-project-name span').html(),
+					    'source' : jQuery(this).attr('fu-source'),
 					    'class' : 'sg-fu-custom--attachment',
 					    'completed' : function() {
 						    tempHandler.addClass('activated');
 						    tempHandler.click();
 					    }
-					});
+					}); // 重新安装附件插件
 				}
 			});
 		}
@@ -261,6 +260,7 @@ function recoverProject(projectArray, namespace) {
 				} else {
 					itemOuter.find('.field-formula-remark textarea').val(formulaRemark);
 				}
+				itemOuter.find('.field-function .opr-attachment').attr('fu-source', projectArray[i]['attachment']);
 			}
 		}
 	}

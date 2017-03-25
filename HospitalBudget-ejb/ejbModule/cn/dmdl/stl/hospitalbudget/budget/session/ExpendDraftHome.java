@@ -323,6 +323,7 @@ public class ExpendDraftHome extends CriterionEntityHome<Object> {
 						}
 						value.accumulate("projectSource", projectSource);
 						value.accumulate("formulaRemark", formulaRemark);
+						value.accumulate("attachment", objects[4] != null ? objects[4].toString() : "");
 						result.add(value);
 					}
 				}
@@ -345,6 +346,7 @@ public class ExpendDraftHome extends CriterionEntityHome<Object> {
 					columnToValue.put("project_amount", data.get("projectAmount"));
 					columnToValue.put("project_source", projectSource);
 					columnToValue.put("formula_remark", formulaRemark);
+					columnToValue.put("attachment", !JSONNull.getInstance().equals(data.get("attachment")) && !"".equals(data.get("attachment")) ? data.get("attachment") : null);
 					columnToValue.put("top_level_project_id", backtrackTopId(btType, projectId));
 					commonTool.updateIntermediate("ys_expand_draft", columnToValue, "ys_expand_draft_id = " + list.get(0));// 理论上只应有一条匹配记录
 				} else {

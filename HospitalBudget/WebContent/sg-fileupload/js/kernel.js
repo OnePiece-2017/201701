@@ -26,6 +26,8 @@ var ______sgFileupload = {
 		return (function() {
 			return {
 			    install : install,
+			    uninstall : uninstall,
+			    reinstall : reinstall,
 			    showPanel : showPanel,
 			    showMaskLayer : showMaskLayer,
 			    hideMaskLayer : hideMaskLayer,
@@ -54,8 +56,12 @@ var ______sgFileupload = {
 			    setTriggerLock : setTriggerLock
 			};
 
+			function validateArguments(arg) {
+				return arg != null && 'object' === typeof arg && !arg.hasOwnProperty('length') && 'target' in arg && 'alias' in arg && 'source' in arg;
+			}
+
 			function install(arg) {
-				if (arg != null && 'object' === typeof arg && !arg.hasOwnProperty('length') && 'target' in arg && 'alias' in arg && 'source' in arg) {
+				if (validateArguments(arg)) {
 					var target = arg['target'], alias = 'string' === typeof arg['alias'] && arg['alias'] != null && arg['alias'] !== '' ? arg['alias'] : 'NONAME', source = arg['source'];
 					if (!______sgFileupload.isWired) {
 						var panelHtml = '';
@@ -305,6 +311,20 @@ var ______sgFileupload = {
 						alert('sgFileupload安装失败！无效的目标元素〔' + target + '〕');
 						return false;
 					}
+				} else {
+					alert('sgFileupload安装失败！无效参数！');
+					return false;
+				}
+			}
+
+			function uninstall(target) {
+				delete ______sgFileupload.storage[target];
+			}
+
+			function reinstall(arg) {
+				if (validateArguments(arg)) {
+					uninstall(arg['target']);
+					return install(arg);
 				} else {
 					alert('sgFileupload安装失败！无效参数！');
 					return false;
