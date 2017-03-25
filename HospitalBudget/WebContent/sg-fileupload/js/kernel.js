@@ -223,18 +223,7 @@ var ______sgFileupload = {
 									    ______sgFileupload.storage[target]['rebuild'] = result.data.rebuild;
 									    $(element).replaceWith('<span id="' + target + '" class="sg-fileupload-attachment">' + ______sgFileupload.storage[target]['alias'] + '</span>');
 									    element = document.getElementById(target);// 更新元素引用
-									    if ('class' in arg && arg['class'] != null && 'object' === typeof arg['class'] && arg['class'].hasOwnProperty('length') && 0 in arg['class'])
-										    for (var i = 0; i < arg['class'].length; i++)
-											    if (arg['class'][i] != null && arg['class'][i].toString() !== '')
-												    $(element).addClass(arg['class'][i].toString());
-									    $(element).mouseover(function() {
-										    // $(element).css("background-color",
-										    // "yellow");
-									    });
-									    $(element).mouseout(function() {
-										    // $(element).css("background-color",
-										    // "#E9E9E4");
-									    });
+									    $(element).addClass('class' in arg && 'string' === typeof arg['class'] && arg['class'] != null && arg['class'] !== '' ? arg['class'] : 'preset');
 									    $(element).click(function() {
 										    if (!______sgFileupload.isLocked) {
 											    ______sgFileupload.isLocked = true;
@@ -245,9 +234,11 @@ var ______sgFileupload = {
 												    sgFileupload.loadUploaded(______sgFileupload.storage[target]['items']);
 											    } else {
 												    var approved = true;
-												    for ( var key in ______sgFileupload.storage)
-													    if (!(approved = ______sgFileupload.storage[key]['ready']))
+												    for ( var key in ______sgFileupload.storage) {
+													    if (!(approved = ______sgFileupload.storage[key]['ready'])) {
 														    break;
+													    }
+												    }
 												    if (approved) {
 													    reloadController();
 													    sgFileupload.loadUploaded(______sgFileupload.storage[target]['items']);
@@ -284,8 +275,9 @@ var ______sgFileupload = {
 									    });
 									    ______sgFileupload.storage[target]['ready'] = true;
 								    } else {
-									    if (!______sgFileupload.isException)
+									    if (!______sgFileupload.isException) {
 										    ______sgFileupload.isException = true;
+									    }
 									    ______sgFileupload.exceptionMessage += (top.toastr != null ? '<br>' : '\n') + '别名〔' + ______sgFileupload.storage[target]['alias'] + '〕';
 								    }
 							    },

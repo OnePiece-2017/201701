@@ -1,4 +1,8 @@
 .sg-fileupload-attachment {
+	cursor: pointer;
+}
+
+.sg-fileupload-attachment.preset {
 	float: left;
 	width: 220px;
 	height: 34px;
@@ -7,7 +11,6 @@
 	margin-top: -10px;
 	font-family: '微软雅黑';
 	text-align: right;
-	cursor: pointer;
 	background: #2dddb1;
 	border-radius: 4px;
 }
