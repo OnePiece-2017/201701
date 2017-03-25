@@ -46,7 +46,7 @@ jQuery(document).ready(function() {
 	triggerRenewDataContainer();// 触发更新数据容器函数
 	computeTotalAmount();// 实时计算总金额
 
-	var forTest = false; // TODO: 仅供测试
+	var forTest = !false; // TODO: 仅供测试
 	if (forTest) {
 		setTimeout(function() {
 			jQuery('#fundsSourceId').val('1');
@@ -134,7 +134,7 @@ function parseProject(projectArray, namespace, projectNature) {
 				html += '				<span>' + (hasSub ? '' : '<textarea id="' + (namespace + '_formulaRemark_' + node['id']) + '" class="form-control"></textarea>') + '</span>';
 				html += '			</div>';
 				html += '			<div class="generic-field field-function">';
-				html += '				<span class="operation-item opr-attachment activated' + (hasSub ? ' not-enabled' : '') + '"></span>';
+				html += '				<span id="' + (namespace + '_attachment_' + node['id']) + '" class="operation-item opr-attachment' + (hasSub ? ' not-enabled' : '') + '"></span>';
 				html += '				<span class="operation-item opr-locking' + (hasSub ? ' not-enabled' : '') + '"></span>';
 				html += '				<span class="operation-item opr-reference' + (hasSub ? ' not-enabled' : '') + '"></span>';
 				html += '			</div>';
@@ -171,14 +171,12 @@ function parseProject(projectArray, namespace, projectNature) {
 			});
 			jQuery('.draft-table-body .data-container [namespace="' + namespace + '"] .field-function .opr-locking:not(.not-enabled)').click(function() {
 				showLayer();
-				if (!jQuery(this).hasClass('not-enabled')) {
-					if (jQuery(this).hasClass('activated')) {
-						jQuery(this).removeClass('activated');
-						jQuery(this).parents('.item-outer').removeClass('locking');
-					} else {
-						jQuery(this).addClass('activated');
-						jQuery(this).parents('.item-outer').addClass('locking');
-					}
+				if (jQuery(this).hasClass('activated')) {
+					jQuery(this).removeClass('activated');
+					jQuery(this).parents('.item-outer').removeClass('locking');
+				} else {
+					jQuery(this).addClass('activated');
+					jQuery(this).parents('.item-outer').addClass('locking');
 				}
 				setTimeout(function() {
 					hideLayer();
@@ -203,6 +201,28 @@ function parseProject(projectArray, namespace, projectNature) {
 					});
 				} else {
 					hideLayer();
+				}
+			});
+			// 绑定附件插件
+			jQuery('.draft-table-body .data-container [namespace="' + namespace + '"] .field-function .opr-attachment:not(.not-enabled)').click(function() {
+				showLayer();
+				var tempHandler = jQuery(this);// 临时句柄
+				if (!jQuery(this).hasClass('activated')) {
+					jQuery(this).addClass('activated');
+					sgFileupload['install']({
+					    'target' : this.id,
+					    'alias' : '',
+					    'source' : 'jjjjjjjjjjjjjjjjjjjjjjjjjj',
+					    'class' : 'sg-fu-custom--attachment',
+					    'completed' : function() {
+						    tempHandler.click();
+						    hideLayer();
+					    }
+					});
+				} else {
+					setTimeout(function() {
+						hideLayer();
+					}, 128);// 防止恶意点击
 				}
 			});
 		}

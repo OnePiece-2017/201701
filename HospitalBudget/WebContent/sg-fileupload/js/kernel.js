@@ -16,7 +16,8 @@ var ______sgFileupload = {
         download : false
     },
     callback : {
-	    saveData : null
+        saveData : null,
+        completed : null
     }
 };
 
@@ -142,7 +143,7 @@ var ______sgFileupload = {
 												    } else {
 													    alert(message);
 												    }
-												    $('.sg-fileupload-panel').fadeOut("fast", function() {
+												    $('.sg-fileupload-panel').fadeOut('fast', function() {
 													    hideMaskLayer();
 												    });
 											    } else {
@@ -171,7 +172,7 @@ var ______sgFileupload = {
 												    } else {
 													    alert(message);
 												    }
-												    $('.sg-fileupload-panel').fadeOut("fast", function() {
+												    $('.sg-fileupload-panel').fadeOut('fast', function() {
 													    hideMaskLayer();
 												    });
 											    }
@@ -227,6 +228,7 @@ var ______sgFileupload = {
 									    } else if (element.tagName != null && element.tagName !== '' && 'span' == element.tagName.toLowerCase()) {
 										    $(element).addClass('preset');
 									    }
+									    setCallback('completed', arg['completed']);
 									    $(element).click(function() {
 										    if (!______sgFileupload.isLocked) {
 											    ______sgFileupload.isLocked = true;
@@ -277,6 +279,7 @@ var ______sgFileupload = {
 										    }
 									    });
 									    ______sgFileupload.storage[target]['ready'] = true;
+									    execCallback('completed');
 								    } else {
 									    if (!______sgFileupload.isException) {
 										    ______sgFileupload.isException = true;
@@ -375,8 +378,9 @@ var ______sgFileupload = {
 			}
 
 			function setCallback(which, handle) {
-				if (______sgFileupload.callback.hasOwnProperty(which) && 'function' === typeof handle)
+				if (______sgFileupload.callback.hasOwnProperty(which) && 'function' === typeof handle) {
 					______sgFileupload.callback[which] = handle;
+				}
 			}
 
 			function getStorageChanged(target) {
@@ -388,8 +392,9 @@ var ______sgFileupload = {
 			}
 
 			function execCallback(which) {
-				if (______sgFileupload.callback.hasOwnProperty(which) && 'function' === typeof ______sgFileupload.callback[which])
+				if (______sgFileupload.callback.hasOwnProperty(which) && 'function' === typeof ______sgFileupload.callback[which]) {
 					______sgFileupload.callback[which]();
+				}
 			}
 
 			function fileDownload(args) {
