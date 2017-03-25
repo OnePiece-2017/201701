@@ -55,7 +55,7 @@ var ______sgFileupload = {
 
 			function install(arg) {
 				if (arg != null && 'object' === typeof arg && !arg.hasOwnProperty('length') && 'target' in arg && 'alias' in arg && 'source' in arg) {
-					var target = arg['target'], alias = arg['alias'], source = arg['source'];
+					var target = arg['target'], alias = 'string' === typeof arg['alias'] && arg['alias'] != null && arg['alias'] !== '' ? arg['alias'] : 'NONAME', source = arg['source'];
 					if (!______sgFileupload.isWired) {
 						var panelHtml = '';
 						panelHtml += '<div class="sg-fileupload-panel">';
@@ -221,9 +221,12 @@ var ______sgFileupload = {
 									    ______sgFileupload.storage[target]['items'] = result.data.items;
 									    ______sgFileupload.storage[target]['source'] = result.data.source;
 									    ______sgFileupload.storage[target]['rebuild'] = result.data.rebuild;
-									    $(element).replaceWith('<span id="' + target + '" class="sg-fileupload-attachment">' + ______sgFileupload.storage[target]['alias'] + '</span>');
-									    element = document.getElementById(target);// 更新元素引用
-									    $(element).addClass('class' in arg && 'string' === typeof arg['class'] && arg['class'] != null && arg['class'] !== '' ? arg['class'] : 'preset');
+									    $(element).addClass('sg-fileupload-attachment');
+									    if ('class' in arg && 'string' === typeof arg['class'] && arg['class'] != null && arg['class'] !== '') {
+										    $(element).addClass(arg['class']);
+									    } else if (element.tagName != null && element.tagName !== '' && 'span' == element.tagName.toLowerCase()) {
+										    $(element).addClass('preset');
+									    }
 									    $(element).click(function() {
 										    if (!______sgFileupload.isLocked) {
 											    ______sgFileupload.isLocked = true;

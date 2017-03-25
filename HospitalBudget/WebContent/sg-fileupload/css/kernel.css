@@ -4,6 +4,7 @@
 
 .sg-fileupload-attachment.preset {
 	float: left;
+	display: block;
 	width: 220px;
 	height: 34px;
 	padding-top: 6px;
@@ -11,7 +12,7 @@
 	margin-top: -10px;
 	font-family: '微软雅黑';
 	text-align: right;
-	background: #2dddb1;
+	background: RGBA(60, 229, 181, 0.6) url(../misc/img_attachment_30x31.png);
 	border-radius: 4px;
 }
 
