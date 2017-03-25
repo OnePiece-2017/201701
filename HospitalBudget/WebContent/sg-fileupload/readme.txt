@@ -6,7 +6,7 @@
 	    'target' : 'avatar',
 	    'alias' : '头像',
 	    'source' : jQuery('#mainForm\\:avatarHidden').val(),
-	    'class' : 'attachment-extend--xxx'
+	    'class' : 'sg-fu-custom--xxx'
 	});
 
 注意：
