@@ -3,5 +3,5 @@
 				    'target' : 'avatar',
 				    'alias' : '头像',
 				    'source' : jQuery('#mainForm\\:avatarHidden').val(),
-				    'class' : [ 'mb10', 'text-center' ]
+				    'class' : [ 'attachment-class' ]
 				});
