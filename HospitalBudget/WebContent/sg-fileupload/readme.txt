@@ -6,7 +6,7 @@
 	    'target' : 'avatar',
 	    'alias' : '头像',
 	    'source' : jQuery('#mainForm\\:avatarHidden').val(),
-	    'class' : 'attachment-avatar'
+	    'class' : 'attachment-extend--xxx'
 	});
 
 注意：
