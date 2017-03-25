@@ -246,10 +246,10 @@ var ______sgFileupload = {
 												    }
 												    if (approved) {
 													    reloadController();
-													    if ('function' === typeof sgFileupload.loadUploaded) {
+													    setTimeout(function() {
 														    sgFileupload.loadUploaded(______sgFileupload.storage[target]['items']);
-													    }
-													    ______sgFileupload.isReady = true;
+														    ______sgFileupload.isReady = true;
+													    }, 1024);// 等待view.js设置loadUploaded
 												    } else {
 													    var message = ______sgFileupload.isException ? ______sgFileupload.exceptionMessage : 'sgFileupload未就绪！';
 													    if (top.toastr != null) {
