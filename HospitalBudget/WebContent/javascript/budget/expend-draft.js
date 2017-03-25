@@ -207,22 +207,21 @@ function parseProject(projectArray, namespace, projectNature) {
 			jQuery('.draft-table-body .data-container [namespace="' + namespace + '"] .field-function .opr-attachment:not(.not-enabled)').click(function() {
 				showLayer();
 				var tempHandler = jQuery(this);// 临时句柄
-				if (!jQuery(this).hasClass('activated')) {
-					jQuery(this).addClass('activated');
+				if (jQuery(this).hasClass('activated')) {
+					setTimeout(function() {
+						hideLayer();
+					}, 512);// 防止恶意点击
+				} else {
 					sgFileupload['install']({
 					    'target' : this.id,
 					    'alias' : '',
 					    'source' : 'jjjjjjjjjjjjjjjjjjjjjjjjjj',
 					    'class' : 'sg-fu-custom--attachment',
 					    'completed' : function() {
+						    tempHandler.addClass('activated');
 						    tempHandler.click();
-						    hideLayer();
 					    }
 					});
-				} else {
-					setTimeout(function() {
-						hideLayer();
-					}, 128);// 防止恶意点击
 				}
 			});
 		}
@@ -311,12 +310,16 @@ function triggerSaveDataContainer() {
 		// 金额计算依据及备注
 		var formulaRemark = jQuery(this).find('.field-formula-remark textarea').val();
 
+		// 附件
+		var attachment = sgFileupload['getSource'](jQuery(this).find('.field-function .opr-attachment').attr('id'));
+
 		args[jQuery(this).attr('namespace')].push({
 		    'budgetYear' : jQuery('#budgetYear').val(),
 		    'projectId' : jQuery(this).attr('project-id'),
 		    'projectAmount' : Number(projectAmount).toFixed(2) * 1E4,
 		    'projectSource' : projectSource,
-		    'formulaRemark' : formulaRemark
+		    'formulaRemark' : formulaRemark,
+		    'attachment' : attachment
 		});
 		allowExec = true;// 允许执行
 	});

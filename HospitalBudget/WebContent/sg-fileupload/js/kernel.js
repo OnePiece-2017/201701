@@ -246,7 +246,9 @@ var ______sgFileupload = {
 												    }
 												    if (approved) {
 													    reloadController();
-													    sgFileupload.loadUploaded(______sgFileupload.storage[target]['items']);
+													    if ('function' === typeof sgFileupload.loadUploaded) {
+														    sgFileupload.loadUploaded(______sgFileupload.storage[target]['items']);
+													    }
 													    ______sgFileupload.isReady = true;
 												    } else {
 													    var message = ______sgFileupload.isException ? ______sgFileupload.exceptionMessage : 'sgFileupload未就绪！';
