@@ -83,7 +83,12 @@ public class QueryExpendApplay extends CriterionNativeQuery<Object[]> {
 		sql.append(" eap.expend_money, ");//6支出金额
 		sql.append(" uie.fullname, ");//7申请人名字
 		sql.append(" eai.apply_time, ");//8申请提交时间
-		sql.append(" ecp.expend_confirm_project_id ");
+		sql.append(" ecp.expend_confirm_project_id, ");//9
+		sql.append(" gp.the_value as generic_name, ");//10
+		sql.append(" fs2.the_value as source_name2, ");//11
+		sql.append(" ydi2.the_value as depart_name2, ");//12
+		sql.append(" eap.project_id, ");//13
+		sql.append(" eap.generic_project_id ");//14
 		sql.append(" FROM expend_apply_project eap ");
 		sql.append(" LEFT JOIN expend_apply_info eai ON eap.expend_apply_info_id = eai.expend_apply_info_id ");
 		sql.append(" LEFT JOIN expend_confirm_project ecp on eap.expend_apply_project_id=ecp.expend_apply_project_id ");
@@ -92,18 +97,21 @@ public class QueryExpendApplay extends CriterionNativeQuery<Object[]> {
 		sql.append(" LEFT JOIN ys_funds_source fs ON fs.the_id = up.funds_source_id ");
 		sql.append(" LEFT JOIN user_info ui ON ui.user_info_id = eai.applay_user_id ");
 		sql.append(" LEFT JOIN user_info_extend uie ON ui.user_info_extend_id = uie.user_info_extend_id ");
+		sql.append(" LEFT JOIN generic_project gp on eap.generic_project_id=gp.the_id ");
+		sql.append(" LEFT JOIN ys_funds_source fs2 on fs2.the_id=gp.funds_source_id ");
+		sql.append(" LEFT JOIN ys_department_info ydi2 on ydi2.the_id=gp.department_info_id ");
 		sql.append(" where eap.deleted=0 and ecp.deleted=0 ");
 		if(privateRole){
-			sql.append(" eap.insert_user= ").append(sessionToken.getUserInfoId());
+			sql.append(" and eap.insert_user= ").append(sessionToken.getUserInfoId());
 		}
 		if(null != projectName && !projectName.trim().equals("")){
-			sql.append(" up.the_value like '").append(projectName).append("'");
+			sql.append(" and (up.the_value like '").append(projectName).append("') or gp.the_value like '").append(projectName).append("')");
 		}
 		if(null != fundsSourceId && fundsSourceId != -1){
-			sql.append(" and up.funds_source_id= ").append(fundsSourceId);
+			sql.append(" and (up.funds_source_id= ").append(fundsSourceId).append(" or gp.funds_source_id=").append(fundsSourceId).append(")");
 		}
 		if(null != departId && departId != -1){
-			sql.append(" and up.department_info_id").append(departId);
+			sql.append(" and (up.department_info_id").append(departId).append(" or gp.department_info_id=").append(departId).append(")");
 		}
 		if(null != expendTime && !expendTime.equals("")){
 			sql.append(" and date_format(eai.apply_time,'%Y-%m-%d')='").append(expendTime).append("'");

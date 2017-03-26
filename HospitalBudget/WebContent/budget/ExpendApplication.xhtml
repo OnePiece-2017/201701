@@ -456,10 +456,10 @@
 												<select id="projectId" class="selectpicker" data-live-search="true" onchange="changeProject()">
 													<option value="-1" class="0">请选择</option>
 													<a:repeat value="#{expendApplyInfoHome.projectList}" var="_var">
-														<s:fragment rendered="#{expendApplyInfoHome.projectId eq _var[1]}">
+														<s:fragment rendered="#{expendApplyInfoHome.projectId eq _var[1] and expendApplyInfoHome.projectType eq _var[3]}">
 															<option value="#{_var[1]}_#{_var[3]}" selected="selected" class = "#{_var[3]}">#{_var[2]}</option>
 														</s:fragment>
-														<s:fragment rendered="#{expendApplyInfoHome.projectId ne _var[1]}">
+														<s:fragment rendered="#{expendApplyInfoHome.projectId ne _var[1] or expendApplyInfoHome.projectType ne _var[3]}">
 															<option value="#{_var[1]}_#{_var[3]}" class = "#{_var[3]}">#{_var[2]}</option>
 														</s:fragment>
 													</a:repeat>

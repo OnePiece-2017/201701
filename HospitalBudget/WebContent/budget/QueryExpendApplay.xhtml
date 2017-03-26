@@ -123,9 +123,30 @@
 			        			<a  href="/HospitalBudget/budget/ExpendConfirmDetail.seam?expendConfrimProjectId=#{_result[9]}"  title="查看详情">#{_result[2]}</a>
 			        		</s:fragment>
 			        	</td>
-			        	<td>#{_result[3]}</td>
-			        	<td>#{_result[4]}</td>
-			        	<td>#{ _result[5]}</td>
+			        	<td>
+			        		<s:fragment rendered="#{_result[14] eq null and _result[13] ne null}">
+			        			#{_result[3]}
+			        		</s:fragment>
+			        		<s:fragment rendered="#{_result[14] ne null and _result[13] eq null}">
+			        			#{_result[12]}
+			        		</s:fragment>
+			        	</td>
+			        	<td>
+			        		<s:fragment rendered="#{_result[14] eq null and _result[13] ne null}">
+			        			#{_result[4]}
+			        		</s:fragment>
+			        		<s:fragment rendered="#{_result[14] ne null and _result[13] eq null}">
+			        			#{_result[11]}
+			        		</s:fragment>
+			        	</td>
+			        	<td>
+			        		<s:fragment rendered="#{_result[14] eq null and _result[13] ne null}">
+			        			#{_result[5]}
+			        		</s:fragment>
+			        		<s:fragment rendered="#{_result[14] ne null and _result[13] eq null}">
+			        			#{_result[10]}
+			        		</s:fragment>
+			        	</td>
 			        	<td>#{_result[6]}</td>
 			        	<td>#{_result[7]}</td>
 			        	<td>#{commonFinder.parseDate(_result[8])}</td>

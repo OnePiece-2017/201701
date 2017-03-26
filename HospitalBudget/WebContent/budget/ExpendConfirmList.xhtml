@@ -13,8 +13,23 @@
 		<link rel="stylesheet" type="text/css" href="#{request.contextPath}/common/css/bootstrap.min.css" />
 		<link rel="stylesheet" type="text/css" href="#{request.contextPath}/common/css/bootstrap-datetimepicker.min.css" />
 		<link rel="stylesheet" type="text/css" href="#{request.contextPath}/common/css/bootstrap-select2.min.css" />
+		<link rel="stylesheet" type="text/css" href="#{request.contextPath}/icheck/skins/square/blue.css" />
 	</ui:define>
-	
+	<style type="text/css">
+			button[data-id='depart']{
+				    width: 100px;
+			}
+			button[data-id='fundsSource']{
+				    width: 100px;
+			}
+			button[data-id='confirmStatus']{
+				    width: 100px;
+			}
+			.bootstrap-select:not([class*="span"]):not([class*="col-"]):not([class*="form-control"]):not(.input-group-btn){
+				width: 100px;
+			}
+			
+	</style>
 	<ui:define name="body">
 	#{expendConfrimList.wire()}
 		<div class="g-data-list-condition">
@@ -49,7 +64,7 @@
 								<span class="field-name mb10">申请编制人</span>
 							</td>
 							<td valign="middle">
-								<select id="fundsSource" class="selectpicker">
+								<select id="fundsSource" class="selectpicker" style="width:">
 									<a:repeat value="#{expendConfrimList.applayUserList}" var="_department">
 										<option value="-1">请选择</option>
 										<optgroup label="#{_department[0]}" data-subtext="科室">
@@ -117,7 +132,8 @@
 					<h:inputHidden value="#{expendConfrimList.applyUser}" id="applyUser"/>
 					<h:inputHidden value="#{expendConfrimList.applyTime}" id="applyTime"/>
 					<h:inputHidden value="#{expendConfrimList.confirmStatus}" id="confirmStatus"/>
-					<h:commandButton styleClass="btn btn-primary mt10 ml20" action="/budget/ExpendConfirmList.xhtml" onclick="return check();" value="搜索" />
+					<h:commandButton styleClass="btn btn-primary" action="/budget/ExpendConfirmList.xhtml" onclick="return check();" value="搜索" style="font-size: 12px;"/>
+					<a class="btn btn-primary"  href="javascript:void(0);" onclick="batchConfrim()"  style="font-size: 12px;">批量确认</a>
 				</div>
 			</h:form>
 		</div>
@@ -156,6 +172,7 @@
 				        			<f:param name="expendConfirmId" value="#{_result[0]}" />
 				        			<img src="../images/icon_law_16x16.png" />
 				        		</s:link>
+				        		<input type="checkbox" class="icheck check_box" name="check_confirm" myattr="#{_result[0]}" />
 			        		</s:fragment>
 						</td>
 		        	</tr>
@@ -212,12 +229,19 @@
 				</table>
 		    </s:fragment>
 		</div>
+		<a:form>
+			<a:queue requestDelay="100" ignoreDupResponses="true" />
+			<a:jsFunction name="confirmBatch" action="#{expendApplyConfirmHome.confirmBatch}" data="#{expendApplyInfoHome.saveResult}" oncomplete="batchcomplete()">
+				<a:actionparam name="confirmIds" assignTo="#{expendApplyConfirmHome.confirmIds}" />
+			</a:jsFunction>
+		</a:form>
 		<script type="text/javascript" src="#{request.contextPath}/common/js/bootstrap.min.js" />
 		<script type="text/javascript" src="#{request.contextPath}/toolkit/utils.js" />
 		<script type="text/javascript" src="#{request.contextPath}/common/js/bootstrap-datetimepicker.min.js" charset="UTF-8" />
 		<script type="text/javascript" src="#{request.contextPath}/common/js/bootstrap-datetimepicker.zh-CN.js" charset="UTF-8" />
 		<script type="text/javascript" src="#{request.contextPath}/common/js/bootstrap-select-defaults-zh_CN.min.js" charset="UTF-8" />
 		<script type="text/javascript" src="#{request.contextPath}/common/js/bootstrap-select.min.js" charset="UTF-8" />
+		<script type="text/javascript" src="#{request.contextPath}/icheck/js/icheck.min.js" charset="UTF-8" />
 		<script type="text/javascript">
 		//<![CDATA[
 			jQuery(document).ready(function() {
@@ -239,9 +263,19 @@
 					___msg('温馨提示', message);
 			    }
 			    ___textRestrictById('mainForm:keyword', 1024);
+			    jQuery('.icheck').iCheck({
+					checkboxClass: 'icheckbox_square-blue',
+					radioClass: 'iradio_square-blue',
+					increaseArea: '20%'
+				});
 			});
 
 			function selectInit(){
+				jQuery('.icheck').iCheck({
+					checkboxClass: 'icheckbox_square-blue',
+					radioClass: 'iradio_square-blue',
+					increaseArea: '20%'
+				});
 				jQuery('.selectpicker').selectpicker();
 			}
 
@@ -255,6 +289,25 @@
 				jQuery("#mainForm\\:applyTime").val(applyTime);
 				jQuery("#mainForm\\:confirmStatus").val(confirmStatus);
 				return true;
+			}
+			function batchConfrim(){
+				var ids = "";
+				jQuery("input[name='check_confirm']").each(function(i){
+					if(jQuery(this).is(':checked')){
+						var id = jQuery(this).attr("myattr");
+						ids += (id + ","); 
+					}
+				});
+				if(ids == ""){
+					alert("请选择确认单");
+				}else{
+					ids = ids.substring(0,ids.length-1);
+					confirmBatch(ids);
+				}
+			}
+
+			function batchcomplete(data){
+				   window.location.href = '../budget/ExpendConfirmList.seam';
 			}
 		//]]>
 		</script>

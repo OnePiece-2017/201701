@@ -135,32 +135,53 @@ public class ExpendConfrimDetailHome extends CriterionEntityHome<Object> {
 		//查询项目列表
 		StringBuffer projectSql = new StringBuffer();
 		projectSql.append(" SELECT ");
-		projectSql.append(" up.the_value, ");
-		projectSql.append(" expi.budget_amount, ");
-		projectSql.append(" expi.budget_amount_frozen, ");
-		projectSql.append(" expi.budget_amount_surplus, ");
-		projectSql.append(" ecp.confirm_money, ");
-		projectSql.append(" ecp.project_id,fs.the_value as source_name ");
+		projectSql.append(" up.the_value, ");//0
+		projectSql.append(" expi.budget_amount, ");//1
+		projectSql.append(" ecp.expend_befor_frozen, ");//2
+		projectSql.append(" ecp.expend_befor_surplus, ");//3
+		projectSql.append(" ecp.confirm_money, ");//4
+		projectSql.append(" ecp.project_id, ");//5
+		projectSql.append(" fs.the_value as source_name, ");//6
+		projectSql.append(" gp.the_value as generic_name, ");//7
+		projectSql.append(" ecp.generic_project_id, ");//8
+		projectSql.append(" fs2.the_value as source_name2, ");//9
+		projectSql.append(" nepi.budget_amount as amount2 ");//10
 		projectSql.append(" FROM expend_confirm_project ecp ");
 		projectSql.append(" LEFT JOIN expend_confirm_info eci on eci.expend_confirm_info_id= ecp.expend_confirm_info_id ");
 		projectSql.append(" LEFT JOIN routine_project up on up.the_id=ecp.project_id ");
 		projectSql.append(" LEFT JOIN normal_expend_plan_info expi on  expi.project_id=ecp.project_id and expi.`year` = eci.`year` ");
 		projectSql.append(" LEFT JOIN ys_funds_source fs on up.funds_source_id=fs.the_id ");
+		projectSql.append(" LEFT JOIN generic_project gp on gp.the_id=ecp.generic_project_id");
+		projectSql.append(" LEFT JOIN normal_expend_plan_info nepi ON nepi.generic_project_id = ecp.generic_project_id AND nepi.`year` = eci.`year` ");
+		projectSql.append(" LEFT JOIN ys_funds_source fs2 ON gp.funds_source_id = fs2.the_id ");
 		projectSql.append(" where  ");
 		projectSql.append(" ecp.expend_confirm_project_id=").append(expendConfrimProjectId);
 		List<Object[]> list = getEntityManager().createNativeQuery("select * from (" + projectSql.toString() + ") as test").getResultList();
 		if(list.size() > 0){
 			for(Object[] obj : list){
 				Object[] projectDetail = new Object[8];
-				projectDetail[0] = obj[0];
-				projectDetail[1] = obj[1];
-				projectDetail[2] = Float.parseFloat(obj[2].toString()) - Float.parseFloat(obj[4].toString());
-				projectDetail[3] = Float.parseFloat(obj[3].toString()) + Float.parseFloat(obj[4].toString());;
-				projectDetail[4] = obj[4];
-				projectDetail[5] = obj[6];
-				projectDetail[6] = "";
-				projectDetail[7] = obj[5];
-				projectList.add(projectDetail);
+				if(null != obj[5] && null == obj[8]){
+					projectDetail[0] = obj[0];
+					projectDetail[1] = obj[1];
+					projectDetail[2] = obj[2];
+					projectDetail[3] = obj[3];
+					projectDetail[4] = obj[4];
+					projectDetail[5] = obj[6];
+					projectDetail[6] = "";
+					projectDetail[7] = obj[5];
+					projectList.add(projectDetail);
+				}else{
+					projectDetail[0] = obj[7];
+					projectDetail[1] = obj[10];
+					projectDetail[2] = obj[2];
+					projectDetail[3] = obj[3];
+					projectDetail[4] = obj[4];
+					projectDetail[5] = obj[9];
+					projectDetail[6] = "";
+					projectDetail[7] = obj[8];
+					projectList.add(projectDetail);
+				}
+				
 			}
 		}
 		return resultSet;

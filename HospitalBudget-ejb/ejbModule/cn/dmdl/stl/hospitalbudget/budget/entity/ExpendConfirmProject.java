@@ -24,6 +24,8 @@ public class ExpendConfirmProject implements java.io.Serializable{
 	private Integer expend_confirm_project_id;
 	private Integer expend_confirm_info_id;
 	private Integer expend_apply_project_id;//申请单项目表
+	private Float expendBeforFrozen;//支出之前冻结
+	private Float expendBeforSurplus;//支出之前剩余
 	private Integer projectId;//项目
 	private Integer genericProjectId;//常规项目
 	private Float confirm_money;//确认金额
@@ -88,6 +90,20 @@ public class ExpendConfirmProject implements java.io.Serializable{
 	}
 	public void setDeleted(boolean deleted) {
 		this.deleted = deleted;
+	}
+	@Column(name = "expend_befor_frozen")
+	public Float getExpendBeforFrozen() {
+		return expendBeforFrozen;
+	}
+	public void setExpendBeforFrozen(Float expendBeforFrozen) {
+		this.expendBeforFrozen = expendBeforFrozen;
+	}
+	@Column(name = "expend_befor_surplus")
+	public Float getExpendBeforSurplus() {
+		return expendBeforSurplus;
+	}
+	public void setExpendBeforSurplus(Float expendBeforSurplus) {
+		this.expendBeforSurplus = expendBeforSurplus;
 	}
 
 }

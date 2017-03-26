@@ -25,6 +25,7 @@ public class NormalExpendPlantInfo implements java.io.Serializable{
 	private Integer deptId;//科室
 	private String year;
 	private Integer projectId;
+	private Integer genericProjectId;
 	private Float budgetAmount;
 	private Float budgetAmountFrozen;
 	private Float budgetAmountSurplus;
@@ -69,6 +70,13 @@ public class NormalExpendPlantInfo implements java.io.Serializable{
 		this.projectId = projectId;
 	}
 	
+	@Column(name = "generic_project_id")
+	public Integer getGenericProjectId() {
+		return genericProjectId;
+	}
+	public void setGenericProjectId(Integer genericProjectId) {
+		this.genericProjectId = genericProjectId;
+	}
 	@Column(name = "budget_amount")
 	@NotNull
 	public Float getBudgetAmount() {

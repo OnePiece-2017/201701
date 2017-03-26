@@ -79,8 +79,8 @@ public class ExpendInfoDetail extends CriterionEntityHome<ExpendApplyInfo>{
 		projectSql.append(" SELECT ");
 		projectSql.append(" up.the_value as routine_name, ");//0项目名
 		projectSql.append(" expi.budget_amount as budget_amount1, ");//1
-		projectSql.append(" expi.budget_amount_frozen as amount_frozen1, ");//2
-		projectSql.append(" expi.budget_amount_surplus as amount_surplus1, ");//3
+		projectSql.append(" eap.expend_befor_frozen, ");//2
+		projectSql.append(" eap.expend_befor_surplus, ");//3
 		projectSql.append(" eap.expend_money as expend_money1, ");//4
 		projectSql.append(" eap.project_id, ");//5
 		projectSql.append(" fs.the_value AS source_name1, ");//6
@@ -106,11 +106,11 @@ public class ExpendInfoDetail extends CriterionEntityHome<ExpendApplyInfo>{
 		if(list.size() > 0){
 			for(Object[] obj : list){
 				Object[] projectDetail = new Object[8];
-				if(null == obj[11] && null != obj[5]){
+				if(null == obj[12] && null != obj[5]){
 					projectDetail[0] = obj[0];
 					projectDetail[1] = obj[1];
-					projectDetail[2] = Float.parseFloat(obj[2].toString()) - Float.parseFloat(obj[4].toString());
-					projectDetail[3] = Float.parseFloat(obj[3].toString()) + Float.parseFloat(obj[4].toString());;
+					projectDetail[2] = obj[2];
+					projectDetail[3] = obj[3];
 					projectDetail[4] = obj[4];
 					allMoney += Float.parseFloat(projectDetail[4].toString());
 					projectDetail[5] = obj[6];
@@ -119,10 +119,10 @@ public class ExpendInfoDetail extends CriterionEntityHome<ExpendApplyInfo>{
 				}else{
 					projectDetail[0] = obj[7];
 					projectDetail[1] = obj[8];
-					projectDetail[2] = Float.parseFloat(obj[9].toString()) - Float.parseFloat(obj[11].toString());
-					projectDetail[3] = Float.parseFloat(obj[10].toString()) + Float.parseFloat(obj[11].toString());;
+					projectDetail[2] = obj[2];
+					projectDetail[3] = obj[3];
 					projectDetail[4] = obj[11];
-					allMoney += Float.parseFloat(projectDetail[11].toString());
+					allMoney += Float.parseFloat(projectDetail[4].toString());
 					projectDetail[5] = obj[13];
 					projectDetail[6] = "";
 					projectDetail[7] = obj[12];

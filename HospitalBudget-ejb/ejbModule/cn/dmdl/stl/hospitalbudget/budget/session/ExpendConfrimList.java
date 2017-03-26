@@ -1,18 +1,37 @@
 package cn.dmdl.stl.hospitalbudget.budget.session;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import javax.persistence.Query;
 
+import net.sf.json.JSONArray;
+import net.sf.json.JSONObject;
+
 import org.jboss.seam.annotations.In;
 import org.jboss.seam.annotations.Name;
 
+import cn.dmdl.stl.hospitalbudget.budget.entity.ExpendApplyInfo;
+import cn.dmdl.stl.hospitalbudget.budget.entity.ExpendApplyProject;
+import cn.dmdl.stl.hospitalbudget.budget.entity.ExpendConfirmInfo;
+import cn.dmdl.stl.hospitalbudget.budget.entity.ExpendConfirmProject;
+import cn.dmdl.stl.hospitalbudget.budget.entity.NormalExpendPlantInfo;
 import cn.dmdl.stl.hospitalbudget.common.session.CriterionNativeQuery;
 import cn.dmdl.stl.hospitalbudget.util.SessionToken;
 
+/**
+ * @author lq
+ *
+ */
+/**
+ * @author lq
+ *
+ */
 @Name("expendConfrimList")
 public class ExpendConfrimList extends CriterionNativeQuery<Object[]> {
 
@@ -29,6 +48,8 @@ public class ExpendConfrimList extends CriterionNativeQuery<Object[]> {
 	private Integer applyUser;//申请编制人
 	private String applyTime;//申请时间
 	private Integer confirmStatus;//确认状态 -1全部  0未确认 1已确认
+	
+	private JSONObject saveResult;
 	
 	private static final int FINA_ROLE_ID = 3;//财务人员角色id
 	private static final int DIRECTOR_ROLE_ID = 4;//主任角色id
@@ -265,6 +286,8 @@ public class ExpendConfrimList extends CriterionNativeQuery<Object[]> {
 			}
 		}
 	}
+	
+	
 	public List<Object[]> getExpendApplyInfoList() {
 		return expendApplyInfoList;
 	}
@@ -330,6 +353,7 @@ public class ExpendConfrimList extends CriterionNativeQuery<Object[]> {
 	public void setApplayUserList(List<Object[]> applayUserList) {
 		this.applayUserList = applayUserList;
 	}
+
 	
 	
 }
