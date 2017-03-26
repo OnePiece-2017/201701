@@ -24,7 +24,8 @@ public class ExpendConfirmProject implements java.io.Serializable{
 	private Integer expend_confirm_project_id;
 	private Integer expend_confirm_info_id;
 	private Integer expend_apply_project_id;//申请单项目表
-	private Integer projectId;
+	private Integer projectId;//项目
+	private Integer genericProjectId;//常规项目
 	private Float confirm_money;//确认金额
 	private boolean deleted;//删除
 	
@@ -66,12 +67,19 @@ public class ExpendConfirmProject implements java.io.Serializable{
 	}
 	
 	@Column(name = "project_id")
-	@NotNull
 	public Integer getProjectId() {
 		return projectId;
 	}
 	public void setProjectId(Integer projectId) {
 		this.projectId = projectId;
+	}
+	
+	@Column(name = "generic_project_id")
+	public Integer getGenericProjectId() {
+		return genericProjectId;
+	}
+	public void setGenericProjectId(Integer genericProjectId) {
+		this.genericProjectId = genericProjectId;
 	}
 	@Column(name = "deleted")
 	@NotNull

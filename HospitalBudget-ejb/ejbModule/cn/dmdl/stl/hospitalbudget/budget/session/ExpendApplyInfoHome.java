@@ -59,6 +59,7 @@ public class ExpendApplyInfoHome extends CriterionEntityHome<ExpendApplyInfo>{
 	private Integer expendApplyInfoId;//编辑使用-申请单号
 	private String applySn;//单据编号
 	private Integer projectId;//项目Id
+	private Integer projectType;//项目类型（常规项目2，项目1）
 	private Integer year;//年份
 	private Integer fundsSourceId;//资金来源id
 	private Integer departmentId;;//部门id
@@ -350,35 +351,69 @@ public class ExpendApplyInfoHome extends CriterionEntityHome<ExpendApplyInfo>{
 	 */
 	public void selectProject(){
 		if(null != projectId && -1 != projectId){
-			StringBuffer sql = new StringBuffer();
-			sql.append(" SELECT ");
-			sql.append(" nepi.dept_id, ");
-			sql.append(" fs.the_id, ");
-			sql.append(" nepi.budget_amount, ");
-			sql.append(" nepi.budget_amount_frozen, ");
-			sql.append(" nepi.budget_amount_surplus ");
-			sql.append(" FROM normal_expend_plan_info nepi ");
-			sql.append(" LEFT JOIN routine_project rp ON nepi.project_id = rp.the_id ");
-			sql.append(" LEFT JOIN ys_funds_source fs on rp.funds_source_id=fs.the_id ");
-			sql.append(" WHERE nepi.project_id= ").append(projectId);
-			@SuppressWarnings("unchecked")
-			List<Object[]> list = getEntityManager().createNativeQuery(sql.toString()).getResultList();
-			if(list.size() > 0){
-				Object[] obj = list.get(0);
-				if(null == departmentId || departmentId == -1){
-					departmentId = Integer.parseInt(obj[0].toString());
+			if(projectType == 1){
+				StringBuffer sql = new StringBuffer();
+				sql.append(" SELECT ");
+				sql.append(" nepi.dept_id, ");
+				sql.append(" fs.the_id, ");
+				sql.append(" nepi.budget_amount, ");
+				sql.append(" nepi.budget_amount_frozen, ");
+				sql.append(" nepi.budget_amount_surplus ");
+				sql.append(" FROM normal_expend_plan_info nepi ");
+				sql.append(" LEFT JOIN routine_project rp ON nepi.project_id = rp.the_id ");
+				sql.append(" LEFT JOIN ys_funds_source fs on rp.funds_source_id=fs.the_id ");
+				sql.append(" WHERE nepi.project_id= ").append(projectId);
+				@SuppressWarnings("unchecked")
+				List<Object[]> list = getEntityManager().createNativeQuery(sql.toString()).getResultList();
+				if(list.size() > 0){
+					Object[] obj = list.get(0);
+					if(null == departmentId || departmentId == -1){
+						departmentId = Integer.parseInt(obj[0].toString());
+					}
+					if(null == fundsSourceId || fundsSourceId == -1){
+						fundsSourceId = Integer.parseInt(obj[1].toString());
+					}
+					if(null != obj[2]){
+						totalMoney = obj[2].toString();
+					}
+					if(null != obj[3]){
+						usedMoney = obj[3].toString();
+					}
+					if(null != obj[4]){
+						canUseMoney = obj[4].toString();
+					}
 				}
-				if(null == fundsSourceId || fundsSourceId == -1){
-					fundsSourceId = Integer.parseInt(obj[1].toString());
-				}
-				if(null != obj[2]){
-					totalMoney = obj[2].toString();
-				}
-				if(null != obj[3]){
-					usedMoney = obj[3].toString();
-				}
-				if(null != obj[4]){
-					canUseMoney = obj[4].toString();
+			}else if(projectType == 2){
+				StringBuffer sql = new StringBuffer();
+				sql.append(" SELECT ");
+				sql.append(" nepi.dept_id, ");
+				sql.append(" fs.the_id, ");
+				sql.append(" nepi.budget_amount, ");
+				sql.append(" nepi.budget_amount_frozen, ");
+				sql.append(" nepi.budget_amount_surplus ");
+				sql.append(" FROM normal_expend_plan_info nepi ");
+				sql.append(" LEFT JOIN generic_project rp ON nepi.project_id = rp.the_id ");
+				sql.append(" LEFT JOIN ys_funds_source fs on rp.funds_source_id=fs.the_id ");
+				sql.append(" WHERE nepi.project_id= ").append(projectId);
+				@SuppressWarnings("unchecked")
+				List<Object[]> list = getEntityManager().createNativeQuery(sql.toString()).getResultList();
+				if(list.size() > 0){
+					Object[] obj = list.get(0);
+					if(null == departmentId || departmentId == -1){
+						departmentId = Integer.parseInt(obj[0].toString());
+					}
+					if(null == fundsSourceId || fundsSourceId == -1){
+						fundsSourceId = Integer.parseInt(obj[1].toString());
+					}
+					if(null != obj[2]){
+						totalMoney = obj[2].toString();
+					}
+					if(null != obj[3]){
+						usedMoney = obj[3].toString();
+					}
+					if(null != obj[4]){
+						canUseMoney = obj[4].toString();
+					}
 				}
 			}
 		}else{
@@ -397,28 +432,56 @@ public class ExpendApplyInfoHome extends CriterionEntityHome<ExpendApplyInfo>{
 			expendList = new ArrayList<Object[]>();
 		}
 		StringBuffer sql = new StringBuffer();
-		sql.append(" SELECT ");
-		sql.append(" up.the_value, ");
-		sql.append(" nepi.budget_amount, ");
-		sql.append(" nepi.budget_amount_frozen, ");
-		sql.append(" nepi.budget_amount_surplus,up.the_id,fs.the_value as source_name ");
-		sql.append(" FROM routine_project up ");
-		sql.append(" LEFT JOIN normal_expend_plan_info nepi ON up.the_id = nepi.project_id ");
-		sql.append(" LEFT JOIN ys_funds_source fs on up.funds_source_id=fs.the_id ");
-		sql.append(" WHERE up.the_id = ").append(projectId);
-		List<Object[]> list = getEntityManager().createNativeQuery("select * from (" + sql.toString() + ") as test").getResultList();
-		Object[] project = list.get(0);
-		DecimalFormat df = new DecimalFormat("#.00");
-		Object[] obj = new Object[8];
-		obj[0] = project[0];
-		obj[1] =  Double.parseDouble(project[1].toString()) == 0 ? "0.00" : df.format(Double.parseDouble(project[1].toString()));
-		obj[2] = Double.parseDouble(project[2].toString()) == 0 ? "0.00" : df.format(Double.parseDouble(project[2].toString()));
-		obj[3] = Double.parseDouble(project[3].toString()) == 0 ? "0.00" : df.format(Double.parseDouble(project[3].toString()));
-		obj[4] = "";
-		obj[5] = project[5];
-		obj[6] = "";
-		obj[7] = project[4];
-		expendList.add(obj);
+		if(projectType == 1){
+			sql.append(" SELECT ");
+			sql.append(" up.the_value, ");
+			sql.append(" nepi.budget_amount, ");
+			sql.append(" nepi.budget_amount_frozen, ");
+			sql.append(" nepi.budget_amount_surplus,up.the_id,fs.the_value as source_name ");
+			sql.append(" FROM routine_project up ");
+			sql.append(" LEFT JOIN normal_expend_plan_info nepi ON up.the_id = nepi.project_id ");
+			sql.append(" LEFT JOIN ys_funds_source fs on up.funds_source_id=fs.the_id ");
+			sql.append(" WHERE up.the_id = ").append(projectId);
+			List<Object[]> list = getEntityManager().createNativeQuery("select * from (" + sql.toString() + ") as test").getResultList();
+			Object[] project = list.get(0);
+			DecimalFormat df = new DecimalFormat("#.00");
+			Object[] obj = new Object[9];
+			obj[0] = project[0];
+			obj[1] =  Double.parseDouble(project[1].toString()) == 0 ? "0.00" : df.format(Double.parseDouble(project[1].toString()));
+			obj[2] = Double.parseDouble(project[2].toString()) == 0 ? "0.00" : df.format(Double.parseDouble(project[2].toString()));
+			obj[3] = Double.parseDouble(project[3].toString()) == 0 ? "0.00" : df.format(Double.parseDouble(project[3].toString()));
+			obj[4] = "";
+			obj[5] = project[5];
+			obj[6] = "";
+			obj[7] = project[4];
+			obj[8] = 1;//项目类型
+			expendList.add(obj);
+		}else if(projectType == 2){
+			sql.append(" SELECT ");
+			sql.append(" up.the_value, ");
+			sql.append(" nepi.budget_amount, ");
+			sql.append(" nepi.budget_amount_frozen, ");
+			sql.append(" nepi.budget_amount_surplus,up.the_id,fs.the_value as source_name ");
+			sql.append(" FROM generic_project up ");
+			sql.append(" LEFT JOIN normal_expend_plan_info nepi ON up.the_id = nepi.project_id ");
+			sql.append(" LEFT JOIN ys_funds_source fs on up.funds_source_id=fs.the_id ");
+			sql.append(" WHERE up.the_id = ").append(projectId);
+			List<Object[]> list = getEntityManager().createNativeQuery("select * from (" + sql.toString() + ") as test").getResultList();
+			Object[] project = list.get(0);
+			DecimalFormat df = new DecimalFormat("#.00");
+			Object[] obj = new Object[9];
+			obj[0] = project[0];
+			obj[1] =  Double.parseDouble(project[1].toString()) == 0 ? "0.00" : df.format(Double.parseDouble(project[1].toString()));
+			obj[2] = Double.parseDouble(project[2].toString()) == 0 ? "0.00" : df.format(Double.parseDouble(project[2].toString()));
+			obj[3] = Double.parseDouble(project[3].toString()) == 0 ? "0.00" : df.format(Double.parseDouble(project[3].toString()));
+			obj[4] = "";
+			obj[5] = project[5];
+			obj[6] = "";
+			obj[7] = project[4];
+			obj[8] = 2;//常规项目类型
+			expendList.add(obj);
+		}
+		
 	}
 	/**
 	 * 提交保存
@@ -542,11 +605,18 @@ public class ExpendApplyInfoHome extends CriterionEntityHome<ExpendApplyInfo>{
 			String expendMoney = project.getString("expend_money");
 			String frozenMoney = project.getString("frozen_money");
 			String surplusMoney = project.getString("project_surplus");
+			String projectType = project.getString("project_type");
 			allMoney += Float.parseFloat(expendMoney);
 			//保存支出申请单详细列表
 			ExpendApplyProject eap = new ExpendApplyProject();
 			eap.setExpendApplyInfoId(expendApplyInfo.getExpendApplyInfoId());
-			eap.setProjectId(Integer.parseInt(projectInfoId));
+			//如果是1，则为项目       2：常规项目
+			if("1".equals(projectType)){
+				eap.setProjectId(Integer.parseInt(projectInfoId));
+			}else if("2".equals(projectType)){
+				eap.setGenericProjectId(projectId);
+			}
+			
 			eap.setExpendBeforFrozen(Float.parseFloat(frozenMoney));
 			eap.setExpendBeforSurplus(Float.parseFloat(surplusMoney));
 			eap.setExpendMoney(Float.parseFloat(expendMoney));
@@ -561,6 +631,7 @@ public class ExpendApplyInfoHome extends CriterionEntityHome<ExpendApplyInfo>{
 			efp.setExpend_confirm_info_id(eci.getExpend_confirm_info_id());
 			efp.setExpend_apply_project_id(eap.getExpendApplyProjectId());
 			efp.setProjectId(eap.getProjectId());
+			efp.setGenericProjectId(eap.getGenericProjectId());
 			efp.setDeleted(false);
 			getEntityManager().persist(efp);
 			//to-do 预算下达金额减去支出金额
@@ -893,7 +964,8 @@ public class ExpendApplyInfoHome extends CriterionEntityHome<ExpendApplyInfo>{
 		projectSql.append(" SELECT ");
 		projectSql.append(" nepi.normal_expend_plan_id, ");
 		projectSql.append(" rp.the_id, ");
-		projectSql.append(" rp.the_value ");
+		projectSql.append(" rp.the_value, ");
+		projectSql.append(" 1 ");
 		projectSql.append(" FROM normal_expend_plan_info nepi ");
 		projectSql.append(" LEFT JOIN routine_project rp ON nepi.project_id = rp.the_id ");
 		projectSql.append(" LEFT JOIN routine_project_executor rpe ON rpe.project_id = rp.the_id ");
@@ -907,12 +979,33 @@ public class ExpendApplyInfoHome extends CriterionEntityHome<ExpendApplyInfo>{
 		if(-1 != sourceId){
 			projectSql.append(" and rp.funds_source_id =  ").append(sourceId);
 		}
+		projectSql.append(" union all ");
+		projectSql.append(" SELECT ");
+		projectSql.append(" nepi.normal_expend_plan_id, ");
+		projectSql.append(" gp.the_id, ");
+		projectSql.append(" gp.the_value, ");
+		projectSql.append(" 2 ");
+		projectSql.append(" FROM normal_expend_plan_info nepi ");
+		projectSql.append(" LEFT JOIN generic_project gp ON nepi.generic_project_id = gp.the_id ");
+		projectSql.append(" LEFT JOIN generic_project_executor gpe ON gpe.project_id = gp.the_id ");
+		projectSql.append(" WHERE gpe.user_info_id =  ");
+		projectSql.append(sessionToken.getUserInfoId());
+		projectSql.append(" and nepi.`year` =");
+		projectSql.append(year);
+		if(-1 != departId){
+			projectSql.append(" and nepi.dept_id= ").append(departId);
+		}
+		if(-1 != sourceId){
+			projectSql.append(" and gp.funds_source_id =  ").append(sourceId);
+		}
 		List<Object[]> list = getEntityManager().createNativeQuery(projectSql.toString()).getResultList();
+		
 		if(list.size() > 0 ){
+			//如果列表中已经有了就移除掉
 			for(Object[] obj : list){
 				boolean flag = false;
 				for(Object[] exist : expendList){
-					if(Integer.parseInt(exist[8].toString()) == Integer.parseInt(obj[1].toString())){
+					if(exist[7].toString().equals(obj[1].toString()) && exist[8].toString().equals(obj[3].toString())){
 						flag = true;
 					}
 				}
@@ -1165,6 +1258,20 @@ public class ExpendApplyInfoHome extends CriterionEntityHome<ExpendApplyInfo>{
 
 	public void setExpendAllMoney(String expendAllMoney) {
 		this.expendAllMoney = expendAllMoney;
+	}
+
+
+
+
+	public Integer getProjectType() {
+		return projectType;
+	}
+
+
+
+
+	public void setProjectType(Integer projectType) {
+		this.projectType = projectType;
 	}
 	
 	

@@ -77,17 +77,28 @@ public class ExpendInfoDetail extends CriterionEntityHome<ExpendApplyInfo>{
 		//查询项目列表
 		StringBuffer projectSql = new StringBuffer();
 		projectSql.append(" SELECT ");
-		projectSql.append(" up.the_value, ");
-		projectSql.append(" expi.budget_amount, ");
-		projectSql.append(" expi.budget_amount_frozen, ");
-		projectSql.append(" expi.budget_amount_surplus, ");
-		projectSql.append(" eap.expend_money, ");
-		projectSql.append(" eap.project_id,fs.the_value as source_name ");
+		projectSql.append(" up.the_value as routine_name, ");//0项目名
+		projectSql.append(" expi.budget_amount as budget_amount1, ");//1
+		projectSql.append(" expi.budget_amount_frozen as amount_frozen1, ");//2
+		projectSql.append(" expi.budget_amount_surplus as amount_surplus1, ");//3
+		projectSql.append(" eap.expend_money as expend_money1, ");//4
+		projectSql.append(" eap.project_id, ");//5
+		projectSql.append(" fs.the_value AS source_name1, ");//6
+		projectSql.append(" gp.the_value as generic_name, ");//7
+		projectSql.append(" nepi2.budget_amount as generic_budget_amount2, ");//8
+		projectSql.append(" nepi2.budget_amount_frozen as amount_frozen2, ");//9
+		projectSql.append(" nepi2.budget_amount_surplus as amount_surplus2, ");//10
+		projectSql.append(" eap.expend_money as expend_money2, ");//11
+		projectSql.append(" eap.generic_project_id, ");//12
+		projectSql.append(" fs2.the_value as source_name2 ");//13
 		projectSql.append(" FROM expend_apply_project eap ");
 		projectSql.append(" LEFT JOIN expend_apply_info eai ON eap.expend_apply_info_id = eai.expend_apply_info_id ");
 		projectSql.append(" LEFT JOIN routine_project up on up.the_id=eap.project_id ");
 		projectSql.append(" LEFT JOIN normal_expend_plan_info expi on  expi.project_id=eap.project_id and expi.`year` = eai.`year` ");
 		projectSql.append(" LEFT JOIN ys_funds_source fs on up.funds_source_id=fs.the_id ");
+		projectSql.append(" LEFT JOIN generic_project gp on gp.the_id = eap.generic_project_id ");
+		projectSql.append(" LEFT JOIN normal_expend_plan_info nepi2 on nepi2.generic_project_id=eap.generic_project_id and nepi2.`year`=eai.`year` ");
+		projectSql.append(" LEFT JOIN ys_funds_source fs2 ON gp.funds_source_id = fs2.the_id ");
 		projectSql.append(" where eap.deleted=0 ");
 		projectSql.append(" and eai.expend_apply_info_id=").append(expendApplyInfoId);
 		List<Object[]> list = getEntityManager().createNativeQuery("select * from (" + projectSql.toString() + ") as test").getResultList();
@@ -95,15 +106,27 @@ public class ExpendInfoDetail extends CriterionEntityHome<ExpendApplyInfo>{
 		if(list.size() > 0){
 			for(Object[] obj : list){
 				Object[] projectDetail = new Object[8];
-				projectDetail[0] = obj[0];
-				projectDetail[1] = obj[1];
-				projectDetail[2] = Float.parseFloat(obj[2].toString()) - Float.parseFloat(obj[4].toString());
-				projectDetail[3] = Float.parseFloat(obj[3].toString()) + Float.parseFloat(obj[4].toString());;
-				projectDetail[4] = obj[4];
-				allMoney += Float.parseFloat(projectDetail[4].toString());
-				projectDetail[5] = obj[6];
-				projectDetail[6] = "";
-				projectDetail[7] = obj[5];
+				if(null == obj[11] && null != obj[5]){
+					projectDetail[0] = obj[0];
+					projectDetail[1] = obj[1];
+					projectDetail[2] = Float.parseFloat(obj[2].toString()) - Float.parseFloat(obj[4].toString());
+					projectDetail[3] = Float.parseFloat(obj[3].toString()) + Float.parseFloat(obj[4].toString());;
+					projectDetail[4] = obj[4];
+					allMoney += Float.parseFloat(projectDetail[4].toString());
+					projectDetail[5] = obj[6];
+					projectDetail[6] = "";
+					projectDetail[7] = obj[5];
+				}else{
+					projectDetail[0] = obj[7];
+					projectDetail[1] = obj[8];
+					projectDetail[2] = Float.parseFloat(obj[9].toString()) - Float.parseFloat(obj[11].toString());
+					projectDetail[3] = Float.parseFloat(obj[10].toString()) + Float.parseFloat(obj[11].toString());;
+					projectDetail[4] = obj[11];
+					allMoney += Float.parseFloat(projectDetail[11].toString());
+					projectDetail[5] = obj[13];
+					projectDetail[6] = "";
+					projectDetail[7] = obj[12];
+				}
 				projectList.add(projectDetail);
 			}
 		}
