@@ -166,14 +166,24 @@
 				var incomeJsonArr = json.income;
 				var incomeHtml = "";
 				jQuery(incomeJsonArr).each(function(index, val){
-					incomeHtml += '<tr class="data-row">';
+					if(val.status == 1){
+						incomeHtml += '<tr class="data-row" style="background-color: green;">';
+					}else if(val.status == 2){
+						incomeHtml += '<tr class="data-row" style="background-color: yellow;">';
+					}else{
+						incomeHtml += '<tr class="data-row">';
+					}
 					incomeHtml += '	<td>' + val.year + '</td>';
 					incomeHtml += '	<td>' + val.dept_name + '</td>';
 					incomeHtml += '	<td>' + val.total_amount + '</td>';
-					incomeHtml += '	<td>--</td>';
-					incomeHtml += '	<td>--</td>';
+					incomeHtml += '	<td>' + val.with_last_year_num+ '</td>';
+					incomeHtml += '	<td>' + val.with_last_year_percent+ '</td>';
 					incomeHtml += '	<td>' + val.status_name + '</td>';
-					incomeHtml += '	<td><input type="checkbox" class="icheck" id="id_' + val.budget_collection_dept_id + '"></td>';
+					incomeHtml += '	<td>';
+					if(val.status == 0){
+						incomeHtml += '<input type="checkbox" class="icheck" id="id_' + val.budget_collection_dept_id + '">';
+					}
+					incomeHtml += ' </td>';
 					incomeHtml += '	<td><a href="../budget/YsIncomeCollectionInfo.seam?collectionDeptId=' + val.budget_collection_dept_id + '"  title="查看" style="text-decoration: none;"><img src="../images/icon_view_16x16.png"></a></td>';
 					incomeHtml += '</tr>';
 				});
@@ -200,14 +210,24 @@
 				var expendJsonArr = json.expend;
 				var expendHtml = "";
 				jQuery(expendJsonArr).each(function(index, val){
-					expendHtml += '<tr class="data-row">';
+					if(val.status == 1){
+						expendHtml += '<tr class="data-row" style="background-color: green;">';
+					}else if(val.status == 2){
+						expendHtml += '<tr class="data-row" style="background-color: yellow;">';
+					}else{
+						expendHtml += '<tr class="data-row">';
+					}
 					expendHtml += '	<td>' + val.year + '</td>';
 					expendHtml += '	<td>' + val.dept_name + '</td>';
 					expendHtml += '	<td>' + val.total_amount + '</td>';
-					expendHtml += '	<td>--</td>';
-					expendHtml += '	<td>--</td>';
+					expendHtml += '	<td>' + val.with_last_year_num+ '</td>';
+					expendHtml += '	<td>' + val.with_last_year_percent+ '</td>';
 					expendHtml += '	<td>' + val.status_name + '</td>';
-					expendHtml += '	<td><input type="checkbox" class="icheck" id="id_' + val.budget_collection_dept_id + '"></td>';
+					expendHtml += '	<td>';
+					if(val.status == 0){
+						expendHtml += '<input type="checkbox" class="icheck" id="id_' + val.budget_collection_dept_id + '">';
+					}
+					expendHtml += ' </td>';
 					expendHtml += '	<td><a href="../budget/YsExpendCollectionInfo.seam?collectionDeptId=' + val.budget_collection_dept_id + '"  title="查看" style="text-decoration: none;"><img src="../images/icon_view_16x16.png"></a></td>';
 					expendHtml += '</tr>';
 				});

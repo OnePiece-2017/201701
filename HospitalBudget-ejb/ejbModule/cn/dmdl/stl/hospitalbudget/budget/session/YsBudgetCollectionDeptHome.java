@@ -3,6 +3,7 @@ package cn.dmdl.stl.hospitalbudget.budget.session;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -15,6 +16,7 @@ import org.jboss.seam.annotations.Name;
 
 import cn.dmdl.stl.hospitalbudget.common.session.CriterionEntityHome;
 import cn.dmdl.stl.hospitalbudget.hospital.entity.YsDepartmentInfo;
+import cn.dmdl.stl.hospitalbudget.util.Assit;
 import cn.dmdl.stl.hospitalbudget.util.DataSourceManager;
 
 @Name("ysBudgetCollectionDeptHome")
@@ -72,8 +74,9 @@ public class YsBudgetCollectionDeptHome extends CriterionEntityHome<Object> {
 		incomeSql.append("GROUP BY bcd.dept_id ");
 		System.out.println(incomeSql);
 		incomeSql.insert(0, "select * from (").append(") t ");
-		//TODO 获得上一年下达的预算数据
-		
+		//获得上一年下达的预算数据
+		CommonDaoHome commonDaoHome = new CommonDaoHome();
+		Map<String, Double> lastYearIncomeAmountMap = commonDaoHome.getLastYearTotalIncomeBudget(year);
 		//按科室加载编制数据
 		double totalIncome = 0;
 		List<Object[]> incomeCollectionList = getEntityManager().createNativeQuery(incomeSql.toString()).getResultList();
@@ -84,8 +87,16 @@ public class YsBudgetCollectionDeptHome extends CriterionEntityHome<Object> {
 			incomeJson.element("year", incomeObjArr[1]);
 			incomeJson.element("dept_name", incomeObjArr[2]);
 			incomeJson.element("total_amount", incomeObjArr[3]);
+			incomeJson.element("with_last_year_num", "--");
+			incomeJson.element("with_last_year_percent", "--");
 			if(null != incomeObjArr[3] && !incomeObjArr[3].toString().isEmpty()){
-				totalIncome += Double.parseDouble(incomeObjArr[3].toString());
+				double thisYearTotalAmount = Double.parseDouble(incomeObjArr[3].toString());
+				totalIncome += thisYearTotalAmount;
+				if(lastYearIncomeAmountMap.containsKey(incomeObjArr[5].toString())){
+					double lastYearTotalAmount = lastYearIncomeAmountMap.get(incomeObjArr[5].toString());
+					incomeJson.element("with_last_year_num", thisYearTotalAmount - lastYearTotalAmount);
+					incomeJson.element("with_last_year_percent", Assit.formatDouble2((thisYearTotalAmount - lastYearTotalAmount)/lastYearTotalAmount*100) + "%");
+				}
 			}
 			incomeJson.element("status", incomeObjArr[4]);
 			incomeJson.element("status_name", decodeStatus(incomeObjArr[4].toString()));
@@ -137,7 +148,7 @@ public class YsBudgetCollectionDeptHome extends CriterionEntityHome<Object> {
 		expendSql.append("GROUP BY bcd.dept_id ");
 		expendSql.insert(0, "select * from (").append(") t ");
 		//TODO 获得上一年下达的预算数据
-		
+		Map<String, Double> lastYearExpendAmountMap = commonDaoHome.getLastYearTotalExpendBudget(year);
 		//按科室加载编制数据
 		double totalExpend = 0;
 		List<Object[]> expendCollectionList = getEntityManager().createNativeQuery(expendSql.toString()).getResultList();
@@ -149,7 +160,13 @@ public class YsBudgetCollectionDeptHome extends CriterionEntityHome<Object> {
 			expendJson.element("dept_name", expendObjArr[2]);
 			expendJson.element("total_amount", expendObjArr[3]);
 			if(null != expendObjArr[3] && !expendObjArr[3].toString().isEmpty()){
-				totalExpend += Double.parseDouble(expendObjArr[3].toString());
+				double thisYearTotalAmount = Double.parseDouble(expendObjArr[3].toString());
+				totalExpend += thisYearTotalAmount;
+				if(lastYearExpendAmountMap.containsKey(expendObjArr[5].toString())){
+					double lastYearTotalAmount = lastYearExpendAmountMap.get(expendObjArr[5].toString());
+					expendJson.element("with_last_year_num", thisYearTotalAmount - lastYearTotalAmount);
+					expendJson.element("with_last_year_percent", Assit.formatDouble2((thisYearTotalAmount - lastYearTotalAmount)/lastYearTotalAmount*100) + "%");
+				}
 			}
 			expendJson.element("status", expendObjArr[4]);
 			expendJson.element("status_name", decodeStatus(expendObjArr[4].toString()));
@@ -220,19 +237,78 @@ public class YsBudgetCollectionDeptHome extends CriterionEntityHome<Object> {
 	 * @return
 	 */
 	public JSONObject submitCollection(){
-		System.out.println(budgetCollectionDeptIds);
 		JSONObject result = new JSONObject();
 		Connection connection = DataSourceManager.open(DataSourceManager.BY_JDBC_DEFAULT);
 		PreparedStatement preparedStatement = null;
 		ResultSet resultSet = null;
 		try {
+			connection.setAutoCommit(false);
+			//收入预算下达
+			StringBuilder sql = new StringBuilder();
+			sql.append("SELECT bcd.dept_id, ");
+			sql.append("bcd.`year`, ");
+			sql.append("ici.generic_project_id, ");
+			sql.append("ici.routine_project_id, ");
+			sql.append("ici.project_amount, ");
+			sql.append("ici.bottom_level ");
+			sql.append("FROM ys_budget_collection_dept bcd ");
+			sql.append("INNER JOIN ys_income_collection_info ici ON bcd.budget_collection_dept_id = ici.budget_collection_dept_id AND ici.delete = 0 ");
+			sql.append("WHERE bcd.status = 0 AND bcd.budget_type = 1 AND ici.bottom_level = 1 ");
+			sql.append("AND bcd.budget_collection_dept_id in (").append(budgetCollectionDeptIds).append(")");
+			preparedStatement = connection.prepareStatement(sql.toString());
+			resultSet = preparedStatement.executeQuery();
+			while(resultSet.next()){
+				preparedStatement = connection.prepareStatement("INSERT INTO `ys_income_plan_info` (`dept_id`, `year`, `routine_project_id`, `generic_project_id`, `budget_amount`, `insert_user`, `insert_time`) VALUES "
+						+ "(?, ?, ?, ?, ?, ?, NOW())");
+				preparedStatement.setInt(1, resultSet.getInt("dept_id"));
+				preparedStatement.setString(2, resultSet.getString("year"));
+				preparedStatement.setString(3, resultSet.getString("routine_project_id"));
+				preparedStatement.setString(4, resultSet.getString("generic_project_id"));
+				preparedStatement.setDouble(5, resultSet.getDouble("project_amount"));
+				preparedStatement.setInt(6, sessionToken.getUserInfoId());
+				preparedStatement.executeUpdate();
+			}
+			
+			//支出预算下达
+			StringBuilder sql2 = new StringBuilder();
+			sql2.append("SELECT bcd.dept_id, ");
+			sql2.append("bcd.`year`, ");
+			sql2.append("ici.generic_project_id, ");
+			sql2.append("ici.routine_project_id, ");
+			sql2.append("ici.project_amount, ");
+			sql2.append("ici.bottom_level ");
+			sql2.append("FROM ys_budget_collection_dept bcd ");
+			sql2.append("INNER JOIN ys_expend_collection_info ici ON bcd.budget_collection_dept_id = ici.budget_collection_dept_id AND ici.delete = 0 ");
+			sql2.append("WHERE bcd.status = 0 AND bcd.budget_type = 2 AND ici.bottom_level = 1 ");
+			sql2.append("AND bcd.budget_collection_dept_id in (").append(budgetCollectionDeptIds).append(")");
+			System.out.println(sql2);
+			preparedStatement = connection.prepareStatement(sql2.toString());
+			resultSet = preparedStatement.executeQuery();
+			while(resultSet.next()){
+				preparedStatement = connection.prepareStatement("INSERT INTO `normal_expend_plan_info` (`dept_id`, `year`, `project_id`, `generic_project_id`, `budget_amount`, `budget_amount_surplus`,  `insert_user`, `insert_time`) VALUES "
+						+ "(?, ?, ?, ?, ?, ?, ?, NOW())");
+				preparedStatement.setInt(1, resultSet.getInt("dept_id"));
+				preparedStatement.setString(2, resultSet.getString("year"));
+				preparedStatement.setString(3, resultSet.getString("routine_project_id"));
+				preparedStatement.setString(4, resultSet.getString("generic_project_id"));
+				preparedStatement.setDouble(5, resultSet.getDouble("project_amount"));
+				preparedStatement.setDouble(6, resultSet.getDouble("project_amount"));
+				preparedStatement.setInt(7, sessionToken.getUserInfoId());
+				preparedStatement.executeUpdate();
+			}
 			preparedStatement = connection.prepareStatement("update ys_budget_collection_dept set status = 1 where budget_collection_dept_id in (" + budgetCollectionDeptIds + ")");
 			preparedStatement.executeUpdate();
 			result.element("invoke_result", "ok");
-			// TODO: 入下达表
+			connection.commit();
+			connection.setAutoCommit(true);
 		} catch (Exception e) {
 			result.element("invoke_result", "fail");
 			result.element("invoke_message", "下达失败！");
+			try {
+				connection.rollback();
+			} catch (SQLException e1) {
+				e1.printStackTrace();
+			}
 		} finally {
 			DataSourceManager.close(connection, preparedStatement, resultSet);
 		}

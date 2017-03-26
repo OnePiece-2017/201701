@@ -88,5 +88,40 @@ public class CommonDaoHome extends CriterionEntityHome<Object>{
 			}
 		}
 	}
+
+	
+	/**
+	 * 获取上一年下达的收入预算
+	 * @param year
+	 * @return
+	 */
+	@SuppressWarnings("unchecked")
+	public Map<String, Double> getLastYearTotalIncomeBudget(String year) {
+		Map<String, Double> map = new HashMap<String, Double>();
+		int lastYear = Integer.parseInt(year) - 1;
+		String dataSql = "SELECT ipi.dept_id,SUM(ipi.budget_amount) as total_amount from ys_income_plan_info ipi where ipi.year = '" + lastYear + "' GROUP BY ipi.dept_id";
+		List<Object[]> dataList = getEntityManager().createNativeQuery(dataSql).getResultList();
+		for(Object[] obj : dataList){
+			map.put(obj[0].toString(), Double.parseDouble(obj[1].toString()));
+		}
+		return map;
+	}
+
+	/**
+	 * 获取上一年瞎打的支出预算
+	 * @param year
+	 * @return
+	 */
+	@SuppressWarnings("unchecked")
+	public Map<String, Double> getLastYearTotalExpendBudget(String year) {
+		Map<String, Double> map = new HashMap<String, Double>();
+		int lastYear = Integer.parseInt(year) - 1;
+		String dataSql = "SELECT ipi.dept_id,SUM(ipi.budget_amount) as total_amount from normal_expend_plan_info ipi where ipi.year = '" + lastYear + "' GROUP BY ipi.dept_id";
+		List<Object[]> dataList = getEntityManager().createNativeQuery(dataSql).getResultList();
+		for(Object[] obj : dataList){
+			map.put(obj[0].toString(), Double.parseDouble(obj[1].toString()));
+		}
+		return map;
+	}
 	
 }

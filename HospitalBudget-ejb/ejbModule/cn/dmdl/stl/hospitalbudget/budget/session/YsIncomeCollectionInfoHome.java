@@ -46,7 +46,7 @@ public class YsIncomeCollectionInfoHome extends CriterionEntityHome<Object> {
 		sql.append("ici.project_source, ");
 		sql.append("ici.project_amount, ");
 		sql.append("ici.formula_remark, ");
-		sql.append("ici.routine_project_id as project_id, ");
+		sql.append("ici.generic_project_id as project_id, ");
 		sql.append("rp.the_pid, ");
 		sql.append("ici.bottom_level ");
 		sql.append("from hospital_budget.ys_budget_collection_dept bcd ");
@@ -78,7 +78,16 @@ public class YsIncomeCollectionInfoHome extends CriterionEntityHome<Object> {
 		}
 		collectionInfo.element("collection_info", collectionInfoArr);
 		collectionInfo.element("total_amount", totalAmount);
-		System.out.println(collectionInfo);
+		
+		String deptNameSql = "select di.the_value from ys_budget_collection_dept bcd INNER JOIN ys_department_info di ON bcd.dept_id = di.the_id "
+				+ "WHERE bcd.budget_collection_dept_id =" + expendCollectionDeptId;
+		List<Object[]> deptNameList = getEntityManager().createNativeQuery(deptNameSql).getResultList();
+		String deptName = "";
+		for(Object obj : deptNameList){
+			deptName = obj.toString();
+		}
+		collectionInfo.element("dept_name", deptName);
+		//获取部门名称
 		return collectionInfo;
 	}
 
