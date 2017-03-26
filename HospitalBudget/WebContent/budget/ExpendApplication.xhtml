@@ -272,6 +272,7 @@
 								</a>
 							</td>
 				            <td style="display:none" id="project_id_#{_index}">#{_obj[7]}</td>
+				            <td style="display:none" id="project_type_#{_index}">#{_obj[8]}</td>
 				        </tr>
 				   	</a:repeat>
 				    </table>
@@ -453,13 +454,13 @@
 										<td valign="top" class="modaltd">
 											<rich:panel id="projectPanl" style="margin:0; border:none; padding: 0;">
 												<select id="projectId" class="selectpicker" data-live-search="true" onchange="changeProject()">
-													<option value="-1">请选择</option>
+													<option value="-1" class="0">请选择</option>
 													<a:repeat value="#{expendApplyInfoHome.projectList}" var="_var">
 														<s:fragment rendered="#{expendApplyInfoHome.projectId eq _var[1]}">
-															<option value="#{_var[1]}" selected="selected">#{_var[2]}</option>
+															<option value="#{_var[1]}_#{_var[3]}" selected="selected" class = "#{_var[3]}">#{_var[2]}</option>
 														</s:fragment>
 														<s:fragment rendered="#{expendApplyInfoHome.projectId ne _var[1]}">
-															<option value="#{_var[1]}" >#{_var[2]}</option>
+															<option value="#{_var[1]}_#{_var[3]}" class = "#{_var[3]}">#{_var[2]}</option>
 														</s:fragment>
 													</a:repeat>
 												</select>
@@ -540,6 +541,7 @@
 			<a:queue requestDelay="100" ignoreDupResponses="true" />
 			<a:jsFunction name="selectProject" action="#{expendApplyInfoHome.selectProject}" reRender="departPanl,fundsSourcePanl,projectPanl,totalMoneyPanl,usedMoneyPanl,canUseMoneyPanl" oncomplete="changeProjectComplete()">
 				<a:actionparam name="projectId" assignTo="#{expendApplyInfoHome.projectId}" />
+				<a:actionparam name="projectType" assignTo="#{expendApplyInfoHome.projectType}" />
 				<a:actionparam name="departmentId" assignTo="#{expendApplyInfoHome.departmentId}" />
 				<a:actionparam name="fundsSourceId" assignTo="#{expendApplyInfoHome.fundsSourceId}" />
 			</a:jsFunction>
@@ -589,6 +591,7 @@
 			</a:jsFunction>
 			<a:jsFunction name="addProject" action="#{expendApplyInfoHome.addProject}" reRender="listPanl" oncomplete="addProjectComplete()">
 				<a:actionparam name="projectId" assignTo="#{expendApplyInfoHome.projectId}" />
+				<a:actionparam name="projectType" assignTo="#{expendApplyInfoHome.projectType}" />
 			</a:jsFunction>
 		</a:form>
 		<script type="text/javascript" src="#{request.contextPath}/common/js/bootstrap.min.js" />
@@ -642,7 +645,9 @@
 				var depart = jQuery("#depart").val();
 				var fundsSource = jQuery("#fundsSource").val();
 				var project = jQuery("#projectId").val();
-				selectProject(project,depart,fundsSource);
+				var projectId = project.substring(0,project.lastIndexOf("_"));
+				var projectType = project.substring((project.lastIndexOf("_")+1),project.length);
+				selectProject(projectId,projectType,depart,fundsSource);
 			}
 			//选择项目回调
 			function changeProjectComplete(){
@@ -858,10 +863,12 @@
 				var json = '{"expend_list":[';
 				jQuery(".expendtr").each(function(i){
 					var projectId= jQuery("#project_id_" + i).text();
+					var projectType = jQuery("#project_type_" + i).text();
 					var projectFrozen = jQuery("#projectFrozen_" + i).text();
 					var projectSurplus = jQuery("#canUseMoney_" + i).text();
 					var money = jQuery("#money_" + i).val();
 					json += '{"project_id":"' + projectId + '",';
+					json += '"project_type":"' + projectType + '",';
 					json += '"frozen_money":"' + projectFrozen + '",';
 					json += '"project_surplus":"' + projectSurplus + '",';
 					json += '"expend_money":"' + money + '"},';
@@ -898,8 +905,10 @@
 			}
 			//添加项目
 			function toAddProject(){
-				var projectId = jQuery("#projectId").val();
-				addProject(projectId);
+				var project = jQuery("#projectId").val();
+				var projectId = project.substring(0,project.lastIndexOf("_"));
+				var projectType = project.substring((project.lastIndexOf("_")+1),project.length);
+				addProject(projectId,projectType);
 			}
 			function addProjectComplete(){
 				jQuery(".form_datetime_second").datetimepicker({

@@ -123,8 +123,7 @@ public class NormalExpendPlantInfo implements java.io.Serializable{
 	}
 	
 	@Temporal(TemporalType.TIMESTAMP)
-	@Column(name = "update_time", nullable = false, length = 19)
-	@NotNull
+	@Column(name = "update_time", length = 19)
 	public Date getUpdateTime() {
 		return updateTime;
 	}
