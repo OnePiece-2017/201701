@@ -264,7 +264,6 @@ public class RoutineProjectHome extends CriterionEntityHome<RoutineProject> {
 					getEntityManager().merge(instance2nd);
 					remainSubProjectIds.add(subprojectInfoOne.getString("id"));
 				}
-				getEntityManager().persist(instance2nd);
 				if (executor != null && !"".equals(executor)) {
 					String[] idArr = executor.split(",");
 					if (idArr != null && idArr.length > 0) {
