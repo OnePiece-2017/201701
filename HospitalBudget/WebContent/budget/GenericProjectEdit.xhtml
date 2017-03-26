@@ -776,6 +776,7 @@
 				var itemData = {};
 				if (g_is_create) {
 					itemData['id'] = g_subproject_index + 1;
+					itemData['is_new'] = 1;
 				} else {
 					itemData['id'] = g_edit_itemData['id'];
 				}

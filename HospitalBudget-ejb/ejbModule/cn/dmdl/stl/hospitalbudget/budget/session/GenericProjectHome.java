@@ -3,8 +3,10 @@ package cn.dmdl.stl.hospitalbudget.budget.session;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import net.sf.json.JSONNull;
 import net.sf.json.JSONObject;
@@ -100,6 +102,8 @@ public class GenericProjectHome extends CriterionEntityHome<GenericProject> {
 				instance2nd.setYsFundsSource(instance.getYsFundsSource());// 继承顶级资金来源
 				instance2nd.setYsDepartmentInfo(instance.getYsDepartmentInfo());// 继承顶级主管科室
 				instance2nd.setTopLevelProjectId(instance.getTheId());// 绑定顶级项目id
+				instance2nd.setInsertTime(new Date());
+				instance2nd.setInsertUser(sessionToken.getUserInfoId());
 				getEntityManager().persist(instance2nd);
 				if (executor != null && !"".equals(executor)) {
 					String[] idArr = executor.split(",");
@@ -112,7 +116,7 @@ public class GenericProjectHome extends CriterionEntityHome<GenericProject> {
 						}
 					}
 				}
-				persist3rdPlus(subprojectInfoAll, Integer.parseInt(key.toString()), instance2nd);
+				persist3rdPlus(subprojectInfoAll, Integer.parseInt(key.toString()), instance2nd, null);
 			}
 		}
 		getEntityManager().flush();
@@ -121,7 +125,7 @@ public class GenericProjectHome extends CriterionEntityHome<GenericProject> {
 	}
 
 	/** 处理三级项目+ */
-	public void persist3rdPlus(JSONObject subprojectInfoAll, int pid, GenericProject parentInstance) {
+	public void persist3rdPlus(JSONObject subprojectInfoAll, int pid, GenericProject parentInstance, Set<String> mergeIdSet) {
 		for (Object key : subprojectInfoAll.keySet()) {
 			JSONObject subprojectInfoOne = subprojectInfoAll.getJSONObject(key.toString());
 			Object pid3rdPlus = subprojectInfoOne.get("pid");
@@ -142,7 +146,17 @@ public class GenericProjectHome extends CriterionEntityHome<GenericProject> {
 				instance3rdPlus.setYsFundsSource(instance.getYsFundsSource());// 继承顶级资金来源
 				instance3rdPlus.setYsDepartmentInfo(instance.getYsDepartmentInfo());// 继承顶级主管科室
 				instance3rdPlus.setTopLevelProjectId(instance.getTheId());// 绑定顶级项目id
-				getEntityManager().persist(instance3rdPlus);
+				if(subprojectInfoOne.containsKey("is_new") || null == mergeIdSet){
+					instance3rdPlus.setInsertTime(new Date());
+					instance3rdPlus.setInsertUser(sessionToken.getUserInfoId());
+					getEntityManager().persist(instance3rdPlus);
+				}else{
+					instance3rdPlus.setTheId(subprojectInfoOne.getInt("id"));
+					instance3rdPlus.setUpdateTime(new Date());
+					instance3rdPlus.setUpdateUser(sessionToken.getUserInfoId());
+					getEntityManager().merge(instance3rdPlus);
+					mergeIdSet.add(subprojectInfoOne.getString("id"));
+				}
 				if (executor != null && !"".equals(executor)) {
 					String[] idArr = executor.split(",");
 					if (idArr != null && idArr.length > 0) {
@@ -154,7 +168,7 @@ public class GenericProjectHome extends CriterionEntityHome<GenericProject> {
 						}
 					}
 				}
-				persist3rdPlus(subprojectInfoAll, Integer.parseInt(key.toString()), instance3rdPlus);
+				persist3rdPlus(subprojectInfoAll, Integer.parseInt(key.toString()), instance3rdPlus, mergeIdSet);
 			}
 		}
 	}
@@ -176,6 +190,7 @@ public class GenericProjectHome extends CriterionEntityHome<GenericProject> {
 		} else {
 			instance.setYsFundsSource(null);
 		}
+		
 		// 处理一级项目-清理旧数据
 		getEntityManager().createNativeQuery("delete from generic_project_compiler where project_id = " + instance.getTheId()).executeUpdate();
 		getEntityManager().createNativeQuery("delete from generic_project_executor where project_id = " + instance.getTheId()).executeUpdate();
@@ -207,17 +222,23 @@ public class GenericProjectHome extends CriterionEntityHome<GenericProject> {
 		instance.setUpdateUser(sessionToken.getUserInfoId());
 		getEntityManager().merge(instance);
 		instance.setTopLevelProjectId(instance.getTheId());// 顶级条目的顶级项目id为自身（修复老数据）
+		
 		// 处理二级项目-清理旧数据
 		List<Object[]> nexusList = getEntityManager().createNativeQuery("select the_id, the_pid from generic_project").getResultList();
 		List<Object> subProjectIdList = new ArrayList<Object>();
 		findSubProjectIds(nexusList, subProjectIdList, instance.getTheId());// 填充子项目id列表
+		Set<String> oldSubProjectIds = new HashSet<String>();
+		for(Object oldSubProjectId : subProjectIdList){
+			oldSubProjectIds.add(oldSubProjectId.toString());
+		}
 		String subProjectIds = subProjectIdList.toString().substring(1, subProjectIdList.toString().length() - 1);// 处理id列表
 		if (subProjectIds != null && !"".equals(subProjectIds)) {
-			getEntityManager().createNativeQuery("delete from generic_project where the_id in (" + subProjectIds + ")").executeUpdate();
 			getEntityManager().createNativeQuery("delete from generic_project_executor where project_id in (" + subProjectIds + ")").executeUpdate();
 		}
+		
 		// 处理二级项目-创建新数据
 		JSONObject subprojectInfoAll = JSONObject.fromObject(subprojectInfo);
+		Set<String> remainSubProjectIds = new HashSet<String>();
 		for (Object key : subprojectInfoAll.keySet()) {
 			JSONObject subprojectInfoOne = subprojectInfoAll.getJSONObject(key.toString());
 			Object pid = subprojectInfoOne.get("pid");
@@ -238,7 +259,20 @@ public class GenericProjectHome extends CriterionEntityHome<GenericProject> {
 				instance2nd.setYsFundsSource(instance.getYsFundsSource());// 继承顶级资金来源
 				instance2nd.setYsDepartmentInfo(instance.getYsDepartmentInfo());// 继承顶级主管科室
 				instance2nd.setTopLevelProjectId(instance.getTheId());// 绑定顶级项目id
-				getEntityManager().persist(instance2nd);
+				//修改by liyu  增加原数据修改机制
+				instance2nd.setUpdateTime(new Date());
+				instance2nd.setUpdateUser(sessionToken.getUserInfoId());
+				if(subprojectInfoOne.containsKey("is_new")){
+					instance2nd.setInsertTime(new Date());
+					instance2nd.setInsertUser(sessionToken.getUserInfoId());
+					getEntityManager().persist(instance2nd);
+				}else{
+					instance2nd.setTheId(subprojectInfoOne.getInt("id"));
+					instance2nd.setUpdateTime(new Date());
+					instance2nd.setUpdateUser(sessionToken.getUserInfoId());
+					getEntityManager().merge(instance2nd);
+					remainSubProjectIds.add(subprojectInfoOne.getString("id"));
+				}
 				if (executor != null && !"".equals(executor)) {
 					String[] idArr = executor.split(",");
 					if (idArr != null && idArr.length > 0) {
@@ -250,7 +284,19 @@ public class GenericProjectHome extends CriterionEntityHome<GenericProject> {
 						}
 					}
 				}
-				persist3rdPlus(subprojectInfoAll, Integer.parseInt(key.toString()), instance2nd);
+				persist3rdPlus(subprojectInfoAll, Integer.parseInt(key.toString()), instance2nd, remainSubProjectIds);
+			}
+		}
+		//做差集筛选出被删除的子级项目
+		oldSubProjectIds.removeAll(remainSubProjectIds);
+		if(oldSubProjectIds.size() > 0){
+			String deletePorjectIds = "";
+			for(String id : oldSubProjectIds){
+				deletePorjectIds += id + ",";
+			}
+			deletePorjectIds = deletePorjectIds.substring(0, deletePorjectIds.length() - 1);
+			if (subProjectIds != null && !"".equals(subProjectIds)) {
+				getEntityManager().createNativeQuery("delete from generic_project where the_id in (" + deletePorjectIds + ")").executeUpdate();
 			}
 		}
 		getEntityManager().flush();
@@ -537,7 +583,6 @@ public class GenericProjectHome extends CriterionEntityHome<GenericProject> {
 			} else {
 				this.subprojectInfoJson = new JSONObject();
 			}
-
 			isFirstTime = true;
 		}
 	}

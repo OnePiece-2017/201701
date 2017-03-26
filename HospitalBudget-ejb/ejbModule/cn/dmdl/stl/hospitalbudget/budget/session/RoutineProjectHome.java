@@ -3,8 +3,10 @@ package cn.dmdl.stl.hospitalbudget.budget.session;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import net.sf.json.JSONNull;
 import net.sf.json.JSONObject;
@@ -98,6 +100,8 @@ public class RoutineProjectHome extends CriterionEntityHome<RoutineProject> {
 				instance2nd.setYsFundsSource(instance.getYsFundsSource());// 继承顶级资金来源
 				instance2nd.setYsDepartmentInfo(instance.getYsDepartmentInfo());// 继承顶级主管科室
 				instance2nd.setTopLevelProjectId(instance.getTheId());// 绑定顶级项目id
+				instance2nd.setInsertTime(new Date());
+				instance2nd.setInsertUser(sessionToken.getUserInfoId());
 				getEntityManager().persist(instance2nd);
 				if (executor != null && !"".equals(executor)) {
 					String[] idArr = executor.split(",");
@@ -110,7 +114,7 @@ public class RoutineProjectHome extends CriterionEntityHome<RoutineProject> {
 						}
 					}
 				}
-				persist3rdPlus(subprojectInfoAll, Integer.parseInt(key.toString()), instance2nd);
+				persist3rdPlus(subprojectInfoAll, Integer.parseInt(key.toString()), instance2nd, null);
 			}
 		}
 		getEntityManager().flush();
@@ -118,8 +122,9 @@ public class RoutineProjectHome extends CriterionEntityHome<RoutineProject> {
 		return "persisted";
 	}
 
-	/** 处理三级项目+ */
-	public void persist3rdPlus(JSONObject subprojectInfoAll, int pid, RoutineProject parentInstance) {
+	/** 处理三级项目+ 
+	 * @param mergeIdSet */
+	public void persist3rdPlus(JSONObject subprojectInfoAll, int pid, RoutineProject parentInstance, Set<String> mergeIdSet) {
 		for (Object key : subprojectInfoAll.keySet()) {
 			JSONObject subprojectInfoOne = subprojectInfoAll.getJSONObject(key.toString());
 			Object pid3rdPlus = subprojectInfoOne.get("pid");
@@ -138,7 +143,17 @@ public class RoutineProjectHome extends CriterionEntityHome<RoutineProject> {
 				instance3rdPlus.setYsFundsSource(instance.getYsFundsSource());// 继承顶级资金来源
 				instance3rdPlus.setYsDepartmentInfo(instance.getYsDepartmentInfo());// 继承顶级主管科室
 				instance3rdPlus.setTopLevelProjectId(instance.getTheId());// 绑定顶级项目id
-				getEntityManager().persist(instance3rdPlus);
+				if(subprojectInfoOne.containsKey("is_new") || null == mergeIdSet){
+					instance3rdPlus.setInsertTime(new Date());
+					instance3rdPlus.setInsertUser(sessionToken.getUserInfoId());
+					getEntityManager().persist(instance3rdPlus);
+				}else{
+					instance3rdPlus.setTheId(subprojectInfoOne.getInt("id"));
+					instance3rdPlus.setUpdateTime(new Date());
+					instance3rdPlus.setUpdateUser(sessionToken.getUserInfoId());
+					getEntityManager().merge(instance3rdPlus);
+					mergeIdSet.add(subprojectInfoOne.getString("id"));
+				}
 				if (executor != null && !"".equals(executor)) {
 					String[] idArr = executor.split(",");
 					if (idArr != null && idArr.length > 0) {
@@ -150,7 +165,7 @@ public class RoutineProjectHome extends CriterionEntityHome<RoutineProject> {
 						}
 					}
 				}
-				persist3rdPlus(subprojectInfoAll, Integer.parseInt(key.toString()), instance3rdPlus);
+				persist3rdPlus(subprojectInfoAll, Integer.parseInt(key.toString()), instance3rdPlus, mergeIdSet);
 			}
 		}
 	}
@@ -207,12 +222,16 @@ public class RoutineProjectHome extends CriterionEntityHome<RoutineProject> {
 		List<Object[]> nexusList = getEntityManager().createNativeQuery("select the_id, the_pid from routine_project").getResultList();
 		List<Object> subProjectIdList = new ArrayList<Object>();
 		findSubProjectIds(nexusList, subProjectIdList, instance.getTheId());// 填充子项目id列表
+		Set<String> oldSubProjectIds = new HashSet<String>();
+		for(Object oldSubProjectId : subProjectIdList){
+			oldSubProjectIds.add(oldSubProjectId.toString());
+		}
 		String subProjectIds = subProjectIdList.toString().substring(1, subProjectIdList.toString().length() - 1);// 处理id列表
 		if (subProjectIds != null && !"".equals(subProjectIds)) {
-			getEntityManager().createNativeQuery("delete from routine_project where the_id in (" + subProjectIds + ")").executeUpdate();
 			getEntityManager().createNativeQuery("delete from routine_project_executor where project_id in (" + subProjectIds + ")").executeUpdate();
 		}
 		// 处理二级项目-创建新数据
+		Set<String> remainSubProjectIds = new HashSet<String>();
 		JSONObject subprojectInfoAll = JSONObject.fromObject(subprojectInfo);
 		for (Object key : subprojectInfoAll.keySet()) {
 			JSONObject subprojectInfoOne = subprojectInfoAll.getJSONObject(key.toString());
@@ -232,6 +251,19 @@ public class RoutineProjectHome extends CriterionEntityHome<RoutineProject> {
 				instance2nd.setYsFundsSource(instance.getYsFundsSource());// 继承顶级资金来源
 				instance2nd.setYsDepartmentInfo(instance.getYsDepartmentInfo());// 继承顶级主管科室
 				instance2nd.setTopLevelProjectId(instance.getTheId());// 绑定顶级项目id
+				instance2nd.setInsertTime(new Date());
+				instance2nd.setInsertUser(sessionToken.getUserInfoId());
+				if(subprojectInfoOne.containsKey("is_new")){
+					instance2nd.setInsertTime(new Date());
+					instance2nd.setInsertUser(sessionToken.getUserInfoId());
+					getEntityManager().persist(instance2nd);
+				}else{
+					instance2nd.setTheId(subprojectInfoOne.getInt("id"));
+					instance2nd.setUpdateTime(new Date());
+					instance2nd.setUpdateUser(sessionToken.getUserInfoId());
+					getEntityManager().merge(instance2nd);
+					remainSubProjectIds.add(subprojectInfoOne.getString("id"));
+				}
 				getEntityManager().persist(instance2nd);
 				if (executor != null && !"".equals(executor)) {
 					String[] idArr = executor.split(",");
@@ -244,7 +276,19 @@ public class RoutineProjectHome extends CriterionEntityHome<RoutineProject> {
 						}
 					}
 				}
-				persist3rdPlus(subprojectInfoAll, Integer.parseInt(key.toString()), instance2nd);
+				persist3rdPlus(subprojectInfoAll, Integer.parseInt(key.toString()), instance2nd, remainSubProjectIds);
+			}
+		}
+		//做差集筛选出被删除的子级项目
+		oldSubProjectIds.removeAll(remainSubProjectIds);
+		if(oldSubProjectIds.size() > 0){
+			String deletePorjectIds = "";
+			for(String id : oldSubProjectIds){
+				deletePorjectIds += id + ",";
+			}
+			deletePorjectIds = deletePorjectIds.substring(0, deletePorjectIds.length() - 1);
+			if (subProjectIds != null && !"".equals(subProjectIds)) {
+				getEntityManager().createNativeQuery("delete from routine_project where the_id in (" + deletePorjectIds + ")").executeUpdate();
 			}
 		}
 		getEntityManager().flush();
