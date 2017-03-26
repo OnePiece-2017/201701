@@ -4,6 +4,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.text.DecimalFormat;
 
 import org.apache.log4j.Logger;
 
@@ -213,5 +214,15 @@ public class Assit {
 		}
 		return total;
 	}
+	
+	/**
+	 * 保留两位小数
+	 * @param d
+	 * @return
+	 */
+	public static String formatDouble2(double d) {
+        DecimalFormat df = new DecimalFormat("#.00");
+        return df.format(d);
+    }
 
 }
