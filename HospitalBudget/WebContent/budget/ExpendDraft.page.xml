@@ -8,13 +8,6 @@
 
 	<param name="from" />
 
-	<navigation from-action="#{expendDraftHome.draft}">
-		<rule if-outcome="drafted">
-			<end-conversation />
-			<redirect view-id="/budget/ExpendDraft.xhtml" />
-		</rule>
-	</navigation>
-
 	<navigation from-action="#{expendDraftHome.submit}">
 		<rule if-outcome="submitted">
 			<end-conversation />

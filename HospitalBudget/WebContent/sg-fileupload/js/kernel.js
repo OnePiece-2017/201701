@@ -16,7 +16,8 @@ var ______sgFileupload = {
         download : false
     },
     callback : {
-	    saveData : null
+        saveData : null,
+        completed : null
     }
 };
 
@@ -25,6 +26,8 @@ var ______sgFileupload = {
 		return (function() {
 			return {
 			    install : install,
+			    uninstall : uninstall,
+			    reinstall : reinstall,
 			    showPanel : showPanel,
 			    showMaskLayer : showMaskLayer,
 			    hideMaskLayer : hideMaskLayer,
@@ -53,9 +56,13 @@ var ______sgFileupload = {
 			    setTriggerLock : setTriggerLock
 			};
 
+			function validateArguments(arg) {
+				return arg != null && 'object' === typeof arg && !arg.hasOwnProperty('length') && 'target' in arg && 'alias' in arg && 'source' in arg;
+			}
+
 			function install(arg) {
-				if (arg != null && 'object' === typeof arg && !arg.hasOwnProperty('length') && 'target' in arg && 'alias' in arg && 'source' in arg) {
-					var target = arg['target'], alias = arg['alias'], source = arg['source'];
+				if (validateArguments(arg)) {
+					var target = arg['target'], alias = 'string' === typeof arg['alias'] && arg['alias'] != null && arg['alias'] !== '' ? arg['alias'] : 'NONAME', source = arg['source'];
 					if (!______sgFileupload.isWired) {
 						var panelHtml = '';
 						panelHtml += '<div class="sg-fileupload-panel">';
@@ -142,7 +149,7 @@ var ______sgFileupload = {
 												    } else {
 													    alert(message);
 												    }
-												    $('.sg-fileupload-panel').fadeOut("fast", function() {
+												    $('.sg-fileupload-panel').fadeOut('fast', function() {
 													    hideMaskLayer();
 												    });
 											    } else {
@@ -171,7 +178,7 @@ var ______sgFileupload = {
 												    } else {
 													    alert(message);
 												    }
-												    $('.sg-fileupload-panel').fadeOut("fast", function() {
+												    $('.sg-fileupload-panel').fadeOut('fast', function() {
 													    hideMaskLayer();
 												    });
 											    }
@@ -221,20 +228,13 @@ var ______sgFileupload = {
 									    ______sgFileupload.storage[target]['items'] = result.data.items;
 									    ______sgFileupload.storage[target]['source'] = result.data.source;
 									    ______sgFileupload.storage[target]['rebuild'] = result.data.rebuild;
-									    $(element).replaceWith('<span id="' + target + '" class="sg-fileupload-attachment">' + ______sgFileupload.storage[target]['alias'] + '</span>');
-									    element = document.getElementById(target);// 更新元素引用
-									    if ('class' in arg && arg['class'] != null && 'object' === typeof arg['class'] && arg['class'].hasOwnProperty('length') && 0 in arg['class'])
-										    for (var i = 0; i < arg['class'].length; i++)
-											    if (arg['class'][i] != null && arg['class'][i].toString() !== '')
-												    $(element).addClass(arg['class'][i].toString());
-									    $(element).mouseover(function() {
-										    // $(element).css("background-color",
-										    // "yellow");
-									    });
-									    $(element).mouseout(function() {
-										    // $(element).css("background-color",
-										    // "#E9E9E4");
-									    });
+									    $(element).addClass('sg-fileupload-attachment');
+									    if ('class' in arg && 'string' === typeof arg['class'] && arg['class'] != null && arg['class'] !== '') {
+										    $(element).addClass(arg['class']);
+									    } else if (element.tagName != null && element.tagName !== '' && 'span' == element.tagName.toLowerCase()) {
+										    $(element).addClass('preset');
+									    }
+									    setCallback('completed', arg['completed']);
 									    $(element).click(function() {
 										    if (!______sgFileupload.isLocked) {
 											    ______sgFileupload.isLocked = true;
@@ -245,13 +245,17 @@ var ______sgFileupload = {
 												    sgFileupload.loadUploaded(______sgFileupload.storage[target]['items']);
 											    } else {
 												    var approved = true;
-												    for ( var key in ______sgFileupload.storage)
-													    if (!(approved = ______sgFileupload.storage[key]['ready']))
+												    for ( var key in ______sgFileupload.storage) {
+													    if (!(approved = ______sgFileupload.storage[key]['ready'])) {
 														    break;
+													    }
+												    }
 												    if (approved) {
 													    reloadController();
-													    sgFileupload.loadUploaded(______sgFileupload.storage[target]['items']);
-													    ______sgFileupload.isReady = true;
+													    setTimeout(function() {
+														    sgFileupload.loadUploaded(______sgFileupload.storage[target]['items']);
+														    ______sgFileupload.isReady = true;
+													    }, 1024);// 等待view.js设置loadUploaded
 												    } else {
 													    var message = ______sgFileupload.isException ? ______sgFileupload.exceptionMessage : 'sgFileupload未就绪！';
 													    if (top.toastr != null) {
@@ -283,9 +287,11 @@ var ______sgFileupload = {
 										    }
 									    });
 									    ______sgFileupload.storage[target]['ready'] = true;
+									    execCallback('completed');
 								    } else {
-									    if (!______sgFileupload.isException)
+									    if (!______sgFileupload.isException) {
 										    ______sgFileupload.isException = true;
+									    }
 									    ______sgFileupload.exceptionMessage += (top.toastr != null ? '<br>' : '\n') + '别名〔' + ______sgFileupload.storage[target]['alias'] + '〕';
 								    }
 							    },
@@ -305,6 +311,20 @@ var ______sgFileupload = {
 						alert('sgFileupload安装失败！无效的目标元素〔' + target + '〕');
 						return false;
 					}
+				} else {
+					alert('sgFileupload安装失败！无效参数！');
+					return false;
+				}
+			}
+
+			function uninstall(target) {
+				delete ______sgFileupload.storage[target];
+			}
+
+			function reinstall(arg) {
+				if (validateArguments(arg)) {
+					uninstall(arg['target']);
+					return install(arg);
 				} else {
 					alert('sgFileupload安装失败！无效参数！');
 					return false;
@@ -380,8 +400,9 @@ var ______sgFileupload = {
 			}
 
 			function setCallback(which, handle) {
-				if (______sgFileupload.callback.hasOwnProperty(which) && 'function' === typeof handle)
+				if (______sgFileupload.callback.hasOwnProperty(which) && 'function' === typeof handle) {
 					______sgFileupload.callback[which] = handle;
+				}
 			}
 
 			function getStorageChanged(target) {
@@ -393,8 +414,9 @@ var ______sgFileupload = {
 			}
 
 			function execCallback(which) {
-				if (______sgFileupload.callback.hasOwnProperty(which) && 'function' === typeof ______sgFileupload.callback[which])
+				if (______sgFileupload.callback.hasOwnProperty(which) && 'function' === typeof ______sgFileupload.callback[which]) {
 					______sgFileupload.callback[which]();
+				}
 			}
 
 			function fileDownload(args) {
