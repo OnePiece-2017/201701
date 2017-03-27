@@ -30,7 +30,6 @@ jQuery(document).ready(function() {
 			hideLayer();
 		}, 128);// 防止恶意点击
 	});
-	___sgInputboxStopReminderService();// 默认停止服务
 
 	___cache['total-amount-value'] = jQuery('.draft-table-head .total-amount-value span');// 缓存节点（总金额）
 

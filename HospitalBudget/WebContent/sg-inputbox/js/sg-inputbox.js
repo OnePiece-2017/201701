@@ -10,7 +10,7 @@ var ______sgInputbox = {
     timer : {},
     allowEnter : {},
     magicBinder : {},
-    reminderService : true
+    reminderService : false
 };
 
 jQuery(document).ready(function() {
