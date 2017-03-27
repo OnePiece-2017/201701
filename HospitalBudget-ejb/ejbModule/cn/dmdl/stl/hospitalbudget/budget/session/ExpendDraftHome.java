@@ -308,7 +308,7 @@ public class ExpendDraftHome extends CriterionEntityHome<Object> {
 		if (renewDataContainerArgs != null) {
 			JSONObject argsJson = JSONObject.fromObject(renewDataContainerArgs);
 			if (argsJson != null && argsJson.has("budgetYear")) {
-				List<Object[]> list = commonTool.selectIntermediate("ys_expand_draft", new String[] { projectIdField, "project_amount", "project_source", "formula_remark", "attachment" }, "status = 0" + " and year = " + argsJson.get("budgetYear") + " and insert_user = " + sessionToken.getUserInfoId() + " and " + projectIdField + " in (select the_id from " + projectTable + " where project_type = 2 and top_level_project_id in (select project_id from " + projectCompilerTable + " where user_info_id = " + sessionToken.getUserInfoId() + "))");
+				List<Object[]> list = commonTool.selectIntermediate("ys_expand_draft", new String[] { projectIdField, "project_amount", "project_source", "formula_remark", "attachment", "status" }, "status in (0, 1, 2, 3, 4)" + " and year = " + argsJson.get("budgetYear") + " and insert_user = " + sessionToken.getUserInfoId() + " and " + projectIdField + " in (select the_id from " + projectTable + " where project_type = 2 and top_level_project_id in (select project_id from " + projectCompilerTable + " where user_info_id = " + sessionToken.getUserInfoId() + "))");
 				if (list != null && list.size() > 0) {
 					for (Object[] objects : list) {
 						JSONObject value = new JSONObject();
@@ -324,6 +324,19 @@ public class ExpendDraftHome extends CriterionEntityHome<Object> {
 						value.accumulate("projectSource", projectSource);
 						value.accumulate("formulaRemark", formulaRemark);
 						value.accumulate("attachment", objects[4] != null ? objects[4].toString() : "");
+						int theStatus = Integer.parseInt(objects[5].toString());
+						value.accumulate("theStatus", "");
+						if (0 == theStatus) {
+							value.element("theStatus", "已保存");
+						} else if (1 == theStatus) {
+							value.element("theStatus", "审核中");
+						} else if (2 == theStatus) {
+							value.element("theStatus", "被退回");
+						} else if (3 == theStatus) {
+							value.element("theStatus", "已完成");
+						} else if (4 == theStatus) {
+							value.element("theStatus", "已追回");
+						}
 						result.add(value);
 					}
 				}

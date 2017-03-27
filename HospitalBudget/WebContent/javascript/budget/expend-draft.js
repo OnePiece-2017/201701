@@ -46,7 +46,7 @@ jQuery(document).ready(function() {
 	triggerRenewDataContainer();// 触发更新数据容器函数
 	computeTotalAmount();// 实时计算总金额
 
-	var forTest = !false; // TODO: 仅供测试
+	var forTest = false; // TODO: 仅供测试
 	if (forTest) {
 		setTimeout(function() {
 			jQuery('#fundsSourceId').val('1');
@@ -132,6 +132,9 @@ function parseProject(projectArray, namespace, projectNature) {
 				html += '			</div>';
 				html += '			<div class="generic-field edge-end field-formula-remark">';
 				html += '				<span>' + (hasSub ? '' : '<textarea id="' + (namespace + '_formulaRemark_' + node['id']) + '" class="form-control"></textarea>') + '</span>';
+				html += '			</div>';
+				html += '			<div class="generic-field edge-end field-the-status">';
+				html += '				<span></span>';
 				html += '			</div>';
 				html += '			<div class="generic-field field-function">';
 				html += '				<span id="' + (namespace + '_attachment_' + node['id']) + '" class="operation-item opr-attachment' + (hasSub ? ' not-enabled' : '') + '"' + (hasSub ? '' : ' fu-source=""') + '></span>';
@@ -261,6 +264,7 @@ function recoverProject(projectArray, namespace) {
 					itemOuter.find('.field-formula-remark textarea').val(formulaRemark);
 				}
 				itemOuter.find('.field-function .opr-attachment').attr('fu-source', projectArray[i]['attachment']);
+				itemOuter.find('.field-the-status span').html(projectArray[i]['theStatus']);
 			}
 		}
 	}

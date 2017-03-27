@@ -127,7 +127,7 @@ ul {
 
 .data-container .item-outer {
 	border: 1px dotted rgba(119, 133, 212, 0.37);
-	width: 1358px;
+	width: 1458px;
 	height: 40px;
 	border-radius: 4px;
 	cursor: pointer;
@@ -143,7 +143,7 @@ ul {
 
 .data-container .item-inner {
 	border: 1px solid #9db4e1;
-	width: 1352px;
+	width: 1452px;
 	height: 34px;
 	border-radius: 4px;
 	margin-top: 2px;
@@ -291,6 +291,15 @@ ul {
 	margin-left: 1px;
 	overflow: hidden;
 	background: #fad5cf;
+}
+
+.data-container .item-inner .field-the-status {
+	width: 100px;
+	background: #ef586d;
+}
+
+.data-container .item-inner .field-the-status span {
+	width: 90px;
 }
 
 .data-container .item-inner .field-function {
