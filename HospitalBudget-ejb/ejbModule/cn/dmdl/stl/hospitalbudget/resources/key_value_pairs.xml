@@ -35,6 +35,7 @@
 	</item>
 
 	<!-- 下载性能 -->
+	<!-- 4 is nginx -->
 	<item key="fileupload.download_performance" for="1" enabled="true">
 		<value>1</value>
 	</item>

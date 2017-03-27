@@ -89,7 +89,7 @@
 						<span>参考</span>
 					</div>
 					<div class="btn-reminder-service stopped">
-						<span>提示</span>
+						<span title="当输入控件获得焦点时&#10;提示相关约束信息&#10;例如：&#10;字段【金额计算依据及备注】">提示</span>
 					</div>
 				</div>
 				<div class="draft-table-title exist-data-panel">
@@ -121,10 +121,10 @@
 									<div class="generic-field edge-end field-project-amount">
 										<span>预算金额</span>
 									</div>
-									<div class="generic-field field-formula-remark">
+									<div class="generic-field edge-end field-formula-remark">
 										<span>金额计算依据及备注</span>
 									</div>
-									<div class="generic-field field-the-status">
+									<div class="generic-field edge-end field-the-status">
 										<span>状态</span>
 									</div>
 									<div class="generic-field field-function">
@@ -145,8 +145,8 @@
 								<h:inputHidden id="budgetYearHidden" value="#{expendDraftHome.budgetYear}" />
 								<h:inputHidden id="fundsSourceIdHidden" value="#{expendDraftHome.fundsSourceId}" />
 								<h:inputHidden id="departmentInfoIdHidden" value="#{expendDraftHome.departmentInfoId}" />
-								<a class="btn btn-success mr15" onclick="triggerSaveDataContainer();">保存</a>
-								<h:commandButton id="submit" value="提交" onclick="return check_submit();" action="#{expendDraftHome.submit}" styleClass="btn btn-primary mr15" />
+								<a class="btn btn-success mr15" onclick="saveData();">保存</a>
+								<a class="btn btn-primary mr15" onclick="submitData();">提交</a>
 							</td>
 						</tr>
 					</table>
@@ -156,11 +156,17 @@
 			</div>
 		<a:form>
 			<a:queue requestDelay="100" ignoreDupResponses="true" />
-			<a:jsFunction name="callRenewDataContainer" action="#{expendDraftHome.renewDataContainer}" data="#{expendDraftHome.dataContainer}" oncomplete="completedRenewDataContainer(data);">
-				<a:actionparam name="renewDataContainerArgs" assignTo="#{expendDraftHome.renewDataContainerArgs}" />
+			<a:jsFunction name="gainOriginalData2trigger" action="#{expendDraftHome.gainOriginalData2action}" data="#{expendDraftHome.gainOriginalData2result}" oncomplete="gainOriginalData2callback(data);">
+				<a:actionparam name="gainOriginalData2args" assignTo="#{expendDraftHome.gainOriginalData2args}" />
 			</a:jsFunction>
-			<a:jsFunction name="callSaveDataContainer" action="#{expendDraftHome.saveDataContainer}" data="#{expendDraftHome.saveDataContainerResult}" oncomplete="completedSaveDataContainer(data);">
-				<a:actionparam name="saveDataContainerArgs" assignTo="#{expendDraftHome.saveDataContainerArgs}" />
+			<a:jsFunction name="gainTamperData2trigger" action="#{expendDraftHome.gainTamperData2action}" data="#{expendDraftHome.gainTamperData2result}" oncomplete="gainTamperData2callback(data);">
+				<a:actionparam name="gainTamperData2args" assignTo="#{expendDraftHome.gainTamperData2args}" />
+			</a:jsFunction>
+			<a:jsFunction name="saveData2trigger" action="#{expendDraftHome.saveData2action}" data="#{expendDraftHome.saveData2result}" oncomplete="saveData2callback(data);">
+				<a:actionparam name="saveData2args" assignTo="#{expendDraftHome.saveData2args}" />
+			</a:jsFunction>
+			<a:jsFunction name="submitData2trigger" action="#{expendDraftHome.submitData2action}" data="#{expendDraftHome.submitData2result}" oncomplete="submitData2callback(data);">
+				<a:actionparam name="submitData2args" assignTo="#{expendDraftHome.submitData2args}" />
 			</a:jsFunction>
 		</a:form>
 		<script type="text/javascript" src="#{request.contextPath}/common/js/bootstrap.min.js" />

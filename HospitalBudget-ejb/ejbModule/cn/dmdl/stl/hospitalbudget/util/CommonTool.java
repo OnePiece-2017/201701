@@ -133,7 +133,7 @@ public class CommonTool implements CommonToolLocal {
 	public boolean deleteIntermediate(String table, String where) {
 		boolean result = false;
 		try {
-			entityManager.createNativeQuery("DELETE FROM " + table + " WHERE " + where).executeUpdate();
+			entityManager.createNativeQuery("DELETE FROM " + table + (where != null && !"".equals(where) ? " WHERE " + where : "")).executeUpdate();
 			result = true;
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -145,7 +145,7 @@ public class CommonTool implements CommonToolLocal {
 	public List<Object[]> selectIntermediate(String table, String[] columns, String where) {
 		List<Object[]> result = null;
 		try {
-			result = entityManager.createNativeQuery("SELECT " + Arrays.toString(columns).replace("[", "").replace("]", "") + " FROM " + table + " WHERE " + where).getResultList();
+			result = entityManager.createNativeQuery("SELECT " + Arrays.toString(columns).replace("[", "").replace("]", "") + " FROM " + table + (where != null && !"".equals(where) ? " WHERE " + where : "")).getResultList();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -180,7 +180,7 @@ public class CommonTool implements CommonToolLocal {
 				}
 				if (!"".equals(setPart.toString())) {
 					setPart.delete(setPart.length() - 2, setPart.length());
-					entityManager.createNativeQuery("UPDATE " + table + " SET " + setPart.toString() + " WHERE " + where).executeUpdate();
+					entityManager.createNativeQuery("UPDATE " + table + " SET " + setPart.toString() + (where != null && !"".equals(where) ? " WHERE " + where : "")).executeUpdate();
 				}
 			}
 

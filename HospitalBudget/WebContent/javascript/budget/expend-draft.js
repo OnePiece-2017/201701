@@ -1,4 +1,5 @@
 var ___cache = {};
+var FIX_RANGE_NUM = 4;
 
 jQuery(document).ready(function() {
 
@@ -44,17 +45,6 @@ jQuery(document).ready(function() {
 	refreshVisualPannel();// 立即刷新
 	triggerRenewDataContainer();// 触发更新数据容器函数
 	computeTotalAmount();// 实时计算总金额
-
-	var forTest = false; // TODO: 仅供测试
-	if (forTest) {
-		setTimeout(function() {
-			jQuery('#fundsSourceId').val('1');
-			jQuery('#fundsSourceId').selectpicker('render');
-			jQuery('#departmentInfoId').val('2');
-			jQuery('#departmentInfoId').selectpicker('render');
-			triggerRenewDataContainer();
-		}, 256);
-	}
 });
 
 function refreshVisualPannel() {
@@ -67,27 +57,31 @@ function refreshVisualPannel() {
 	}
 }
 
+function assembleArguments() {
+	return JSON.stringify({
+	    budgetYear : jQuery('#budgetYear').val(),
+	    fundsSourceId : jQuery('#fundsSourceId').val(),
+	    departmentInfoId : jQuery('#departmentInfoId').val()
+	});
+}
+
 function triggerRenewDataContainer() {
-	var budgetYear = jQuery('#budgetYear').val();
-	var fundsSourceId = jQuery('#fundsSourceId').val();
-	var departmentInfoId = jQuery('#departmentInfoId').val();
-	var args = {
-	    budgetYear : budgetYear,
-	    fundsSourceId : fundsSourceId,
-	    departmentInfoId : departmentInfoId
-	};
 	showLayer();
 	jQuery('.draft-table-body .data-container').empty();// 1、清空数据容器
 	jQuery('.draft-table-body').getNiceScroll().resize();// 2、重绘滚动条
-	callRenewDataContainer(JSON.stringify(args));// 3、调用更新数据容器AJAX
+	gainOriginalData2trigger(assembleArguments());
 }
 
-function completedRenewDataContainer(data) {
+function gainOriginalData2callback(data) {
 	parseProject(data['new_generic'], 'generic', '项目');// 4、解析项目并放入数据容器
 	parseProject(data['new_routine'], 'routine', '常规');// 5、解析常规并放入数据容器
-	bindingCtrlEvents();// 6、绑定事件
+	gainTamperData2trigger(assembleArguments());
+}
+
+function gainTamperData2callback(data) {
 	recoverProject(data['old_generic'], 'generic');// 7、恢复项目并修改数据容器
 	recoverProject(data['old_routine'], 'routine');// 8、恢复项目并修改数据容器
+	bindingCtrlEvents();// 6、绑定事件
 	jQuery('.draft-table-body').getNiceScroll().resize();// 9、重绘滚动条
 	setTimeout(function() {
 		hideLayer();
@@ -232,7 +226,7 @@ function parseProject(projectArray, namespace, projectNature) {
 function bindingCtrlEvents() {
 	jQuery('.draft-table-body .data-container .item-outer .field-project-amount input').blur(function() {
 		if (jQuery.isNumeric(this.value)) {
-			this.value = Number(this.value).toFixed(2);
+			this.value = Number(this.value).toFixed(FIX_RANGE_NUM);
 		} else {
 			this.value = '';
 		}
@@ -244,7 +238,7 @@ function recoverProject(projectArray, namespace) {
 		for (var i = 0, len = projectArray.length; i < len; i++) {
 			var itemOuter = jQuery('.draft-table-body .data-container .item-outer[namespace="' + namespace + '"][project-id="' + projectArray[i]['projectId'] + '"]');
 			if (itemOuter.length > 0) {
-				var projectAmount = (projectArray[i]['projectAmount'] * 1E-4).toFixed(2);
+				var projectAmount = (projectArray[i]['projectAmount'] * 1E-4).toFixed(FIX_RANGE_NUM);
 				if (itemOuter.hasClass('read-only')) {
 					itemOuter.find('.field-project-amount span').html(projectAmount);
 				} else {
@@ -263,7 +257,20 @@ function recoverProject(projectArray, namespace) {
 					itemOuter.find('.field-formula-remark textarea').val(formulaRemark);
 				}
 				itemOuter.find('.field-function .opr-attachment').attr('fu-source', projectArray[i]['attachment']);
-				itemOuter.find('.field-the-status span').html(projectArray[i]['theStatus']);
+				var theStatus = Number(projectArray[i]['theStatus']), theStatusLabel = '';
+				itemOuter.attr('the-status', theStatus);
+				if (0 == theStatus) {
+					theStatusLabel = "已保存";
+				} else if (1 == theStatus) {
+					theStatusLabel = "审核中";
+				} else if (2 == theStatus) {
+					theStatusLabel = "被退回";
+				} else if (3 == theStatus) {
+					theStatusLabel = "已完成";
+				} else if (4 == theStatus) {
+					theStatusLabel = "已追回";
+				}
+				itemOuter.find('.field-the-status span').html(theStatusLabel);
 			}
 		}
 	}
@@ -280,11 +287,11 @@ function computeTotalAmount() {
 		}
 		result += temp;
 	});
-	___cache['total-amount-value'].html(result.toFixed(2));
+	___cache['total-amount-value'].html(result.toFixed(FIX_RANGE_NUM));
 	setTimeout(computeTotalAmount, 256);// 间隔一个周期再次进行计算
 }
 
-function triggerSaveDataContainer() {
+function saveData() {
 	showLayer();
 	var allowExec = false;
 	var args = {
@@ -293,7 +300,7 @@ function triggerSaveDataContainer() {
 	};
 	// 数据采集（项目、常规）
 	var callback = null;// 提示框回调函数
-	jQuery('.draft-table-body .data-container .item-outer.write-able:not(.locking)').each(function() {
+	jQuery('.draft-table-body .data-container .item-outer.write-able:not(.locking)').filter(':not([the-status]), [the-status="0"], [the-status="2"], [the-status="4"]').each(function() {
 		var tempHandler = null;// 临时句柄
 
 		// 预算金额
@@ -319,7 +326,7 @@ function triggerSaveDataContainer() {
 		args[jQuery(this).attr('namespace')].push({
 		    'budgetYear' : jQuery('#budgetYear').val(),
 		    'projectId' : jQuery(this).attr('project-id'),
-		    'projectAmount' : Number(projectAmount).toFixed(2) * 1E4,
+		    'projectAmount' : Number(projectAmount).toFixed(FIX_RANGE_NUM) * 1E4,
 		    'projectSource' : projectSource,
 		    'formulaRemark' : formulaRemark,
 		    'attachment' : attachment
@@ -328,7 +335,7 @@ function triggerSaveDataContainer() {
 	});
 
 	if (allowExec) {
-		callSaveDataContainer(JSON.stringify(args));// 调用保存数据容器AJAX
+		saveData2trigger(JSON.stringify(args));// 调用保存数据容器AJAX
 	} else {
 		hideLayer();
 		if (callback != null) {
@@ -341,15 +348,87 @@ function triggerSaveDataContainer() {
 	}
 }
 
-function completedSaveDataContainer(data) {
+function saveData2callback(data) {
 	hideLayer();
 	if (data != null && 'INVOKE_SUCCESS' == data.invoke_result) {
-		___msg('温馨提示', data.result_message);
+		___msg('温馨提示', data.result_message, {
+			closed : function() {
+				showLayer();
+				gainTamperData2trigger(assembleArguments());
+			}
+		});
 	} else {
 		___msg('错误提示', data.result_message);
 	}
 }
 
-function check_submit() {
-	return true;
+function submitData2callback(data) {
+	hideLayer();
+	if (data != null && 'INVOKE_SUCCESS' == data.invoke_result) {
+		___msg('温馨提示', data.result_message, {
+			closed : function() {
+				showLayer();
+				gainTamperData2trigger(assembleArguments());
+			}
+		});
+	} else {
+		___msg('错误提示', data.result_message);
+	}
+}
+
+function submitData() {
+	showLayer();
+	var allowExec = false;
+	var args = {
+	    'generic' : [],
+	    'routine' : []
+	};
+	// 数据采集（项目、常规）
+	var callback = null;// 提示框回调函数
+	jQuery('.draft-table-body .data-container .item-outer.write-able:not(.locking)').filter(':not([the-status]), [the-status="0"], [the-status="2"], [the-status="4"]').each(function() {
+		var tempHandler = null;// 临时句柄
+
+		// 预算金额
+		var projectAmount = jQuery(this).find('.field-project-amount input').val();
+		tempHandler = jQuery(this).find('.field-project-amount input');
+		if (!jQuery.isNumeric(projectAmount)) {
+			callback = function() {
+				tempHandler.focus();
+			};
+			allowExec = false;// 不允许执行
+			return false;// 结束遍历
+		}
+
+		// 项目来源
+		var projectSource = jQuery(this).find('.field-project-source textarea').val();
+
+		// 金额计算依据及备注
+		var formulaRemark = jQuery(this).find('.field-formula-remark textarea').val();
+
+		// 附件
+		var attachment = sgFileupload['getSource'](jQuery(this).find('.field-function .opr-attachment').attr('id'));
+
+		args[jQuery(this).attr('namespace')].push({
+		    'budgetYear' : jQuery('#budgetYear').val(),
+		    'projectId' : jQuery(this).attr('project-id'),
+		    'projectAmount' : Number(projectAmount).toFixed(FIX_RANGE_NUM) * 1E4,
+		    'projectSource' : projectSource,
+		    'formulaRemark' : formulaRemark,
+		    'attachment' : attachment
+		});
+		allowExec = true;// 允许执行
+	});
+
+	if (allowExec) {
+		submitData2trigger(JSON.stringify(args));// 调用提交数据容器AJAX
+	} else {
+		hideLayer();
+		if (callback != null) {
+			___msg('温馨提示', '数据不完整，不能执行提交操作！', {
+				closed : callback
+			});
+		} else {
+			___msg('温馨提示', '无可提交的条目！');
+		}
+	}
 }
