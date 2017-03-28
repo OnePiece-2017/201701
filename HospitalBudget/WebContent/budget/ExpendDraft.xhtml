@@ -64,7 +64,7 @@
 						<div class="fl">
 							<span class="field-name mb10">主管科室</span>
 							<select id="departmentInfoId" class="selectpicker" data-live-search="true">
-								<a:repeat value="#{expendDraftHome.departmentInfoList}" var="_var">
+								<a:repeat value="#{commonDaoHome.departmentInfoListByUserId}" var="_var">
 									<option value="#{_var[0]}">#{_var[1]}</option>
 								</a:repeat>
 							</select>
