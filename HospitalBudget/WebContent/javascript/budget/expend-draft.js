@@ -385,38 +385,65 @@ function submitData() {
 	};
 	// 数据采集（项目、常规）
 	var callback = null;// 提示框回调函数
-	jQuery('.draft-table-body .data-container .item-outer.write-able:not(.locking)').filter(':not([the-status]), [the-status="0"], [the-status="2"], [the-status="4"]').each(function() {
+	jQuery('.draft-table-body .data-container .item-outer:not(.locking)').filter(':not([the-status]), [the-status="0"], [the-status="2"], [the-status="4"]').each(function() {
 		var tempHandler = null;// 临时句柄
-
-		// 预算金额
-		var projectAmount = jQuery(this).find('.field-project-amount input').val();
-		tempHandler = jQuery(this).find('.field-project-amount input');
-		if (!jQuery.isNumeric(projectAmount)) {
-			callback = function() {
-				tempHandler.focus();
-			};
-			allowExec = false;// 不允许执行
-			return false;// 结束遍历
+		var readLine = false;
+		if(jQuery(this).hasClass("read-only")){
+			readLine = true;
 		}
+		if(readLine){//只读行，父类项目
+			// 预算金额
+			var projectAmount = jQuery(this).find('.field-project-amount span').html();
 
-		// 项目来源
-		var projectSource = jQuery(this).find('.field-project-source textarea').val();
+			// 项目来源
+			var projectSource = "";
 
-		// 金额计算依据及备注
-		var formulaRemark = jQuery(this).find('.field-formula-remark textarea').val();
+			// 金额计算依据及备注
+			var formulaRemark = "";
 
-		// 附件
-		var attachment = sgFileupload['getSource'](jQuery(this).find('.field-function .opr-attachment').attr('id'));
+			// 附件
+			var attachment = "";
 
-		args[jQuery(this).attr('namespace')].push({
-		    'budgetYear' : jQuery('#budgetYear').val(),
-		    'projectId' : jQuery(this).attr('project-id'),
-		    'projectAmount' : Number(projectAmount).toFixed(FIX_RANGE_NUM) * 1E4,
-		    'projectSource' : projectSource,
-		    'formulaRemark' : formulaRemark,
-		    'attachment' : attachment
-		});
-		allowExec = true;// 允许执行
+			args[jQuery(this).attr('namespace')].push({
+			    'budgetYear' : jQuery('#budgetYear').val(),
+			    'projectId' : jQuery(this).attr('project-id'),
+			    'projectAmount' : Number(projectAmount).toFixed(FIX_RANGE_NUM) * 1E4,
+			    'projectSource' : projectSource,
+			    'formulaRemark' : formulaRemark,
+			    'attachment' : attachment
+			});
+			allowExec = true;// 允许执行
+		}else{//编辑行，子集项目
+			// 预算金额
+			var projectAmount = jQuery(this).find('.field-project-amount input').val();
+			tempHandler = jQuery(this).find('.field-project-amount input');
+			if (!jQuery.isNumeric(projectAmount)) {
+				callback = function() {
+					tempHandler.focus();
+				};
+				allowExec = false;// 不允许执行
+				return false;// 结束遍历
+			}
+
+			// 项目来源
+			var projectSource = jQuery(this).find('.field-project-source textarea').val();
+
+			// 金额计算依据及备注
+			var formulaRemark = jQuery(this).find('.field-formula-remark textarea').val();
+
+			// 附件
+			var attachment = sgFileupload['getSource'](jQuery(this).find('.field-function .opr-attachment').attr('id'));
+
+			args[jQuery(this).attr('namespace')].push({
+			    'budgetYear' : jQuery('#budgetYear').val(),
+			    'projectId' : jQuery(this).attr('project-id'),
+			    'projectAmount' : Number(projectAmount).toFixed(FIX_RANGE_NUM) * 1E4,
+			    'projectSource' : projectSource,
+			    'formulaRemark' : formulaRemark,
+			    'attachment' : attachment
+			});
+			allowExec = true;// 允许执行
+		}
 	});
 
 	if (allowExec) {
