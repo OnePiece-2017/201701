@@ -1,5 +1,7 @@
 package cn.dmdl.stl.hospitalbudget.budget.session;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
 import java.util.List;
 
 import net.sf.json.JSONArray;
@@ -59,35 +61,40 @@ public class YsIncomeCollectionInfoHome extends CriterionEntityHome<Object> {
 		
 		
 		JSONObject collectionInfo = new JSONObject();
-		JSONArray collectionInfoArr = new JSONArray();
-		double totalAmount = 0;
-		for(Object[] object : incomeCollectionInfoList){
-			JSONObject json = new JSONObject();
-			json.element("project_name", object[0]);
-			json.element("is_usual", object[1]);
-			json.element("project_source", object[2]);
-			json.element("project_amount", object[3]);
-			json.element("formula_remark", object[4]);
-			json.element("project_id", object[5]);
-			json.element("the_pid", object[6]);
-			json.element("bottom_level", object[7]);
-			if(Integer.parseInt(object[7].toString()) == 1){
-				totalAmount += Double.parseDouble(object[3].toString());
+		try{
+			JSONArray collectionInfoArr = new JSONArray();
+			double totalAmount = 0;
+			for(Object[] object : incomeCollectionInfoList){
+				JSONObject json = new JSONObject();
+				json.element("project_name", object[0]);
+				json.element("is_usual", object[1]);
+				json.element("project_source", URLDecoder.decode(object[2].toString(), "utf-8"));
+				json.element("project_amount", Double.parseDouble(object[3].toString())/10000);
+				json.element("formula_remark", URLDecoder.decode(object[4].toString(), "utf-8"));
+				json.element("project_id", object[5]);
+				json.element("the_pid", object[6]);
+				json.element("bottom_level", object[7]);
+				if(Integer.parseInt(object[7].toString()) == 1){
+					totalAmount += Double.parseDouble(object[3].toString());
+				}
+				collectionInfoArr.add(json);
 			}
-			collectionInfoArr.add(json);
+			collectionInfo.element("collection_info", collectionInfoArr);
+			collectionInfo.element("total_amount", totalAmount/10000);
+			
+			//获取部门名称
+			String deptNameSql = "select di.the_value from ys_budget_collection_dept bcd INNER JOIN ys_department_info di ON bcd.dept_id = di.the_id "
+					+ "WHERE bcd.budget_collection_dept_id =" + expendCollectionDeptId;
+			List<Object[]> deptNameList = getEntityManager().createNativeQuery(deptNameSql).getResultList();
+			String deptName = "";
+			for(Object obj : deptNameList){
+				deptName = obj.toString();
+			}
+			collectionInfo.element("dept_name", deptName);
+		}catch(UnsupportedEncodingException e){
+			e.printStackTrace();
 		}
-		collectionInfo.element("collection_info", collectionInfoArr);
-		collectionInfo.element("total_amount", totalAmount);
-		
-		String deptNameSql = "select di.the_value from ys_budget_collection_dept bcd INNER JOIN ys_department_info di ON bcd.dept_id = di.the_id "
-				+ "WHERE bcd.budget_collection_dept_id =" + expendCollectionDeptId;
-		List<Object[]> deptNameList = getEntityManager().createNativeQuery(deptNameSql).getResultList();
-		String deptName = "";
-		for(Object obj : deptNameList){
-			deptName = obj.toString();
-		}
-		collectionInfo.element("dept_name", deptName);
-		//获取部门名称
+
 		return collectionInfo;
 	}
 

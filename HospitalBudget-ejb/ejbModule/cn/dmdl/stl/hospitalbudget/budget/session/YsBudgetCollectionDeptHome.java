@@ -18,6 +18,7 @@ import cn.dmdl.stl.hospitalbudget.common.session.CriterionEntityHome;
 import cn.dmdl.stl.hospitalbudget.hospital.entity.YsDepartmentInfo;
 import cn.dmdl.stl.hospitalbudget.util.Assit;
 import cn.dmdl.stl.hospitalbudget.util.DataSourceManager;
+import cn.dmdl.stl.hospitalbudget.util.HospitalConstant;
 
 @Name("ysBudgetCollectionDeptHome")
 public class YsBudgetCollectionDeptHome extends CriterionEntityHome<Object> {
@@ -147,6 +148,7 @@ public class YsBudgetCollectionDeptHome extends CriterionEntityHome<Object> {
 		}
 		expendSql.append("GROUP BY bcd.dept_id ");
 		expendSql.insert(0, "select * from (").append(") t ");
+		System.out.println(expendSql);
 		//TODO 获得上一年下达的预算数据
 		Map<String, Double> lastYearExpendAmountMap = commonDaoHome.getLastYearTotalExpendBudget(year);
 		//按科室加载编制数据
@@ -158,7 +160,10 @@ public class YsBudgetCollectionDeptHome extends CriterionEntityHome<Object> {
 			expendJson.element("budget_collection_dept_id", expendObjArr[0]);
 			expendJson.element("year", expendObjArr[1]);
 			expendJson.element("dept_name", expendObjArr[2]);
-			expendJson.element("total_amount", expendObjArr[3]);
+			expendJson.element("total_amount", Double.parseDouble(expendObjArr[3].toString())/10000);
+			//默认无数据
+			expendJson.element("with_last_year_num", "--");
+			expendJson.element("with_last_year_percent", "--");
 			if(null != expendObjArr[3] && !expendObjArr[3].toString().isEmpty()){
 				double thisYearTotalAmount = Double.parseDouble(expendObjArr[3].toString());
 				totalExpend += thisYearTotalAmount;
@@ -176,7 +181,7 @@ public class YsBudgetCollectionDeptHome extends CriterionEntityHome<Object> {
 			expendJsonArr.add(expendJson);
 		}
 		budgetCollectionInfo.element("expend", expendJsonArr);
-		budgetCollectionInfo.element("total_expend", totalExpend);
+		budgetCollectionInfo.element("total_expend", totalExpend/10000);
 		//加载未提交编制的科室
 		JSONArray expendUnfinishedJsonArr = new JSONArray();
 		for(Integer unFinishedDeptId : expendDeptMap.keySet()){
@@ -324,13 +329,13 @@ public class YsBudgetCollectionDeptHome extends CriterionEntityHome<Object> {
 	private String decodeStatus(String status) {
 		String statusName = null;
 		switch(Integer.parseInt(status)) { 
-			case 0 :
+			case HospitalConstant.COLLECTIONSTATUS_WAIT :
 				statusName = "待处理"; 
 				break; 
-			case 1 : 
+			case HospitalConstant.COLLECTIONSTATUS_FINISH : 
 				statusName = "已下达"; 
 				break;  
-			case 2 : 
+			case HospitalConstant.COLLECTIONSTATUS_RETURN : 
 				statusName = "被追回"; 
 				break; 
 			default: 
