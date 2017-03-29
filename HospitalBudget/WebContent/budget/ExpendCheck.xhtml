@@ -89,7 +89,7 @@
 			<div style="line-height: 40px;">
 				<div style="float: left;">
 					<strong style="font-size: 20px;">支出预算审核</strong>
-					<font style="margin-left: 15px;color: #f903ed;">项目金额(合计：<span class="node-totalAmount"></span>元)</font>
+					<font style="margin-left: 15px;color: #f903ed;">项目金额(合计：<span class="node-totalAmount"></span>万元)</font>
 					<strong style="font-size: 28px;position:relative;left:30%;" id="dept_name"></strong>
 				</div>
 				<div style="float: right;">
@@ -197,6 +197,7 @@
 		}
 
 		function wirePage(data){
+			jQuery(".record  tr:not(:first)").html("");
 			var jsonArr= data.draft_info;
 			var html = "";
 		    jQuery(jsonArr).each(function(index, val){
@@ -287,6 +288,21 @@
 			});
 			var expandDraftInfo = JSON.stringify(expandJson)
 			goAheadAction(expandDraftInfo);
+		}
+
+
+		function goHeadComplete(data){
+			if(data.isok == "ok"){
+				___msg('温馨提示', data.message, {
+					closed: ___dynamic_function
+				});
+				filterDraft();
+			}else{
+				___msg('温馨提示', data.message, {
+					closed: ___dynamic_function
+				});
+				return false;
+			}
 		}
 
 		//]]>

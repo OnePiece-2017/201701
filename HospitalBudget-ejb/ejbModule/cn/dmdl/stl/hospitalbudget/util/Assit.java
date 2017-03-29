@@ -5,6 +5,8 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.text.DecimalFormat;
+import java.util.List;
+import java.util.Set;
 
 import org.apache.log4j.Logger;
 
@@ -224,5 +226,34 @@ public class Assit {
         DecimalFormat df = new DecimalFormat("#.00");
         return df.format(d);
     }
+	
+	
+	/**
+	 * 处理id集合返回id字符串
+	 * @param draftIdList
+	 * @return
+	 */
+	public static String formatIdsList(List<Integer> idList){
+		String ids = "";
+		for(Integer id : idList){
+			ids += id + ",";
+		}
+		ids = ids.substring(0, ids.length() - 1);
+		return ids;
+	}
+	
+	/**
+	 * 处理id集合返回id字符串
+	 * @param idSet
+	 * @return
+	 */
+	public static String formatIdsSet(Set<Integer> idSet){
+		String ids = "";
+		for(Integer id : idSet){
+			ids += id + ",";
+		}
+		ids = ids.substring(0, ids.length() - 1);
+		return ids;
+	}
 
 }

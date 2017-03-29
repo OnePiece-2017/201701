@@ -29,7 +29,7 @@
 	<ui:define name="body">
 		<div class="pd0-10 pt30">
 			<strong style="font-size: 20px;">预算汇总</strong>
-			<font style="margin-left: 15px;color: #f903ed;">项目金额(合计：<span class="node-totalAmount">--</span>元)</font>
+			<font style="margin-left: 15px;color: #f903ed;">项目金额(合计：<span class="node-totalAmount">--</span>万元)</font>
 			<strong style="font-size: 28px;position:relative;left:30%;" id="dept_name"></strong>
 			<div class="g-data-list-table freeze-attendProject">
 			    <table class="record" width="100%" cellpadding="0" cellspacing="0">
@@ -84,7 +84,7 @@
 					html += "<tr class='root treegrid-" + val.project_id + "'>";
 					console.log(1);
 				}
-			  	html += "<td>" + val.project_name + "</td>";
+			  	html += "<td style='text-align:left;'>" + val.project_name + "</td>";
 			  	if(val.is_usual == 1){
 				  	html += "<td>常规</td>";
 				}else{

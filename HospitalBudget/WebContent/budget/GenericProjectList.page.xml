@@ -3,7 +3,7 @@
 	xsi:schemaLocation="http://jboss.com/products/seam/pages http://jboss.com/products/seam/pages-2.2.xsd"
 	login-required="true">
 
-	<restrict>#{s:hasRole('?')}</restrict>
+	<restrict>#{s:hasRole('generic_project')}</restrict>
 	<param name="from" />
 	<param name="page" value="#{genericProjectList.page}" />
 	<param name="keyword" value="#{genericProjectList.keyword}" />
