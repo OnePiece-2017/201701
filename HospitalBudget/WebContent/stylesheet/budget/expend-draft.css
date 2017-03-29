@@ -3,11 +3,10 @@
 }
 
 .not-exist-data-panel {
-	width: 98%;
-	position: absolute;
+	width: 100%;
 	border-radius: 10px 10px 0 0;
 	border: 1px dotted #e7cece;
-	margin-top: 30px;
+	float: left;
 }
 
 .not-exist-data-panel .icon {

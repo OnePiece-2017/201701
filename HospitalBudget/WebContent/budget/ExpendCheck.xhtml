@@ -16,6 +16,8 @@
 		<link rel="stylesheet" type="text/css" href="#{request.contextPath}/common/css/jquery.treegrid.css" />
 		<link rel="stylesheet" type="text/css" href="#{request.contextPath}/icheck/skins/square/blue.css" />
 		<link rel="stylesheet" type="text/css" href="#{request.contextPath}/toastr/toastr.min.css" />
+		<link rel="stylesheet" type="text/css" href="#{request.contextPath}/sg-messagebox/css/sg-messagebox.css" />
+		<link rel="stylesheet" type="text/css" href="#{request.contextPath}/sg-fileupload/css/kernel.css" />
 		<style type="text/css">
 			.root {
 				background: #add595;
@@ -23,37 +25,56 @@
 			.treegrid-indent{
 				width:32px;
 			}
+			
+			.field-name {
+				float: left;
+				width: 85px;
+				padding-right: 15px;
+				font-family: '微软雅黑';
+				text-align: right;
+				line-height: 34px;
+				display: block;
+			}
+			
+			.bs-budget-year .bootstrap-select:not([class*="span"]):not([class*="col-"]):not([class*="form-control"]):not(.input-group-btn) {
+				width: 128px;
+			}
+			
+			.bs-funds-source .bootstrap-select:not([class*="span"]):not([class*="col-"]):not([class*="form-control"]):not(.input-group-btn) {
+				width: 128px;
+			}
+			
+			.sg-fu-custom--attachment {
+			}
 		</style>
 	</ui:define>
 
 	<ui:define name="body">
 		<div class="pd0-10 pt30">
 			<div class="g-data-list-condition">
-				<div class="fl">
-					<div style="float: left; text-align: center; line-height: 36px; width: 70px;">
-						<span>年份</span>
-					</div>
-					<div class="fl">
+				<div class="fl" style="min-width: 840px;">
+					<div class="fl bs-budget-year">
+							<span class="field-name mb10">年份</span>
 						<select id="budgetYear" class="selectpicker">
 							<a:repeat value="#{commonDaoHome.recentYearList}" var="_var">
 								<option value="#{_var[0]}">#{_var[1]}</option>
 							</a:repeat>
 						</select>
 					</div>
-					<div style="float: left; text-align: center; line-height: 36px; width: 70px;">
-						<span>科室</span>
-					</div>
 					<div class="fl">
+						<div style="float: left; text-align: center; line-height: 36px; width: 70px;">
+							<span>科室</span>
+						</div>
 						<select id="departmentIds" class="selectpicker" multiple="multiple" data-live-search="true" title="全部科室">
 							<a:repeat value="#{commonDaoHome.departmentInfoListByUserId}" var="_var">
 								<option value="#{_var[0]}">#{_var[1]}</option>
 							</a:repeat>
 						</select>
 					</div>
-					<div style="float: left; text-align: center; line-height: 36px; width: 70px;">
-						<span>资金来源</span>
-					</div>
-					<div class="fl">
+					<div class="fl bs-funds-source">
+						<div style="float: left; text-align: center; line-height: 36px; width: 70px;">
+							<span>资金来源</span>
+						</div>
 						<select id="fundsSourceId" class="selectpicker" multiple="multiple">
 							<a:repeat value="#{commonDaoHome.fundsSource}" var="_var">
 								<option value="#{_var[0]}">#{_var[1]}</option>
@@ -63,6 +84,13 @@
 					<div class="fl" style="margin-left:10px;">
 						<a class="btn btn-primary mr15" onclick="return onSave();">追回所有预算</a>
 					</div>
+				</div>
+			</div>
+			<div style="line-height: 40px;">
+				<div style="float: left;">
+					<strong style="font-size: 20px;">支出预算审核</strong>
+					<font style="margin-left: 15px;color: #f903ed;">项目金额(合计：<span class="node-totalAmount"></span>元)</font>
+					<strong style="font-size: 28px;position:relative;left:30%;" id="dept_name"></strong>
 				</div>
 				<div style="float: right;">
 					<table class="normal-btn">
@@ -80,7 +108,7 @@
 			<strong style="font-size: 20px;">支出预算审核</strong>
 			<font style="margin-left: 15px;color: #f903ed;">项目金额(合计：<span class="node-totalAmount"></span>万元)</font>
 			<strong style="font-size: 28px;position:relative;left:30%;" id="dept_name"></strong>
-			<div class="g-data-list-table freeze-attendProject">
+			<div class="g-data-list-table freeze-attendProject" style="margin-top: 41px;">
 			    <table class="record" width="100%" cellpadding="0" cellspacing="0">
 			        <tr>
 			            <th width="20%">项目名称</th>
@@ -125,6 +153,8 @@
 		<script type="text/javascript" src="#{request.contextPath}/common/js/jquery.treegrid.js" charset="UTF-8" />
 		<script type="text/javascript" src="#{request.contextPath}/icheck/js/icheck.min.js" charset="UTF-8" />
 		<script type="text/javascript" src="#{request.contextPath}/toastr/toastr.min.js" />
+		<script type="text/javascript" src="#{request.contextPath}/sg-messagebox/js/sg-messagebox.js" />
+		<script type="text/javascript" src="#{request.contextPath}/sg-fileupload/js/kernel.js" />
 		<script type="text/javascript" src="#{request.contextPath}/toolkit/utils.js" charset="UTF-8" />
 		<script type="text/javascript">
 		//<![CDATA[
@@ -186,12 +216,16 @@
 					html += "<td>项目</td>";
 				}
 			  	html += "<td>" + val.dept_name + "</td>";
-			  	html += "<td>" + val.project_source + "</td>";
+			  	html += "<td class='field-popup'>" + ___genStdHtml___a_abbr(val.project_source, 13) + "</td>";
 			  	html += "<td>" + val.project_amount + "</td>";
 			  	html += "<td>" + val.with_last_year_num + "</td>";
 			  	html += "<td>" + val.with_last_year_percent + "</td>";
-			  	html += "<td>" + val.formula_remark + "</td>";
-			  	html += "<td>附件</td>";
+			  	html += "<td class='field-popup'>" + ___genStdHtml___a_abbr(val.formula_remark, 13) + "</td>";
+			  	if (val.attachment != null && val.attachment !== '') {
+			  		html += '<td class="field-attachment" id="temp_attachment_' + index + '" fu-source="' + val.attachment + '">附件</td>';
+			  	} else {
+			  		html += '<td></td>';
+			  	}
 			  	html += '<td><input type="checkbox" class="icheck" id="' + val.process_step_info_id + '_' + val.ys_expand_draft_id + '" name="' + val.top_level_project_id + '"></td>';
 			  	html += "</tr>";
 			});
@@ -203,6 +237,41 @@
 				checkboxClass: 'icheckbox_square-blue',
 				radioClass: 'iradio_square-blue',
 				increaseArea: '20%'
+			});
+			
+			jQuery('td.field-popup').click(function() {
+				___sgMessagebox({
+					type: 'warning',
+					title: '温馨提示',
+					message: jQuery(this).find('a').attr('title'),
+					fadeInMillis: 0,
+					fadeOutMillis: 1000 * 60,
+					fadeInCallback: null,
+					fadeOutCallback: function() {
+						jQuery('#subproject_projectName').focus();
+					}
+				});
+			});
+			
+			jQuery('td.field-attachment').click(function() {
+				showLayer();
+				var tempHandler = jQuery(this);// 临时句柄
+				if (jQuery(this).hasClass('activated')) {
+					setTimeout(function() {
+						hideLayer();
+					}, 512);// 防止恶意点击
+				} else {
+					sgFileupload['reinstall']({
+					    'target' : this.id,
+					    'alias' : null,
+					    'source' : jQuery(this).attr('fu-source'),
+					    'class' : 'sg-fu-custom--attachment',
+					    'completed' : function() {
+						    tempHandler.addClass('activated');
+						    tempHandler.click();
+					    }
+					}); // 重新安装附件插件
+				}
 			});
 		}
 
