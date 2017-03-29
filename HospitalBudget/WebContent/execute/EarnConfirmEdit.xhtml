@@ -1,0 +1,1067 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:s="http://jboss.com/products/seam/taglib"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:a="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich"
+	template="/layout/template_edit.xhtml">
+
+	<ui:define name="head">
+		<link rel="stylesheet" type="text/css" href="#{request.contextPath}/common/css/bootstrap.min.css" />
+		<link rel="stylesheet" type="text/css" href="#{request.contextPath}/common/css/bootstrap-select.min.css" />
+		<link rel="stylesheet" type="text/css" href="#{request.contextPath}/sg-messagebox/css/sg-messagebox.css" />
+		<link rel="stylesheet" type="text/css" href="#{request.contextPath}/sg-reminder/css/sg-reminder.css" />
+		<link rel="stylesheet" type="text/css" href="#{request.contextPath}/common/css/bootstrap-datetimepicker.min.css" />
+		<link rel="stylesheet" type="text/css" href="#{request.contextPath}/common/css/bootstrap.min.css" />
+		<link rel="stylesheet" type="text/css" href="#{request.contextPath}/stylesheet/fix.css" />
+		<style type="text/css">
+			.bs-w440 .bootstrap-select:not([class*="span"]):not([class*="col-"]):not([class*="form-control"]):not(.input-group-btn) {
+			    width: 440px;
+			}
+			#node-subproject {
+				width: 100%;
+				height: 310px;
+				border-style: solid;
+				border-width: 2px;
+				border-color: #000;
+				border-radius: 5px;
+				margin-top: 10px;
+				background: #fff;
+				display: none;
+			}
+			
+			#node-subproject-nodata {
+				width: 100%;
+				height: 310px;
+				border-style: solid;
+				border-width: 2px;
+				border-color: #000;
+				border-radius: 5px;
+				margin-top: 10px;
+				background: #fff;
+				display: none;
+			}
+			
+			#node-subproject-nodata .icon {
+				float: left;
+				width: 32px;
+				height: 32px;
+				margin: 135px 42%;
+				opacity: 0.3;
+			}
+			
+			#node-subproject-nodata .message {
+				float: left;
+				margin: 142px -41%;
+				opacity: 0.6;
+			}
+			
+			#node-subproject ul {
+				list-style: none;
+				white-space: nowrap;
+				margin-left: 20px;
+			}
+			
+			.subproject-set {
+				margin-left: -40px !important;
+			}
+			
+			#node-subproject .row-head,#node-subproject .row-data {
+				width: 1400px;
+				height: 44px;
+				border-bottom: 2px solid #fff;
+			}
+			
+			#node-subproject .row-head>span:nth-child(1),#node-subproject .row-data>span:nth-child(1) {
+				width: 42px;
+				background: #05d380;
+			}
+			
+			#node-subproject .row-head>span:nth-child(2),#node-subproject .row-data>span:nth-child(2) {
+				width: 310px;
+				background: #05d380;
+			}
+			
+			#node-subproject .row-head>span:nth-child(3),#node-subproject .row-data>span:nth-child(3) {
+				width: 300px;
+				background: #00cfea;
+			}
+			
+			#node-subproject .row-head>span:nth-child(4),#node-subproject .row-data>span:nth-child(4) {
+				width: 240px;
+				background: #00cfea;
+			}
+			
+			#node-subproject .row-head>span:nth-child(5),#node-subproject .row-data>span:nth-child(5) {
+				width: 300px;
+				background: #d3d4d7;
+			}
+			
+			#node-subproject .row-data span:last-child a:first-child {
+				margin-left: -10px;
+			}
+			
+			#node-subproject .row-data span:last-child a {
+				margin-top: -2px;
+			}
+			
+			#node-subproject .row-head span {
+				float: left;
+				display: block;
+				line-height: 42px;
+				text-align: center;
+				font-size: 15px;
+				font-weight: bold;
+				padding-left: 15px;
+				padding-right: 15px;
+			}
+			
+			#node-subproject .row-data span {
+				float: left;
+				display: block;
+				line-height: 42px;
+				text-align: center;
+				font-size: 15px;
+				padding-left: 15px;
+				padding-right: 15px;
+			}
+			
+			#node-subproject .row-head span:not(:first-child):not(:last-child), #node-subproject .row-data span:not(:first-child):not(:last-child) {
+				border-right: 2px solid #000;
+			}
+			
+			.popup-layer-subproject {
+				position: fixed;
+				width: 100%;
+				height: 100%;
+				z-index: 1024;
+				left: 0;
+				top: 0;
+				background: rgba(0, 0, 0, 0.85);
+				display: none;
+			}
+			
+			.popup-layer-subproject-interactive {
+				position: fixed;
+				width: 800px;
+				height: 430px;
+				background: #86cef0;
+				left: 30%;
+				top: 15%;
+				border-radius: 15px;
+			}
+			
+			.toggle-child {
+				width: 24px;
+				height: 24px;
+				margin: 9px -7px;
+			}
+			
+			.subproject-set .row-data:hover {
+				border-bottom: 2px solid rgb(46, 104, 163) !important;
+			}
+		</style>
+	</ui:define>
+
+	<ui:define name="body">
+		#{earnConfirmHome.wire()}
+		<h:form id="mainForm" styleClass="edit" enctype="multipart/form-data" onkeydown="if (event.keyCode == 13) return false;">
+			<div class="pd0-10">
+				<div class="pt30 fs14">
+					<table width="100%" cellpadding="0" cellspacing="0">
+						<tr>
+							<td>
+								<div class="pb20">
+									<table>
+										<tr>
+											<td valign="middle">
+												<span class="field-name mb10" >单据编号</span>
+											</td>
+											<td valign="middle">
+												<h:inputText id="productName" value="#{earnConfirmHome.receiptsCode}" styleClass="form-control mb10 fix--w220" />
+											</td>
+											<td valign="middle">
+												<font color="red" style="margin-left: 3px;">*</font>
+											</td>
+										</tr>
+									</table>
+								</div>
+							</td>
+							<td width="50%">
+								<div class="pb20">
+									<table>
+										<tr>
+											<td valign="middle">
+												<span class="field-name mb10">报销科室</span>
+											</td>
+											<td valign="middle">
+												<select id="departmentInfoId" class="selectpicker" data-live-search="true">
+													<a:repeat value="#{earnConfirmHome.departmentInfoList}" var="_var">
+														<option value="#{_var[0]}">#{_var[1]}</option>
+													</a:repeat>
+												</select>
+												<h:inputHidden id="departmentInfoIdHidden" value="#{earnConfirmHome.departmentInfoId}" />
+											</td>
+											<td valign="middle">
+												<font color="red" style="margin-left: 3px;">*</font>
+											</td>
+										</tr>
+									</table>
+								</div>
+							</td>
+						</tr>
+						<tr>
+							<td width="50%">
+								<div class="pb20">
+									<table>
+										<tr>
+											<td valign="middle">
+												<span class="field-name mb10">报销人</span>
+											</td>
+											<td valign="middle">
+												<h:inputText id="confirmMan" value="#{earnConfirmHome.reimbursementMan}" styleClass="form-control mb10 fix--w220" />
+											</td>
+										</tr>
+									</table>
+								</div>
+							</td>
+							<td>
+								<div class="pb20">
+									<table>
+										<tr>
+											<td valign="middle">
+												<span class="field-name mb10">凭证号</span>
+											</td>
+											<td valign="middle">
+												<h:inputText id="voucherCode" value="#{earnConfirmHome.voucherCode}" styleClass="form-control mb10 fix--w220" />
+											</td>
+										</tr>
+									</table>
+								</div>
+							</td>
+						</tr>
+						<tr>
+							<td width="50%">
+								<div class="pb20">
+									<table>
+										<tr>
+										<td valign="middle">
+												<span class="field-name mb10">资金来源</span>
+											</td>
+											<td valign="middle">
+												<select id="fundsSourceId" class="selectpicker" data-live-search="true">
+													<a:repeat value="#{earnConfirmHome.fundsSourceList}" var="_var">
+														<option value="#{_var[0]}">#{_var[1]}</option>
+													</a:repeat>
+												</select>
+												<h:inputHidden id="fundsSourceIdHidden" value="#{earnConfirmHome.fundsSourceId}" />
+											</td>
+											<td valign="middle">
+												<font color="red" style="margin-left: 3px;">*</font>
+											</td>
+										</tr>
+									</table>
+								</div>
+							</td> 
+						</tr>
+						<tr>
+							<td >
+								<div class="pb20">
+									<table>
+										<tr>
+											<td>
+												<span class="field-name mb10">收款方式</span>
+											</td>
+											<td >
+												（
+												<input type="radio" class="icheck" name="process_type" value="1" id="sex_radio__male" />
+												<label for="sex_radio__male"><span>现金</span></label>
+												<input type="radio" class="icheck" name="process_type" value="2" id="sex_radio__female" />
+												<label for="sex_radio__female"><span>支票</span></label>
+												<input type="radio" class="icheck" name="process_type" value="3" id="sex_radio__female" />
+												<label for="sex_radio__female"><span>汇款</span></label>
+												<h:inputHidden id="process_type" value="#{earnConfirmHome.process_type}" />
+												）
+											</td>
+										</tr>
+									</table>
+								</div>
+							</td>
+							<td>
+								<div class="pb20">
+									<table>
+										<tr>
+											<td valign="middle">
+												<span class="field-name mb10">支票号</span>
+											</td>
+											<td valign="middle">
+												<h:inputText id="chequeCode" value="#{earnConfirmHome.chequeCode}"  styleClass="form-control mb10 fix--w220" />
+											</td>
+										</tr>
+									</table>
+								</div>
+							</td>
+						</tr>
+						
+						<tr>
+							<td >
+								<div class="pb20">
+									<table>
+										<tr>
+											<td valign="middle">
+												<span class="field-name mb10">付款单位</span>
+											</td>
+											<td valign="middle">
+												<h:inputText id="paymentUnit" value='#{earnConfirmHome.paymentUnit}' styleClass="form-control mb10 fix--w220" />
+											</td>
+										</tr>
+									</table>
+								</div>
+							</td>
+							<td>
+								<div class="pb20">
+									<table>
+										<tr>
+											<td valign="middle">
+												<span class="field-name mb10">发票号</span>
+											</td>
+											<td valign="middle">
+												<h:inputText id="invoiceCode" value="#{earnConfirmHome.invoiceCode}" styleClass="form-control mb10 fix--w220" />
+											</td>
+										</tr>
+									</table>
+								</div>
+							</td>
+						</tr>
+						
+						<tr>
+							<td>
+								<div class="pb20">
+									<table>
+										<tr>
+											<td valign="middle">
+												<span class="field-name mb10">单据总金额</span>
+											</td>
+											<td valign="middle">
+												<h:inputText id="totalAmount" value="#{earnConfirmHome.totalAmount}" styleClass="form-control mb10 fix--w220" />
+											</td>
+										</tr>
+									</table>
+								</div>
+							</td>
+							<td width="50%">
+								<div class="pb20">
+									<table>
+										<tr>
+											<td valign="middle">
+												<span class="field-name mb10">入账时间</span>
+											</td>
+											<td valign="middle">
+												<div class="form-group">
+													<div class="input-group date form_date col-md-5">
+														<h:inputText id="postingDate" value="#{earnConfirmHome.postingDate}" styleClass="form-control mb10 fix--w141" readonly="true" />
+														<h:inputHidden id="postingDateHidden" value="#{earnConfirmHome.postingDate}" />
+														<span class="input-group-addon"><span class="glyphicon glyphicon-remove"></span></span>
+														<span class="input-group-addon"><span class="glyphicon glyphicon-calendar"></span></span>
+													</div>
+												</div>
+											</td>
+											<td valign="middle">
+												<font color="red" style="margin-left: 3px;">*</font>
+											</td>
+										</tr>
+									</table>
+								</div>
+							</td>
+						</tr>
+						<tr>
+							<td colspan="1">
+								<div class="pb20">
+									<table>
+										<tr>
+											<td valign="middle">
+												<span class="field-name mb10">登记人</span>
+											</td>
+											<td valign="middle">
+												<h:inputText id="registerMan" value="#{earnConfirmHome.registerMan}" styleClass="form-control mb10 fix--w220" />
+											</td>
+										</tr>
+									</table>
+								</div>
+							</td>
+							<td width="50%">
+								<div class="pb20">
+									<table>
+										<tr>
+											<td valign="middle">
+												<span class="field-name mb10">登记时间</span>
+											</td>
+											<td valign="middle">
+												<div class="form-group">
+													<div class="input-group date form_date col-md-5">
+														<h:inputText id="closeExpendDate" value="#{earnConfirmHome.registerDate}" styleClass="form-control mb10 fix--w141" readonly="true" />
+														<h:inputHidden id="closeExpendDateHidden" value="#{earnConfirmHome.registerDate}" />
+														<span class="input-group-addon"><span class="glyphicon glyphicon-remove"></span></span>
+														<span class="input-group-addon"><span class="glyphicon glyphicon-calendar"></span></span>
+													</div>
+												</div>
+											</td>
+											<td valign="middle">
+												<font color="red" style="margin-left: 3px;">*</font>
+											</td>
+										</tr>
+									</table>
+								</div>
+							</td>
+						</tr>
+					</table>
+				</div>
+				
+				<div>
+					<strong onclick="debugInfo();" style="font-size: 20px;">以下内容为子项目</strong>
+					<a class="top-level btn btn-success fr" style="margin-top: -6px;" onclick="subprojectAdd(this);">添加</a>
+					<a id="subprojectEmptyBtn" class="btn btn-danger disabled fr" style="margin-top: -6px; margin-right: 10px;" onclick="subprojectEmpty();">清空</a>
+					<div id="node-subproject" class="pb30 fs14">
+						<ul class="subproject-set">
+							<li>
+								<div class="row-head">
+									<span>
+										<img src="../images/icon_arrow_carrot_down_32x32.png" style="width: 24px;height: 24px;margin: 9px -7px; opacity: 0;" />
+									</span>
+									<span>项目名称</span>
+									<span>本次预算内收款</span>
+									<span>确认本次预算内收款</span>
+									<span>年预算</span>
+									<span>描述</span>
+									<span>操作</span>
+								</div>
+							</li>
+						</ul>
+					</div>
+					<div id="node-subproject-nodata" class="pb30 fs14">
+						<img class="icon" src="../images/icon_info_32x32.png" />
+						<strong class="message">暂无数据！</strong>
+					</div>
+				</div>
+				
+				
+				<div class="popup-layer-subproject">
+					<div class="popup-layer-subproject-interactive">
+						<div class="pt30 fs14">
+							<table width="100%" cellpadding="0" cellspacing="0">
+								<tr>
+									<td colspan="2">
+										<div class="pb20">
+											<table>
+												<tr>
+													<td valign="middle">
+														<span class="field-name mb10">项目名称</span>
+													</td>
+													<td valign="middle">
+														<select id="productId" class="selectpicker" data-live-search="true">
+														<a:repeat value="#{earnConfirmHome.productList}" var="_var">
+														 	<option value="#{_var[0]}" type = "#{_var[2]}" >#{_var[1]}</option>
+														</a:repeat>
+														</select>
+													</td>
+													<td valign="middle">
+														<font color="red" style="margin-left: 3px;">*</font>
+													</td>
+												</tr>
+											</table>
+										</div>
+									</td>
+								</tr>
+								
+								<tr>
+									<td>
+										<div class="pb20">
+											<table>
+												<tr>
+													<td valign="middle">
+														<span class="field-name mb10">本次预算内收款</span>
+													</td>
+													<td valign="middle">
+														<h:inputText id="subprojectBudgetaryAmount"  styleClass="form-control mb10 fix--w220" />
+													</td>
+												</tr>
+											</table>
+										</div>
+									</td>
+									<td>
+										<div class="pb20">
+											<table>
+												<tr>
+													<td valign="middle">
+														<span class="field-name mb10" style="width:145px;">确认本次预算内收款</span>
+													</td>
+													<td valign="middle">
+														<h:inputText id="subprojectBudgetaryAmountAffirm"  styleClass="form-control mb10 fix--w220" />
+													</td>
+												</tr>
+											</table>
+										</div>
+									</td>
+								</tr>
+								<tr>
+									<td>
+										<div class="pb20">
+											<table>
+												<tr>
+													<td valign="middle">
+														<span class="field-name mb10">年预算</span>
+													</td>
+													<td valign="middle">
+														<h:inputText id="subprojectBudgetaryYear"  styleClass="form-control mb10 fix--w220" />
+													</td>
+												</tr>
+											</table>
+										</div>
+									</td>
+								</tr>
+								<tr>
+									<td colspan="2">
+										<div class="pb20">
+											<table>
+												<tr>
+													<td valign="middle">
+														<span class="field-name mb10">描述</span>
+													</td>
+													<td valign="middle">
+														<textarea id="subproject_description" class="form-control mb10 fix--textarea-610x130" />
+													</td>
+													<td valign="middle">
+														<font color="red" style="margin-left: 3px;"></font>
+													</td>
+												</tr>
+											</table>
+										</div>
+									</td>
+								</tr>
+							</table>
+						</div>
+						<div class="pb95">
+							<table class="normal-btn">
+								<tr>
+									<td>
+										<a class="btn btn-primary mr15" onclick="saveSubprojectItem();">提交</a>
+										<a class="btn btn-default" onclick="setSubprojectInteractive(false);">关闭</a>
+									</td>
+								</tr>
+							</table>
+							<br />
+							<br />
+						</div>
+					</div>
+				</div>
+				<div class="pt50 pb95">
+					<table class="normal-btn">
+						<tr>
+							<td>
+								<h:inputHidden id="subprojectInfoHidden" value="#{earnConfirmHome.subprojectInfo}" />
+								<h:commandButton id="persist" value="提交" onclick="return beforeSubmit();" action="#{earnConfirmHome.persist}" disabled="#{!earnConfirmHome.wired}" rendered="#{!earnConfirmHome.managed}" styleClass="btn btn-primary mr15" />
+								<h:commandButton id="update" value="保存" onclick="return beforeSubmit();" action="#{earnConfirmHome.update}" rendered="#{earnConfirmHome.managed}" styleClass="btn btn-primary mr15" />
+								<s:button id="cancel" value="返回" view="/execute/EarnConfirmList.xhtml" propagation="none" styleClass="btn btn-default" />
+							</td>
+						</tr>
+					</table>
+				</div>
+			</div>
+		</h:form>
+		<script type="text/javascript" src="#{request.contextPath}/common/js/bootstrap.min.js" />
+		<script type="text/javascript" src="#{request.contextPath}/common/js/bootstrap-select.min.js" charset="UTF-8" />
+		<script type="text/javascript" src="#{request.contextPath}/common/js/bootstrap-select-defaults-zh_CN.min.js" charset="UTF-8" />
+		<script type="text/javascript" src="#{request.contextPath}/common/js/bootstrap-datetimepicker.min.js" charset="UTF-8" />
+		<script type="text/javascript" src="#{request.contextPath}/common/js/bootstrap-datetimepicker.zh-CN.js" charset="UTF-8" />
+		<script type="text/javascript" src="#{request.contextPath}/toolkit/utils.js" />
+		<script type="text/javascript" src="#{request.contextPath}/sg-messagebox/js/sg-messagebox.js" />
+		<script type="text/javascript" src="#{request.contextPath}/sg-reminder/js/sg-reminder.js" />
+		<script type="text/javascript">
+		//<![CDATA[
+		
+			var g_personJson = #{earnConfirmHome.personJson};
+			var g_subproject_all = #{earnConfirmHome.subprojectInfoJson}; //子项目集合
+			
+			var toggleIcon = {
+				'opened': '../images/icon_arrow_carrot_down_32x32.png',
+				'closed': '../images/icon_arrow_carrot_right_32x32.png'
+			};
+
+			var g_subproject_index = 0; //项目索引，初始值为0
+			var g_is_create = #{earnConfirmHome.first}; //是否为添加模式
+			var g_edit_itemData = {}; //在编辑项目
+			
+			jQuery(document).ready(function() {
+
+				//提前设置滚动条，后续会引用该对象
+				jQuery('#node-subproject').niceScroll({
+					cursorcolor: '#000',
+					cursorwidth: 9,
+					cursoropacitymax: 0.8,
+					touchbehavior: false,
+					autohidemode: true
+				});
+			
+				loadSubprojectItem(); //加载子项目
+				//生成下一个项目索引，注意：仅适用于初始化，并且在加载子项目之后执行
+				for (var key in g_subproject_all) {
+					if (Number(key) > g_subproject_index) {
+						g_subproject_index = Number(key);
+					}
+				}  
+			
+				jQuery('.selectpicker').selectpicker();
+			
+				var message = '#{routineProjectHome.message}';
+				if (message != '') {
+					___msg('温馨提示', message, {
+						closed: ___dynamic_function
+					});
+				}
+			
+				jQuery('#projectType').val(jQuery('#mainForm\\:projectTypeHidden').val());
+				jQuery('#projectType').selectpicker('render');
+			
+				jQuery('#departmentInfoId').val(jQuery('#mainForm\\:departmentInfoIdHidden').val());
+				jQuery('#departmentInfoId').selectpicker('render');
+			
+				jQuery('#fundsSourceId').val(jQuery('#mainForm\\:fundsSourceIdHidden').val());
+				jQuery('#fundsSourceId').selectpicker('render');
+			
+				setTimeout('subprojectOutputFlush();', 0);//解决Chrome元素渲染速度问题  
+				
+			    var message = '#{earnConfirmHome.message}';
+			    if (message != '') {
+					___msg('温馨提示', message);
+			    }
+
+				jQuery('.form_year').datetimepicker({
+					language: 'zh-CN',
+					format: "yyyy--mm",
+					pickerPosition: "bottom-left",
+					weekStart: 1,
+					todayBtn: 1,
+					autoclose: 1,
+					startView: 4,
+					minView: 4,
+					maxView: 4
+				});
+
+				jQuery('.form_date').datetimepicker({
+					language: 'zh-CN',
+					format: "yyyy-mm-dd",
+					pickerPosition: "bottom-left",
+					weekStart: 1,
+					todayBtn: 1,
+					autoclose: 1,
+					todayHighlight: 1,
+					startView: 2,
+					minView: 2,
+					forceParse: 0
+				});
+
+			    jQuery('.selectpicker').selectpicker();
+
+		 		jQuery('#theType').val(jQuery('#mainForm\\:theTypeHidden').val());
+			    jQuery('#theType').selectpicker('render');
+
+				jQuery('#departmentInfoId').val(jQuery('#mainForm\\:departmentInfoIdHidden').val());
+			    jQuery('#departmentInfoId').selectpicker('render'); 
+
+			});
+
+			function setSubprojectInteractive(show) {
+				if (show) {
+					jQuery('.popup-layer-subproject').show();
+				} else {
+					jQuery('.popup-layer-subproject').hide();
+				}
+			}
+			
+			function subprojectEmpty() {
+				g_subproject_all = {};
+				jQuery('.subproject-set .row-data').remove();
+				jQuery('.subproject-set .row-data-ul').remove();
+				subprojectOutputFlush();
+			}
+			
+			function subprojectAdd(handle) {
+				g_is_create = true;
+				//重置用户输入
+				jQuery('#subproject_projectName').val('');
+				jQuery('#productId').val('');
+				jQuery('#productId').selectpicker('render');
+				jQuery('#mainForm\\:subprojectBudgetaryAmount').val('');
+				jQuery('#mainForm\\:subprojectBudgetaryAmountAffirm').val('');
+				jQuery('#mainForm\\:subprojectBudgetaryYear').val('');
+				jQuery('#subproject_description').val('');
+				rebuildParentList(null);
+				if (jQuery(handle).hasClass('top-level')) {
+					jQuery('#subproject_parentId').val('0');
+				} else {
+					jQuery('#subproject_parentId').val(jQuery(handle).parents('.row-data').attr('data-id'));
+				}
+				jQuery('#subproject_parentId').selectpicker('render');
+				setSubprojectInteractive(true);
+			}
+			
+			/* function subprojectEdit(handle) {
+				g_is_create = false;
+				var dataId = jQuery(handle).parents('.row-data').attr('data-id');
+				g_edit_itemData = {};
+				jQuery.extend(true, g_edit_itemData, g_subproject_all[dataId]); //深拷贝
+				//恢复用户输入
+				jQuery('#subproject_projectName').val(g_subproject_all[dataId]['name']);
+				jQuery('#subproject_budgetPersonCompilerIds').val(g_subproject_all[dataId]['compiler'].split(','));
+				jQuery('#subproject_budgetPersonCompilerIds').selectpicker('render');
+				jQuery('#subproject_budgetPersonExecutorIds').val(g_subproject_all[dataId]['executor'].split(','));
+				jQuery('#subproject_budgetPersonExecutorIds').selectpicker('render');
+				jQuery('#subproject_description').val(g_subproject_all[dataId]['description']);
+				rebuildParentList(dataId);
+				var pid = g_subproject_all[dataId]['pid'];
+				jQuery('#subproject_parentId').val(pid != null ? pid: 0);
+				jQuery('#subproject_parentId').selectpicker('render');
+				setSubprojectInteractive(true);
+			} */
+			
+			function saveSubprojectItem() {
+				if (g_is_create) {
+					insertSubprojectItem();
+				} else {
+					updateSubprojectItem();
+				}
+			}
+			
+			function validateSubprojectItem() {
+				var id = jQuery('#productId').val();
+				var name = jQuery('select#productId option:selected').text();
+				var type = jQuery('select#productId option:selected').attr('type');
+				if (id == null || id == '') {
+					___sgMessagebox({
+						type: 'warning',
+						title: '温馨提示',
+						message: '请选择项目！',
+						fadeInMillis: 0,
+						fadeOutMillis: 1000 * 1,
+						fadeInCallback: null,
+						fadeOutCallback: function() {
+							jQuery('#productId').focus();
+						}
+					});
+					return null;
+				}
+				var itemData = {};
+				if (g_is_create) {
+					itemData['id'] = g_subproject_index + 1;
+				} else {
+					itemData['id'] = g_edit_itemData['id'];
+				}
+				itemData['id'] = id;
+				itemData['name'] = name;
+				itemData['type'] = type;
+				itemData['description'] = jQuery('#subproject_description').val(); 	
+				
+				if(null != jQuery('#mainForm\\:subprojectBudgetaryAmount').val() && '' != jQuery('#mainForm\\:subprojectBudgetaryAmount').val()){
+					itemData['subprojectBudgetaryAmount'] = jQuery('#mainForm\\:subprojectBudgetaryAmount').val();
+				}else{
+					itemData['subprojectBudgetaryAmount'] = '   ';
+				}
+
+				if( null != jQuery('#mainForm\\:subprojectBudgetaryAmountAffirm').val() && '' != jQuery('#mainForm\\:subprojectBudgetaryAmountAffirm').val()){
+					itemData['subprojectBudgetaryAmountAffirm'] = jQuery('#mainForm\\:subprojectBudgetaryAmountAffirm').val();
+				}else{
+					itemData['subprojectBudgetaryAmountAffirm'] = ' ';
+				}
+
+				if( null != jQuery('#mainForm\\:subprojectBudgetaryYear').val() && '' != jQuery('#mainForm\\:subprojectBudgetaryYear').val()){
+					itemData['subprojectBudgetaryYear'] = jQuery('#mainForm\\:subprojectBudgetaryYear').val();
+				}else{
+					itemData['subprojectBudgetaryYear'] = '   ';
+				}
+				
+				console.log(itemData);
+				return itemData;
+			}
+			
+			function insertSubprojectItem() {
+				var itemData = validateSubprojectItem();
+				if (itemData != null) {
+					g_subproject_index++; //索引自增
+					g_subproject_all[g_subproject_index] = itemData;
+					setSubprojectInteractive(false);
+					subprojectAdd_handle(g_subproject_index);
+				}
+			}
+			
+			function updateSubprojectItem() {
+				var itemData = validateSubprojectItem();
+				if (itemData != null) {
+					if (g_edit_itemData['pid'] != itemData['pid']) {
+						var dataId = g_edit_itemData['id'];
+						jQuery.extend(g_subproject_all[dataId], itemData); //合并
+						updateSubprojectItemLevel(dataId);
+						loadSubprojectItem();
+					} else {
+						var dataId = g_edit_itemData['id'];
+						jQuery.extend(g_subproject_all[dataId], itemData); //合并
+						var rdRef = jQuery('.row-data[data-id="' + dataId + '"]');
+						rdRef.children('.field-name').html(g_subproject_all[dataId]['name']);
+						rdRef.children('.field-compiler').html(___genStdHtml___a_abbr(gainPersonStr(g_subproject_all[dataId]['compiler']), 13));
+						rdRef.children('.field-executor').html(___genStdHtml___a_abbr(gainPersonStr(g_subproject_all[dataId]['executor']), 13));
+						//rdRef.children('.field-description').html(g_subproject_all[dataId]['description']);
+					}
+					setSubprojectInteractive(false);
+				}
+			}
+			
+			function updateSubprojectItemLevel(id) {
+				for (var key in g_subproject_all) {
+					if (id == g_subproject_all[key]['pid']) {
+						g_subproject_all[key]['level'] = g_subproject_all[id]['level'] + 1;
+						updateSubprojectItemLevel(key);
+					}
+				}
+			}
+			
+			function loadSubprojectItem() {
+				//清除节点
+				/* jQuery('.subproject-set .row-data').remove();
+				jQuery('.subproject-set .row-data-ul').remove(); 
+			 	var recursionCreate = function(pid) {
+					for (var key in g_subproject_all) {
+						if (pid == g_subproject_all[key]['pid']) {
+							subprojectAdd_handle(key);
+							recursionCreate(key);
+						}
+					}
+				}; 
+			 	for (var key in g_subproject_all) {
+					if (null == g_subproject_all[key]['pid']) {
+						subprojectAdd_handle(key);
+						recursionCreate(key); 
+					}
+				} */
+
+				for (var key in g_subproject_all) {
+					subprojectAdd_handle(key);
+				}
+				subprojectOutputFlush();
+			}
+			
+			function gainPersonStr(ids) {
+				var result = '';
+				if (ids != null && ids != '') {
+					var idArr = ids.split(',');
+					for (var i = 0; i < idArr.length; i++) {
+						result += g_personJson[idArr[i]];
+						if (i < idArr.length - 1) {
+							result += ',';
+						}
+					}
+				}
+				console.log('gainPersonStr------------'+result);
+				return result;
+			}
+			
+			function subprojectAdd_handle(subprojectIndex) {
+				var rowDataHtml = '';
+				rowDataHtml += '<div class="row-data" data-id="' + g_subproject_all[subprojectIndex]['id'] + '">';
+				rowDataHtml += '	<span>';
+				rowDataHtml += '		<img src="' + toggleIcon['opened'] + '" class="toggle-child" onclick="toggleChild(this);">';
+				rowDataHtml += '	</span>';
+				rowDataHtml += '	<span class="field-name">' + g_subproject_all[subprojectIndex]['name'] + '</span>';
+				/* rowDataHtml += '	<span class="field-compiler">' + ___genStdHtml___a_abbr(gainPersonStr(g_subproject_all[subprojectIndex]['compiler']), 13) + '</span>';
+				rowDataHtml += '	<span class="field-executor">' + ___genStdHtml___a_abbr(gainPersonStr(g_subproject_all[subprojectIndex]['executor']), 13) + '</span>'; */
+				rowDataHtml += '	<span class="field-name">' + g_subproject_all[subprojectIndex]['subprojectBudgetaryAmount'] + '</span>';
+				rowDataHtml += '	<span class="field-name">' + g_subproject_all[subprojectIndex]['subprojectBudgetaryAmountAffirm'] + '</span>';
+				rowDataHtml += '	<span class="field-name">' + g_subproject_all[subprojectIndex]['subprojectBudgetaryYear'] + '</span>';
+				rowDataHtml += '	<span class="field-description">' + g_subproject_all[subprojectIndex]['description'] + '</span>';
+				rowDataHtml += '	<span>';
+				rowDataHtml += '		<a class="btn btn-success" onclick="subprojectAdd(this);">添加</a>';
+				rowDataHtml += '		<a class="btn btn-danger" onclick="subprojectDel(this);">删除</a>';
+				rowDataHtml += '	</span>';
+				rowDataHtml += '</div>';
+				var pid = g_subproject_all[subprojectIndex]['pid'];
+				if (pid != null) {
+					var rdRef = jQuery('.row-data[data-id="' + pid + '"]');
+					var child = rdRef.next('ul');
+					if (child.length > 0) {
+						jQuery(child).children('li').append(rowDataHtml);
+						jQuery(child).children('li').children('.row-data:last').find('.toggle-child').css('opacity', '0');
+					} else {
+						rowDataHtml = '<ul class="row-data-ul"><li>' + rowDataHtml + '</li></ul>';
+						rdRef.after(rowDataHtml);
+						rdRef.find('.toggle-child').css('opacity', '1');
+						rdRef.next('ul').children('li').children('.row-data:last').find('.toggle-child').css('opacity', '0');
+					}
+				} else {
+					jQuery('#node-subproject .subproject-set').children('li').append(rowDataHtml);
+					jQuery('#node-subproject .toggle-child:last').css('opacity', '0');
+					jQuery('#node-subproject').getNiceScroll().resize();
+					jQuery('#node-subproject').getNiceScroll(0).doScrollTop(document.getElementById('node-subproject').scrollHeight, 0);
+				}
+				subprojectOutputFlush();
+			}
+			
+			function toggleChild(handle) {
+				var child = jQuery(handle).parents('.row-data').next('ul');
+				if (child.length > 0) {
+					jQuery(handle).attr('src', jQuery(child).is(':visible') ? toggleIcon['closed'] : toggleIcon['opened']);
+					showLayer();
+					jQuery(child).toggle('fast',
+					function() {
+						jQuery('#node-subproject').getNiceScroll().resize();
+						hideLayer();
+					});
+				}
+			}
+			
+			function subprojectDel(handle) {
+				//删除数据结构
+				var dataId = jQuery(handle).parents('.row-data').attr('data-id');
+				var recurrenceDelSubset = function(id) {
+					for (var key in g_subproject_all) {
+						if (id == g_subproject_all[key]['pid']) {
+							recurrenceDelSubset(key);
+						}
+					}
+					delete g_subproject_all[id];
+				};
+				recurrenceDelSubset(dataId);
+				//删除页面元素
+				var child = jQuery(handle).parents('.row-data').next('ul');
+				if (child.length > 0) {
+					jQuery(child).remove();
+				}
+				if (jQuery(handle).parents('.row-data').siblings().length > 0) {
+					jQuery(handle).parents('.row-data').remove();
+				} else {
+					if (jQuery(handle).parents('.row-data').parent().parent().prev('.row-data').length > 0) {
+						jQuery(handle).parents('.row-data').parent().parent().prev('.row-data').find('.toggle-child').css('opacity', '0');
+					}
+					jQuery(handle).parents('.row-data').parent().parent().remove();
+				}
+				subprojectOutputFlush();
+			}
+			
+			function subprojectOutputFlush() {
+				if (jQuery('#node-subproject .row-data').length > 0) {
+					console.log('----有数据');
+					jQuery('#node-subproject-nodata').hide();
+					jQuery('#node-subproject').show();
+					jQuery('#subprojectEmptyBtn').removeClass('disabled');
+				} else {
+					console.log('----无数据');
+					jQuery('#node-subproject').hide();
+					jQuery('#node-subproject-nodata').show();
+					jQuery('#subprojectEmptyBtn').addClass('disabled');
+				} 
+			}
+			
+			function rebuildParentList(exceptId) { //添加时传null 编辑时传data-id
+				jQuery('#subproject_parentId').empty();
+				jQuery('#subproject_parentId').selectpicker('refresh');
+				var separatorGenerator = function(size) {
+					var result = '';
+					for (var i = size - 1; i >= 0; i--) {
+						result += '　　';
+					}
+					return result;
+				};
+				var html = '<option value="0">●●●●●●●●顶级</option>';
+				var recurrenceSubset = function(pid) {
+					for (var key in g_subproject_all) {
+						if (exceptId != g_subproject_all[key]['id'] && pid == g_subproject_all[key]['pid']) {
+							html += '<option value="' + key + '">' + separatorGenerator(g_subproject_all[key]['level'] - 1) + g_subproject_all[key]['name'] + '</option>';
+							recurrenceSubset(key);
+						}
+					}
+				};
+				for (var key in g_subproject_all) {
+					if (exceptId != g_subproject_all[key]['id'] && null == g_subproject_all[key]['pid']) {
+						html += '<option value="' + key + '">' + separatorGenerator(g_subproject_all[key]['level'] - 1) + g_subproject_all[key]['name'] + '</option>';
+						recurrenceSubset(key);
+					}
+				}
+				jQuery('#subproject_parentId').append(html);
+				jQuery('#subproject_parentId').selectpicker('refresh');
+			}
+			
+			//提交表单前
+			function beforeSubmit() {
+			/* 	var projectType = jQuery('#projectType').val();
+				if (projectType == null || projectType == '') {
+					___dynamic_function = function() {
+						jQuery('button[data-id="projectType"]').focus().click();
+					};
+					___msg('温馨提示', '请选择项目类型！', {
+						closed: ___dynamic_function
+					});
+					return false;
+				}
+				jQuery('#mainForm\\:projectTypeHidden').val(projectType); */
+			
+				var departmentInfoId = jQuery('#departmentInfoId').val();
+				if (departmentInfoId == null || departmentInfoId == '') {
+					___dynamic_function = function() {
+						jQuery('button[data-id="departmentInfoId"]').focus().click();
+					};
+					___msg('温馨提示', '请报销部门！', {
+						closed: ___dynamic_function
+					});
+					return false;
+				}
+				jQuery('#mainForm\\:departmentInfoIdHidden').val(departmentInfoId);
+			
+			/* 	var budgetPersonCompilerIds = jQuery('#budgetPersonCompilerIds').val();
+				if (budgetPersonCompilerIds == null || budgetPersonCompilerIds == '') {
+					___dynamic_function = function() {
+						jQuery('button[data-id="budgetPersonCompilerIds"]').focus().click();
+					};
+					___msg('温馨提示', '请选择编制人员！', {
+						closed: ___dynamic_function
+					});
+					return false;
+				}
+			
+				var budgetPersonExecutorIds = jQuery('#budgetPersonExecutorIds').val(); */
+				
+				/* if (budgetPersonExecutorIds == null || budgetPersonExecutorIds == '') {
+					___dynamic_function = function() {
+						jQuery('button[data-id="budgetPersonExecutorIds"]').focus().click();
+					};
+					___msg('温馨提示', '请选择执行人员！', {
+						closed: ___dynamic_function
+					});
+					return false;
+				} */
+			
+				/* var fundsSourceId = jQuery('#fundsSourceId').val();
+				if (fundsSourceId == null || fundsSourceId == '') {
+					___dynamic_function = function() {
+						jQuery('button[data-id="fundsSourceId"]').focus().click();
+					};
+					___msg('温馨提示', '请选择资金来源！', {
+						closed: ___dynamic_function
+					});
+					return false;
+				} */
+				jQuery('#mainForm\\:fundsSourceIdHidden').val(fundsSourceId);
+
+				var process_type = jQuery('input[name="process_type"]:checked').val();
+				jQuery('#mainForm\\:process_type').val(process_type);
+
+				jQuery('#mainForm\\:subprojectInfoHidden').val(JSON.stringify(g_subproject_all));
+			}
+			
+			function debugInfo() {
+				___log('这是--------'+JSON.stringify(g_subproject_all));
+			}
+
+		//]]>
+		</script>
+	</ui:define>
+</ui:composition>
