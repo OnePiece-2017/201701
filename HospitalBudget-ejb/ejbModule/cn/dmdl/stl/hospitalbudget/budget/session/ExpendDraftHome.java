@@ -160,6 +160,7 @@ public class ExpendDraftHome extends CriterionEntityHome<Object> {
 		}
 		gainTamperData2result.accumulate("old_generic", pullOldProject(gainTamperData2args, "generic_project_id", "generic_project", "generic_project_compiler"));
 		gainTamperData2result.accumulate("old_routine", pullOldProject(gainTamperData2args, "routine_project_id", "routine_project", "routine_project_compiler"));
+		System.out.println(gainTamperData2result);
 	}
 
 	@SuppressWarnings("unchecked")
@@ -213,6 +214,7 @@ public class ExpendDraftHome extends CriterionEntityHome<Object> {
 				nodeTmp.accumulate("projectName", valueMap.get(root).getTheValue());
 				nodeTmp.accumulate("fundsSource", valueMap.get(valueMap.get(root).getTopLevelProjectId()).getYsFundsSource().getTheValue());
 				nodeTmp.accumulate("departmentName", valueMap.get(valueMap.get(root).getTopLevelProjectId()).getYsDepartmentInfo().getTheValue());
+				nodeTmp.accumulate("bottomLevel", valueMap.get(root).isBottomLevel());
 				nodeTmp.accumulate("subset", new JSONArray());
 				result.add(nodeTmp);
 				processGenericProjectLeaf(result.getJSONObject(result.size() - 1), nexusMap, valueMap, nexusMap.get(root));
@@ -289,6 +291,7 @@ public class ExpendDraftHome extends CriterionEntityHome<Object> {
 				nodeTmp.accumulate("projectName", valueMap.get(root).getTheValue());
 				nodeTmp.accumulate("fundsSource", valueMap.get(valueMap.get(root).getTopLevelProjectId()).getYsFundsSource().getTheValue());
 				nodeTmp.accumulate("departmentName", valueMap.get(valueMap.get(root).getTopLevelProjectId()).getYsDepartmentInfo().getTheValue());
+				nodeTmp.accumulate("bottomLevel", valueMap.get(root).isBottomLevel());
 				nodeTmp.accumulate("subset", new JSONArray());
 				result.add(nodeTmp);
 				processRoutineProjectLeaf(result.getJSONObject(result.size() - 1), nexusMap, valueMap, nexusMap.get(root));

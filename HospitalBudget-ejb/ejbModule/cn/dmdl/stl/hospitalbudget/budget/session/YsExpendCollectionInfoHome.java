@@ -54,7 +54,6 @@ public class YsExpendCollectionInfoHome extends CriterionEntityHome<Object> {
 		sql.append("AND ici.`delete` = 0 ");
 		sql.append("INNER JOIN hospital_budget.generic_project rp ON ici.generic_project_id = rp.the_id ");
 		sql.append("WHERE bcd.budget_collection_dept_id = ").append(expendCollectionDeptId).append(" ");
-		System.out.println(sql);
 		List<Object[]> incomeCollectionInfoList = getEntityManager().createNativeQuery(sql.toString()).getResultList();
 		//TODO 获取上一年的预算数据
 		

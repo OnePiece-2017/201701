@@ -72,12 +72,13 @@ public class ExpendApplayList extends CriterionNativeQuery<Object[]> {
 		sql.append(" LEFT JOIN user_info_extend uie on ui.user_info_extend_id=uie.user_info_extend_id ");
 		sql.append(" where eai.deleted=0 ");
 		if(privateRole){
-			sql.append(" eai.insert_user= ").append(sessionToken.getUserInfoId());
+			sql.append(" and eai.insert_user= ").append(sessionToken.getUserInfoId());
 		}
 		if(null != searchKey && !searchKey.equals("")){
 			sql.append(" and (eai.expend_apply_code = '%").append(searchKey).append("%' eai.finace_account_name LIKE '%").append(searchKey).append("%')");
 		}
 		sql.insert(0, "select * from (").append(") as recordset");
+		System.out.println(sql);
 		setEjbql(sql.toString());
 		return super.createQuery();
 	}

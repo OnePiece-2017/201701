@@ -60,22 +60,25 @@
 							</a:repeat>
 						</select>
 					</div>
+					<div class="fl" style="margin-left:10px;">
+						<a class="btn btn-primary mr15" onclick="return onSave();">追回所有预算</a>
+					</div>
 				</div>
 				<div style="float: right;">
 					<table class="normal-btn">
 						<tr>
 							<td>
-								<a class="btn btn-primary mr15" onclick="return onSave();">导出</a>
+								<a class="btn btn-primary mr15" onclick="return goAhead();">通过</a>
 							</td>
 							<td>
-								<a class="btn btn-primary mr15" onclick="return onSubmit();">下达</a>
+								<a class="btn btn-primary mr15" onclick="return onSave();">不通过</a>
 							</td>
 						</tr>
 					</table>
 				</div>
 			</div>
 			<strong style="font-size: 20px;">支出预算审核</strong>
-			<font style="margin-left: 15px;color: #f903ed;">项目金额(合计：<span class="node-totalAmount">--</span>元)</font>
+			<font style="margin-left: 15px;color: #f903ed;">项目金额(合计：<span class="node-totalAmount"></span>元)</font>
 			<strong style="font-size: 28px;position:relative;left:30%;" id="dept_name"></strong>
 			<div class="g-data-list-table freeze-attendProject">
 			    <table class="record" width="100%" cellpadding="0" cellspacing="0">
@@ -88,7 +91,7 @@
 			            <th width="10%">与上一年预算<br />同比增减(万元)</th>
 			            <th width="10%">与上一年预算<br />同比增减率</th>
 			            <th width="20%">金额计算依据及备注</th>
-			            <th width="5%">附件</th>
+			            <th width="5%">状态</th>
 			            <th width="5%">操作</th>
 			        </tr>
 				</table>
@@ -103,9 +106,16 @@
 				</table>
 			</div>
 		</div>
+		<h:inputHidden id="departmentInfoIdHidden" value="#{sessionToken.departmentInfoId}" />
 		<a:form>
 			<a:queue requestDelay="100" ignoreDupResponses="true" />
-			<a:jsFunction name="getCollectionInfoAction"  data="#{ysExpendCollectionInfoHome.collectionExpendInfo}" oncomplete="wirePage(data);">
+			<a:jsFunction name="filterCollectionAction"  data="#{expendCheckHome.draftInfo}" oncomplete="wirePage(data);">
+				<a:actionparam name="year" assignTo="#{expendCheckHome.year}" />
+				<a:actionparam name="deptId" assignTo="#{expendCheckHome.deptIds}" />
+				<a:actionparam name="fundsSourceId" assignTo="#{expendCheckHome.fundsSourceId}" />
+			</a:jsFunction>
+			<a:jsFunction name="goAheadAction"  data="#{expendCheckHome.goAhead()}" oncomplete="goHeadComplete(data);">
+				<a:actionparam name="expandDraftInfo" assignTo="#{expendCheckHome.expandDraftInfo}" />
 			</a:jsFunction>
 		</a:form>
 		<script type="text/javascript" src="#{request.contextPath}/javascript/template_list.js" charset="UTF-8" />
@@ -132,7 +142,86 @@
 				touchbehavior : false,
 				autohidemode : false
 		    });
+		    jQuery("#departmentIds").val(jQuery("#departmentInfoIdHidden").val());
+		    jQuery("#fundsSourceId").val(1);
+		    jQuery('.selectpicker').selectpicker("render");
+
+		    jQuery(".record").on("ifChanged", "input", function(){
+				var icheckName = jQuery(this).attr("name");
+			    if(jQuery(this).is(":checked")){//被选中
+					jQuery(".icheck[name='" + icheckName + "']").iCheck('check');
+				}else{
+					jQuery(".icheck[name='" + icheckName + "']").iCheck('uncheck');
+				}
+			});
+		    filterDraft();
+		    jQuery('#budgetYear, #departmentIds, #fundsSourceId').change(filterDraft);
+
 		});
+
+		function filterDraft(){
+			var year = jQuery("#budgetYear").val();
+		    var deptIds = jQuery("#departmentIds").val();
+		    if(deptIds){
+		    	deptIds = deptIds.toString(); 
+			}
+			var fundsSourceId = jQuery("#fundsSourceId").val();
+		    filterCollectionAction(year, deptIds, fundsSourceId);
+		}
+
+		function wirePage(data){
+			var jsonArr= data.draft_info;
+			var html = "";
+		    jQuery(jsonArr).each(function(index, val){
+			    if(!val.is_root){
+			    	html += "<tr class='treegrid-" + val.project_id + " treegrid-parent-" + val.the_pid + "'>";
+				}else{
+					html += "<tr class='root treegrid-" + val.project_id + "'>";
+				}
+			  	html += "<td style='text-align:left;'>" + val.project_name + "</td>";
+			  	if(val.is_usual == 1){
+				  	html += "<td>常规</td>";
+				}else{
+					html += "<td>项目</td>";
+				}
+			  	html += "<td>" + val.dept_name + "</td>";
+			  	html += "<td>" + val.project_source + "</td>";
+			  	html += "<td>" + val.project_amount + "</td>";
+			  	html += "<td>" + val.with_last_year_num + "</td>";
+			  	html += "<td>" + val.with_last_year_percent + "</td>";
+			  	html += "<td>" + val.formula_remark + "</td>";
+			  	html += "<td>附件</td>";
+			  	html += '<td><input type="checkbox" class="icheck" id="' + val.process_step_info_id + '_' + val.ys_expand_draft_id + '" name="' + val.top_level_project_id + '"></td>';
+			  	html += "</tr>";
+			});
+			jQuery(".record").append(html);
+			jQuery('.record').treegrid();
+			jQuery(".node-totalAmount").html(data.total_amount);
+
+			jQuery('.icheck').iCheck({
+				checkboxClass: 'icheckbox_square-blue',
+				radioClass: 'iradio_square-blue',
+				increaseArea: '20%'
+			});
+		}
+
+
+		//通过
+		function goAhead(){
+			var checkArr = jQuery(".icheck:checked");
+			if(checkArr.length <= 0){
+				___msg('温馨提示', '请选择具体的项目！', {
+					closed: ___dynamic_function
+				});
+				return false;
+			}
+			var expandJson = [];
+			jQuery(checkArr).each(function(index, val){
+				expandJson.push({'step_id' : jQuery(val).attr("id").split("_")[0] , 'draft_id' : jQuery(val).attr("id").split("_")[1]});
+			});
+			var expandDraftInfo = JSON.stringify(expandJson)
+			goAheadAction(expandDraftInfo);
+	}
 
 		//]]>
 		</script>
