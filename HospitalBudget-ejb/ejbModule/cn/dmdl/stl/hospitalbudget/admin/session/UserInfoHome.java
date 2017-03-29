@@ -15,7 +15,6 @@ import cn.dmdl.stl.hospitalbudget.boot.ConfigureCache;
 import cn.dmdl.stl.hospitalbudget.common.session.CriterionEntityHome;
 import cn.dmdl.stl.hospitalbudget.hospital.entity.YsDepartmentInfo;
 import cn.dmdl.stl.hospitalbudget.util.Assit;
-import cn.dmdl.stl.hospitalbudget.util.DateTimeHelper;
 import cn.dmdl.stl.hospitalbudget.util.GlobalConstant;
 import cn.dmdl.stl.hospitalbudget.util.MD5;
 
@@ -27,8 +26,6 @@ public class UserInfoHome extends CriterionEntityHome<UserInfo> {
 	private Integer roleInfoId;// 角色value
 	private UserInfoExtend userInfoExtend;// 用户信息-扩展
 	private String password;// 密码
-	private String birthday;// 生日
-	private String interest;// 兴趣
 	private List<Object[]> departmentInfoList;// 科室select
 	private Integer departmentInfoId;// 科室id
 	private boolean isFirstTime;// 首次标记（提交表单后返回错误状态重载页面控件，如下拉框。。。）
@@ -58,12 +55,6 @@ public class UserInfoHome extends CriterionEntityHome<UserInfo> {
 		instance.setInsertUser(sessionToken.getUserInfoId());
 		userInfoExtend.setInsertTime(new Date());
 		userInfoExtend.setInsertUser(sessionToken.getUserInfoId());
-		if (birthday != null && !"".equals(birthday)) {
-			userInfoExtend.setBirthday(DateTimeHelper.strToDate(birthday, DateTimeHelper.PATTERN_DATE));
-		} else {
-			userInfoExtend.setBirthday(null);
-		}
-		userInfoExtend.setInterest(interest);
 		getEntityManager().persist(userInfoExtend);
 		instance.setUserInfoExtend(userInfoExtend);
 		getEntityManager().persist(instance);
@@ -98,12 +89,6 @@ public class UserInfoHome extends CriterionEntityHome<UserInfo> {
 		instance.setUpdateUser(sessionToken.getUserInfoId());
 		userInfoExtend.setUpdateTime(new Date());
 		userInfoExtend.setUpdateUser(sessionToken.getUserInfoId());
-		if (birthday != null && !"".equals(birthday)) {
-			userInfoExtend.setBirthday(DateTimeHelper.strToDate(birthday, DateTimeHelper.PATTERN_DATE));
-		} else {
-			userInfoExtend.setBirthday(null);
-		}
-		userInfoExtend.setInterest(interest);
 		getEntityManager().flush();
 		raiseAfterTransactionSuccessEvent();
 		return "updated";
@@ -210,10 +195,6 @@ public class UserInfoHome extends CriterionEntityHome<UserInfo> {
 			roleInfoId = roleInfoId != null ? roleInfoId : instance.getRoleInfo().getRoleInfoId();
 			userInfoExtend = instance.getUserInfoExtend();
 			userInfoExtend.setSex(userInfoExtend.getSex() != 0 ? userInfoExtend.getSex() : 1);
-			if (instance.getUserInfoExtend().getBirthday() != null) {
-				birthday = birthday != null ? birthday : DateTimeHelper.dateToStr(instance.getUserInfoExtend().getBirthday(), DateTimeHelper.PATTERN_DATE);
-			}
-			interest = interest != null ? interest : instance.getUserInfoExtend().getInterest();
 		} else {
 			userInfoExtend = userInfoExtend != null ? userInfoExtend : new UserInfoExtend();
 			userInfoExtend.setSex(userInfoExtend.getSex() != 0 ? userInfoExtend.getSex() : 1);
@@ -263,22 +244,6 @@ public class UserInfoHome extends CriterionEntityHome<UserInfo> {
 
 	public void setPassword(String password) {
 		this.password = password;
-	}
-
-	public String getBirthday() {
-		return birthday;
-	}
-
-	public void setBirthday(String birthday) {
-		this.birthday = birthday;
-	}
-
-	public String getInterest() {
-		return interest;
-	}
-
-	public void setInterest(String interest) {
-		this.interest = interest;
 	}
 
 	public List<Object[]> getDepartmentInfoList() {

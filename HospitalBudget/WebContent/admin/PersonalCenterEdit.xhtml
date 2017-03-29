@@ -64,23 +64,6 @@
 									<table>
 										<tr>
 											<td valign="middle">
-												<span class="field-name mb10">昵称</span>
-											</td>
-											<td valign="middle">
-												<h:inputText id="nickname" value="#{personalCenterHome.instance.userInfoExtend.nickname}" styleClass="form-control mb10 fix--w220" />
-											</td>
-											<td valign="middle">
-												<font color="red" style="margin-left: 3px;">*</font>
-											</td>
-										</tr>
-									</table>
-								</div>
-							</td>
-							<td width="50%">
-								<div class="pb20">
-									<table>
-										<tr>
-											<td valign="middle">
 												<span class="field-name mb10">姓名</span>
 											</td>
 											<td valign="middle">
@@ -93,8 +76,6 @@
 									</table>
 								</div>
 							</td>
-						</tr>
-						<tr>
 							<td width="50%">
 								<div class="pb20">
 									<table>
@@ -116,66 +97,6 @@
 									</table>
 								</div>
 							</td>
-							<td width="50%">
-								<div class="pb20">
-									<table>
-										<tr>
-											<td valign="middle">
-												<span class="field-name mb10">生日</span>
-											</td>
-											<td valign="middle">
-												<div class="form-group">
-													<div class="input-group date form_date col-md-5">
-														<h:inputText id="birthday" value="#{personalCenterHome.birthday}" styleClass="form-control mb10 fix--w141" readonly="true" />
-														<h:inputHidden id="birthdayHidden" value="#{personalCenterHome.birthday}" />
-														<span class="input-group-addon"><span class="glyphicon glyphicon-remove"></span></span>
-														<span class="input-group-addon"><span class="glyphicon glyphicon-calendar"></span></span>
-													</div>
-												</div>
-											</td>
-											<td valign="middle">
-												<font color="red" style="margin-left: 3px;"></font>
-											</td>
-										</tr>
-									</table>
-								</div>
-							</td>
-						</tr>
-						<tr>
-							<td width="50%">
-								<div class="pb20">
-									<table>
-										<tr>
-											<td valign="middle">
-												<span class="field-name mb10">手机</span>
-											</td>
-											<td valign="middle">
-												<h:inputText id="cellphone" value="#{personalCenterHome.instance.userInfoExtend.cellphone}" styleClass="form-control mb10 fix--w220" />
-											</td>
-											<td valign="middle">
-												<font color="red" style="margin-left: 3px;"></font>
-											</td>
-										</tr>
-									</table>
-								</div>
-							</td>
-							<td width="50%">
-								<div class="pb20">
-									<table>
-										<tr>
-											<td valign="middle">
-												<span class="field-name mb10">电话</span>
-											</td>
-											<td valign="middle">
-												<h:inputText id="telephone" value="#{personalCenterHome.instance.userInfoExtend.telephone}" styleClass="form-control mb10 fix--w220" />
-											</td>
-											<td valign="middle">
-												<font color="red" style="margin-left: 3px;"></font>
-											</td>
-										</tr>
-									</table>
-								</div>
-							</td>
 						</tr>
 						<tr>
 							<td width="50%">
@@ -187,47 +108,6 @@
 											</td>
 											<td valign="middle">
 												<h:inputText id="mail" value="#{personalCenterHome.instance.userInfoExtend.mail}" styleClass="form-control mb10 fix--w220" />
-											</td>
-											<td valign="middle">
-												<font color="red" style="margin-left: 3px;"></font>
-											</td>
-										</tr>
-									</table>
-								</div>
-							</td>
-							<td width="50%">
-								<div class="pb20">
-									<table>
-										<tr>
-											<td valign="middle">
-												<span class="field-name mb10">地址</span>
-											</td>
-											<td valign="middle">
-												<h:inputText id="address" value="#{personalCenterHome.instance.userInfoExtend.address}" styleClass="form-control mb10 fix--w220" />
-											</td>
-											<td valign="middle">
-												<font color="red" style="margin-left: 3px;"></font>
-											</td>
-										</tr>
-									</table>
-								</div>
-							</td>
-						</tr>
-						<tr>
-							<td width="50%">
-								<div class="pb20">
-									<table>
-										<tr>
-											<td valign="middle">
-												<span class="field-name mb10">兴趣</span>
-											</td>
-											<td valign="middle">
-												<select id="interest" class="selectpicker" multiple="multiple" data-live-search="true">
-													<a:repeat value="#{commonTool.getDictionaryByPid(7)}" var="_var">
-														<option value="#{_var.theId}">#{_var.theValue}</option>
-													</a:repeat>
-												</select>
-												<h:inputHidden id="interestHidden" value="#{personalCenterHome.interest}" />
 											</td>
 											<td valign="middle">
 												<font color="red" style="margin-left: 3px;"></font>
@@ -313,20 +193,13 @@
 				
 			    jQuery('.selectpicker').selectpicker();
 				
-				___textRestrictById('mainForm:nickname', 24);
 				___textRestrictById('mainForm:fullname', 24);
-				___textRestrictById('mainForm:cellphone', 12);
-				___textRestrictById('mainForm:telephone', 20);
 				___textRestrictById('mainForm:mail', 30);
-				___textRestrictById('mainForm:address', 48);
 				
 				var sexHidden = jQuery('#mainForm\\:sexHidden').val();
 				jQuery('input[name="sex_radio"][value="' + sexHidden + '"]').iCheck('check');
 			    jQuery('#roleInfoId').val(jQuery('#mainForm\\:roleInfoIdHidden').val());
 			    jQuery('#roleInfoId').selectpicker('render');
-			    
-			    jQuery('#interest').val(jQuery('#mainForm\\:interestHidden').val().split(','));
-			    jQuery('#interest').selectpicker('render');
 			    
 			    jQuery('#systemThemeId').val(jQuery('#mainForm\\:systemThemeIdHidden').val());
 			    jQuery('#systemThemeId').selectpicker('render');
@@ -335,15 +208,6 @@
 			
 			//提交表单前
 			function beforeSubmit() {
-				var nickname = jQuery('#mainForm\\:nickname').val();
-				if (nickname == null || nickname == '') {
-				    ___dynamic_function = function() {
-						jQuery('#mainForm\\:nickname').focus();
-					};
-					___msg('温馨提示', '请填写昵称！', {closed: ___dynamic_function});
-					return false;
-				}
-				
 				var fullname = jQuery('#mainForm\\:fullname').val();
 				if (fullname == null || fullname == '') {
 				    ___dynamic_function = function() {
@@ -356,15 +220,7 @@
 				var sex = jQuery('input[name="sex_radio"]:checked').val();
 				jQuery('#mainForm\\:sexHidden').val(sex);
 				
-				jQuery('#mainForm\\:birthdayHidden').val(jQuery('#mainForm\\:birthday').val());
 				jQuery('#mainForm\\:enabledHidden').val(jQuery('#enabled:checked').length > 0);
-				
-				var interest = jQuery('#interest').val();
-				if (interest != null && interest != '') {
-					jQuery('#mainForm\\:interestHidden').val(interest.join(','));
-				} else {
-					jQuery('#mainForm\\:interestHidden').val('');
-				}
 				
 				jQuery('#mainForm\\:systemThemeIdHidden').val(jQuery('#systemThemeId').val());
 

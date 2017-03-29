@@ -29,38 +29,14 @@
 					<td class="field-value" width="30%">#{userInfoHome.instance.ysDepartmentInfo.theValue}</td>
 				</tr>
 				<tr class="odd">
-					<td class="field-name" width="20%">昵称</td>
-					<td class="field-value" width="30%">#{userInfoHome.instance.userInfoExtend.nickname}</td>
 					<td class="field-name" width="20%">姓名</td>
 					<td class="field-value" width="30%">#{userInfoHome.instance.userInfoExtend.fullname}</td>
-				</tr>
-				<tr class="even">
 					<td class="field-name" width="20%">性别</td>
 					<td class="field-value" width="30%">#{userInfoHome.instance.userInfoExtend.sex == 1 ? '男' : '女'}</td>
-					<td class="field-name" width="20%">生日</td>
-					<td class="field-value" width="30%">
-						<h:outputText value="#{userInfoHome.instance.userInfoExtend.birthday}">
-							<s:convertDateTime type="both" dateStyle="full" pattern="yyyy-MM-dd" />
-						</h:outputText>
-					</td>
-				</tr>
-				<tr class="odd">
-					<td class="field-name" width="20%">手机</td>
-					<td class="field-value" width="30%">#{userInfoHome.instance.userInfoExtend.cellphone}</td>
-					<td class="field-name" width="20%">电话</td>
-					<td class="field-value" width="30%">#{userInfoHome.instance.userInfoExtend.telephone}</td>
 				</tr>
 				<tr class="even">
 					<td class="field-name" width="20%">邮箱</td>
 					<td class="field-value" colspan="3">#{userInfoHome.instance.userInfoExtend.mail}</td>
-				</tr>
-				<tr class="odd">
-					<td class="field-name" width="20%">地址</td>
-					<td class="field-value" colspan="3">#{userInfoHome.instance.userInfoExtend.address}</td>
-				</tr>
-				<tr class="even">
-					<td class="field-name" width="20%">兴趣</td>
-					<td class="field-value" colspan="3">#{commonTool.getDictionaryValueByIds(userInfoHome.instance.userInfoExtend.interest)}</td>
 				</tr>
 				<tr class="odd">
 					<td class="field-name" width="20%">创建时间</td>

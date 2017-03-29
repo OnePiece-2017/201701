@@ -14,7 +14,6 @@
 		<link rel="stylesheet" type="text/css" href="#{request.contextPath}/common/css/bootstrap-select.min.css" />
 		<link rel="stylesheet" type="text/css" href="#{request.contextPath}/common/css/bootstrap-datetimepicker.min.css" />
 		<link rel="stylesheet" type="text/css" href="#{request.contextPath}/icheck/skins/square/blue.css" />
-		<link rel="stylesheet" type="text/css" href="#{request.contextPath}/sg-fileupload/css/kernel.css" />
 	</ui:define>
 
 	<ui:define name="body">
@@ -46,10 +45,15 @@
 									<table>
 										<tr>
 											<td valign="middle">
-												<span class="field-name mb10">昵称</span>
+												<span class="field-name mb10">角色</span>
 											</td>
 											<td valign="middle">
-												<h:inputText id="nickname" value="#{userInfoHome.userInfoExtend.nickname}" styleClass="form-control mb10 fix--w220" />
+												<select id="roleInfoId" class="selectpicker">
+													<a:repeat value="#{userInfoHome.roleInfoList}" var="_var">
+														<option value="#{_var[0]}">#{_var[1]}</option>
+													</a:repeat>
+												</select>
+												<h:inputHidden id="roleInfoIdHidden" value="#{userInfoHome.roleInfoId}" />
 											</td>
 											<td valign="middle">
 												<font color="red" style="margin-left: 3px;">*</font>
@@ -103,28 +107,6 @@
 									<table>
 										<tr>
 											<td valign="middle">
-												<span class="field-name mb10">角色</span>
-											</td>
-											<td valign="middle">
-												<select id="roleInfoId" class="selectpicker">
-													<a:repeat value="#{userInfoHome.roleInfoList}" var="_var">
-														<option value="#{_var[0]}">#{_var[1]}</option>
-													</a:repeat>
-												</select>
-												<h:inputHidden id="roleInfoIdHidden" value="#{userInfoHome.roleInfoId}" />
-											</td>
-											<td valign="middle">
-												<font color="red" style="margin-left: 3px;">*</font>
-											</td>
-										</tr>
-									</table>
-								</div>
-							</td>
-							<td width="50%">
-								<div class="pb20">
-									<table>
-										<tr>
-											<td valign="middle">
 												<span class="field-name mb10">科室</span>
 											</td>
 											<td valign="middle">
@@ -142,8 +124,6 @@
 									</table>
 								</div>
 							</td>
-						</tr>
-						<tr>
 							<td width="50%">
 								<div class="pb20">
 									<table>
@@ -161,6 +141,8 @@
 									</table>
 								</div>
 							</td>
+						</tr>
+						<tr>
 							<td width="50%">
 								<div class="pb20">
 									<table>
@@ -182,44 +164,6 @@
 									</table>
 								</div>
 							</td>
-						</tr>
-						<tr>
-							<td width="50%">
-								<div class="pb20">
-									<table>
-										<tr>
-											<td valign="middle">
-												<span class="field-name mb10">手机</span>
-											</td>
-											<td valign="middle">
-												<h:inputText id="cellphone" value="#{userInfoHome.userInfoExtend.cellphone}" styleClass="form-control mb10 fix--w220" />
-											</td>
-											<td valign="middle">
-												<font color="red" style="margin-left: 3px;"></font>
-											</td>
-										</tr>
-									</table>
-								</div>
-							</td>
-							<td width="50%">
-								<div class="pb20">
-									<table>
-										<tr>
-											<td valign="middle">
-												<span class="field-name mb10">电话</span>
-											</td>
-											<td valign="middle">
-												<h:inputText id="telephone" value="#{userInfoHome.userInfoExtend.telephone}" styleClass="form-control mb10 fix--w220" />
-											</td>
-											<td valign="middle">
-												<font color="red" style="margin-left: 3px;"></font>
-											</td>
-										</tr>
-									</table>
-								</div>
-							</td>
-						</tr>
-						<tr>
 							<td width="50%">
 								<div class="pb20">
 									<table>
@@ -237,91 +181,8 @@
 									</table>
 								</div>
 							</td>
-							<td width="50%">
-								<div class="pb20">
-									<table>
-										<tr>
-											<td valign="middle">
-												<span class="field-name mb10">地址</span>
-											</td>
-											<td valign="middle">
-												<h:inputText id="address" value="#{userInfoHome.userInfoExtend.address}" styleClass="form-control mb10 fix--w220" />
-											</td>
-											<td valign="middle">
-												<font color="red" style="margin-left: 3px;"></font>
-											</td>
-										</tr>
-									</table>
-								</div>
-							</td>
 						</tr>
 						<tr>
-							<td width="50%">
-								<div class="pb20">
-									<table>
-										<tr>
-											<td valign="middle">
-												<span class="field-name mb10">生日</span>
-											</td>
-											<td valign="middle">
-												<div class="form-group">
-													<div class="input-group date form_date col-md-5">
-														<h:inputText id="birthday" value="#{userInfoHome.birthday}" styleClass="form-control mb10 fix--w141" readonly="true" />
-														<h:inputHidden id="birthdayHidden" value="#{userInfoHome.birthday}" />
-														<span class="input-group-addon"><span class="glyphicon glyphicon-remove"></span></span>
-														<span class="input-group-addon"><span class="glyphicon glyphicon-calendar"></span></span>
-													</div>
-												</div>
-											</td>
-											<td valign="middle">
-												<font color="red" style="margin-left: 3px;"></font>
-											</td>
-										</tr>
-									</table>
-								</div>
-							</td>
-							<td width="50%">
-								<div class="pb20">
-									<table>
-										<tr>
-											<td valign="middle">
-												<span class="field-name mb10">兴趣</span>
-											</td>
-											<td valign="middle">
-												<select id="interest" class="selectpicker" multiple="multiple" data-live-search="true">
-													<a:repeat value="#{commonTool.getDictionaryByPid(7)}" var="_var">
-														<option value="#{_var.theId}">#{_var.theValue}</option>
-													</a:repeat>
-												</select>
-												<h:inputHidden id="interestHidden" value="#{userInfoHome.interest}" />
-											</td>
-											<td valign="middle">
-												<font color="red" style="margin-left: 3px;"></font>
-											</td>
-										</tr>
-									</table>
-								</div>
-							</td>
-						</tr>
-						<tr>
-							<td width="50%">
-								<div class="pb20">
-									<table>
-										<tr>
-											<td valign="middle">
-												<span class="field-name mb10">附件</span>
-											</td>
-											<td valign="middle">
-												<span id="attachment"></span>
-												<h:inputHidden id="attachmentHidden" value="#{userInfoHome.userInfoExtend.attachment}" />
-											</td>
-											<td valign="middle">
-												<font color="red" style="margin-left: 3px;"></font>
-											</td>
-										</tr>
-									</table>
-								</div>
-							</td>
 							<td width="50%">
 								<div class="pb20">
 									<table>
@@ -364,7 +225,6 @@
 		<script type="text/javascript" src="#{request.contextPath}/common/js/bootstrap-datetimepicker.min.js" />
 		<script type="text/javascript" src="#{request.contextPath}/common/js/bootstrap-datetimepicker.zh-CN.js" />
 		<script type="text/javascript" src="#{request.contextPath}/icheck/js/icheck.min.js" />
-		<script type="text/javascript" src="#{request.contextPath}/sg-fileupload/js/kernel.js" />
 		<script type="text/javascript" src="#{request.contextPath}/toolkit/utils.js" />
 		<script type="text/javascript">
 		//<![CDATA[
@@ -391,16 +251,12 @@
 			    jQuery('.selectpicker').selectpicker();
 				
 				___textRestrictById('mainForm:username', 14);
-				___textRestrictById('mainForm:nickname', 24);
 				if (#{!userInfoHome.managed}) {
 					___textRestrictById('mainForm:password', 14);
 					___textRestrictById('mainForm:passwordConfirm', 14);
 				}
 				___textRestrictById('mainForm:fullname', 24);
-				___textRestrictById('mainForm:cellphone', 12);
-				___textRestrictById('mainForm:telephone', 20);
 				___textRestrictById('mainForm:mail', 30);
-				___textRestrictById('mainForm:address', 48);
 				
 				jQuery('.icheck').iCheck({
 					checkboxClass: 'icheckbox_square-blue',
@@ -416,18 +272,8 @@
 
 				var sexHidden = jQuery('#mainForm\\:sexHidden').val();
 				jQuery('input[name="sex_radio"][value="' + sexHidden + '"]').iCheck('check');
-			    
-			    jQuery('#interest').val(jQuery('#mainForm\\:interestHidden').val().split(','));
-			    jQuery('#interest').selectpicker('render');
 
 			    jQuery('#enabled').iCheck(jQuery('#mainForm\\:enabledHidden').val() != 'true' ? 'uncheck' : 'check');
-
-				sgFileupload['install']({
-				    'target' : 'attachment',
-				    'alias' : '附件',
-				    'source' : jQuery('#mainForm\\:attachmentHidden').val(),
-				    'class' : ''
-				});
 			});
 			
 			//提交表单前
@@ -438,15 +284,6 @@
 						jQuery('#mainForm\\:username').focus();
 					};
 					___msg('温馨提示', '请填写用户名！', {closed: ___dynamic_function});
-					return false;
-				}
-				
-				var nickname = jQuery('#mainForm\\:nickname').val();
-				if (nickname == null || nickname == '') {
-				    ___dynamic_function = function() {
-						jQuery('#mainForm\\:nickname').focus();
-					};
-					___msg('温馨提示', '请填写昵称！', {closed: ___dynamic_function});
 					return false;
 				}
 
@@ -506,18 +343,7 @@
 				var sex = jQuery('input[name="sex_radio"]:checked').val();
 				jQuery('#mainForm\\:sexHidden').val(sex);
 				
-				jQuery('#mainForm\\:birthdayHidden').val(jQuery('#mainForm\\:birthday').val());
-				
-				var interest = jQuery('#interest').val();
-				if (interest != null && interest != '') {
-					jQuery('#mainForm\\:interestHidden').val(interest.join(','));
-				} else {
-					jQuery('#mainForm\\:interestHidden').val('');
-				}
-				
 				jQuery('#mainForm\\:enabledHidden').val(jQuery('#enabled:checked').length > 0);
-
-				jQuery('#mainForm\\:attachmentHidden').val(sgFileupload['getSource']('attachment'));
 			}
 		//]]>
 		</script>

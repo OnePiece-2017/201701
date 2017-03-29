@@ -23,11 +23,6 @@
 				<div class="fl">
 					<h:commandButton styleClass="btn btn-primary mt10 ml20" action="/admin/UserInfoList.xhtml" value="搜索" />
 				</div>
-				<s:fragment rendered="#{s:hasRole('user_management/export')}">
-					<div class="fl">
-						<h:commandButton styleClass="btn btn-success mt10 ml10" action="#{userInfoList.export}" value="导出" />
-					</div>
-				</s:fragment>
 				<s:fragment rendered="#{s:hasRole('user_management/create')}">
 					<div class="fr">
 						<s:link value="添加" view="/admin/UserInfoEdit.xhtml" styleClass="btn btn-success fr mt10 mr10">

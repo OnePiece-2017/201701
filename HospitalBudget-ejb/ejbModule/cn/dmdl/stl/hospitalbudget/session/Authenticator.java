@@ -85,7 +85,7 @@ public class Authenticator implements AuthenticatorLocal {
 				sessionToken.setUserInfoId(userInfo.getUserInfoId());
 				sessionToken.setRoleInfoId(userInfo.getRoleInfo().getRoleInfoId());
 				sessionToken.setUsername(userInfo.getUsername());
-				sessionToken.setNickname(userInfo.getUserInfoExtend().getNickname());
+				sessionToken.setFullname(userInfo.getUserInfoExtend().getFullname());
 
 				// 设置主题（优先级：用户>角色>系统）
 				String systemThemeName = null;
@@ -225,7 +225,7 @@ public class Authenticator implements AuthenticatorLocal {
 			sessionToken.setUserInfoId(null);
 			sessionToken.setUsername(null);
 			sessionToken.setUserInfoIdMD5(null);
-			sessionToken.setNickname(null);
+			sessionToken.setFullname(null);
 			sessionToken.setSystemThemeName(null);
 			sessionToken.setSystemThemeNameSource(null);
 			sessionToken.setSystemThemeCssPath(null);
