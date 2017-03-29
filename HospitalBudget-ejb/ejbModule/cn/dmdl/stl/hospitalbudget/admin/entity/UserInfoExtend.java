@@ -26,16 +26,9 @@ public class UserInfoExtend implements java.io.Serializable {
 
 	private static final long serialVersionUID = 1L;
 	private Integer userInfoExtendId;
-	private String nickname;
 	private String fullname;
 	private String avatar;
-	private Date birthday;
-	private String cellphone;
-	private String telephone;
 	private String mail;
-	private String address;
-	private String interest;
-	private String attachment;
 	private Date insertTime;
 	private Integer insertUser;
 	private Date updateTime;
@@ -55,17 +48,6 @@ public class UserInfoExtend implements java.io.Serializable {
 
 	public void setUserInfoExtendId(Integer userInfoExtendId) {
 		this.userInfoExtendId = userInfoExtendId;
-	}
-
-	@Column(name = "nickname", nullable = false, length = 24)
-	@NotNull
-	@Length(max = 24)
-	public String getNickname() {
-		return this.nickname;
-	}
-
-	public void setNickname(String nickname) {
-		this.nickname = nickname;
 	}
 
 	@Column(name = "fullname", nullable = false, length = 24)
@@ -89,36 +71,6 @@ public class UserInfoExtend implements java.io.Serializable {
 		this.avatar = avatar;
 	}
 
-	@Temporal(TemporalType.DATE)
-	@Column(name = "birthday", length = 10)
-	public Date getBirthday() {
-		return this.birthday;
-	}
-
-	public void setBirthday(Date birthday) {
-		this.birthday = birthday;
-	}
-
-	@Column(name = "cellphone", length = 12)
-	@Length(max = 12)
-	public String getCellphone() {
-		return this.cellphone;
-	}
-
-	public void setCellphone(String cellphone) {
-		this.cellphone = cellphone;
-	}
-
-	@Column(name = "telephone", length = 20)
-	@Length(max = 20)
-	public String getTelephone() {
-		return this.telephone;
-	}
-
-	public void setTelephone(String telephone) {
-		this.telephone = telephone;
-	}
-
 	@Column(name = "mail", length = 30)
 	@Length(max = 30)
 	public String getMail() {
@@ -127,36 +79,6 @@ public class UserInfoExtend implements java.io.Serializable {
 
 	public void setMail(String mail) {
 		this.mail = mail;
-	}
-
-	@Column(name = "address", length = 48)
-	@Length(max = 48)
-	public String getAddress() {
-		return this.address;
-	}
-
-	public void setAddress(String address) {
-		this.address = address;
-	}
-
-	@Column(name = "interest", length = 255)
-	@Length(max = 255)
-	public String getInterest() {
-		return interest;
-	}
-
-	public void setInterest(String interest) {
-		this.interest = interest;
-	}
-
-	@Column(name = "attachment", length = 32)
-	@Length(max = 32)
-	public String getAttachment() {
-		return attachment;
-	}
-
-	public void setAttachment(String attachment) {
-		this.attachment = attachment;
 	}
 
 	@Temporal(TemporalType.TIMESTAMP)

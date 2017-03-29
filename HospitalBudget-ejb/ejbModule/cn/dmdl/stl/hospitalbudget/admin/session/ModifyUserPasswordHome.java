@@ -14,6 +14,16 @@ public class ModifyUserPasswordHome extends CriterionEntityHome<UserInfo> {
 	private static final long serialVersionUID = 1L;
 	private String password;// 密码
 
+	public String reset() {
+		setMessage("");
+
+		joinTransaction();
+		instance.setPassword(MD5.getMD5Alpha(""));
+		getEntityManager().flush();
+		raiseAfterTransactionSuccessEvent();
+		return "reseted";
+	}
+
 	@Override
 	public String update() {
 		setMessage("");
