@@ -3,5 +3,6 @@
 	xsi:schemaLocation="http://jboss.com/products/seam/pages http://jboss.com/products/seam/pages-2.2.xsd"
 	login-required="true">
 
+	<restrict>#{s:hasRole('budget_collection_dept')}</restrict>
 
 </page>
