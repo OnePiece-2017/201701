@@ -45,6 +45,7 @@ jQuery(document).ready(function() {
 	refreshVisualPannel();// 立即刷新
 	triggerRenewDataContainer();// 触发更新数据容器函数
 	computeTotalAmount();// 实时计算总金额
+	computeParentAmount();// 实时计算父级金额
 });
 
 function refreshVisualPannel() {
@@ -291,6 +292,30 @@ function computeTotalAmount() {
 	setTimeout(computeTotalAmount, 256);// 间隔一个周期再次进行计算
 }
 
+function processParent(itemOuter, baseAdd) {
+	var ul = jQuery(itemOuter).parent('li').parent('ul');
+	if (!ul.hasClass('data-container')) {
+		var itemOuterParent = ul.prev('.item-outer');
+		var refer = itemOuterParent.find('.field-project-amount span');
+		if (!jQuery.isNumeric(refer.html())) {
+			refer.html(0);
+		}
+		if (!jQuery.isNumeric(baseAdd)) {
+			baseAdd = 0;
+		}
+		refer.html((Number(refer.html()) + Number(baseAdd)).toFixed(FIX_RANGE_NUM));
+		processParent(itemOuterParent, baseAdd);
+	}
+}
+
+function computeParentAmount() {
+	jQuery('.draft-table-body .data-container .item-outer.read-only .field-project-amount span').html(0);
+	jQuery('.draft-table-body .data-container .item-outer.write-able').each(function() {
+		processParent(this, jQuery(this).find('.field-project-amount input').val());
+	});
+	setTimeout(computeParentAmount, 256);// 间隔一个周期再次进行计算
+}
+
 function saveData() {
 	showLayer();
 	var allowExec = false;
@@ -388,10 +413,10 @@ function submitData() {
 	jQuery('.draft-table-body .data-container .item-outer:not(.locking)').filter(':not([the-status]), [the-status="0"], [the-status="2"], [the-status="4"]').each(function() {
 		var tempHandler = null;// 临时句柄
 		var readLine = false;
-		if(jQuery(this).hasClass("read-only")){
+		if (jQuery(this).hasClass("read-only")) {
 			readLine = true;
 		}
-		if(readLine){//只读行，父类项目
+		if (readLine) {// 只读行，父类项目
 			// 预算金额
 			var projectAmount = jQuery(this).find('.field-project-amount span').html();
 
@@ -413,7 +438,7 @@ function submitData() {
 			    'attachment' : attachment
 			});
 			allowExec = true;// 允许执行
-		}else{//编辑行，子集项目
+		} else {// 编辑行，子集项目
 			// 预算金额
 			var projectAmount = jQuery(this).find('.field-project-amount input').val();
 			tempHandler = jQuery(this).find('.field-project-amount input');
