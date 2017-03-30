@@ -67,12 +67,11 @@ public class ExpendApplyInfoHome extends CriterionEntityHome<ExpendApplyInfo>{
 	private String reciveCompany;//收款单位
 	private String invoiceSn;//发票
 	private String summary;//摘要
-	private Integer applayer;//申请人
 	private String totalMoney;//已到账金额
 	private String usedMoney;//已使用金额
 	private String canUseMoney;//可使用金额
 	private String projectJson;//json
-	
+	private String reimbur;//报销人
 	private String comment ;//备注
 	private Float allMoney;//总金额
 	private String applyTime;//申请时间
@@ -80,6 +79,7 @@ public class ExpendApplyInfoHome extends CriterionEntityHome<ExpendApplyInfo>{
 	private Integer register;//登记人
 	private JSONObject saveResult;
 	private String expendAllMoney;//总支出金额
+	private List<Object> companyList;//收款单位列表
 	@SuppressWarnings("unchecked")
 	public void wire(){
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
@@ -100,7 +100,13 @@ public class ExpendApplyInfoHome extends CriterionEntityHome<ExpendApplyInfo>{
 		if(null == expendApplyInfoId){
 			expendApplyInfoId = 0;
 		}
-		
+		//查询当前登陆人的科室
+		String companySql = "select eai.recive_company from expend_apply_info eai LEFT JOIN user_info ui on ui.user_info_id=eai.insert_user where ui.department_info_id=" + sessionToken.getDepartmentInfoId();
+		companyList = new ArrayList<Object>();
+		List<Object> oldCompany = getEntityManager().createNativeQuery(companySql).getResultList();
+		if(oldCompany.size() > 0){
+			companyList = oldCompany;
+		}
 		//初始化人员
 		wireBudgetPerson();
 		
@@ -113,9 +119,9 @@ public class ExpendApplyInfoHome extends CriterionEntityHome<ExpendApplyInfo>{
 			invoiceSn = eai.getInvoiceNum();
 			summary = eai.getSummary();
 			if(null != eai.getReimbursementer()){
-				applayer = eai.getReimbursementer();
+				reimbur = eai.getReimbursementer();
 			}else{
-				applayer = 0;
+				reimbur = "";
 			}
 			if(null != eai.getRegister()){
 				register = eai.getRegister();
@@ -531,7 +537,7 @@ public class ExpendApplyInfoHome extends CriterionEntityHome<ExpendApplyInfo>{
 		expendApplyInfo.setInsertTime(new Date());
 		expendApplyInfo.setDeleted(false);
 		expendApplyInfo.setSummary(summary);
-		expendApplyInfo.setReimbursementer(applayer);
+		expendApplyInfo.setReimbursementer(reimbur);
 		expendApplyInfo.setExpendApplyStatus(0);
 		try {
 			expendApplyInfo.setApplyTime(sdf.parse(applyTime));
@@ -717,7 +723,7 @@ public class ExpendApplyInfoHome extends CriterionEntityHome<ExpendApplyInfo>{
 		expendApplyInfo.setInsertTime(new Date());
 		expendApplyInfo.setDeleted(false);
 		expendApplyInfo.setSummary(summary);
-		expendApplyInfo.setReimbursementer(applayer);
+		expendApplyInfo.setReimbursementer(reimbur);
 		expendApplyInfo.setExpendApplyStatus(0);
 		try {
 			expendApplyInfo.setApplyTime(sdf.parse(applyTime));
@@ -1107,6 +1113,8 @@ public class ExpendApplyInfoHome extends CriterionEntityHome<ExpendApplyInfo>{
 		}
 		return projectList;
 	}
+	
+	//递归查询当前登陆人所在部门的额最高部门
 	public List<Object[]> getDepartmentInfoList() {
 		return departmentInfoList;
 	}
@@ -1236,7 +1244,6 @@ public class ExpendApplyInfoHome extends CriterionEntityHome<ExpendApplyInfo>{
 		this.saveResult = saveResult;
 	}
 
-
 	public String getSummary() {
 		return summary;
 	}
@@ -1245,13 +1252,6 @@ public class ExpendApplyInfoHome extends CriterionEntityHome<ExpendApplyInfo>{
 		this.summary = summary;
 	}
 
-	public Integer getApplayer() {
-		return applayer;
-	}
-
-	public void setApplayer(Integer applayer) {
-		this.applayer = applayer;
-	}
 
 	public String getTotalMoney() {
 		return totalMoney;
@@ -1277,93 +1277,84 @@ public class ExpendApplyInfoHome extends CriterionEntityHome<ExpendApplyInfo>{
 		this.canUseMoney = canUseMoney;
 	}
 
-
 	public String getComment() {
 		return comment;
 	}
-
 
 	public void setComment(String comment) {
 		this.comment = comment;
 	}
 
-
 	public Float getAllMoney() {
 		return allMoney;
 	}
-
 
 	public void setAllMoney(Float allMoney) {
 		this.allMoney = allMoney;
 	}
 
-
 	public String getApplyTime() {
 		return applyTime;
 	}
-
 
 	public void setApplyTime(String applyTime) {
 		this.applyTime = applyTime;
 	}
 
-
 	public String getRegistTime() {
 		return registTime;
 	}
-
 
 	public void setRegistTime(String registTime) {
 		this.registTime = registTime;
 	}
 
-
 	public Integer getRegister() {
 		return register;
 	}
-
 
 	public void setRegister(Integer register) {
 		this.register = register;
 	}
 
-
 	public Integer getExpendApplyInfoId() {
 		return expendApplyInfoId;
 	}
-
 
 	public void setExpendApplyInfoId(Integer expendApplyInfoId) {
 		this.expendApplyInfoId = expendApplyInfoId;
 	}
 
-
-
-
 	public String getExpendAllMoney() {
 		return expendAllMoney;
 	}
-
-
-
 
 	public void setExpendAllMoney(String expendAllMoney) {
 		this.expendAllMoney = expendAllMoney;
 	}
 
-
-
-
 	public Integer getProjectType() {
 		return projectType;
 	}
 
-
-
-
 	public void setProjectType(Integer projectType) {
 		this.projectType = projectType;
 	}
-	
-	
+
+	public String getReimbur() {
+		return reimbur;
+	}
+
+	public void setReimbur(String reimbur) {
+		this.reimbur = reimbur;
+	}
+
+	public List<Object> getCompanyList() {
+		return companyList;
+	}
+
+	public void setCompanyList(List<Object> companyList) {
+		this.companyList = companyList;
+	}
+
 }
