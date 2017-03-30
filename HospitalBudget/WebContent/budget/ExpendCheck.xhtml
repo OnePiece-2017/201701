@@ -65,7 +65,7 @@
 						<div style="float: left; text-align: center; line-height: 36px; width: 70px;">
 							<span>科室</span>
 						</div>
-						<select id="departmentIds" class="selectpicker" multiple="multiple" data-live-search="true" title="全部科室">
+						<select id="departmentIds" class="selectpicker" multiple="multiple" data-live-search="true" title="请选择">
 							<a:repeat value="#{commonDaoHome.departmentInfoListByUserId}" var="_var">
 								<option value="#{_var[0]}">#{_var[1]}</option>
 							</a:repeat>
@@ -82,7 +82,7 @@
 						</select>
 					</div>
 					<div class="fl" style="margin-left:10px;">
-						<a class="btn btn-primary mr15" onclick="return onSave();">追回所有预算</a>
+						<a class="btn btn-primary mr15" onclick="return ttakeBackDraft();">追回所有预算</a>
 					</div>
 				</div>
 			</div>
@@ -99,7 +99,7 @@
 								<a class="btn btn-primary mr15" onclick="return goAhead();">通过</a>
 							</td>
 							<td>
-								<a class="btn btn-primary mr15" onclick="return onSave();">不通过</a>
+								<a class="btn btn-primary mr15" onclick="return returnCollection();">不通过</a>
 							</td>
 						</tr>
 					</table>
@@ -140,6 +140,13 @@
 				<a:actionparam name="fundsSourceId" assignTo="#{expendCheckHome.fundsSourceId}" />
 			</a:jsFunction>
 			<a:jsFunction name="goAheadAction"  data="#{expendCheckHome.goAhead()}" oncomplete="goHeadComplete(data);">
+				<a:actionparam name="expandDraftInfo" assignTo="#{expendCheckHome.expandDraftInfo}" />
+			</a:jsFunction>
+			<a:jsFunction name="takeBackDraftAction"  data="#{expendCheckHome.takeBackDraft()}" oncomplete="takeBackDraftComplete(data);">
+				<a:actionparam name="year" assignTo="#{expendCheckHome.year}" />
+				<a:actionparam name="deptId" assignTo="#{expendCheckHome.deptIds}" />
+			</a:jsFunction>
+			<a:jsFunction name="returnCollectionAction"  data="#{expendCheckHome.returnDraft()}" oncomplete="returnDraftComplete(data);">
 				<a:actionparam name="expandDraftInfo" assignTo="#{expendCheckHome.expandDraftInfo}" />
 			</a:jsFunction>
 		</a:form>
@@ -292,6 +299,68 @@
 
 
 		function goHeadComplete(data){
+			if(data.isok == "ok"){
+				___msg('温馨提示', data.message, {
+					closed: ___dynamic_function
+				});
+				filterDraft();
+			}else{
+				___msg('温馨提示', data.message, {
+					closed: ___dynamic_function
+				});
+				return false;
+			}
+		}
+
+		function takeBackDraft(){
+			if(confirm('确定要追回该科室的预算吗')){
+				var year = jQuery("#budgetYear").val();
+			    var deptIds = jQuery("#departmentIds").val();
+			    console.log(deptIds);
+			    if(deptIds){
+			    	deptIds = deptIds.toString(); 
+				}else{
+					___msg('温馨提示', '请选择具体的科室', {
+						closed: ___dynamic_function
+					});
+				}
+			    takeBackDraftAction(year, deptIds);
+			}else{
+				return false;
+			}
+		}
+
+		function takeBackDraftComplete(data){
+			if(data.isok == "ok"){
+				___msg('温馨提示', data.message, {
+					closed: ___dynamic_function
+				});
+			}else{
+				___msg('温馨提示', data.message, {
+					closed: ___dynamic_function
+				});
+				return false;
+			}
+		}
+
+		function returnCollection(){
+			var checkArr = jQuery(".icheck:checked");
+			if(checkArr.length <= 0){
+				___msg('温馨提示', '请选择具体的项目！', {
+					closed: ___dynamic_function
+				});
+				return false;
+			}
+			var expandJson = [];
+			jQuery(checkArr).each(function(index, val){
+				expandJson.push({'step_id' : jQuery(val).attr("id").split("_")[0] , 'draft_id' : jQuery(val).attr("id").split("_")[1]});
+			});
+			var expandDraftInfo = JSON.stringify(expandJson)
+			returnCollectionAction(expandDraftInfo);
+		}
+
+
+		function returnDraftComplete(data){
 			if(data.isok == "ok"){
 				___msg('温馨提示', data.message, {
 					closed: ___dynamic_function

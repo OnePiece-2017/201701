@@ -193,7 +193,7 @@ public class ExpendCheckHome extends CriterionEntityHome<Object>{
 				connection.setAutoCommit(false);
 				if(resultSet.next()){//有下一步审核人
 					//处理流程任务数据
-					dealWithDraftProcess(connection, preparedStatement, draftIdList, draftIds, stepId);
+					goAheadDraftProcess(connection, preparedStatement, draftIdList, draftIds, stepId);
 					//添加新的任务执行人
 					for(Integer draftId : draftIdList){
 						preparedStatement = connection.prepareStatement("INSERT INTO `ys_expand_draft_process` (`ys_expand_draft_id`, `user_id`, `process_step_info_id`) VALUES (?, ?, ?)");
@@ -275,7 +275,7 @@ public class ExpendCheckHome extends CriterionEntityHome<Object>{
 					//没有下达的数据
 					//查询历史版本
 					sql.delete(0, sql.length());
-					sql.append("select t1.dept_id,MAX(t.version) as max_version from ys_expand_collection_info_log t  ");
+					sql.append("select t1.dept_id,MAX(t.version) as max_version from ys_expend_collection_info_log t  ");
 					sql.append("INNER JOIN ys_budget_collection_dept t1 ON t.budget_collection_dept_id = t1.budget_collection_dept_id ");
 					sql.append("where t1.`year` = ? AND t1.dept_id in (").append(deptIds).append(") GROUP BY t1.dept_id ");
 					preparedStatement = connection.prepareStatement(sql.toString());
@@ -290,7 +290,7 @@ public class ExpendCheckHome extends CriterionEntityHome<Object>{
 					preparedStatement.setString(1, year);
 					preparedStatement.setInt(2, HospitalConstant.COLLECTIONTYPE_EXPEND);
 					preparedStatement.setInt(3, HospitalConstant.COLLECTIONSTATUS_WAIT);
-					preparedStatement.setInt(4, HospitalConstant.COLLECTIONSTATUS_RETURN);
+					preparedStatement.setInt(4, HospitalConstant.COLLECTIONSTATUS_TAKEBACK);
 					resultSet = preparedStatement.executeQuery();
 					Map<Integer, Integer> collectionDeptIdMap = new HashMap<Integer, Integer>();//记录部门id的汇总id
 					while(resultSet.next()){
@@ -363,7 +363,7 @@ public class ExpendCheckHome extends CriterionEntityHome<Object>{
 						preparedStatement.executeUpdate();
 					}
 					
-					dealWithDraftProcess(connection, preparedStatement, draftIdList, draftIds, stepId);
+					goAheadDraftProcess(connection, preparedStatement, draftIdList, draftIds, stepId);
 					
 				}
 			}
@@ -387,7 +387,7 @@ public class ExpendCheckHome extends CriterionEntityHome<Object>{
 	}
 	
 	/**
-	 * 处理步骤数据
+	 * 通过处理步骤数据
 	 * @param connection
 	 * @param preparedStatement
 	 * @param draftIdList
@@ -395,7 +395,7 @@ public class ExpendCheckHome extends CriterionEntityHome<Object>{
 	 * @param stepId
 	 * @throws SQLException
 	 */
-	public void dealWithDraftProcess(Connection connection, PreparedStatement preparedStatement, List<Integer> draftIdList, String draftIds, int stepId) throws SQLException{
+	public void goAheadDraftProcess(Connection connection, PreparedStatement preparedStatement, List<Integer> draftIdList, String draftIds, int stepId) throws SQLException{
 		//先入日志表
 		for(Integer draftId : draftIdList){
 			preparedStatement = connection.prepareStatement("INSERT INTO `ys_expand_draft_process_log` (`ys_expand_draft_id`, `user_id`, `process_step_info_id`) VALUES (?, ?, ?)");
@@ -407,6 +407,176 @@ public class ExpendCheckHome extends CriterionEntityHome<Object>{
 		//删除流程处理人表数据
 		preparedStatement = connection.prepareStatement("delete from ys_expand_draft_process where ys_expand_draft_id in (" + draftIds + ")");
 		preparedStatement.executeUpdate();
+	}
+	
+	
+	/**
+	 * 退回处理步骤数据
+	 * @param connection
+	 * @param preparedStatement
+	 * @param draftIdList
+	 * @param draftIds
+	 * @param stepId
+	 * @throws SQLException
+	 */
+	public void returnDraftProcess(Connection connection, PreparedStatement preparedStatement, List<Integer> draftIdList, String draftIds, int stepId) throws SQLException{
+		//先入日志表
+		for(Integer draftId : draftIdList){
+			preparedStatement = connection.prepareStatement("INSERT INTO `ys_expand_draft_process_log` (`ys_expand_draft_id`, `user_id`, `process_step_info_id`, `operate_type`) VALUES (?, ?, ?, ?)");
+			preparedStatement.setInt(1, draftId);
+			preparedStatement.setInt(2, sessionToken.getUserInfoId());
+			preparedStatement.setInt(3, stepId);
+			preparedStatement.setInt(4, 1);//不通过
+			preparedStatement.executeUpdate();
+		}
+		//删除流程处理人表数据
+		preparedStatement = connection.prepareStatement("delete from ys_expand_draft_process where ys_expand_draft_id in (" + draftIds + ")");
+		preparedStatement.executeUpdate();
+	}
+	
+	/**
+	 * 预算追回
+	 * @return
+	 */
+	public JSONObject takeBackDraft(){
+		JSONObject result = new JSONObject();
+		Connection connection = DataSourceManager.open(DataSourceManager.BY_JDBC_DEFAULT);
+		PreparedStatement preparedStatement = null;
+		ResultSet resultSet = null;
+		try {
+			preparedStatement = connection.prepareStatement("select budget_collection_dept_id,dept_id,`status` from ys_budget_collection_dept where `year` = ? AND budget_type = ? AND dept_id in (" + deptIds + ")");
+			preparedStatement.setString(1, year);
+			preparedStatement.setInt(2, HospitalConstant.COLLECTIONTYPE_EXPEND);
+			resultSet = preparedStatement.executeQuery();
+			Set<Integer> collectionDeptIdSet = new HashSet<Integer>();
+			boolean takeBackFlas = false;//是否可被追回追回
+			while(resultSet.next()){
+				if(resultSet.getInt("status") == 1){
+					result.element("isok", "err");
+					result.element("message", "您的部门预算已经下达，不能追回！");
+					return result;
+				}else if(resultSet.getInt("status") == 2){
+					result.element("isok", "err");
+					result.element("message", "您的部门预算已经被追回！");
+					return result;
+				}else if(resultSet.getInt("status") == 0){
+					takeBackFlas = true;
+					collectionDeptIdSet.add(resultSet.getInt("budget_collection_dept_id"));
+				}
+			}
+			if(takeBackFlas){
+				StringBuilder sql = new StringBuilder();
+				connection.setAutoCommit(false);
+				for(Integer collectionDeptId : collectionDeptIdSet){
+					//修改汇总表状态
+					preparedStatement = connection.prepareStatement("UPDATE ys_budget_collection_dept set `status` = ? where budget_collection_dept_id = ?");
+					preparedStatement.setInt(1, HospitalConstant.COLLECTIONSTATUS_TAKEBACK);
+					preparedStatement.setInt(2, collectionDeptId);
+					preparedStatement.executeUpdate();
+					//插入历史版本
+					sql.delete(0, sql.length());
+					sql.append("INSERT INTO `ys_expend_collection_info_log` ");
+					sql.append("(`budget_collection_dept_id`, `year`, `project_source`, `routine_project_id`, `generic_project_id`, ");
+					sql.append("`bottom_level`, `project_amount`, `formula_remark`, `attachment`, `insert_time`, ");
+					sql.append("`insert_user`, `version`, `delete`) ");
+					sql.append("SELECT budget_collection_dept_id, year, project_source, routine_project_id, generic_project_id, ");
+					sql.append("bottom_level, project_amount, formula_remark, attachment, insert_time, ");
+					sql.append("insert_user, version, `delete` FROM ys_expend_collection_info where budget_collection_dept_id = ? ");
+					preparedStatement = connection.prepareStatement(sql.toString());
+					preparedStatement.setInt(1, collectionDeptId);
+					preparedStatement.executeUpdate();
+					//删除当前版本信息
+					preparedStatement = connection.prepareStatement("delete from ys_expend_collection_info where budget_collection_dept_id = ?");
+					preparedStatement.setInt(1, collectionDeptId);
+					preparedStatement.executeUpdate();
+				}
+				//将预算编制改为追回状态
+				sql.delete(0, sql.length());
+				sql.append("SELECT ed.ys_expand_draft_id FROM ys_expand_draft ed  ");
+				sql.append("INNER JOIN generic_project t ON ed.generic_project_id = t.the_id ");
+				sql.append("WHERE ed.`year` = ? AND t.department_info_id in (").append(deptIds).append(") ");
+				sql.append("UNION ");
+				sql.append("SELECT ed.ys_expand_draft_id FROM ys_expand_draft ed  ");
+				sql.append("INNER JOIN routine_project t ON ed.routine_project_id = t.the_id ");
+				sql.append("WHERE ed.`year` = ? AND t.department_info_id in (").append(deptIds).append(") ");
+				preparedStatement = connection.prepareStatement(sql.toString());
+				preparedStatement.setString(1, year);
+				preparedStatement.setString(2, year);
+				resultSet = preparedStatement.executeQuery();
+				Set<Integer> expendDraftIdSet = new HashSet<Integer>();
+				while(resultSet.next()){
+					expendDraftIdSet.add(resultSet.getInt("ys_expand_draft_id"));
+				}
+				//更新编制表
+				if(expendDraftIdSet.size() > 0){
+					String expendDraftIds = Assit.formatIdsSet(expendDraftIdSet);
+					preparedStatement = connection.prepareStatement("update ys_expand_draft set `status` = ? where ys_expand_draft_id in (" + expendDraftIds + ")");
+					preparedStatement.setInt(1, HospitalConstant.DRAFTSTATUS_TAKEBACK);
+					preparedStatement.executeUpdate();
+					//清除审核中的任务
+					preparedStatement = connection.prepareStatement("DELETE FROM ys_expand_draft_process where ys_expand_draft_id in (" + expendDraftIds + ")");
+					preparedStatement.executeUpdate();
+				}
+				connection.commit();
+				connection.setAutoCommit(true);
+			}else{
+				result.element("isok", "err");
+				result.element("message", "没有可被追回的预算！");
+				return result;
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} finally{
+			DataSourceManager.close(connection, preparedStatement, resultSet);
+		}
+		result.element("isok", "ok");
+		result.element("message", "追回成功！");
+		return result;
+	}
+	
+	/**
+	 * 退回编制
+	 * @return
+	 */
+	public JSONObject returnDraft(){
+		JSONObject result = new JSONObject();
+		Connection connection = DataSourceManager.open(DataSourceManager.BY_JDBC_DEFAULT);
+		PreparedStatement preparedStatement = null;
+		ResultSet resultSet = null;
+		System.out.println(expandDraftInfo);
+		JSONArray arr = JSONArray.fromObject(expandDraftInfo);
+		Map<Integer, List<Integer>> draftInfoMap = new HashMap<Integer, List<Integer>>();
+		for(Object obj : arr){
+			JSONObject json = JSONObject.fromObject(obj);
+			if(draftInfoMap.containsKey(json.getInt("step_id"))){
+				draftInfoMap.get(json.getInt("step_id")).add(json.getInt("draft_id"));
+			}else{
+				List<Integer> list = new ArrayList<Integer>();
+				list.add(json.getInt("draft_id"));
+				draftInfoMap.put(json.getInt("step_id"), list);
+			}
+		}
+		try {
+			connection.setAutoCommit(false);
+			for(Integer stepId : draftInfoMap.keySet()){
+				List<Integer> draftIdList = draftInfoMap.get(stepId);
+				String draftIds = Assit.formatIdsList(draftIdList);
+				preparedStatement = connection.prepareStatement("update ys_expand_draft set `status` = ? where ys_expand_draft_id in (" + draftIds + ")");
+				preparedStatement.setInt(1, HospitalConstant.DRAFTSTATUS_RETURN);
+				preparedStatement.executeUpdate();
+				returnDraftProcess(connection, preparedStatement, draftIdList, draftIds, stepId);
+				
+			}
+			connection.commit();
+			connection.setAutoCommit(true);
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} finally{
+			DataSourceManager.close(connection, preparedStatement, resultSet);
+		}
+		result.element("isok", "ok");
+		result.element("message", "退回成功！");
+		return result;
 	}
 	
 	public String getYear() {
@@ -433,8 +603,5 @@ public class ExpendCheckHome extends CriterionEntityHome<Object>{
 	public void setExpandDraftInfo(String expandDraftInfo) {
 		this.expandDraftInfo = expandDraftInfo;
 	}
-
-	
-	
 
 }

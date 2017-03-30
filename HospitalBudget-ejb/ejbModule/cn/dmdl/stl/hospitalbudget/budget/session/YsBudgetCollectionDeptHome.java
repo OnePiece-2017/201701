@@ -335,7 +335,7 @@ public class YsBudgetCollectionDeptHome extends CriterionEntityHome<Object> {
 			case HospitalConstant.COLLECTIONSTATUS_FINISH : 
 				statusName = "已下达"; 
 				break;  
-			case HospitalConstant.COLLECTIONSTATUS_RETURN : 
+			case HospitalConstant.COLLECTIONSTATUS_TAKEBACK : 
 				statusName = "被追回"; 
 				break; 
 			default: 
