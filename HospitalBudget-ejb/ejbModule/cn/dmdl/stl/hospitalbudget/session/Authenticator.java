@@ -205,7 +205,7 @@ public class Authenticator implements AuthenticatorLocal {
 		if (login != null) {
 			// 功能菜单
 			JSONArray pmi = pullMenuInfo();
-			for (int i = 0; i < 16; i++) {
+			for (int i = 0; i < 128; i++) {
 				excludeInvalidFunction(pmi);
 			}
 			sessionToken.setMenuInfoJsonArray(pmi);
