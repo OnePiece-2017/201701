@@ -192,7 +192,6 @@ public class Authenticator implements AuthenticatorLocal {
 	public void excludeInvalidFunction(JSONArray pmi) {
 		for (int i = 0; i < pmi.size(); i++) {
 			if (JSONNull.getInstance().equals(pmi.getJSONObject(i).get("tabUrl")) && 0 == pmi.getJSONObject(i).getJSONArray("leaf").size()) {
-				pmi.getJSONObject(i).accumulate("deleted", true);
 				pmi.discard(i);
 			} else {
 				excludeInvalidFunction(pmi.getJSONObject(i).getJSONArray("leaf"));
@@ -209,8 +208,6 @@ public class Authenticator implements AuthenticatorLocal {
 				excludeInvalidFunction(pmi);
 			}
 			sessionToken.setMenuInfoJsonArray(pmi);
-			// 快捷启动
-			sessionToken.setQuickStartConfig(commonTool.selectIntermediateAsIds("quick_start", "menu_info_id", "user_info_id = " + sessionToken.getUserInfoId()));
 			// 登录统计
 			LoginInfo loginInfo = new LoginInfo();
 			loginInfo.setUserInfoId(sessionToken.getUserInfoId());
@@ -246,7 +243,6 @@ public class Authenticator implements AuthenticatorLocal {
 			sessionToken.setSystemThemeNameSource(null);
 			sessionToken.setSystemThemeCssPath(null);
 			sessionToken.setMenuInfoJsonArray(null);
-			sessionToken.setQuickStartConfig(null);
 			sessionToken.setDepartmentInfoId(null);
 		}
 	}

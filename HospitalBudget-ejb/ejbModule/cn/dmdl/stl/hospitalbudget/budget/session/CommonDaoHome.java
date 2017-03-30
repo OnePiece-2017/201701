@@ -155,6 +155,19 @@ public class CommonDaoHome extends CriterionEntityHome<Object>{
 		}
 	}
 
+	public String getDepartmentInfoListByUserIdWhereCondition() {
+		StringBuffer result = new StringBuffer();
+		List<Object[]> list = getDepartmentInfoListByUserId();
+		if (list != null && list.size() > 0) {
+			for (int i = 0; i < list.size(); i++) {
+				result.append(list.get(i)[0]);
+				if (i < list.size() - 1) {
+					result.append(", ");
+				}
+			}
+		}
+		return result.toString();
+	}
 	
 	/**
 	 * 获取上一年下达的收入预算

@@ -2,6 +2,7 @@ package cn.dmdl.stl.hospitalbudget.budget.session;
 
 import javax.persistence.Query;
 
+import org.jboss.seam.annotations.In;
 import org.jboss.seam.annotations.Name;
 
 import cn.dmdl.stl.hospitalbudget.common.session.CriterionNativeQuery;
@@ -10,6 +11,9 @@ import cn.dmdl.stl.hospitalbudget.common.session.CriterionNativeQuery;
 public class GenericProjectList extends CriterionNativeQuery<Object[]> {
 
 	private static final long serialVersionUID = 1L;
+
+	@In(create = true)
+	CommonDaoHome commonDaoHome;
 
 	@Override
 	protected Query createQuery() {
@@ -28,6 +32,10 @@ public class GenericProjectList extends CriterionNativeQuery<Object[]> {
 		sql.append(" where generic_project.deleted = 0 and generic_project.the_pid is null");
 		if (keyword != null && !"".equals(keyword)) {
 			sql.append(" and generic_project.the_value like '%" + keyword + "%'");
+		}
+		String wc = commonDaoHome.getDepartmentInfoListByUserIdWhereCondition();
+		if (wc != null && !"".equals(wc)) {
+			sql.append(" and generic_project.department_info_id in (" + wc + ")");
 		}
 		sql.append(" order by generic_project.the_id desc");
 		sql.insert(0, "select * from (").append(") as recordset");
