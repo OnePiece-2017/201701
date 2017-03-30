@@ -14,19 +14,22 @@
 		<link rel="stylesheet" type="text/css" href="#{request.contextPath}/common/css/bootstrap-datetimepicker.min.css" />
 		<link rel="stylesheet" type="text/css" href="#{request.contextPath}/common/css/bootstrap-select2.min.css" />
 		<link rel="stylesheet" type="text/css" href="#{request.contextPath}/icheck/skins/square/blue.css" />
+		
+		<script type="text/javascript" src="#{request.contextPath}/common/js/bootstrap-datetimepicker.min.js" />
+		<script type="text/javascript" src="#{request.contextPath}/common/js/bootstrap-datetimepicker.zh-CN.js" />
 	</ui:define>
 	<style type="text/css">
 			button[data-id='depart']{
-				    width: 100px;
+				    width: 200px;
 			}
 			button[data-id='fundsSource']{
-				    width: 100px;
+				    width:200px;
 			}
 			button[data-id='confirmStatus']{
-				    width: 100px;
+				    width: 200px;
 			}
 			.bootstrap-select:not([class*="span"]):not([class*="col-"]):not([class*="form-control"]):not(.input-group-btn){
-				width: 100px;
+				width: 200px;
 			}
 			td{text-align: center;}
 	</style>
@@ -42,10 +45,10 @@
 								<table width="100%" cellpadding="0" cellspacing="0">
 									<tr>
 										<td valign="middle" width="30%" align="right">
-											<span class="field-name mb10">科&nbsp;&nbsp;&nbsp;&nbsp;室:</span>
+											<span class="">科</span><span>室:</span>
 										</td>
 										<td valign="middle" width="70%" style="padding-left:10px;">
-											<select id="depart" class="selectpicker">
+											<select id="depart" class="selectpicker" style="width: 200px;">
 												<a:repeat value="#{expendConfrimList.departList}" var="_var">
 													<s:fragment rendered="#{expendConfrimList.departmentId eq _var[0]}">
 														<option value="#{_var[0]}" selected="selected">#{_var[1]}</option>
@@ -68,7 +71,7 @@
 											<span class="field-name mb10">申请编制人:</span>
 										</td>
 										<td valign="middle" width="70%" style="padding-left:10px;">
-											<select id="fundsSource" class="selectpicker" style="width:">
+											<select id="fundsSource" class="selectpicker" style="width: 200px;">
 												<a:repeat value="#{expendConfrimList.applayUserList}" var="_department">
 													<option value="-1">请选择</option>
 													<optgroup label="#{_department[0]}" data-subtext="科室">
@@ -98,10 +101,17 @@
 										<span class="field-name mb10">申请提交时间:</span>
 									</td>
 									<td valign="middle" width="70%" style="padding-left:10px;">
-										<div class="input-append date form_datetime_second" style="position:relative;" >
+										<!-- <div class="input-append date form_datetime_second" style="position:relative;" >
 			                               		<input id="applyTime" type="text" value="#{expendConfrimList.applyTime}" readonly="readonly" style="border-radius:4px;width:110px;height:34;" name="time"/> 
 			                               		<span class="add-on" style="position:absolute; right:10px; top:3px;"><i class="icon-th" style="margin:0;"></i></span>
-			                            </div>
+			                            </div> -->
+			                            <div class="form-group">
+											<div class="input-group date form_date col-md-5">
+												<input id="applyTime" type="text" value="#{expendConfrimList.applyTime}" readonly="readonly" styleClass="form-control mb10 fix--w141" name="time" style="width: 125px;"/> 
+												<span class="input-group-addon"><span class="glyphicon glyphicon-remove"></span></span>
+												<span class="input-group-addon"><span class="glyphicon glyphicon-calendar"></span></span>
+											</div>
+										</div>
 									</td>
 								</tr>
 							</table>
@@ -115,7 +125,7 @@
 											<span class="field-name mb10">确认状态:</span>
 										</td>
 										<td valign="middle" width="40%" style="padding-left:10px;">
-											<select id="confirmStatus" class="selectpicker">
+											<select id="confirmStatus" class="selectpicker" style="width: 200px;">
 												<s:fragment rendered="#{expendConfrimList.confirmStatus eq -1}">
 													<option value="-1" selected="selected">全部</option>
 													<option value="0">未确认</option>
@@ -262,17 +272,18 @@
 		//<![CDATA[
 			jQuery(document).ready(function() {
 				selectInit();
-				//时间插件
-				jQuery(".form_datetime_second").datetimepicker({
-					format: "yyyy-mm-dd",  
-					autoclose: true,
+
+				jQuery('.form_date').datetimepicker({
+					language: 'zh-CN',
+					format: "yyyy-mm-dd",
+					pickerPosition: "bottom-left",
 					weekStart: 1,
-					language:  'zh-CN',
+					todayBtn: 1,
+					autoclose: 1,
+					todayHighlight: 1,
 					startView: 2,
 					minView: 2,
-					maxView: 2,	
-					forceParse: false, 
-					pickerPosition: "bottom-left"
+					forceParse: 0
 				});
 			    var message = '#{processInfoHome.message}';
 			    if (message != '') {
