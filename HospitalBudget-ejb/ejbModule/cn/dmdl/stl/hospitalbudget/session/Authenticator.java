@@ -192,7 +192,6 @@ public class Authenticator implements AuthenticatorLocal {
 	public void excludeInvalidFunction(JSONArray pmi) {
 		for (int i = 0; i < pmi.size(); i++) {
 			if (JSONNull.getInstance().equals(pmi.getJSONObject(i).get("tabUrl")) && 0 == pmi.getJSONObject(i).getJSONArray("leaf").size()) {
-				pmi.getJSONObject(i).accumulate("deleted", true);
 				pmi.discard(i);
 			} else {
 				excludeInvalidFunction(pmi.getJSONObject(i).getJSONArray("leaf"));
