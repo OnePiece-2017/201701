@@ -209,8 +209,6 @@ public class Authenticator implements AuthenticatorLocal {
 				excludeInvalidFunction(pmi);
 			}
 			sessionToken.setMenuInfoJsonArray(pmi);
-			// 快捷启动
-			sessionToken.setQuickStartConfig(commonTool.selectIntermediateAsIds("quick_start", "menu_info_id", "user_info_id = " + sessionToken.getUserInfoId()));
 			// 登录统计
 			LoginInfo loginInfo = new LoginInfo();
 			loginInfo.setUserInfoId(sessionToken.getUserInfoId());
@@ -246,7 +244,6 @@ public class Authenticator implements AuthenticatorLocal {
 			sessionToken.setSystemThemeNameSource(null);
 			sessionToken.setSystemThemeCssPath(null);
 			sessionToken.setMenuInfoJsonArray(null);
-			sessionToken.setQuickStartConfig(null);
 			sessionToken.setDepartmentInfoId(null);
 		}
 	}

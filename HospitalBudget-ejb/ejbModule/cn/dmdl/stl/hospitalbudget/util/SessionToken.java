@@ -33,7 +33,6 @@ public class SessionToken implements Serializable {
 	private String systemThemeNameSource;
 	private String systemThemeCssPath;
 	private JSONArray menuInfoJsonArray;
-	private String quickStartConfig;
 	private Integer departmentInfoId;
 
 	public Integer getUserInfoId() {
@@ -122,14 +121,6 @@ public class SessionToken implements Serializable {
 
 	public void setMenuInfoJsonArray(JSONArray menuInfoJsonArray) {
 		this.menuInfoJsonArray = menuInfoJsonArray;
-	}
-
-	public String getQuickStartConfig() {
-		return quickStartConfig;
-	}
-
-	public void setQuickStartConfig(String quickStartConfig) {
-		this.quickStartConfig = quickStartConfig;
 	}
 
 	public Integer getDepartmentInfoId() {

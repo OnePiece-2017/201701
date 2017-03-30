@@ -1,7 +1,5 @@
 //===================菜单模块开始===================
 var menuInfoJsonArray = null;
-var quickStartReference = null;
-var quickStartConfig = null;
 var tabContainer = {};
 var tabReflection = {};
 var userClickTab = false;
@@ -217,32 +215,6 @@ jQuery(document).ready(function() {
 
 	setTimeout('requestServerInfoServlet()', 0);// 异步请求远程时钟
 
-	// 快捷启动
-	if (quickStartConfig != null && quickStartConfig != '') {
-		var indexArray = quickStartConfig.split(',');
-		if (indexArray != null && indexArray.length > 0) {
-			showMainMaskLayer();// 打开顶级遮罩层
-			quickStartReference = function(index) {
-				var callback = 'quickStartReference(' + (index - 1) + ')';
-				var delay = 0;
-				if (index > -1) {
-					var funcName = jQuery('.div-main-left .function-container .func-name[tab-index="' + indexArray[index] + '"]');
-					if (funcName != null && funcName.length > 0) {
-						var funcOuter = funcName.parents('.func-outer');
-						if (funcOuter != null && funcOuter.length > 0) {
-							funcOuter.click();// 模拟用户点击
-							jQuery(window).resize();// 重绘窗体
-							delay = 1024;// 延长下一次点击时间
-						}
-					}
-					setTimeout(callback, delay);// 提高用户体验度
-				} else {
-					hideMainMaskLayer();// 关闭顶级遮罩层
-				}
-			};
-			quickStartReference(indexArray.length - 1);
-		}
-	}
 });
 
 function gotoAppropriatePosition() {
