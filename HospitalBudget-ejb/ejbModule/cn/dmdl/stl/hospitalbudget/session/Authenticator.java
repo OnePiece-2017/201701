@@ -12,6 +12,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
 import net.sf.json.JSONArray;
+import net.sf.json.JSONNull;
 import net.sf.json.JSONObject;
 
 import org.jboss.seam.annotations.Destroy;
@@ -188,11 +189,26 @@ public class Authenticator implements AuthenticatorLocal {
 		}
 	}
 
+	public void excludeInvalidFunction(JSONArray pmi) {
+		for (int i = 0; i < pmi.size(); i++) {
+			if (JSONNull.getInstance().equals(pmi.getJSONObject(i).get("tabUrl")) && 0 == pmi.getJSONObject(i).getJSONArray("leaf").size()) {
+				pmi.getJSONObject(i).accumulate("deleted", true);
+				pmi.discard(i);
+			} else {
+				excludeInvalidFunction(pmi.getJSONObject(i).getJSONArray("leaf"));
+			}
+		}
+	}
+
 	public String login() {
 		String login = identity.login();
 		if (login != null) {
 			// 功能菜单
-			sessionToken.setMenuInfoJsonArray(pullMenuInfo());
+			JSONArray pmi = pullMenuInfo();
+			for (int i = 0; i < 16; i++) {
+				excludeInvalidFunction(pmi);
+			}
+			sessionToken.setMenuInfoJsonArray(pmi);
 			// 快捷启动
 			sessionToken.setQuickStartConfig(commonTool.selectIntermediateAsIds("quick_start", "menu_info_id", "user_info_id = " + sessionToken.getUserInfoId()));
 			// 登录统计
