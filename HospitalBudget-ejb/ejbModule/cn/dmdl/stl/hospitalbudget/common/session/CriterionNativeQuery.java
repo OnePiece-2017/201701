@@ -3,11 +3,20 @@ package cn.dmdl.stl.hospitalbudget.common.session;
 import java.util.ArrayList;
 import java.util.List;
 
-import cn.dmdl.stl.hospitalbudget.boot.ConfigureCache;
+import org.jboss.seam.annotations.In;
+import org.jboss.seam.annotations.Logger;
+import org.jboss.seam.log.Log;
 
-public class CriterionNativeQuery<E> extends NativeQuery<E> {
+import cn.dmdl.stl.hospitalbudget.boot.ConfigureCache;
+import cn.dmdl.stl.hospitalbudget.util.SessionToken;
+
+public abstract class CriterionNativeQuery<E> extends NativeQuery<E> {
 
 	private static final long serialVersionUID = 1L;
+	@In
+	protected SessionToken sessionToken;
+	@Logger
+	protected Log log;
 	private String orderDirection;
 	private Integer maxResults;
 	protected static final int MAX_RESULTS = 20;

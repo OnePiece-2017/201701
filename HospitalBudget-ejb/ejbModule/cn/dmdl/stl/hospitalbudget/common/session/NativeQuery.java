@@ -14,7 +14,7 @@ import org.jboss.seam.persistence.PersistenceProvider.Feature;
 import org.jboss.seam.persistence.QueryParser;
 import org.jboss.seam.transaction.Transaction;
 
-public class NativeQuery<E> extends Query<EntityManager, E> {
+public abstract class NativeQuery<E> extends Query<EntityManager, E> {
 
 	private static final long serialVersionUID = 1L;
 
