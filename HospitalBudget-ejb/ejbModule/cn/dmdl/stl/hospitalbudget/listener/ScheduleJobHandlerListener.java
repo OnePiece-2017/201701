@@ -10,6 +10,7 @@ import org.apache.log4j.Logger;
 import org.dom4j.Document;
 import org.dom4j.Element;
 import org.dom4j.io.SAXReader;
+import org.jsoup.Jsoup;
 import org.quartz.CronTrigger;
 import org.quartz.JobDetail;
 import org.quartz.Scheduler;
@@ -63,7 +64,21 @@ public class ScheduleJobHandlerListener implements ServletContextListener {
 		} catch (Exception e) {
 			logger.error("contextInitialized", e);
 		}
-		System.out.println("系统启动完成");// 因为定时器是最后被执行的，所以理论上在这个时间节点上，应用程序应该可以正常通信了。
+		new Thread(new Runnable() {
+			public void run() {
+				int failureTimes = 0;
+				while (failureTimes < 10) {
+					try {
+						Thread.sleep(1000);
+						Jsoup.connect("http://127.0.0.1:8080/" + ConfigureCache.getProjectName() + "/login.seam").get();
+						break;
+					} catch (Exception e) {
+						failureTimes++;
+					}
+				}
+				System.out.println("**********" + ConfigureCache.getProjectName() + "启动完毕**********"); // 因为定时器是最后被执行的，所以理论上在这个时间节点上，应用程序应该可以正常通信了。
+			}
+		}).start();
 	}
 
 	/**
