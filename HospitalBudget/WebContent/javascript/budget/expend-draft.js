@@ -34,13 +34,21 @@ jQuery(document).ready(function() {
 
 	___cache['total-amount-value'] = jQuery('.draft-table-head .total-amount-value span');// 缓存节点（总金额）
 
-	jQuery('.draft-table-title, .draft-table-body').niceScroll({
+/*	jQuery('.draft-table-title, .draft-table-body').niceScroll({
 	    cursorcolor : '#4d0acf',
 	    cursorwidth : 8,
 	    cursoropacitymax : 0.8,
 	    touchbehavior : false,
 	    autohidemode : true
-	});
+	});*/
+	
+/*	jQuery('.draft-table').niceScroll({
+	    cursorcolor : '#4d0acf',
+	    cursorwidth : 8,
+	    cursoropacitymax : 0.8,
+	    touchbehavior : false,
+	    autohidemode : true
+	});*/
 
 	refreshVisualPannel();// 立即刷新
 	triggerRenewDataContainer();// 触发更新数据容器函数
