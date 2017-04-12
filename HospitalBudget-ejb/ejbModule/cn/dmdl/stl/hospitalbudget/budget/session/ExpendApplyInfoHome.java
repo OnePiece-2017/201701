@@ -13,25 +13,6 @@ import java.util.Map;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 import org.jboss.seam.annotations.Name;
 
 import cn.dmdl.stl.hospitalbudget.admin.entity.UserInfo;
@@ -39,7 +20,6 @@ import cn.dmdl.stl.hospitalbudget.budget.entity.ExpendApplyInfo;
 import cn.dmdl.stl.hospitalbudget.budget.entity.ExpendApplyProject;
 import cn.dmdl.stl.hospitalbudget.budget.entity.ExpendConfirmInfo;
 import cn.dmdl.stl.hospitalbudget.budget.entity.ExpendConfirmProject;
-import cn.dmdl.stl.hospitalbudget.budget.entity.NormalExpendBudgetOrderInfo;
 import cn.dmdl.stl.hospitalbudget.budget.entity.NormalExpendPlantInfo;
 import cn.dmdl.stl.hospitalbudget.budget.entity.TaskOrder;
 import cn.dmdl.stl.hospitalbudget.budget.entity.TaskUser;
@@ -524,6 +504,11 @@ public class ExpendApplyInfoHome extends CriterionEntityHome<ExpendApplyInfo>{
 	 */
 	@SuppressWarnings("unchecked")
 	public String save(){
+		if (saveResult != null) {
+			saveResult.clear();
+		} else {
+			saveResult = new JSONObject();
+		}
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 		joinTransaction();
 		//申请单
@@ -705,6 +690,11 @@ public class ExpendApplyInfoHome extends CriterionEntityHome<ExpendApplyInfo>{
 	 */
 	@SuppressWarnings("unchecked")
 	public String update(){
+		if (saveResult != null) {
+			saveResult.clear();
+		} else {
+			saveResult = new JSONObject();
+		}
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 		joinTransaction();
 		//申请单
@@ -773,11 +763,6 @@ public class ExpendApplyInfoHome extends CriterionEntityHome<ExpendApplyInfo>{
 			eci.setYear(expendApplyInfo.getYear());
 			eci.setDeleted(false);
 			getEntityManager().merge(eci);
-		}
-		if (saveResult != null) {
-			saveResult.clear();
-		} else {
-			saveResult = new JSONObject();
 		}
 		saveResult.accumulate("invoke_result", "INVOKE_SUCCESS");
 		saveResult.accumulate("message", "提交成功！");
