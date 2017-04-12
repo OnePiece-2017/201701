@@ -549,7 +549,7 @@ public class ExpendApplyInfoHome extends CriterionEntityHome<ExpendApplyInfo>{
 		}
 		
 		//配置流程信息
-		UserInfo userInfo = getEntityManager().find(UserInfo.class, sessionToken.getUserInfoId());
+		/*UserInfo userInfo = getEntityManager().find(UserInfo.class, sessionToken.getUserInfoId());
 		TaskOrder taskOrder = new TaskOrder();
 		taskOrder.setTaskName(userInfo.getYsDepartmentInfo().getTheValue() + "〔" + year + "〕常规支出执行");
 		taskOrder.setDeptId(userInfo.getYsDepartmentInfo().getTheId());
@@ -591,9 +591,9 @@ public class ExpendApplyInfoHome extends CriterionEntityHome<ExpendApplyInfo>{
 			saveResult.element("invoke_result", "INVOKE_FAILURE");
 			saveResult.element("message", "操作失败！请先完善科室[" + userInfo.getYsDepartmentInfo().getTheValue() + "]的流程信息！");
 			return  "no";
-		}
-		expendApplyInfo.setTaskOrderId(taskOrder.getTaskOrderId());
-		expendApplyInfo.setOrderSn(taskOrder.getOrderSn());
+		}*/
+		expendApplyInfo.setTaskOrderId(0);
+		expendApplyInfo.setOrderSn("");
 		getEntityManager().persist(expendApplyInfo);
 		//生成确认单
 		ExpendConfirmInfo eci = new ExpendConfirmInfo();
