@@ -82,7 +82,7 @@ function triggerRenewDataContainer() {
 }
 
 function gainOriginalData2callback(data) {
-	parseProject(data['new_generic'], 'generic', '项目');// 4、解析项目并放入数据容器
+	parseProject(data['new_generic'], 'generic', '新增');// 4、解析项目并放入数据容器
 	parseProject(data['new_routine'], 'routine', '常规');// 5、解析常规并放入数据容器
 	gainTamperData2trigger(assembleArguments());
 }
