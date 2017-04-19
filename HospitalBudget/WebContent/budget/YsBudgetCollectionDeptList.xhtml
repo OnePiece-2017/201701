@@ -55,7 +55,15 @@
 					<table class="normal-btn">
 						<tr>
 							<td>
-								<a class="btn btn-primary mr15" onclick="return onSave();">导出</a>
+								<!-- <a class="btn btn-primary mr15" onclick="return exportExcel();"></a> -->
+								<rich:panel id="exportPanel" style="margin:0; border:none; padding: 0;">
+									<s:link  styleClass="btn btn-primary mr15" view="/budget/YsBudgetCollectionDeptList.xhtml" action="#{ysBudgetCollectionDeptHome.expExcel()}" >导出
+	                       				<f:param name="year" value="#{ysBudgetCollectionDeptHome.year}"/>
+	                       				<f:param name="deptIds" value="#{ysBudgetCollectionDeptHome.deptIds}"/>
+	                        		</s:link>
+                        		</rich:panel>
+                        		<a:form >
+                        		</a:form>
 							</td>
 							<td>
 								<a class="btn btn-primary mr15" onclick="return onSubmit();">下达</a>
@@ -113,7 +121,7 @@
 		</div>
 		<a:form>
 			<a:queue requestDelay="100" ignoreDupResponses="true" />
-			<a:jsFunction name="filterCollectionAction" action="#{ysBudgetCollectionDeptHome.filterBudgetCollectionInfo()}" data="#{ysBudgetCollectionDeptHome.budgetCollectionInfo}" oncomplete="wirePage(data);">
+			<a:jsFunction name="filterCollectionAction" action="#{ysBudgetCollectionDeptHome.filterBudgetCollectionInfo()}" reRender="exportPanel" data="#{ysBudgetCollectionDeptHome.budgetCollectionInfo}" oncomplete="wirePage(data);">
 				<a:actionparam name="year" assignTo="#{ysBudgetCollectionDeptHome.year}" />
 				<a:actionparam name="deptId" assignTo="#{ysBudgetCollectionDeptHome.deptIds}" />
 			</a:jsFunction>
@@ -157,7 +165,15 @@
 				}
 			    filterCollectionAction(year, deptIds);
 			}
-
+			//导出
+			function exportExcel(){
+				var year = jQuery("#budgetYear").val();
+			    var deptIds = jQuery("#departmentIds").val();
+			    if(deptIds){
+			    	deptIds = deptIds.toString(); 
+				}
+			    expExcel(year, deptIds);
+			}
 			//装载页面
 			function wirePage(data){
 				var json = eval(data);
