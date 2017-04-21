@@ -65,7 +65,7 @@ public class ExpendApplyInfoHome extends CriterionEntityHome<ExpendApplyInfo>{
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 		projectList = new ArrayList<Object[]>();
 		reciveCompanyList = new ArrayList<Object[]>();
-		applySn = "";
+		applySn = queryNextCode();
 		projectId = -1;
 		fundsSourceId = -1;
 		departmentId = -1;
@@ -75,6 +75,8 @@ public class ExpendApplyInfoHome extends CriterionEntityHome<ExpendApplyInfo>{
 		projectJson = "";
 		expendAllMoney = "";
 		expendList = new ArrayList<Object[]>();
+		applyTime = sdf.format(new Date());
+		reimbur = sessionToken.getUsername();
 		Calendar calendar = Calendar.getInstance();
 		year = calendar.get(Calendar.YEAR);
 		if(null == expendApplyInfoId){
@@ -188,7 +190,28 @@ public class ExpendApplyInfoHome extends CriterionEntityHome<ExpendApplyInfo>{
 	}
 	
 	
-	
+	@SuppressWarnings("unchecked")
+	public String queryNextCode(){
+		String firstCode = "EP";
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
+		String secondCode = sdf.format(new Date());
+		String thirdCode;
+		String sql = "select eai.expend_apply_code from expend_apply_info eai where eai.expend_apply_code like '" + firstCode + secondCode + "%' ORDER BY eai.expend_apply_info_id";
+		List<Object> list = getEntityManager().createNativeQuery(sql).getResultList();
+		if(null != list && list.size() > 0){
+			String lastCode = list.get(0).toString();
+			String last = lastCode.substring(10,lastCode.length());
+			int lc = Integer.parseInt(last);
+			if(lc >= 1000){
+				thirdCode = (Integer.parseInt(last) + 1) + "";
+			}else{
+				thirdCode = String.format("%0" + 4 + "d", Integer.parseInt(last) + 1);
+			}
+		}else{
+			thirdCode = "0001";
+		}
+		return firstCode + secondCode + thirdCode;
+	}
 	
 	/**
 	 * 弹出模态框初始化
@@ -510,6 +533,15 @@ public class ExpendApplyInfoHome extends CriterionEntityHome<ExpendApplyInfo>{
 			saveResult = new JSONObject();
 		}
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+		//校验申请单号是否已经存在
+		String checkSql = "select * from expend_apply_info where expend_apply_code='" + applySn + "'";
+		List<Object[]> checkList = getEntityManager().createNativeQuery(checkSql).getResultList();
+		if(null != checkList && checkList.size() > 0){
+			applySn = queryNextCode();
+			saveResult.accumulate("invoke_result", "INVOKE_FAIL");
+			saveResult.accumulate("message", "编码已经存在，已为您刷新编码！请重新提交");
+			return "";
+		}
 		joinTransaction();
 		//申请单
 		ExpendApplyInfo expendApplyInfo = new ExpendApplyInfo();
