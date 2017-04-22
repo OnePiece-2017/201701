@@ -4,5 +4,7 @@
 	login-required="true">
 
 	<restrict>#{s:hasRole('budget_collection_dept')}</restrict>
-
+	 <param name="from" />
+	<param name="year" value="#{ysBudgetCollectionDeptHome.year}"/>
+	<param name="deptIds" value="#{ysBudgetCollectionDeptHome.deptIds}"/>
 </page>

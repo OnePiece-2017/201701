@@ -95,8 +95,7 @@ public class ExpendApplyInfo implements java.io.Serializable{
 		this.reciveCompany = reciveCompany;
 	}
 	
-	@Column(name = "invoice_num", nullable = false, length = 200)
-	@NotNull
+	@Column(name = "invoice_num", length = 200)
 	@Length(max = 200)
 	public String getInvoiceNum() {
 		return invoiceNum;
