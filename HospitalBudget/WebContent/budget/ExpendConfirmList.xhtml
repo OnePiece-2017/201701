@@ -35,7 +35,7 @@
 	</style>
 	<ui:define name="body">
 	#{expendConfrimList.wire()}
-		<div class="g-data-list-condition" style="height:100px">
+		<div class="g-data-list-condition" style="height:182px">
 			<h:form id="mainForm">
 				<input type="hidden" name="page" value="1" />
 				<table width="100%" cellpadding="0" cellspacing="0" style=" margin-top: 19px;">
@@ -98,21 +98,20 @@
 							<table width="100%" cellpadding="0" cellspacing="0">
 								<tr>
 									<td valign="middle" width="30%" align="right">
-										<span class="field-name mb10">申请提交时间:</span>
-									</td>
-									<td valign="middle" width="70%" style="padding-left:10px;">
-										<!-- <div class="input-append date form_datetime_second" style="position:relative;" >
-			                               		<input id="applyTime" type="text" value="#{expendConfrimList.applyTime}" readonly="readonly" style="border-radius:4px;width:110px;height:34;" name="time"/> 
-			                               		<span class="add-on" style="position:absolute; right:10px; top:3px;"><i class="icon-th" style="margin:0;"></i></span>
-			                            </div> -->
-			                            <div class="form-group">
-											<div class="input-group date form_date col-md-5">
-												<input id="applyTime" type="text" value="#{expendConfrimList.applyTime}" readonly="readonly" styleClass="form-control mb10 fix--w141" name="time" style="width: 125px;"/> 
-												<span class="input-group-addon"><span class="glyphicon glyphicon-remove"></span></span>
-												<span class="input-group-addon"><span class="glyphicon glyphicon-calendar"></span></span>
-											</div>
-										</div>
-									</td>
+											<span class="field-name mb10">金额范围:</span>
+										</td>
+										<td valign="middle" width="70%" style="padding-left:10px;">
+											<select id="moneyType" class="selectpicker" style="width: 200px;">
+												<a:repeat value="#{expendConfrimList.moneyList}" var="_money">
+													<s:fragment rendered="#{expendConfrimList.moneyType eq _money[0]}">
+														<option value="#{_money[0]}" selected="selected">#{_money[1]}</option>
+													</s:fragment>
+													<s:fragment rendered="#{expendConfrimList.moneyType ne _money[0]}">
+														<option value="#{_money[0]}">#{_money[1]}</option>
+													</s:fragment>
+												</a:repeat>
+											</select>
+										</td>
 								</tr>
 							</table>
 							</div>
@@ -124,7 +123,7 @@
 										<td valign="middle" width="30%" align="right">
 											<span class="field-name mb10">确认状态:</span>
 										</td>
-										<td valign="middle" width="40%" style="padding-left:10px;">
+										<td valign="middle" width="70%" style="padding-left:10px;">
 											<select id="confirmStatus" class="selectpicker" style="width: 200px;">
 												<s:fragment rendered="#{expendConfrimList.confirmStatus eq -1}">
 													<option value="-1" selected="selected">全部</option>
@@ -143,18 +142,89 @@
 												</s:fragment>
 											</select>
 										</td>
-										<td valign="middle" width="30%" style="padding-left:10px;">
+									</tr>
+								</table>
+							</div>
+						</td>
+					</tr>
+					<tr>
+						<td width="50%">
+							<div class="fl" style="width: 400px;">
+							<table width="100%" cellpadding="0" cellspacing="0">
+								<tr>
+									<td valign="middle" width="30%" align="right">
+										<span class="field-name mb10">申请开始时间:</span>
+									</td>
+									<td valign="middle" width="70%" style="padding-left:10px;">
+			                            <div class="form-group">
+											<div class="input-group date form_date col-md-5">
+												<input id="applyTime" type="text" value="#{expendConfrimList.applyTime}" readonly="readonly" class="form-control mb10 fix--w141" name="time" style="width: 125px;"/> 
+												<span class="input-group-addon"><span class="glyphicon glyphicon-remove"></span></span>
+												<span class="input-group-addon"><span class="glyphicon glyphicon-calendar"></span></span>
+											</div>
+										</div>
+									</td>
+								</tr>
+							</table>
+							</div>
+						</td>
+						<td width="50%">
+							<div class="fl" style="width: 400px;">
+							<table width="100%" cellpadding="0" cellspacing="0">
+								<tr>
+									<td valign="middle" width="30%" align="right">
+										<span class="field-name mb10">申请结束时间:</span>
+									</td>
+									<td valign="middle" width="70%" style="padding-left:10px;">
+			                            <div class="form-group">
+											<div class="input-group date form_date col-md-5">
+												<input id="applyEndTime" type="text" value="#{expendConfrimList.applyEndTime}" readonly="readonly" class="form-control mb10 fix--w141" name="time" style="width: 125px;"/> 
+												<span class="input-group-addon"><span class="glyphicon glyphicon-remove"></span></span>
+												<span class="input-group-addon"><span class="glyphicon glyphicon-calendar"></span></span>
+											</div>
+										</div>
+									</td>
+								</tr>
+							</table>
+							</div>
+						</td>
+					</tr>
+					<tr>
+						<td width="50%">
+							<div class="fl" style="width: 400px;">
+							<table width="100%" cellpadding="0" cellspacing="0">
+								<tr>
+									<td valign="middle" width="30%" align="right">
+										<span class="field-name mb10">报销人:</span>
+									</td>
+									<td valign="middle" width="70%" style="padding-left:10px;">
+			                            <div class="form-group">
+												<input id="reimbursementer" type="text" value="#{expendConfrimList.reimbursementer}"  class="form-control mb10 fix--w141" style="width:150px"/> 
+										</div>
+									</td>
+								</tr>
+							</table>
+							</div>
+						</td>
+						<td width="50%">
+							<div class="fl" style="width: 400px;">
+							<table width="100%" cellpadding="0" cellspacing="0">
+								<tr>
+									<td valign="middle" width="100%" style="padding-left:128px;" >
 										<div class="fl">
 											<h:inputHidden value="#{expendConfrimList.departmentId}" id="departId"/>
 											<h:inputHidden value="#{expendConfrimList.applyUser}" id="applyUser"/>
 											<h:inputHidden value="#{expendConfrimList.applyTime}" id="applyTime"/>
 											<h:inputHidden value="#{expendConfrimList.confirmStatus}" id="confirmStatus"/>
+											<h:inputHidden value="#{expendConfrimList.moneyType}" id="moneyType"/>
+											<h:inputHidden value="#{expendConfrimList.applyEndTime}" id="applyEndTime"/>
+											<h:inputHidden value="#{expendConfrimList.reimbursementer}" id="reimbursementer"/>
 											<h:commandButton styleClass="btn btn-primary" action="/budget/ExpendConfirmList.xhtml" onclick="return check();" value="搜索" style="font-size: 12px;"/>
 											<a class="btn btn-primary"  href="javascript:void(0);" onclick="batchConfrim()"  style="font-size: 12px;">批量确认</a>
 										</div>
-										</td>
-									</tr>
-								</table>
+									</td>
+								</tr>
+							</table>
 							</div>
 						</td>
 					</tr>
@@ -311,10 +381,16 @@
 				var applyer = jQuery("#fundsSource").val();
 				var applyTime = jQuery("#applyTime").val();
 				var confirmStatus = jQuery("#confirmStatus").val();
+				var applyEndTime = jQuery("#applyEndTime").val();
+				var moneyType = jQuery("#moneyType").val();
+				var reimbursementer = jQuery("#reimbursementer").val().trim();
 				jQuery("#mainForm\\:departId").val(departId);
 				jQuery("#mainForm\\:applyUser").val(applyer);
 				jQuery("#mainForm\\:applyTime").val(applyTime);
 				jQuery("#mainForm\\:confirmStatus").val(confirmStatus);
+				jQuery("#mainForm\\:applyEndTime").val(applyEndTime);
+				jQuery("#mainForm\\:moneyType").val(moneyType);
+				jQuery("#mainForm\\:reimbursementer").val(reimbursementer);
 				return true;
 			}
 			function batchConfrim(){

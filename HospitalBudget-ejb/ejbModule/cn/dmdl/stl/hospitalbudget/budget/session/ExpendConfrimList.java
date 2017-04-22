@@ -48,6 +48,10 @@ public class ExpendConfrimList extends CriterionNativeQuery<Object[]> {
 	private Integer applyUser;//申请编制人
 	private String applyTime;//申请时间
 	private Integer confirmStatus;//确认状态 -1全部  0未确认 1已确认
+	private String applyEndTime;//申请结束时间
+	private Integer moneyType;//金额范围 -1：全部 0：0-1万  1：1-5万  2：5-10万  3：10-50万 4：50万以上
+	private List<Object[]> moneyList;//金钱范围
+	private String reimbursementer;//报销人
 	
 	private JSONObject saveResult;
 	
@@ -64,9 +68,25 @@ public class ExpendConfrimList extends CriterionNativeQuery<Object[]> {
 		if(null == applyTime){
 			applyTime = "";
 		}
+		if(null == applyEndTime){
+			applyEndTime = "";
+		}
 		if(null == confirmStatus){
 			confirmStatus = -1;
 		}
+		if(moneyType == null){
+			moneyType = -1;
+		}
+		if(null == reimbursementer){
+			reimbursementer = "";
+		}
+		moneyList = new ArrayList<Object[]>();
+		moneyList.add(new Object[]{"-1","全部"});
+		moneyList.add(new Object[]{"0","0-10000"});
+		moneyList.add(new Object[]{"1","10001-50000"});
+		moneyList.add(new Object[]{"2","50001-100000"});
+		moneyList.add(new Object[]{"3","100000-500000"});
+		moneyList.add(new Object[]{"4","500000以上"});
 		//初始化科室列表
 		wireDepartmentInfo();
 		System.out.println(departList);
@@ -102,13 +122,29 @@ public class ExpendConfrimList extends CriterionNativeQuery<Object[]> {
 			sql.append(" and eai.applay_user_id= ").append(applyUser);
 		}
 		if(null != applyTime && !applyTime.equals("")){
-			sql.append(" and date_format(eai.apply_time ,'%Y-%m-%d') = '").append(applyTime).append("'");
+			sql.append(" and eai.apply_time>='").append(applyTime + " 00:00:00").append("'");
 		}
-		if(null != applyTime && !applyTime.equals("")){
-			sql.append(" and date_format(eai.apply_time ,'%Y-%m-%d') = '").append(applyTime).append("'");
+		if(null != applyEndTime && !applyEndTime.equals("")){
+			sql.append(" and eai.apply_time<'").append(applyEndTime + " 23:59:59").append("'");
 		}
 		if(null != confirmStatus && confirmStatus != -1){
 			sql.append(" and eci.confirm_status= ").append(confirmStatus);
+		}
+		if(null != moneyType && moneyType != -1){
+			if(moneyType == 0){
+				sql.append(" and eai.total_money > 0 and eai.total_money <= 10000 ");
+			}else if(moneyType == 1){
+				sql.append(" and eai.total_money > 10001 and eai.total_money <= 50000 ");
+			}else if(moneyType == 2){
+				sql.append(" and eai.total_money > 50000 and eai.total_money <= 100000 ");
+			}else if(moneyType == 3){
+				sql.append(" and eai.total_money > 100000 and eai.total_money <= 500000 ");
+			}else if(moneyType == 4){
+				sql.append(" and eai.total_money > 500000 ");
+			}
+		}
+		if(null != reimbursementer && !reimbursementer.equals("")){
+			sql.append(" and eai.reimbursementer = '").append(reimbursementer).append("'");
 		}
 		sql.append(" ORDER BY eci.expend_confirm_info_id desc");
 		sql.insert(0, "select * from (").append(") as recordset");
@@ -352,6 +388,38 @@ public class ExpendConfrimList extends CriterionNativeQuery<Object[]> {
 
 	public void setApplayUserList(List<Object[]> applayUserList) {
 		this.applayUserList = applayUserList;
+	}
+
+	public String getApplyEndTime() {
+		return applyEndTime;
+	}
+
+	public void setApplyEndTime(String applyEndTime) {
+		this.applyEndTime = applyEndTime;
+	}
+
+	public Integer getMoneyType() {
+		return moneyType;
+	}
+
+	public void setMoneyType(Integer moneyType) {
+		this.moneyType = moneyType;
+	}
+
+	public List<Object[]> getMoneyList() {
+		return moneyList;
+	}
+
+	public void setMoneyList(List<Object[]> moneyList) {
+		this.moneyList = moneyList;
+	}
+
+	public String getReimbursementer() {
+		return reimbursementer;
+	}
+
+	public void setReimbursementer(String reimbursementer) {
+		this.reimbursementer = reimbursementer;
 	}
 
 	
