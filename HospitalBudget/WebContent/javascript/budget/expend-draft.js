@@ -130,7 +130,7 @@ function parseProject(projectArray, namespace, projectNature) {
 				html += '				<span>' + (hasSub ? '' : '<textarea id="' + (namespace + '_projectSource_' + node['id']) + '" class="form-control"></textarea>') + '</span>';
 				html += '			</div>';
 				html += '			<div class="generic-field edge-end field-project-amount">';
-				html += '				<span>' + (hasSub ? '' : '<input id="' + (namespace + '_projectAmount_' + node['id']) + '" class="form-control"></input>') + '</span>';
+				html += '				<span>' + (hasSub ? '' : '<input id="' + (namespace + '_projectAmount_' + node['id']) + '" class="form-control" style="text-align:right;"></input>') + '</span>';
 				html += '			</div>';
 				html += '			<div class="generic-field edge-end field-formula-remark">';
 				html += '				<span>' + (hasSub ? '' : '<textarea id="' + (namespace + '_formulaRemark_' + node['id']) + '" class="form-control"></textarea>') + '</span>';
@@ -160,10 +160,10 @@ function parseProject(projectArray, namespace, projectNature) {
 				___sgInputbox({
 				    id : this.id,
 				    alias : '项目来源' + ___surroundContents(jQuery(this).parents('.item-outer').attr('project-nature'), 'ID: ' + this.id.replace(namespace + '_projectSource_', '')),
-				    threshold : 45,
+				    threshold : 100,
 				    notify : true
 				});
-				___textRestrictById(this.id, 45);
+				___textRestrictById(this.id, 100);
 			});
 			jQuery('.draft-table-body .data-container [namespace="' + namespace + '"] textarea[id^="' + namespace + '_formulaRemark_"]').each(function() {
 				___sgInputbox({

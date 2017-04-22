@@ -658,7 +658,7 @@
 					forceParse: false, 
 					pickerPosition: "bottom-left"
 				});
-				 jQuery('.selectpicker').selectpicker();
+				jQuery('.selectpicker').selectpicker();
 				var applyUser = "#{expendApplyInfoHome.applyUser}";
 				var applayer = "#{expendApplyInfoHome.reimbur}";
 				var register = "#{expendApplyInfoHome.register}";
@@ -672,8 +672,18 @@
 						jQuery('#register').selectpicker('deselectAll');
 					}
 				}
-				 jQuery('.selectpicker').selectpicker();
-				 keyInit();
+				//初始化部分数据
+				var userId = #{sessionToken.userInfoId};
+				if(userId){
+					jQuery('#user').val(userId);
+					jQuery('#user').selectpicker("render");
+					jQuery('#register').val(userId);
+					jQuery('#register').selectpicker("render");
+				}
+				jQuery('#mainForm\\:reimbur').val('#{sessionToken.fullname}');
+
+				jQuery('.selectpicker').selectpicker();
+				keyInit();
 			});
 			
 			//选择项目
@@ -952,6 +962,11 @@
 				modalInit(year);
 			}
 			function toAddModelComplete(){
+				var deptId = #{sessionToken.departmentInfoId};
+				if(deptId){
+					jQuery('#depart').val(deptId);
+					jQuery('#depart').selectpicker("render");
+				}
 				jQuery("#addModal").modal("show");
 				huidiao();
 			}
