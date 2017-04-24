@@ -139,7 +139,7 @@ function parseProject(projectArray, namespace, projectNature) {
 				html += '				<span></span>';
 				html += '			</div>';
 				html += '			<div class="generic-field field-function">';
-				html += '				<span id="' + (namespace + '_attachment_' + node['id']) + '" class="operation-item opr-attachment' + (hasSub ? ' not-enabled' : '') + '"' + (hasSub ? '' : ' fu-source=""') + '></span>';
+				html += '				<span id="' + (namespace + '_attachment_' + node['id']) + '" class="operation-item opr-attachment' + (hasSub ? ' not-enabled' : '') + '"' + (hasSub ? '' : ' fu-source=""') + '>附件</span>';
 				html += '				<span class="operation-item opr-locking' + (hasSub ? ' not-enabled' : '') + '"></span>';
 				//html += '				<span class="operation-item opr-reference' + (hasSub ? ' not-enabled' : '') + '"></span>';
 				html += '			</div>';
