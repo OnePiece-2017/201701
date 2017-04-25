@@ -1,0 +1,184 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:s="http://jboss.com/products/seam/taglib"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:a="http://richfaces.org/a4j"
+	template="/layout/template_list.xhtml">
+
+	<ui:define name="head">
+		<link rel="stylesheet" type="text/css" href="#{request.contextPath}/common/css/bootstrap.min.css" />
+		<link rel="stylesheet" type="text/css" href="#{request.contextPath}/common/css/bootstrap-select.min.css" />
+		<style type="text/css">
+			.field-name {
+				float: left;
+				width: 85px;
+				padding-right: 15px;
+				font-family: '微软雅黑';
+				text-align: right;
+				line-height: 34px;
+				display: block;
+			}
+			
+			.bs-budget-year .bootstrap-select:not([class*="span"]):not([class*="col-"]):not([class*="form-control"]):not(.input-group-btn) {
+				width: 128px;
+			}
+			
+			.bs-funds-source .bootstrap-select:not([class*="span"]):not([class*="col-"]):not([class*="form-control"]):not(.input-group-btn) {
+				width: 192px;
+			}
+			
+			.sg-fu-custom--attachment {
+			}
+		</style>
+	</ui:define>
+	<ui:define name="body">
+	#{disburseStatisticalList.wire()}
+		<div class="g-data-list-condition">
+			<h:form id="mainForm">
+				<input type="hidden" name="page" value="1" />
+				<div class="fl bs-budget-year">
+							<span class="field-name mb10">预算年份</span>
+							<select id="beginYearParam" class="selectpicker">
+								<a:repeat value="#{disburseStatisticalList.beginYear}" var="_var">
+									<option value="#{_var[0]}">#{_var[1]}</option>
+								</a:repeat>
+							</select>
+				</div>
+				<div class="fl bs-funds-source">
+							<span class="field-name mb10">资金来源</span>
+							<select id="fundsSourceId" class="selectpicker" data-live-search="true">
+								<a:repeat value="#{disburseStatisticalList.fundsSourceList}" var="_var">
+									<option value="#{_var[0]}">#{_var[1]}</option>
+								</a:repeat>
+							</select>
+				</div>
+				<div class="fl">
+					<span class="field-name mb10">主管科室</span>
+					<select id="departmentInfoId" class="selectpicker" data-live-search="true">
+						<a:repeat value="#{disburseStatisticalList.departmentInfoList}" var="_var">
+							<option value="#{_var[0]}">#{_var[1]}</option>
+						</a:repeat>
+					</select>
+				</div>
+				<div class="fl">
+					<h:commandButton styleClass="btn btn-primary mt10 ml20" action="/budget/DisburseStatisticalList.xhtml" onclick="return beforeSubmit();" value="搜索" />
+				</div>
+				<h:inputHidden id="beginYearParam" value="#{disburseStatisticalList.beginYearParam}" />
+				<h:inputHidden id="departmentInfoId" value="#{disburseStatisticalList.departmentInfoId}" />
+				<h:inputHidden id="fundsSourceId" value="#{disburseStatisticalList.fundsSourceId}" />
+			</h:form>
+		</div>
+		<div class="g-data-list-table">
+		    <table class="record" width="100%" cellpadding="0" cellspacing="0">
+		        <tr>
+		            <th width="10%">ID</th>
+		            <th width="30%">项目名称</th>
+		            <th width="10%">项目类型</th>
+		            <th width="10%">预算金额</th>
+		            <th width="10%">已支出金额</th>
+		            <th width="10%">可支出金额</th>
+		            <th width="10%">执行率</th>
+		        </tr>
+		        <a:repeat value="#{disburseStatisticalList.resultList}" var="_result" rowKeyVar="_row">
+		        	<tr class="node-record #{_row % 2 eq 0 ? 'odd' : 'even'}">
+			        	<td>
+			        		<h:outputText value="#{_result[0]}" />
+			        	</td>
+			        	<td>
+			        		<h:outputText value="#{_result[1]}" />
+			        	</td>
+			        	<td>
+			        		<h:outputText value="#{_result[2] == 1 ? '一般项目' : '常规项目' }" />
+			        	</td>
+			        	<td>
+			        		<h:outputText value="#{_result[4]}" />
+			        	</td>
+			        	<td>
+			        		<h:outputText value="#{_result[5]}" />
+			        	</td>
+			        	<td>
+			        		<h:outputText value="#{_result[6]}" />
+			        	</td>
+			        	<td>
+			        		<h:outputText value="#{_result[7]}" />%
+			        	</td>
+		        	</tr>
+		        </a:repeat>
+		    </table>
+		    #{paginationModel.init(disburseStatisticalList)}
+		    <s:fragment rendered="#{paginationModel.query != null}">
+				<table class="pagination-model" style="width: auto; margin: 40px auto;" cellpadding="0" cellspacing="0">
+					<tr>
+						<td>
+							<s:span rendered="#{paginationModel.previousPageExist}">
+								<s:link view="#{servletContexts.request.servletPath}" value="首页">
+									<f:param name="page" value="1" />
+								</s:link>
+							</s:span>
+							<s:span rendered="#{paginationModel.previousPageExist}">
+								<s:link view="#{servletContexts.request.servletPath}" value="&lt;&lt;">
+									<f:param name="page" value="#{paginationModel.previousPage}" />
+								</s:link>
+							</s:span>
+							<a:repeat value="#{paginationModel.pageNoList}" var="_pageNo">
+								<span class="#{paginationModel.page == _pageNo ? 'page-current' : ''}">
+									<s:link view="#{servletContexts.request.servletPath}" value="#{_pageNo}">
+										<f:param name="page" value="#{_pageNo}" />
+									</s:link>
+								</span>
+							</a:repeat>
+							<s:span rendered="#{paginationModel.nextPageExist}">
+								<s:link view="#{servletContexts.request.servletPath}" value="&gt;&gt;">
+									<f:param name="page" value="#{paginationModel.nextPage}" />
+								</s:link>
+							</s:span>
+							<s:span rendered="#{paginationModel.nextPageExist}">
+								<s:link view="#{servletContexts.request.servletPath}" value="尾页">
+									<f:param name="page" value="#{paginationModel.lastPage}" />
+								</s:link>
+							</s:span>
+							<s:span rendered="#{paginationModel.lastPage > 0}">
+								<a>共#{paginationModel.lastPage}页</a>
+							</s:span>
+							<s:fragment rendered="#{paginationModel.lastPage > 1}">
+								<span>
+									<a>转至</a>
+								</span>
+								<span class="page-index">
+									<input type="text" id="pageIndex" />
+								</span>
+								<span class="page-goto">
+									<s:link value="确定" id="gotoPageLink" styleClass="page-determine" view="#{servletContexts.request.servletPath}" onclick="return gotoPage(#{paginationModel.lastPage});" />
+								</span>
+							</s:fragment>
+						</td>
+					</tr>
+				</table>
+		    </s:fragment>
+		</div>
+		<script type="text/javascript" src="#{request.contextPath}/common/js/bootstrap.min.js" />
+		<script type="text/javascript" src="#{request.contextPath}/common/js/bootstrap-select.min.js" charset="UTF-8" />
+		<script type="text/javascript" src="#{request.contextPath}/common/js/bootstrap-select-defaults-zh_CN.min.js" charset="UTF-8" />
+		<script type="text/javascript" src="#{request.contextPath}/toolkit/utils.js" />
+		<script type="text/javascript">
+		//<![CDATA[
+			jQuery(document).ready(function() {
+				jQuery(".selectpicker").selectpicker();
+				
+			}); 
+
+			function beforeSubmit(){
+				var departmentInfoId = jQuery('#departmentInfoId').val();
+				jQuery('#mainForm\\:beginYearParam').val(jQuery('#beginYearParam').val());
+				jQuery('#mainForm\\:departmentInfoId').val(jQuery('#departmentInfoId').val());
+				jQuery('#mainForm\\:fundsSourceId').val(jQuery('#fundsSourceId').val());
+				console.log(jQuery('#beginYearParam').val()+'-----------'+jQuery('#departmentInfoId').val()+'-----------------'+jQuery('#fundsSourceId').val());
+			}
+		//]]>
+		</script>
+	</ui:define>
+</ui:composition>
