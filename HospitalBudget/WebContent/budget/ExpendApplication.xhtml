@@ -72,6 +72,43 @@
 			    vertical-align: text-top;
 			    width: 14px;
 			}
+			input{text-align:center}
+			
+			.mater_name_bd{
+				position:absolute;
+				min-width:200px;
+				display:none;
+				top:191px;
+				width:220px;
+				border:1px solid #ddd;
+				box-sizing:border-box;
+				background-color:#fff;
+				text-align:left;
+				font-size:12px;
+				}
+			.mater_name_list{
+				height:77px;
+				overflow:auto;
+				}
+			.mater_name_list li{
+				height:24px;
+				line-height:24px;
+				padding:0 10px;
+				cursor:pointer;
+				white-space:nowrap;
+				list-style-type:none;
+				
+				margin: 2px;
+				}
+			.mater_name_list li.m_cur{
+				background-color:#f4f4f4;
+				}
+			.mater_name_list li:hover{
+				color:#C0C0C;
+				}
+			.addbg{
+			        background:#87A900;
+			    }
 		</style>
 	</ui:define>
 	<ui:define name="body">
@@ -121,7 +158,12 @@
 													<a:repeat value="#{expendApplyInfoHome.applayUserList}" var="_department">
 														<optgroup label="#{_department[0]}" data-subtext="科室">
 															<a:repeat value="#{_department[1]}" var="_user">
-																<option value="#{_user[0]}">#{_user[1]}</option>
+																<s:fragment rendered="#{sessionToken.userInfoId eq _user[0]}">
+																	<option value="#{_user[0]}" selected="selected">#{_user[1]}</option>
+																</s:fragment>
+																<s:fragment rendered="#{sessionToken.userInfoId ne _user[0]}">
+																	<option value="#{_user[0]}" >#{_user[1]}</option>
+																</s:fragment>
 															</a:repeat>
 														</optgroup>
 													</a:repeat>
@@ -144,7 +186,7 @@
 												<span class="field-name mb10">单据编号:</span>
 											</td>
 											<td valign="middle">
-												<h:inputText id="formnum" value="#{expendApplyInfoHome.applySn}" styleClass=" mb10 border" style="height:34px;width:220px" maxlength="20"/>
+												<h:inputText id="formnum" readonly="readonly" value="#{expendApplyInfoHome.applySn}" styleClass=" mb10 border" style="height:34px;width:220px" maxlength="20" />
 											</td>
 											<td valign="middle">
 												<font color="red" style="margin-left: 3px;">*</font>
@@ -161,15 +203,7 @@
 												<span class="field-name mb10">报销人:</span>
 											</td>
 											<td valign="middle">
-												<select id="reimbursementer" class="selectpicker" data-live-search="true">
-													<a:repeat value="#{expendApplyInfoHome.applayUserList}" var="_department">
-														<optgroup label="#{_department[0]}" data-subtext="科室">
-															<a:repeat value="#{_department[1]}" var="_user">
-																<option value="#{_user[0]}">#{_user[1]}</option>
-															</a:repeat>
-														</optgroup>
-													</a:repeat>
-												</select>
+												<h:inputText id="reimbur" value="#{expendApplyInfoHome.reimbur}" styleClass=" mb10 border" style="height:34px;width:220px" maxlength="20"/>
 											</td>
 											<td valign="middle">
 												<font color="red" style="margin-left: 3px;">*</font>
@@ -188,7 +222,19 @@
 												<span class="field-name mb10">收款单位:</span>
 											</td>
 											<td valign="middle">
-												<h:inputText id="reciveCompany" value="#{expendApplyInfoHome.reciveCompany}" styleClass=" mb10 border" style="height:34px;width:220px" maxlength="30"/>
+												<h:inputText id="reciveCompany" value="#{expendApplyInfoHome.reciveCompany}" styleClass=" mb10 border" style="height:34px;width:220px" maxlength="30" onkeyup='searchLi(this,event,1)' onblur="searchDis(this)"/>
+												<div class="mater_name_bd"  style="min-width: 10%;z-index:9999;" >
+			                                    	<ul class="mater_name_list"  style="padding-left: 0; width: 220px;">
+			                                       		<a:repeat value="#{expendApplyInfoHome.companyList}" var="_com" rowKeyVar="_row">
+			                                       			<li name="companyLi" onclick="clickSearch(this)" class="material_li material_li_#{_row + 1}" >#{_com}</li>
+			                                       		</a:repeat>
+			                                        </ul>
+			                                        <ul class='mater_name_list3'  style='display:none'>
+			                                        	<a:repeat value="#{expendApplyInfoHome.companyList}" var="_company" rowKeyVar="_r">
+			                                       			<li name="companyLi" onclick="clickSearch(this)" class="material_li_#{_r + 1}">#{_company}</li>
+			                                       		</a:repeat>
+			                                        </ul>
+			                                    </div>
 											</td>
 											<td valign="middle">
 												<font color="red" style="margin-left: 3px;">*</font>
@@ -208,7 +254,6 @@
 												<h:inputText id="invoicenum" value="#{expendApplyInfoHome.invoiceSn}" styleClass=" mb10 border" style="height:34px;width:220px" maxlength="20"/>
 											</td>
 											<td valign="middle">
-												<font color="red" style="margin-left: 3px;">*</font>
 											</td>
 										</tr>
 									</table>
@@ -227,7 +272,6 @@
 												<h:inputText id="summary" value="#{expendApplyInfoHome.summary}" styleClass=" mb10 border" style="height:34px;width:220px" maxlength="20"/>
 											</td>
 											<td valign="middle">
-												<font color="red" style="margin-left: 3px;">*</font>
 											</td>
 										</tr>
 									</table>
@@ -240,7 +284,7 @@
 					<a class="btn btn-add mr15" onclick="toAddModel()" style="float:right ">添加</a>
 				</div>
 				<rich:panel id="listPanl" style="margin:0; border:none; padding: 0;">
-				<div class="g-data-list-table freeze-candidateProject" style="border: 1px solid #e1e1e1;overflow:auto;">
+				<div class="g-data-list-table freeze-candidateProject" style="border: 1px solid #e1e1e1;height:200px;overflow:auto;">
 				    <table class="record" width="100%" cellpadding="0" cellspacing="0">
 				        <tr>
 				        	<th width="5%">序号</th>
@@ -328,7 +372,12 @@
 													<a:repeat value="#{expendApplyInfoHome.applayUserList}" var="_department">
 														<optgroup label="#{_department[0]}" data-subtext="科室">
 															<a:repeat value="#{_department[1]}" var="_user">
-																<option value="#{_user[0]}">#{_user[1]}</option>
+																<s:fragment rendered="#{sessionToken.userInfoId eq _user[0]}">
+																	<option value="#{_user[0]}" selected="selected">#{_user[1]}</option>
+																</s:fragment>
+																<s:fragment rendered="#{sessionToken.userInfoId eq _user[0]}">
+																	<option value="#{_user[0]}">#{_user[1]}</option>
+																</s:fragment>
 															</a:repeat>
 														</optgroup>
 													</a:repeat>
@@ -348,7 +397,7 @@
 								</td>
 								<td valign="middle">
 									<div>
-										<h:inputTextarea value="#{expendApplyInfoHome.comment}"  id="comment"  rows="5" cols="60"/>
+										<h:inputTextarea value="#{expendApplyInfoHome.comment}"  id="comment"  rows="8" cols="70"/>
 									</div>
 								</td>
 							</tr>
@@ -552,7 +601,7 @@
 				<a:actionparam name="reciveCompany" assignTo="#{expendApplyInfoHome.reciveCompany}" />
 				<a:actionparam name="invoiceSn" assignTo="#{expendApplyInfoHome.invoiceSn}" />
 				<a:actionparam name="summary" assignTo="#{expendApplyInfoHome.summary}" />
-				<a:actionparam name="applayer" assignTo="#{expendApplyInfoHome.applayer}" />
+				<a:actionparam name="reimbur" assignTo="#{expendApplyInfoHome.reimbur}" />
 				<a:actionparam name="projectJson" assignTo="#{expendApplyInfoHome.projectJson}" />
 				<a:actionparam name="applyTime" assignTo="#{expendApplyInfoHome.applyTime}" />
 				<a:actionparam name="registTime" assignTo="#{expendApplyInfoHome.registTime}" />
@@ -567,7 +616,7 @@
 				<a:actionparam name="reciveCompany" assignTo="#{expendApplyInfoHome.reciveCompany}" />
 				<a:actionparam name="invoiceSn" assignTo="#{expendApplyInfoHome.invoiceSn}" />
 				<a:actionparam name="summary" assignTo="#{expendApplyInfoHome.summary}" />
-				<a:actionparam name="applayer" assignTo="#{expendApplyInfoHome.applayer}" />
+				<a:actionparam name="reimbur" assignTo="#{expendApplyInfoHome.reimbur}" />
 				<a:actionparam name="projectJson" assignTo="#{expendApplyInfoHome.projectJson}" />
 				<a:actionparam name="applyTime" assignTo="#{expendApplyInfoHome.applyTime}" />
 				<a:actionparam name="registTime" assignTo="#{expendApplyInfoHome.registTime}" />
@@ -617,19 +666,13 @@
 					forceParse: false, 
 					pickerPosition: "bottom-left"
 				});
-				 jQuery('.selectpicker').selectpicker();
+				jQuery('.selectpicker').selectpicker();
 				var applyUser = "#{expendApplyInfoHome.applyUser}";
-				var applayer = "#{expendApplyInfoHome.applayer}";
+				var applayer = "#{expendApplyInfoHome.reimbur}";
 				var register = "#{expendApplyInfoHome.register}";
 				var expendIdEdit = jQuery("#mainForm\\:expendApplyIdEdit").val();
 				if(expendIdEdit != "0"){
 					jQuery("#user").selectpicker("val",applyUser);
-					if(applayer != "0"){
-						jQuery("#reimbursementer").selectpicker("val",applayer);
-					}else{
-						jQuery('#reimbursementer').selectpicker({noneSelectedText:"全部"});
-						jQuery('#reimbursementer').selectpicker('deselectAll');
-					}
 					if(register != "0"){
 						jQuery("#register").selectpicker("val",register);
 					}else{
@@ -637,7 +680,19 @@
 						jQuery('#register').selectpicker('deselectAll');
 					}
 				}
+				//初始化部分数据
+				var userId = #{sessionToken.userInfoId};
+				if(userId){
+					jQuery('#user').val(userId);
+					jQuery('#user').selectpicker("render");
+					jQuery('#register').val(userId);
+					jQuery('#register').selectpicker("render");
+				}
+				jQuery('#mainForm\\:reimbur').val('#{sessionToken.fullname}');
+
+				jQuery("#mainForm\\:formnum").attr("readonly",true);
 				 jQuery('.selectpicker').selectpicker();
+				 keyInit();
 			});
 			
 			//选择项目
@@ -673,7 +728,7 @@
 				var reciveCompany = jQuery("#mainForm\\:reciveCompany").val();
 				var invoicenum = jQuery("#mainForm\\:invoicenum").val();
 				var summary = jQuery("#mainForm\\:summary").val();
-				var reimbursementer = jQuery("#reimbursementer").val();
+				var reimbursementer = jQuery("#mainForm\\:reimbur").val();
 				var applyTime = jQuery("#applyTime").val();
 				var registeTime = jQuery("#registeTime").val();
 				var register = jQuery("#register").val();
@@ -688,7 +743,7 @@
 					return ;
 				}
 				if(user == null || user == "" || projectId == "-1"){
-					___msg('温馨提示', "请选择报销人");
+					___msg('温馨提示', "请选择申请人");
 					flag = false;
 					return ;
 				}
@@ -703,23 +758,31 @@
 					flag = false;
 					return ;
 				}
-				if(invoicenum == ""){
+				/* if(invoicenum == ""){
 					___msg('温馨提示', "请输入发票号");
 					flag = false;
 					return ;
 				}
-				if(summary == ""){
+				if(summary == "" ){
 					___msg('温馨提示', "请输入发票张数");
 					flag = false;
 					return ;
-				}
+				}else{
+					if(isNaN(summary) || Number(summary) < 1 || Number(summary) % 1 != 0){
+						___msg('温馨提示', "发票张数只能为整数");
+						flag = false;
+						return ;
+					}
+				} */
 				if(applyTime == ""){
 					___msg('温馨提示', "请选择申请时间");
 					flag = false;
 					return ;
 				}
 				if(null == reimbursementer || reimbursementer == ""){
-					reimbursementer = "0";
+					___msg('温馨提示', "请输入报销人");
+					flag = false;
+					return ;
 				}
 				jQuery("input[name='money']").each(function(){
 					var price = jQuery(this).val();
@@ -778,7 +841,7 @@
 				var reciveCompany = jQuery("#mainForm\\:reciveCompany").val();
 				var invoicenum = jQuery("#mainForm\\:invoicenum").val();
 				var summary = jQuery("#mainForm\\:summary").val();
-				var reimbursementer = jQuery("#reimbursementer").val();
+				var reimbursementer = jQuery("#mainForm\\:reimbur").val();
 				var applyTime = jQuery("#applyTime").val();
 				var registeTime = jQuery("#registeTime").val();
 				var register = jQuery("#register").val();
@@ -805,7 +868,7 @@
 					flag = false;
 					return ;
 				}
-				if(invoicenum == ""){
+				/* if(invoicenum == ""){
 					___msg('温馨提示', "请输入发票号");
 					flag = false;
 					return ;
@@ -814,14 +877,22 @@
 					___msg('温馨提示', "请输入发票张数");
 					flag = false;
 					return ;
-				}
+				}else{
+					if(isNaN(summary) || Number(summary) < 1 || Number(summary) % 1 != 0){
+						___msg('温馨提示', "发票张数只能为整数");
+						flag = false;
+						return ;
+					}
+				} */
 				if(applyTime == ""){
 					___msg('温馨提示', "请选择申请时间");
 					flag = false;
 					return ;
 				}
 				if(null == reimbursementer || reimbursementer == ""){
-					reimbursementer = "0";
+					___msg('温馨提示', "请输入报销人");
+					flag = false;
+					return ;
 				}
 				jQuery("input[name='money']").each(function(){
 					var price = jQuery(this).val();
@@ -900,6 +971,11 @@
 				modalInit(year);
 			}
 			function toAddModelComplete(){
+				var deptId = #{sessionToken.departmentInfoId};
+				if(deptId){
+					jQuery('#depart').val(deptId);
+					jQuery('#depart').selectpicker("render");
+				}
 				jQuery("#addModal").modal("show");
 				huidiao();
 			}
@@ -958,6 +1034,127 @@
 					total += parseFloat(price);
 				});
 				jQuery("#mainForm\\:allMoney").val(total);
+			}
+
+
+			//输入框级联查询功能
+			function searchLi(obj,event,num){
+				var code=event.keyCode;
+				var inVal = jQuery.trim(jQuery(obj).val());
+				if(code!=40 && code!=38 && code != 108 && code != 13){
+					var val="";
+					jQuery(obj).next().find(".mater_name_list").empty();
+					jQuery(obj).next().find(".mater_name_list3 li").each(function(i){
+						var liTextVal=jQuery(this).text().replace(jQuery(this).find(":first").text(),"");
+						if(inVal!=""){
+							if(liTextVal.indexOf(inVal)>=0){
+								val +="<li  onclick='selectCompany(this)' calss='material_li material_li_"+(i+1)+"'>";
+								val +=jQuery(this).html();
+								val +="</li>";
+							}
+						}else{
+							jQuery(obj).parent().find('div.mater_name_bd').hide();
+						}
+						/* else{
+							val +="<li  onclick='selectCompany(this)' calss='material_li material_li_"+(i+1)+"' >";
+							val +=jQuery(this).html();
+							val +="</li>";
+						} */
+						
+					});
+					if(val != ""){
+						jQuery(obj).next().find(".mater_name_list").append(val);
+						jQuery(obj).parent().find('div.mater_name_bd').show();
+					} else{
+						jQuery(obj).parent().find('div.mater_name_bd').hide();
+					}
+					
+				}else if((code==40 || code==38) && num==2){
+					var val="";
+					jQuery(obj).next().find(".mater_name_list").empty();
+					jQuery(obj).next().find(".mater_name_list3 li").each(function(i){
+						var liTextVal=jQuery(this).text().replace(jQuery(this).find(":first").text(),"");
+						if(inVal!=""){
+							if(liTextVal.indexOf(inVal)>=0){
+								val +="<li  onclick='selectCompany(this)' calss='material_li material_li_"+(i+1)+"'>";
+								val +=jQuery(this).html();
+								val +="</li>";
+							}
+						}else{
+							val +="<li  onclick='selectCompany(this)' calss='material_li material_li_"+(i+1)+"'>";
+							val +=jQuery(this).html();
+							val +="</li>";
+						}
+						
+					});
+					jQuery(obj).next().find(".mater_name_list").append(val);
+					jQuery(obj).parent().find('div.mater_name_bd').show();
+			}
+			}
+			function searchDis(obj){
+				 setTimeout(function(){
+					 jQuery(obj).parent().find('div.mater_name_bd').hide();
+		            },500)  
+				
+			}
+			function searchShow(obj){
+				jQuery(obj).parent().find('div.mater_name_bd').show();
+			}
+
+			function selectCompany(obj){
+				jQuery("#mainForm\\:reciveCompany").val(jQuery(obj).html());
+				jQuery('div.mater_name_bd').hide();
+			}
+
+			//页面初始化键盘上下键操作
+			function keyInit(){
+				 jQuery("#mainForm\\:reciveCompany").keydown(function(e){
+				        e = e || window.event;
+				        var keycode = e.which ? e.which : e.keyCode;
+				        if(keycode == 38){
+				            movePrev(this);
+				        }else if(keycode == 40){
+				            if(!jQuery(this).parent().find(".mater_name_bd").is(":visible")){
+				            	jQuery(this).parent().find(".mater_name_bd").show();
+				            	searchLi(this,e,2);
+				                return;
+				            }
+				            if(jQuery(this).next().find("li").hasClass("addbg")){
+				                moveNext(this);
+				            }else{
+				            	jQuery(this).next().find("li").removeClass('addbg').eq(0).addClass('addbg');
+				            }
+				        }else if(keycode == 108 || keycode == 13){
+				            dojob(this,keycode);
+				        }
+				    });
+			}
+			//键盘方向键↓操作
+			var movePrev = function(obj){
+				var index = jQuery(".mater_name_list").find(".addbg").prevAll().length;
+			    if(index == 0){
+			    	 jQuery(".mater_name_list").find("li").removeClass('addbg').eq(jQuery(".material_li").length-1).addClass('addbg');
+			    }else{
+			    	 jQuery(".mater_name_list").find("li").removeClass('addbg').eq(index-1).addClass('addbg');
+			    }
+			    jQuery(".mater_name_list").scrollTop((index-1)*24);
+			};
+			//键盘方向键↑操作
+			var moveNext = function(obj){
+			    var index = jQuery(".mater_name_list").find(".addbg").prevAll().length;
+			    if(index == jQuery(".mater_name_list").find(".material_li").length-1){
+			    	 jQuery(".mater_name_list").find("li").removeClass('addbg').eq(0).addClass('addbg');
+			    }else{
+			    	jQuery(".mater_name_list").find("li").removeClass('addbg').eq(index+1).addClass('addbg');
+			    }
+			    jQuery(".mater_name_list").scrollTop((index-1)*24);
+			};
+			
+			var dojob = function(obj,code){
+			    //判断当前是否存在选中的下拉数据，如果有则执行选中数据的点击事件，没有则在根据扫码功能是否开启来判断是否走扫码功能
+				if( jQuery(".mater_name_list").find("li").hasClass("addbg")){
+					 jQuery(".mater_name_list").find(".addbg").click();
+			    }
 			}
 		//]]>
 		</script>

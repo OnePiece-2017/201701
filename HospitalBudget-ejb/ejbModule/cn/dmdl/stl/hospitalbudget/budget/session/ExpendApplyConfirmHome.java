@@ -78,12 +78,10 @@ public class ExpendApplyConfirmHome extends CriterionEntityHome<ExpendApplyInfo>
 			totalMoney = eci.getTotalMoney();
 			StringBuffer userSql = new StringBuffer();
 			userSql.append(" select uie1.fullname as applyer_name, ");
-			userSql.append(" uie2.fullname as reimbursementer_name,uie3.fullname as register_name ");
+			userSql.append(" eai.reimbursementer as reimbursementer_name,uie3.fullname as register_name ");
 			userSql.append(" from expend_apply_info eai  ");
 			userSql.append(" LEFT JOIN user_info ui1 on eai.applay_user_id=ui1.user_info_id ");
 			userSql.append(" LEFT JOIN user_info_extend uie1 on ui1.user_info_extend_id=uie1.user_info_extend_id ");
-			userSql.append(" LEFT JOIN user_info ui2 on eai.reimbursementer=ui2.user_info_id ");
-			userSql.append(" LEFT JOIN user_info_extend uie2 on ui2.user_info_extend_id=uie2.user_info_extend_id ");
 			userSql.append(" LEFT JOIN user_info ui3 on eai.register=ui3.user_info_id ");
 			userSql.append(" LEFT JOIN user_info_extend uie3 on ui3.user_info_extend_id=uie3.user_info_extend_id ");
 			userSql.append(" where eai.expend_apply_info_id =  ").append(expendApplyInfo.getExpendApplyInfoId());

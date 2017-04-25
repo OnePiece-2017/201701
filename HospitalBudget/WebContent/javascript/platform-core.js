@@ -10,7 +10,5 @@ if (myName != null && myName != '') {
 		if (handle != null && 'function' === typeof handle) {
 			handle(dataArr[1]);
 		}
-	} else {
-		alert('#ERROR: Invalid iframe name.');
 	}
 }

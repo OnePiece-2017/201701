@@ -34,13 +34,21 @@ jQuery(document).ready(function() {
 
 	___cache['total-amount-value'] = jQuery('.draft-table-head .total-amount-value span');// 缓存节点（总金额）
 
-	jQuery('.draft-table-title, .draft-table-body').niceScroll({
+/*	jQuery('.draft-table-title, .draft-table-body').niceScroll({
 	    cursorcolor : '#4d0acf',
 	    cursorwidth : 8,
 	    cursoropacitymax : 0.8,
 	    touchbehavior : false,
 	    autohidemode : true
-	});
+	});*/
+	
+/*	jQuery('.draft-table').niceScroll({
+	    cursorcolor : '#4d0acf',
+	    cursorwidth : 8,
+	    cursoropacitymax : 0.8,
+	    touchbehavior : false,
+	    autohidemode : true
+	});*/
 
 	refreshVisualPannel();// 立即刷新
 	triggerRenewDataContainer();// 触发更新数据容器函数
@@ -74,7 +82,7 @@ function triggerRenewDataContainer() {
 }
 
 function gainOriginalData2callback(data) {
-	parseProject(data['new_generic'], 'generic', '项目');// 4、解析项目并放入数据容器
+	parseProject(data['new_generic'], 'generic', '新增');// 4、解析项目并放入数据容器
 	parseProject(data['new_routine'], 'routine', '常规');// 5、解析常规并放入数据容器
 	gainTamperData2trigger(assembleArguments());
 }
@@ -122,7 +130,7 @@ function parseProject(projectArray, namespace, projectNature) {
 				html += '				<span>' + (hasSub ? '' : '<textarea id="' + (namespace + '_projectSource_' + node['id']) + '" class="form-control"></textarea>') + '</span>';
 				html += '			</div>';
 				html += '			<div class="generic-field edge-end field-project-amount">';
-				html += '				<span>' + (hasSub ? '' : '<input id="' + (namespace + '_projectAmount_' + node['id']) + '" class="form-control"></input>') + '</span>';
+				html += '				<span>' + (hasSub ? '' : '<input id="' + (namespace + '_projectAmount_' + node['id']) + '" class="form-control" style="text-align:right;"></input>') + '</span>';
 				html += '			</div>';
 				html += '			<div class="generic-field edge-end field-formula-remark">';
 				html += '				<span>' + (hasSub ? '' : '<textarea id="' + (namespace + '_formulaRemark_' + node['id']) + '" class="form-control"></textarea>') + '</span>';
@@ -131,9 +139,9 @@ function parseProject(projectArray, namespace, projectNature) {
 				html += '				<span></span>';
 				html += '			</div>';
 				html += '			<div class="generic-field field-function">';
-				html += '				<span id="' + (namespace + '_attachment_' + node['id']) + '" class="operation-item opr-attachment' + (hasSub ? ' not-enabled' : '') + '"' + (hasSub ? '' : ' fu-source=""') + '></span>';
+				html += '				<span id="' + (namespace + '_attachment_' + node['id']) + '" class="operation-item opr-attachment' + (hasSub ? ' not-enabled' : '') + '"' + (hasSub ? '' : ' fu-source=""') + '>附件</span>';
 				html += '				<span class="operation-item opr-locking' + (hasSub ? ' not-enabled' : '') + '"></span>';
-				html += '				<span class="operation-item opr-reference' + (hasSub ? ' not-enabled' : '') + '"></span>';
+				//html += '				<span class="operation-item opr-reference' + (hasSub ? ' not-enabled' : '') + '"></span>';
 				html += '			</div>';
 				html += '		</div>';
 				html += '	</div>';
@@ -152,10 +160,10 @@ function parseProject(projectArray, namespace, projectNature) {
 				___sgInputbox({
 				    id : this.id,
 				    alias : '项目来源' + ___surroundContents(jQuery(this).parents('.item-outer').attr('project-nature'), 'ID: ' + this.id.replace(namespace + '_projectSource_', '')),
-				    threshold : 45,
+				    threshold : 100,
 				    notify : true
 				});
-				___textRestrictById(this.id, 45);
+				___textRestrictById(this.id, 100);
 			});
 			jQuery('.draft-table-body .data-container [namespace="' + namespace + '"] textarea[id^="' + namespace + '_formulaRemark_"]').each(function() {
 				___sgInputbox({

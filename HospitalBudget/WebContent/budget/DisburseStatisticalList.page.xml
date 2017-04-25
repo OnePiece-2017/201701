@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<page xmlns="http://jboss.com/products/seam/pages" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://jboss.com/products/seam/pages http://jboss.com/products/seam/pages-2.2.xsd"
+	login-required="true">
+
+	<restrict>#{s:hasRole('routine_project')}</restrict>
+	<param name="from" />
+	<param name="page" value="#{disburseStatisticalList.page}" />
+	<param name="keyword" value="#{disburseStatisticalList.keyword}" />
+	<param name="beginYearParam" value="#{disburseStatisticalList.beginYearParam}" />
+	<param name="departmentInfoId" value="#{disburseStatisticalList.departmentInfoId}" />
+	<param name="fundsSourceId" value="#{disburseStatisticalList.fundsSourceId}" />
+
+</page>

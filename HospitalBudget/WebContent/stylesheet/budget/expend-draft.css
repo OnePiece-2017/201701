@@ -311,7 +311,7 @@ ul {
 }
 
 .data-container .item-inner .field-function .operation-item {
-	width: 32px;
+	width: 45px;
 	height: 32px;
 	opacity: 0.21;
 }
@@ -325,11 +325,10 @@ ul {
 }
 
 .data-container .item-inner .field-function .operation-item.opr-attachment {
-	background: url(../../images/budget/icon_attach_16x16.png) no-repeat center;
 }
 
 .data-container .item-inner .field-function .operation-item.opr-locking {
-	background: url(../../images/budget/icon_password_16x16.png) no-repeat center;
+	background: url(../../images/icon_delete_16x16.png) no-repeat center;
 }
 
 .data-container .item-inner .field-function .operation-item.opr-reference {

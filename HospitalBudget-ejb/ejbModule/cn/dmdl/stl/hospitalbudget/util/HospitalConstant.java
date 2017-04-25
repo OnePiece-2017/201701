@@ -16,7 +16,7 @@ public class HospitalConstant {
 	//汇总表状态
 	public final static int COLLECTIONSTATUS_WAIT = 0;//待处理
 	public final static int COLLECTIONSTATUS_FINISH = 1;//已下达
-	public final static int COLLECTIONSTATUS_RETURN = 2;//被追回
+	public final static int COLLECTIONSTATUS_TAKEBACK = 2;//被追回
 	
 	//汇总表类型
 	public final static int COLLECTIONTYPE_INCOME = 1;//收入

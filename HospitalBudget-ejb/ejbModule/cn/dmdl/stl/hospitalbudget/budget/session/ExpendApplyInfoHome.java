@@ -13,25 +13,6 @@ import java.util.Map;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 import org.jboss.seam.annotations.Name;
 
 import cn.dmdl.stl.hospitalbudget.admin.entity.UserInfo;
@@ -39,7 +20,6 @@ import cn.dmdl.stl.hospitalbudget.budget.entity.ExpendApplyInfo;
 import cn.dmdl.stl.hospitalbudget.budget.entity.ExpendApplyProject;
 import cn.dmdl.stl.hospitalbudget.budget.entity.ExpendConfirmInfo;
 import cn.dmdl.stl.hospitalbudget.budget.entity.ExpendConfirmProject;
-import cn.dmdl.stl.hospitalbudget.budget.entity.NormalExpendBudgetOrderInfo;
 import cn.dmdl.stl.hospitalbudget.budget.entity.NormalExpendPlantInfo;
 import cn.dmdl.stl.hospitalbudget.budget.entity.TaskOrder;
 import cn.dmdl.stl.hospitalbudget.budget.entity.TaskUser;
@@ -67,12 +47,11 @@ public class ExpendApplyInfoHome extends CriterionEntityHome<ExpendApplyInfo>{
 	private String reciveCompany;//收款单位
 	private String invoiceSn;//发票
 	private String summary;//摘要
-	private Integer applayer;//申请人
 	private String totalMoney;//已到账金额
 	private String usedMoney;//已使用金额
 	private String canUseMoney;//可使用金额
 	private String projectJson;//json
-	
+	private String reimbur;//报销人
 	private String comment ;//备注
 	private Float allMoney;//总金额
 	private String applyTime;//申请时间
@@ -80,12 +59,13 @@ public class ExpendApplyInfoHome extends CriterionEntityHome<ExpendApplyInfo>{
 	private Integer register;//登记人
 	private JSONObject saveResult;
 	private String expendAllMoney;//总支出金额
+	private List<Object> companyList;//收款单位列表
 	@SuppressWarnings("unchecked")
 	public void wire(){
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 		projectList = new ArrayList<Object[]>();
 		reciveCompanyList = new ArrayList<Object[]>();
-		applySn = "";
+		applySn = queryNextCode();
 		projectId = -1;
 		fundsSourceId = -1;
 		departmentId = -1;
@@ -95,12 +75,20 @@ public class ExpendApplyInfoHome extends CriterionEntityHome<ExpendApplyInfo>{
 		projectJson = "";
 		expendAllMoney = "";
 		expendList = new ArrayList<Object[]>();
+		applyTime = sdf.format(new Date());
+		reimbur = sessionToken.getUsername();
 		Calendar calendar = Calendar.getInstance();
 		year = calendar.get(Calendar.YEAR);
 		if(null == expendApplyInfoId){
 			expendApplyInfoId = 0;
 		}
-		
+		//查询当前登陆人的科室
+		String companySql = "select eai.recive_company from expend_apply_info eai LEFT JOIN user_info ui on ui.user_info_id=eai.insert_user where ui.department_info_id=" + sessionToken.getDepartmentInfoId();
+		companyList = new ArrayList<Object>();
+		List<Object> oldCompany = getEntityManager().createNativeQuery(companySql).getResultList();
+		if(oldCompany.size() > 0){
+			companyList = oldCompany;
+		}
 		//初始化人员
 		wireBudgetPerson();
 		
@@ -113,9 +101,9 @@ public class ExpendApplyInfoHome extends CriterionEntityHome<ExpendApplyInfo>{
 			invoiceSn = eai.getInvoiceNum();
 			summary = eai.getSummary();
 			if(null != eai.getReimbursementer()){
-				applayer = eai.getReimbursementer();
+				reimbur = eai.getReimbursementer();
 			}else{
-				applayer = 0;
+				reimbur = "";
 			}
 			if(null != eai.getRegister()){
 				register = eai.getRegister();
@@ -202,7 +190,28 @@ public class ExpendApplyInfoHome extends CriterionEntityHome<ExpendApplyInfo>{
 	}
 	
 	
-	
+	@SuppressWarnings("unchecked")
+	public String queryNextCode(){
+		String firstCode = "EP";
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
+		String secondCode = sdf.format(new Date());
+		String thirdCode;
+		String sql = "select eai.expend_apply_code from expend_apply_info eai where eai.expend_apply_code like '" + firstCode + secondCode + "%' ORDER BY eai.expend_apply_info_id";
+		List<Object> list = getEntityManager().createNativeQuery(sql).getResultList();
+		if(null != list && list.size() > 0){
+			String lastCode = list.get(0).toString();
+			String last = lastCode.substring(10,lastCode.length());
+			int lc = Integer.parseInt(last);
+			if(lc >= 1000){
+				thirdCode = (Integer.parseInt(last) + 1) + "";
+			}else{
+				thirdCode = String.format("%0" + 4 + "d", Integer.parseInt(last) + 1);
+			}
+		}else{
+			thirdCode = "0001";
+		}
+		return firstCode + secondCode + thirdCode;
+	}
 	
 	/**
 	 * 弹出模态框初始化
@@ -518,7 +527,21 @@ public class ExpendApplyInfoHome extends CriterionEntityHome<ExpendApplyInfo>{
 	 */
 	@SuppressWarnings("unchecked")
 	public String save(){
+		if (saveResult != null) {
+			saveResult.clear();
+		} else {
+			saveResult = new JSONObject();
+		}
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+		//校验申请单号是否已经存在
+		String checkSql = "select * from expend_apply_info where expend_apply_code='" + applySn + "'";
+		List<Object[]> checkList = getEntityManager().createNativeQuery(checkSql).getResultList();
+		if(null != checkList && checkList.size() > 0){
+			applySn = queryNextCode();
+			saveResult.accumulate("invoke_result", "INVOKE_FAIL");
+			saveResult.accumulate("message", "编码已经存在，已为您刷新编码！请重新提交");
+			return "";
+		}
 		joinTransaction();
 		//申请单
 		ExpendApplyInfo expendApplyInfo = new ExpendApplyInfo();
@@ -531,7 +554,7 @@ public class ExpendApplyInfoHome extends CriterionEntityHome<ExpendApplyInfo>{
 		expendApplyInfo.setInsertTime(new Date());
 		expendApplyInfo.setDeleted(false);
 		expendApplyInfo.setSummary(summary);
-		expendApplyInfo.setReimbursementer(applayer);
+		expendApplyInfo.setReimbursementer(reimbur);
 		expendApplyInfo.setExpendApplyStatus(0);
 		try {
 			expendApplyInfo.setApplyTime(sdf.parse(applyTime));
@@ -558,7 +581,7 @@ public class ExpendApplyInfoHome extends CriterionEntityHome<ExpendApplyInfo>{
 		}
 		
 		//配置流程信息
-		UserInfo userInfo = getEntityManager().find(UserInfo.class, sessionToken.getUserInfoId());
+		/*UserInfo userInfo = getEntityManager().find(UserInfo.class, sessionToken.getUserInfoId());
 		TaskOrder taskOrder = new TaskOrder();
 		taskOrder.setTaskName(userInfo.getYsDepartmentInfo().getTheValue() + "〔" + year + "〕常规支出执行");
 		taskOrder.setDeptId(userInfo.getYsDepartmentInfo().getTheId());
@@ -600,9 +623,9 @@ public class ExpendApplyInfoHome extends CriterionEntityHome<ExpendApplyInfo>{
 			saveResult.element("invoke_result", "INVOKE_FAILURE");
 			saveResult.element("message", "操作失败！请先完善科室[" + userInfo.getYsDepartmentInfo().getTheValue() + "]的流程信息！");
 			return  "no";
-		}
-		expendApplyInfo.setTaskOrderId(taskOrder.getTaskOrderId());
-		expendApplyInfo.setOrderSn(taskOrder.getOrderSn());
+		}*/
+		expendApplyInfo.setTaskOrderId(0);
+		expendApplyInfo.setOrderSn("");
 		getEntityManager().persist(expendApplyInfo);
 		//生成确认单
 		ExpendConfirmInfo eci = new ExpendConfirmInfo();
@@ -699,6 +722,11 @@ public class ExpendApplyInfoHome extends CriterionEntityHome<ExpendApplyInfo>{
 	 */
 	@SuppressWarnings("unchecked")
 	public String update(){
+		if (saveResult != null) {
+			saveResult.clear();
+		} else {
+			saveResult = new JSONObject();
+		}
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 		joinTransaction();
 		//申请单
@@ -717,7 +745,7 @@ public class ExpendApplyInfoHome extends CriterionEntityHome<ExpendApplyInfo>{
 		expendApplyInfo.setInsertTime(new Date());
 		expendApplyInfo.setDeleted(false);
 		expendApplyInfo.setSummary(summary);
-		expendApplyInfo.setReimbursementer(applayer);
+		expendApplyInfo.setReimbursementer(reimbur);
 		expendApplyInfo.setExpendApplyStatus(0);
 		try {
 			expendApplyInfo.setApplyTime(sdf.parse(applyTime));
@@ -767,11 +795,6 @@ public class ExpendApplyInfoHome extends CriterionEntityHome<ExpendApplyInfo>{
 			eci.setYear(expendApplyInfo.getYear());
 			eci.setDeleted(false);
 			getEntityManager().merge(eci);
-		}
-		if (saveResult != null) {
-			saveResult.clear();
-		} else {
-			saveResult = new JSONObject();
 		}
 		saveResult.accumulate("invoke_result", "INVOKE_SUCCESS");
 		saveResult.accumulate("message", "提交成功！");
@@ -1107,6 +1130,8 @@ public class ExpendApplyInfoHome extends CriterionEntityHome<ExpendApplyInfo>{
 		}
 		return projectList;
 	}
+	
+	//递归查询当前登陆人所在部门的额最高部门
 	public List<Object[]> getDepartmentInfoList() {
 		return departmentInfoList;
 	}
@@ -1236,7 +1261,6 @@ public class ExpendApplyInfoHome extends CriterionEntityHome<ExpendApplyInfo>{
 		this.saveResult = saveResult;
 	}
 
-
 	public String getSummary() {
 		return summary;
 	}
@@ -1245,13 +1269,6 @@ public class ExpendApplyInfoHome extends CriterionEntityHome<ExpendApplyInfo>{
 		this.summary = summary;
 	}
 
-	public Integer getApplayer() {
-		return applayer;
-	}
-
-	public void setApplayer(Integer applayer) {
-		this.applayer = applayer;
-	}
 
 	public String getTotalMoney() {
 		return totalMoney;
@@ -1277,93 +1294,84 @@ public class ExpendApplyInfoHome extends CriterionEntityHome<ExpendApplyInfo>{
 		this.canUseMoney = canUseMoney;
 	}
 
-
 	public String getComment() {
 		return comment;
 	}
-
 
 	public void setComment(String comment) {
 		this.comment = comment;
 	}
 
-
 	public Float getAllMoney() {
 		return allMoney;
 	}
-
 
 	public void setAllMoney(Float allMoney) {
 		this.allMoney = allMoney;
 	}
 
-
 	public String getApplyTime() {
 		return applyTime;
 	}
-
 
 	public void setApplyTime(String applyTime) {
 		this.applyTime = applyTime;
 	}
 
-
 	public String getRegistTime() {
 		return registTime;
 	}
-
 
 	public void setRegistTime(String registTime) {
 		this.registTime = registTime;
 	}
 
-
 	public Integer getRegister() {
 		return register;
 	}
-
 
 	public void setRegister(Integer register) {
 		this.register = register;
 	}
 
-
 	public Integer getExpendApplyInfoId() {
 		return expendApplyInfoId;
 	}
-
 
 	public void setExpendApplyInfoId(Integer expendApplyInfoId) {
 		this.expendApplyInfoId = expendApplyInfoId;
 	}
 
-
-
-
 	public String getExpendAllMoney() {
 		return expendAllMoney;
 	}
-
-
-
 
 	public void setExpendAllMoney(String expendAllMoney) {
 		this.expendAllMoney = expendAllMoney;
 	}
 
-
-
-
 	public Integer getProjectType() {
 		return projectType;
 	}
 
-
-
-
 	public void setProjectType(Integer projectType) {
 		this.projectType = projectType;
 	}
-	
-	
+
+	public String getReimbur() {
+		return reimbur;
+	}
+
+	public void setReimbur(String reimbur) {
+		this.reimbur = reimbur;
+	}
+
+	public List<Object> getCompanyList() {
+		return companyList;
+	}
+
+	public void setCompanyList(List<Object> companyList) {
+		this.companyList = companyList;
+	}
+
 }

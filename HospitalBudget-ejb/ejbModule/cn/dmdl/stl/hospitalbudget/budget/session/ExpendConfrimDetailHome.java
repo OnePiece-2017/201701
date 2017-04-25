@@ -54,7 +54,7 @@ public class ExpendConfrimDetailHome extends CriterionEntityHome<Object> {
 		dataSql.append(" eai.recive_company,");//3收款单位
 		dataSql.append(" eai.invoice_num,");//4发票号
 		dataSql.append(" eai.summary,");//5摘要
-		dataSql.append(" uie1.fullname,");//6报销人
+		dataSql.append(" eai.reimbursementer,");//6报销人
 		dataSql.append(" eai.apply_time, ");//7申请时间
 		dataSql.append(" eai.register_time, ");//8登记时间
 		dataSql.append(" uie2.fullname as register, ");//9登记人
@@ -65,8 +65,6 @@ public class ExpendConfrimDetailHome extends CriterionEntityHome<Object> {
 		dataSql.append(" LEFT JOIN expend_confirm_info eci on eci.expend_confirm_info_id= ecp.expend_confirm_info_id ");
 		dataSql.append(" LEFT JOIN user_info ui on eai.applay_user_id=ui.user_info_id ");
 		dataSql.append(" LEFT JOIN user_info_extend uie on uie.user_info_extend_id=ui.user_info_extend_id ");
-		dataSql.append(" LEFT JOIN user_info ui1 on eai.reimbursementer=ui1.user_info_id ");
-		dataSql.append(" LEFT JOIN user_info_extend uie1 on uie1.user_info_extend_id=ui1.user_info_extend_id ");
 		dataSql.append(" LEFT JOIN user_info ui2 ON eai.register = ui2.user_info_id ");
 		dataSql.append(" LEFT JOIN user_info_extend uie2 ON uie2.user_info_extend_id = ui2.user_info_extend_id ");
 		dataSql.append(" LEFT JOIN user_info ui3 ON eai.insert_user = ui3.user_info_id ");

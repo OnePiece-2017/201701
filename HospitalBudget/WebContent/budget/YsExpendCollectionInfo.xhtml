@@ -16,6 +16,8 @@
 		<link rel="stylesheet" type="text/css" href="#{request.contextPath}/common/css/jquery.treegrid.css" />
 		<link rel="stylesheet" type="text/css" href="#{request.contextPath}/icheck/skins/square/blue.css" />
 		<link rel="stylesheet" type="text/css" href="#{request.contextPath}/toastr/toastr.min.css" />
+		<link rel="stylesheet" type="text/css" href="#{request.contextPath}/sg-messagebox/css/sg-messagebox.css" />
+		<link rel="stylesheet" type="text/css" href="#{request.contextPath}/sg-fileupload/css/kernel.css" />
 		<style type="text/css">
 			.root {
 				background: #add595;
@@ -67,6 +69,8 @@
 		<script type="text/javascript" src="#{request.contextPath}/common/js/jquery.treegrid.js" charset="UTF-8" />
 		<script type="text/javascript" src="#{request.contextPath}/icheck/js/icheck.min.js" charset="UTF-8" />
 		<script type="text/javascript" src="#{request.contextPath}/toastr/toastr.min.js" />
+		<script type="text/javascript" src="#{request.contextPath}/sg-messagebox/js/sg-messagebox.js" />
+		<script type="text/javascript" src="#{request.contextPath}/sg-fileupload/js/kernel.js" />
 		<script type="text/javascript" src="#{request.contextPath}/toolkit/utils.js" charset="UTF-8" />
 		<script type="text/javascript">
 		//<![CDATA[
@@ -88,20 +92,57 @@
 			  	if(val.is_usual == 1){
 				  	html += "<td>常规</td>";
 				}else{
-					html += "<td>项目</td>";
+					html += "<td>新增</td>";
 				}
-			  	html += "<td>" + val.project_source + "</td>";
+			  	html += "<td class='field-popup'>" + ___genStdHtml___a_abbr(val.project_source, 13) + "</td>";
 			  	html += "<td>" + val.project_amount + "</td>";
 			  	html += "<td>--</td>";
 			  	html += "<td>--</td>";
-			  	html += "<td>" + val.formula_remark + "</td>";
-			  	html += "<td>附件</td>";
+			  	html += "<td class='field-popup'>" + ___genStdHtml___a_abbr(val.formula_remark, 13) + "</td>";
+			  	if (val.attachment != null && val.attachment !== '') {
+			  		html += '<td class="field-attachment" id="temp_attachment_' + index + '" fu-source="' + val.attachment + '">附件</td>';
+			  	} else {
+			  		html += '<td></td>';
+			  	}
 			  	html += "</tr>";
 			});
 			jQuery(".record").append(html);
 			jQuery('.record').treegrid();
 			jQuery(".node-totalAmount").html(data.total_amount);
 			jQuery("#dept_name").html(data.dept_name);
+			
+			jQuery('td.field-popup').click(function() {
+				___sgMessagebox({
+					type: 'warning',
+					title: '温馨提示',
+					message: jQuery(this).find('a').attr('title'),
+					fadeInMillis: 0,
+					fadeOutMillis: 1000 * 60,
+					fadeInCallback: null,
+					fadeOutCallback: null
+				});
+			});
+			
+			jQuery('td.field-attachment').click(function() {
+				showLayer();
+				var tempHandler = jQuery(this);// 临时句柄
+				if (jQuery(this).hasClass('activated')) {
+					setTimeout(function() {
+						hideLayer();
+					}, 512);// 防止恶意点击
+				} else {
+					sgFileupload['reinstall']({
+					    'target' : this.id,
+					    'alias' : null,
+					    'source' : jQuery(this).attr('fu-source'),
+					    'class' : 'sg-fu-custom--attachment',
+					    'completed' : function() {
+						    tempHandler.addClass('activated');
+						    tempHandler.click();
+					    }
+					}); // 重新安装附件插件
+				}
+			});
 			
 		}
 		//]]>

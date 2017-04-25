@@ -3,13 +3,21 @@ package cn.dmdl.stl.hospitalbudget.common.session;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.jboss.seam.annotations.In;
+import org.jboss.seam.annotations.Logger;
 import org.jboss.seam.framework.EntityQuery;
+import org.jboss.seam.log.Log;
 
 import cn.dmdl.stl.hospitalbudget.boot.ConfigureCache;
+import cn.dmdl.stl.hospitalbudget.util.SessionToken;
 
-public class CriterionEntityQuery<E> extends EntityQuery<E> {
+public abstract class CriterionEntityQuery<E> extends EntityQuery<E> {
 
 	private static final long serialVersionUID = 1L;
+	@In
+	protected SessionToken sessionToken;
+	@Logger
+	protected Log log;
 	private String orderDirection;
 	private Integer maxResults;
 	protected static final int MAX_RESULTS = 20;
@@ -91,7 +99,6 @@ public class CriterionEntityQuery<E> extends EntityQuery<E> {
 				}
 			}
 		}
-
 		return list;
 	}
 }

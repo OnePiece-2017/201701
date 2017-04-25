@@ -10,5 +10,7 @@
 	<param name="applyUser" value="#{expendConfrimList.applyUser}" />
 	<param name="applyTime" value="#{expendConfrimList.applyTime}" />
 	<param name="confirmStatus" value="#{expendConfrimList.confirmStatus}" />
-	
+	<param name="moneyType" value="#{expendConfrimList.moneyType}" />
+	<param name="applyEndTime" value="#{expendConfrimList.applyEndTime}" />
+	<param name="reimbursementer" value="#{expendConfrimList.reimbursementer}" />
 </page>

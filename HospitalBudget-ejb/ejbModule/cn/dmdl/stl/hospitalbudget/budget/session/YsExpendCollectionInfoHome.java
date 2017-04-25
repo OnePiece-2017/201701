@@ -36,7 +36,8 @@ public class YsExpendCollectionInfoHome extends CriterionEntityHome<Object> {
 		sql.append("ici.formula_remark, ");
 		sql.append("ici.routine_project_id as project_id, ");
 		sql.append("rp.the_pid, ");
-		sql.append("ici.bottom_level ");
+		sql.append("ici.bottom_level, ");
+		sql.append("ici.attachment ");
 		sql.append("from hospital_budget.ys_budget_collection_dept bcd ");
 		sql.append("INNER JOIN hospital_budget.ys_expend_collection_info ici ON bcd.budget_collection_dept_id = ici.budget_collection_dept_id  ");
 		sql.append("AND ici.`delete` = 0 ");
@@ -50,7 +51,8 @@ public class YsExpendCollectionInfoHome extends CriterionEntityHome<Object> {
 		sql.append("ici.formula_remark, ");
 		sql.append("ici.generic_project_id as project_id, ");
 		sql.append("rp.the_pid, ");
-		sql.append("ici.bottom_level ");
+		sql.append("ici.bottom_level, ");
+		sql.append("ici.attachment ");
 		sql.append("from hospital_budget.ys_budget_collection_dept bcd ");
 		sql.append("INNER JOIN hospital_budget.ys_expend_collection_info ici ON bcd.budget_collection_dept_id = ici.budget_collection_dept_id  ");
 		sql.append("AND ici.`delete` = 0 ");
@@ -76,6 +78,7 @@ public class YsExpendCollectionInfoHome extends CriterionEntityHome<Object> {
 				if(Integer.parseInt(object[7].toString()) == 1){
 					totalAmount += Double.parseDouble(object[3].toString());
 				}
+				json.element("attachment", object[8]);
 				collectionInfoArr.add(json);
 			}
 			collectionInfo.element("collection_info", collectionInfoArr);
