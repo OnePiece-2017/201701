@@ -6,107 +6,36 @@
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:h="http://java.sun.com/jsf/html"
 	xmlns:rich="http://richfaces.org/rich"
-	template="layout/template_login.xhtml">
-
+	template="layout/template.xhtml">
+<ui:define name="head">
+	<link rel="stylesheet" type="text/css" href="#{request.contextPath}/stylesheet/login.css" />
+</ui:define>
 <ui:define name="body">
-<style>
-input {
-    border: medium none;
-    list-style-type: none;
-    margin: 0;
-    padding: 0;
-}
-	.logo_company{margin:auto auto; display: block;}
-	.logo_box01{height: 64px;margin: 0 auto;width: 360px; margin-top:160px; border-bottom:1px #d8e2f3 dotted;}
-	.login_new{ width:330px; margin:0 auto; margin-top:30px;}
-	.user_new{background: url(#{request.contextPath}/images/man.png) no-repeat;height:36px;padding-bottom:20px;width:328px;}
-	.write01{ height:34px; width:265px;float: right;background: none repeat;color: #B0B0B0;font-size: 14px;line-height: 34px; margin-right:5px;}
-	.ts_font {
-	    color: #ff0000;
-	    font-size: 14px;
-	     padding-left:10px;
-	}
-	.font01{min-width:137px; display:inline-block;height: 35px;}
-	.pass_new{background: url(#{request.contextPath}/images/secret.png) no-repeat;height: 36px;padding-bottom: 17px;width: 328px;}
-	.login_button{ padding-top:10px;}
-	.forget a{color: #3c779a;font-size: 12px;}
-	.btn-info {
-		color: #fff;
-		background-color: #5bc0de;
-		border-color: #46b8da
-	}
-	.btn {
-		display: inline-block;
-		padding: 6px 12px;
-		margin-bottom: 0;
-		font-size: 12px;
-		font-weight: 400;
-		line-height: 1.42857143;
-		text-align: center;
-		white-space: nowrap;
-		vertical-align: middle;
-		cursor: pointer;
-		-webkit-user-select: none;
-		-moz-user-select: none;
-		-ms-user-select: none;
-		user-select: none;
-		background-image: none;
-		border: 1px solid transparent;
-		border-radius: 4px;
-		width:328px;
-	}
-	.ts_font {
-	    color: #ff0000;
-	    font-size: 14px;
-	     padding-left:10px;
-	}
-	.forget a{color: #3c779a;font-size: 12px;}
-	.forget{ height:45px;}
-</style>
-			 <h:form id="mainForm">
-				 <s:fragment rendered="false">
-					<h:messages id="errorMessage" layout="table" globalOnly="true" styleClass="login-failed" rendered="#{showGlobalMessages != 'false'}" />
-				</s:fragment>
-				<div class="logo_box01">
-					<img class="logo_company" src="#{request.contextPath}/images/yylogo.bmp"/>
-				</div>
-				<div class="login_new">
-					<table width="" border="0" cellspacing="0" cellpadding="0">
-					  <tr>
-					    <td class="user_new" >
-					    	<h:inputText id="username" value="#{credentials.username}" styleClass="write01"/>
-					    </td>
-					    <td class="ts_font" height="40" align="left" >
-					    </td>
-					  </tr>
-					  <tr>
-					    <td class="pass_new">
-					    	<h:inputSecret id="password" value="#{credentials.password}" styleClass="write01"/>
-					    </td>
-					    <td class="ts_font" height="40" align="left" >
-					    </td>
-					  </tr>
-					  <tr>
-					    <td class="login_button">
-					    	<h:commandButton id="submit" value="登录" onclick="return beforeSubmit();" action="#{authenticator.login}" styleClass="btn btn-info"/>
-					    </td>
-					  </tr>
-				</table>
+
+	   <h:form id="mainForm">
+			<div class="login">
+			    <div class="message">友谊医院预算系统</div>
+			    <div id="darkbannerwrap"></div>
+			    
+				<h:inputText id="username" value="#{credentials.username}" />
+				<!-- <input name="username" placeholder="用户名" required="" type="text"> -->
+				<hr class="hr15"></hr>
+				<h:inputSecret id="password" value="#{credentials.password}" />
+				<!-- <input name="password" placeholder="密码" required="" type="password"> -->
+				<hr class="hr15"></hr>
+				<h:commandButton id="submit" value="登录" onclick="return beforeSubmit();"  style="width:100%;" action="#{authenticator.login}" styleClass="btn btn-info"/>
+				<!-- <input value="登录" style="width:100%;" type="submit"> -->
+				<hr class="hr20"></hr>
+				<!-- 帮助 <a onClick="alert('请联系管理员')">忘记密码</a> -->
 			</div>
 		</h:form>
+
+		<div class="copyright">© 2017Copyright by 友谊医院</div>
 		<script type="text/javascript" src="#{request.contextPath}/toolkit/utils.js" charset="UTF-8" />
 		<script type="text/javascript">
 		//<![CDATA[
 			jQuery(document).ready(function() {
-			    jQuery('body').niceScroll({
-					cursorcolor : '#404040',
-					cursorwidth : 6,
-					cursoropacitymax : 0.8,
-					touchbehavior : false,
-					autohidemode : true
-			    });
-
-			    ___textRestrictById('mainForm:username', 255);
+/* 			    ___textRestrictById('mainForm:username', 255);
 			    ___textRestrictById('mainForm:password', 255);
 				
 				var message = '#{sessionToken.message}';
@@ -120,7 +49,7 @@ input {
 				if (forTest) {
 					jQuery('#mainForm\\:username').val('zhangjie');
 					jQuery('#mainForm\\:submit').click();
-				}
+				} */
 			});
 			
 			//提交表单前

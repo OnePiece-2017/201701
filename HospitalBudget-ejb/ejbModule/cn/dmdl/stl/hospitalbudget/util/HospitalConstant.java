@@ -22,4 +22,8 @@ public class HospitalConstant {
 	public final static int COLLECTIONTYPE_INCOME = 1;//收入
 	public final static int COLLECTIONTYPE_EXPEND = 2;//支出
 	
+	//编制类型
+	public final static int TYPE_DRAFT = 0;//编制
+	public final static int TYPE_ADJUSTMENT = 1;//调整
+	
 }

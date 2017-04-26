@@ -146,7 +146,7 @@ function parseProject(projectArray, namespace, projectNature) {
 				html += '		</div>';
 				html += '	</div>';
 				if (hasSub) {
-					html += '<ul>';
+					html += '<ul style="padding-left:10px;">';
 					processLeaf(node['subset']);
 					html += '</ul>';
 				}

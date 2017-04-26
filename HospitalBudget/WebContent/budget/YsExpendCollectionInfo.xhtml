@@ -42,8 +42,9 @@
 			            <th width="10%">项目金额(元)</th>
 			            <th width="10%">与上一年预算<br />同比增减(万元)</th>
 			            <th width="10%">与上一年预算<br />同比增减率</th>
-			            <th width="30%">金额计算依据及备注</th>
+			            <th width="25%">金额计算依据及备注</th>
 			            <th width="5%">附件</th>
+			            <th width="5%">操作</th>
 			        </tr>
 				</table>
 			</div>
@@ -61,6 +62,9 @@
 			<a:queue requestDelay="100" ignoreDupResponses="true" />
 			<a:jsFunction name="getCollectionInfoAction"  data="#{ysExpendCollectionInfoHome.collectionExpendInfo}" oncomplete="wirePage(data);">
 			</a:jsFunction>
+			<a:jsFunction name="deleteCollectionAction"  action="#{ysExpendCollectionInfoHome.deleteCollectionById()}" oncomplete="getCollectionInfoAction();">
+				<a:actionparam name="collectionId" assignTo="#{ysExpendCollectionInfoHome.collectionId}" />
+			</a:jsFunction>
 		</a:form>
 		<script type="text/javascript" src="#{request.contextPath}/javascript/template_list.js" charset="UTF-8" />
 		<script type="text/javascript" src="#{request.contextPath}/common/js/bootstrap.min.js" />
@@ -76,9 +80,15 @@
 		//<![CDATA[
 		jQuery(document).ready(function(){
 			getCollectionInfoAction();
+
+			jQuery(".record").on("click", "a", function(){
+				var collectionId = jQuery(this).attr("id");
+				deleteCollectionAction(collectionId);
+			});
 		});
 
 		function wirePage(data){
+			jQuery(".record  tr:not(:first)").html("");
 		    var jsonArr= data.collection_info;
 		    var html = "";
 		    jQuery(jsonArr).each(function(index, val){
@@ -104,6 +114,11 @@
 			  	} else {
 			  		html += '<td></td>';
 			  	}
+			  	if(val.bottom_level == 1){
+				  	html += "<td><a href='javascript:;' style='text-decoration:none;' id='" + val.expend_collection_info_id + "'><img src='../images/icon_delete_16x16.png'></a></td>";
+				}else{
+					html += "<td></td>";
+				}
 			  	html += "</tr>";
 			});
 			jQuery(".record").append(html);

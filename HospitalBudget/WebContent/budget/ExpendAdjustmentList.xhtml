@@ -1,0 +1,309 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:s="http://jboss.com/products/seam/taglib"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:a="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich"
+	template="/layout/template_edit.xhtml">
+
+	<ui:define name="head">
+		<link rel="stylesheet" type="text/css" href="#{request.contextPath}/stylesheet/template_list.css" />
+		<link rel="stylesheet" type="text/css" href="#{request.contextPath}/common/css/bootstrap.min.css" />
+		<link rel="stylesheet" type="text/css" href="#{request.contextPath}/common/css/bootstrap-select.min.css" />
+		<link rel="stylesheet" type="text/css" href="#{request.contextPath}/common/css/jquery.treegrid.css" />
+		<link rel="stylesheet" type="text/css" href="#{request.contextPath}/icheck/skins/square/blue.css" />
+		<link rel="stylesheet" type="text/css" href="#{request.contextPath}/toastr/toastr.min.css" />
+		<link rel="stylesheet" type="text/css" href="#{request.contextPath}/sg-messagebox/css/sg-messagebox.css" />
+		<link rel="stylesheet" type="text/css" href="#{request.contextPath}/sg-fileupload/css/kernel.css" />
+		<style type="text/css">
+			.root {
+				background: #add595;
+			}
+			
+			.treegrid-indent{
+				width:32px;
+			}
+			
+			.field-name {
+				float: left;
+				width: 85px;
+				padding-right: 15px;
+				font-family: '微软雅黑';
+				text-align: right;
+				line-height: 34px;
+				display: block;
+			}
+			
+			.bs-budget-year .bootstrap-select:not([class*="span"]):not([class*="col-"]):not([class*="form-control"]):not(.input-group-btn) {
+				width: 128px;
+			}
+			
+			.bs-funds-source .bootstrap-select:not([class*="span"]):not([class*="col-"]):not([class*="form-control"]):not(.input-group-btn) {
+				width: 128px;
+			}
+			
+			.sg-fu-custom--attachment {
+			}
+			
+		</style>
+	</ui:define>
+
+	<ui:define name="body">
+		<div class="pd0-10 pt30">
+			<div class="g-data-list-condition">
+				<div class="fl" style="min-width: 840px;">
+					<div class="fl bs-budget-year">
+							<span class="field-name mb10">年份</span>
+						<select id="budgetYear" class="selectpicker">
+							<a:repeat value="#{commonDaoHome.recentYearList}" var="_var">
+								<option value="#{_var[0]}">#{_var[1]}</option>
+							</a:repeat>
+						</select>
+					</div>
+					<div class="fl">
+						<div style="float: left; text-align: center; line-height: 36px; width: 70px;">
+							<span>科室</span>
+						</div>
+						<select id="departmentIds" class="selectpicker" multiple="multiple" data-live-search="true" title="请选择">
+							<a:repeat value="#{commonDaoHome.departmentInfoListByUserId}" var="_var">
+								<option value="#{_var[0]}">#{_var[1]}</option>
+							</a:repeat>
+						</select>
+					</div>
+					<div class="fl bs-funds-source">
+						<div style="float: left; text-align: center; line-height: 36px; width: 70px;">
+							<span>资金来源</span>
+						</div>
+						<select id="fundsSourceId" class="selectpicker" multiple="multiple">
+							<a:repeat value="#{commonDaoHome.fundsSource}" var="_var">
+								<option value="#{_var[0]}">#{_var[1]}</option>
+							</a:repeat>
+						</select>
+					</div>
+				</div>
+			</div>
+			<div style="line-height: 40px;">
+				<!-- <div style="float: left;">
+					<strong style="font-size: 20px;">支出预算审核</strong>
+					<font style="margin-left: 15px;color: #f903ed;">项目金额(合计：<span class="node-totalAmount"></span>万元)</font>
+					<strong style="font-size: 28px;position:relative;left:30%;" id="dept_name"></strong>
+				</div> -->
+				<div style="float: right;">
+					<table class="normal-btn">
+						<tr>
+							<td>
+								<a class="btn btn-primary mr15" onclick="return adjust();">提交</a>
+							</td>
+						</tr>
+					</table>
+				</div>
+			</div>
+			<div class="g-data-list-table freeze-attendProject" style="margin-top: 41px;">
+			    <table class="record" width="100%" cellpadding="0" cellspacing="0">
+			        <tr>
+			            <th width="20%">项目名称</th>
+			            <th width="10%">主管科室</th>
+			            <th width="5%">项目性质</th>
+			            <th width="20%">项目金额(元)</th>
+			            <th width="20%">剩余金额</th>
+			            <th width="15%">调整后金额</th>
+			            <th width="10%">操作</th>
+			        </tr>
+				</table>
+			</div>
+		</div>
+		<h:inputHidden id="departmentInfoIdHidden" value="#{sessionToken.departmentInfoId}" />
+		<a:form>
+			<a:queue requestDelay="100" ignoreDupResponses="true" />
+			<a:jsFunction name="filterInfoAction"  data="#{expendAdjustmentHome.allAdjustInfo}" oncomplete="wirePage(data);">
+				<a:actionparam name="year" assignTo="#{expendAdjustmentHome.year}" />
+				<a:actionparam name="deptId" assignTo="#{expendAdjustmentHome.deptIds}" />
+				<a:actionparam name="fundsSourceId" assignTo="#{expendAdjustmentHome.fundsSourceId}" />
+			</a:jsFunction>
+		</a:form>
+		<script type="text/javascript" src="#{request.contextPath}/javascript/template_list.js" charset="UTF-8" />
+		<script type="text/javascript" src="#{request.contextPath}/common/js/bootstrap.min.js" />
+		<script type="text/javascript" src="#{request.contextPath}/common/js/bootstrap-select.min.js" charset="UTF-8" />
+		<script type="text/javascript" src="#{request.contextPath}/common/js/bootstrap-select-defaults-zh_CN.min.js" charset="UTF-8" />
+		<script type="text/javascript" src="#{request.contextPath}/common/js/jquery.treegrid.js" charset="UTF-8" />
+		<script type="text/javascript" src="#{request.contextPath}/icheck/js/icheck.min.js" charset="UTF-8" />
+		<script type="text/javascript" src="#{request.contextPath}/toastr/toastr.min.js" />
+		<script type="text/javascript" src="#{request.contextPath}/sg-messagebox/js/sg-messagebox.js" />
+		<script type="text/javascript" src="#{request.contextPath}/sg-fileupload/js/kernel.js" />
+		<script type="text/javascript" src="#{request.contextPath}/toolkit/utils.js" charset="UTF-8" />
+		<script type="text/javascript">
+		//<![CDATA[
+		
+		jQuery(document).ready(function() {
+			//获取当前年
+		    var date=new Date;
+		    var yearStr=date.getFullYear();
+		    jQuery("#budgetYear").val(yearStr)
+		    jQuery("#departmentIds").val(jQuery("#departmentInfoIdHidden").val());
+		    jQuery("#fundsSourceId").val(1);
+		    
+		    jQuery('.selectpicker').selectpicker();
+		    jQuery('.normal-attendProject').niceScroll({
+				cursorcolor : '#5cb85c',
+				cursorwidth : 9,
+				cursoropacitymax : 0.8,
+				touchbehavior : false,
+				autohidemode : false
+		    });
+
+		    filterInfo();
+		    jQuery('#budgetYear, #departmentIds, #fundsSourceId').change(filterInfo);
+
+		    jQuery(".record").on("click","a",function(){
+				jQuery(this).parents("tr").remove();
+			});
+
+			jQuery(".record").on("keypress", "input", function(){
+				if((event.keyCode >= 48 && event.keyCode <= 57) || event.keyCode == 46){  
+		 	    	return true;
+		 	    }else{  
+		 	    	return false;  
+		 	    } 
+			});
+		});
+
+		//筛选编制信息
+		function filterInfo(){
+			var year = jQuery("#budgetYear").val();
+		    var deptIds = jQuery("#departmentIds").val();
+		    if(deptIds){
+		    	deptIds = deptIds.toString(); 
+			}
+		    var fundsSourceId = jQuery("#fundsSourceId").val();
+		    filterInfoAction(year, deptIds, fundsSourceId);
+		}
+		/* jQuery(document).ready(function(){
+			//获取当前年
+		    var date=new Date;
+		    var yearStr=date.getFullYear();
+		    jQuery("#budgetYear").val(yearStr)
+		    
+		    jQuery('.selectpicker').selectpicker();
+		    jQuery('.normal-attendProject').niceScroll({
+				cursorcolor : '#5cb85c',
+				cursorwidth : 9,
+				cursoropacitymax : 0.8,
+				touchbehavior : false,
+				autohidemode : false
+		    });
+		    jQuery("#departmentIds").val(jQuery("#departmentInfoIdHidden").val());
+		    jQuery("#fundsSourceId").val(1);
+		    jQuery('.selectpicker').selectpicker("render");
+
+		    jQuery(".record").on("ifChanged", "input", function(){
+				var icheckName = jQuery(this).attr("name");
+			    if(jQuery(this).is(":checked")){//被选中
+					jQuery(".icheck[name='" + icheckName + "']").iCheck('check');
+				}else{
+					jQuery(".icheck[name='" + icheckName + "']").iCheck('uncheck');
+				}
+			});
+		    filterDraft();
+		    jQuery('#budgetYear, #departmentIds, #fundsSourceId').change(filterDraft);
+
+		});
+
+		function filterDraft(){
+			var year = jQuery("#budgetYear").val();
+		    var deptIds = jQuery("#departmentIds").val();
+		    if(deptIds){
+		    	deptIds = deptIds.toString(); 
+			}
+			var fundsSourceId = jQuery("#fundsSourceId").val();
+		    filterCollectionAction(year, deptIds, fundsSourceId);
+		}
+ */
+		function wirePage(data){
+			jQuery(".record  tr:not(:first)").html("");
+			var jsonArr= data.old_info;
+			var html = "";
+		    jQuery(jsonArr).each(function(index, val){
+			    if(!val.is_root){
+			    	html += "<tr class='treegrid-" + val.project_id + " treegrid-parent-" + val.the_pid + "'>";
+				}else{
+					html += "<tr class='root treegrid-" + val.project_id + "'>";
+				}
+			  	html += "<td style='text-align:left;'>" + val.project_name + "</td>";
+			  	html += "<td>" + val.dept_name + "</td>";
+			  	if(val.is_usual == 1){
+				  	html += "<td>常规</td>";
+				}else{
+					html += "<td>新增</td>";
+				}
+			  	html += "<td>" + val.budget_amount + "</td>";
+			  	html += "<td>" + val.budget_amount_surplus + "</td>";
+			  	html += "<td><input type='text' class='form-control'></td>";
+			  	html += "<td><a href='javascript:;' style='text-decoration:none;'><img src='../images/icon_delete_16x16.png'></a></td>";
+			  	html += "</tr>";
+			});
+		    
+		    var jsonArrNew= data.new_info;
+		    jQuery(jsonArrNew).each(function(index, val){
+			    if(!val.is_root){
+			    	html += "<tr class='treegrid-" + val.project_id + " treegrid-parent-" + val.the_pid + "'>";
+				}else{
+					html += "<tr class='root treegrid-" + val.project_id + "'>";
+				}
+			  	html += "<td style='text-align:left;'>" + val.project_name + "</td>";
+			  	html += "<td>" + val.dept_name + "</td>";
+			  	if(val.is_usual == 1){
+				  	html += "<td>常规</td>";
+				}else{
+					html += "<td>新增</td>";
+				}
+			  	html += "<td>--</td>";
+			  	html += "<td>--</td>";
+			  	html += "<td><input type='text' class='form-control'></td>";
+			  	html += "<td><a href='javascript:;' style='text-decoration:none;'><img src='../images/icon_delete_16x16.png'></a></td>";
+			  	html += "</tr>";
+			});
+			jQuery(".record").append(html);
+			jQuery('.record').treegrid();
+			
+		}
+
+
+		//通过
+		function adjust(){
+			if(checkArr.length <= 0){
+				___msg('温馨提示', '请选择具体的项目！', {
+					closed: ___dynamic_function
+				});
+				return false;
+			}
+			var expandJson = [];
+			jQuery(checkArr).each(function(index, val){
+				expandJson.push({'step_id' : jQuery(val).attr("id").split("_")[0] , 'draft_id' : jQuery(val).attr("id").split("_")[1]});
+			});
+			var expandDraftInfo = JSON.stringify(expandJson)
+			goAheadAction(expandDraftInfo);
+		}
+
+
+		function adjustComplete(data){
+			if(data.isok == "ok"){
+				___msg('温馨提示', data.message, {
+					closed: ___dynamic_function
+				});
+				filterDraft();
+			}else{
+				___msg('温馨提示', data.message, {
+					closed: ___dynamic_function
+				});
+				return false;
+			}
+		}
+
+
+		//]]>
+		</script>
+	</ui:define>
+</ui:composition>

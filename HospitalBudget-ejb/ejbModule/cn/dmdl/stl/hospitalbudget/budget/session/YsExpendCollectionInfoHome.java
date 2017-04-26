@@ -2,6 +2,9 @@ package cn.dmdl.stl.hospitalbudget.budget.session;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.util.List;
 
 import net.sf.json.JSONArray;
@@ -10,6 +13,7 @@ import net.sf.json.JSONObject;
 import org.jboss.seam.annotations.Name;
 
 import cn.dmdl.stl.hospitalbudget.common.session.CriterionEntityHome;
+import cn.dmdl.stl.hospitalbudget.util.DataSourceManager;
 
 @Name("ysExpendCollectionInfoHome")
 public class YsExpendCollectionInfoHome extends CriterionEntityHome<Object> {
@@ -20,6 +24,7 @@ public class YsExpendCollectionInfoHome extends CriterionEntityHome<Object> {
 	private static final long serialVersionUID = 1L;
 	
 	private Integer expendCollectionDeptId;
+	private Integer collectionId;
 	
 	/**
 	 * 获取汇总明细数据
@@ -37,7 +42,8 @@ public class YsExpendCollectionInfoHome extends CriterionEntityHome<Object> {
 		sql.append("ici.routine_project_id as project_id, ");
 		sql.append("rp.the_pid, ");
 		sql.append("ici.bottom_level, ");
-		sql.append("ici.attachment ");
+		sql.append("ici.attachment, ");
+		sql.append("ici.expend_collection_info_id ");
 		sql.append("from hospital_budget.ys_budget_collection_dept bcd ");
 		sql.append("INNER JOIN hospital_budget.ys_expend_collection_info ici ON bcd.budget_collection_dept_id = ici.budget_collection_dept_id  ");
 		sql.append("AND ici.`delete` = 0 ");
@@ -52,7 +58,8 @@ public class YsExpendCollectionInfoHome extends CriterionEntityHome<Object> {
 		sql.append("ici.generic_project_id as project_id, ");
 		sql.append("rp.the_pid, ");
 		sql.append("ici.bottom_level, ");
-		sql.append("ici.attachment ");
+		sql.append("ici.attachment, ");
+		sql.append("ici.expend_collection_info_id ");
 		sql.append("from hospital_budget.ys_budget_collection_dept bcd ");
 		sql.append("INNER JOIN hospital_budget.ys_expend_collection_info ici ON bcd.budget_collection_dept_id = ici.budget_collection_dept_id  ");
 		sql.append("AND ici.`delete` = 0 ");
@@ -79,6 +86,7 @@ public class YsExpendCollectionInfoHome extends CriterionEntityHome<Object> {
 					totalAmount += Double.parseDouble(object[3].toString());
 				}
 				json.element("attachment", object[8]);
+				json.element("expend_collection_info_id", object[9]);
 				collectionInfoArr.add(json);
 			}
 			collectionInfo.element("collection_info", collectionInfoArr);
@@ -98,6 +106,24 @@ public class YsExpendCollectionInfoHome extends CriterionEntityHome<Object> {
 		}
 		return collectionInfo;
 	}
+	
+	/**
+	 * 删除某条编制信息
+	 */
+	public void deleteCollectionById(){
+		Connection connection = DataSourceManager.open(DataSourceManager.BY_JDBC_DEFAULT);
+		PreparedStatement preparedStatement = null;
+		ResultSet resultSet = null;
+		try {
+			preparedStatement = connection.prepareStatement("delete from ys_expend_collection_info where expend_collection_info_id = ?");
+			preparedStatement.setInt(1, collectionId);
+			preparedStatement.executeUpdate();
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			DataSourceManager.close(connection, preparedStatement, resultSet);
+		}
+	}
 
 	public Integer getExpendCollectionDeptId() {
 		return expendCollectionDeptId;
@@ -105,6 +131,14 @@ public class YsExpendCollectionInfoHome extends CriterionEntityHome<Object> {
 
 	public void setExpendCollectionDeptId(Integer expendCollectionDeptId) {
 		this.expendCollectionDeptId = expendCollectionDeptId;
+	}
+
+	public Integer getCollectionId() {
+		return collectionId;
+	}
+
+	public void setCollectionId(Integer collectionId) {
+		this.collectionId = collectionId;
 	}
 	
 	

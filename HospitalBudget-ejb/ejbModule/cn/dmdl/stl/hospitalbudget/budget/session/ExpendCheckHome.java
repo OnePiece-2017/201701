@@ -91,7 +91,6 @@ public class ExpendCheckHome extends CriterionEntityHome<Object>{
 		sql.append("WHERE ed.delete = 0 AND ed.year = '").append(year).append("' AND ed.status = ").append(HospitalConstant.DRAFTSTATUS_AUDIT).append(" ");
 		sql.append("GROUP BY ed.ys_expand_draft_id ");
 		sql.insert(0, "select * from (").append(") t order by t.ys_expand_draft_id ");
-		System.out.println(sql);
 		Connection connection = DataSourceManager.open(DataSourceManager.BY_JDBC_DEFAULT);
 		PreparedStatement preparedStatement = null;
 		ResultSet resultSet = null;
@@ -258,6 +257,10 @@ public class ExpendCheckHome extends CriterionEntityHome<Object>{
 							genericProjectList.add(map);
 						}
 					}
+					//更新审核状态
+					preparedStatement = connection.prepareStatement("update ys_expand_draft set `status` = ? where ys_expand_draft_id in (" + draftIds + ")");
+					preparedStatement.setInt(1, HospitalConstant.DRAFTSTATUS_FINISH);
+					preparedStatement.executeUpdate();
 					String deptIds = Assit.formatIdsSet(deptIdSet);
 					//检查有没有已经下达的数据
 					preparedStatement = connection.prepareStatement("select 1 from ys_budget_collection_dept bcd where bcd.`year` = ? "
