@@ -72,6 +72,10 @@
 					</table>
 				</div>
 			</div>
+			<div style="text-align: center;">
+				<strong style="font-size: 20px;">收支对比</strong>
+				<font style="margin-left: 15px;">(收入-支出) ： <span style="color: #f903ed;" id="income_expend" class="node-summaryInfo"></span>(万元)</font>
+			</div>
 			
 			<strong style="font-size: 20px;">支出预算</strong>
 			<font style="margin-left: 15px;color: #f903ed;">(共<span id="expend_rows" class="node-summaryInfo">0</span>万元)</font>
@@ -264,6 +268,9 @@
 				});
 				jQuery("#expend_table").append(expendHtml);
 				jQuery("#expend_rows").html(json.total_expend);
+
+				var imcomeMinusExpendNum = json.total_income - json.total_expend;
+				jQuery("#income_expend").html(json.total_income + " - " + json.total_expend + " = " + imcomeMinusExpendNum);
 				
 				jQuery('.icheck').iCheck({
 					checkboxClass: 'icheckbox_square-blue',

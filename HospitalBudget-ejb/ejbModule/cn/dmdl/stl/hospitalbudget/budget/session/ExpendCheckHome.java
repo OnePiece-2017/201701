@@ -90,7 +90,7 @@ public class ExpendCheckHome extends CriterionEntityHome<Object>{
 		sql.append("AND edp.user_id = ").append(sessionToken.getUserInfoId()).append(" ");
 		sql.append("WHERE ed.delete = 0 AND ed.year = '").append(year).append("' AND ed.status = ").append(HospitalConstant.DRAFTSTATUS_AUDIT).append(" ");
 		sql.append("GROUP BY ed.ys_expand_draft_id ");
-		sql.insert(0, "select * from (").append(") t order by t.ys_expand_draft_id ");
+		sql.insert(0, "select * from (").append(") t order by t.top_level_project_id,t.bottom_level ");
 		Connection connection = DataSourceManager.open(DataSourceManager.BY_JDBC_DEFAULT);
 		PreparedStatement preparedStatement = null;
 		ResultSet resultSet = null;
@@ -190,9 +190,12 @@ public class ExpendCheckHome extends CriterionEntityHome<Object>{
 				preparedStatement.setInt(2, stepIndex + 1);
 				resultSet = preparedStatement.executeQuery();
 				connection.setAutoCommit(false);
-				if(resultSet.next()){//有下一步审核人
-					//处理流程任务数据
-					goAheadDraftProcess(connection, preparedStatement, draftIdList, draftIds, stepId);
+				boolean hasNext = false;
+				while(resultSet.next()){
+					hasNext = true;
+					if(resultSet.isFirst()){
+						goAheadDraftProcess(connection, preparedStatement, draftIdList, draftIds, stepId);
+					}
 					//添加新的任务执行人
 					for(Integer draftId : draftIdList){
 						preparedStatement = connection.prepareStatement("INSERT INTO `ys_expand_draft_process` (`ys_expand_draft_id`, `user_id`, `process_step_info_id`) VALUES (?, ?, ?)");
@@ -201,7 +204,8 @@ public class ExpendCheckHome extends CriterionEntityHome<Object>{
 						preparedStatement.setInt(3, resultSet.getInt("process_step_info_id"));
 						preparedStatement.executeUpdate();
 					}
-				}else{//没有下一步人审核，进入汇总
+				}
+				if(!hasNext){//没有下一步人审核，进入汇总
 					//查询出当前的编制数据
 					sql.delete(0, sql.length());
 					sql.append("select ed.`year`, ");

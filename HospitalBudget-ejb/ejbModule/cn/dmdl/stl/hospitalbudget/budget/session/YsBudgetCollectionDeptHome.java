@@ -306,7 +306,6 @@ public class YsBudgetCollectionDeptHome extends CriterionEntityHome<Object> {
 			sql2.append("INNER JOIN ys_expend_collection_info ici ON bcd.budget_collection_dept_id = ici.budget_collection_dept_id AND ici.delete = 0 ");
 			sql2.append("WHERE bcd.status = 0 AND bcd.budget_type = 2 AND ici.bottom_level = 1 ");
 			sql2.append("AND bcd.budget_collection_dept_id in (").append(budgetCollectionDeptIds).append(")");
-			System.out.println(sql2);
 			preparedStatement = connection.prepareStatement(sql2.toString());
 			resultSet = preparedStatement.executeQuery();
 			while(resultSet.next()){
@@ -370,8 +369,6 @@ public class YsBudgetCollectionDeptHome extends CriterionEntityHome<Object> {
 	 * 导出
 	 */
 	public void expExcel(){
-		System.out.println(year);
-		System.out.println(deptIds);
 		FacesContext ctx = FacesContext.getCurrentInstance();
 		ctx.responseComplete();
 		HttpServletResponse response = (HttpServletResponse) ctx

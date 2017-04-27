@@ -132,12 +132,13 @@ ul {
 }
 
 .data-container .item-outer.locking {
-	background: url(../../images/img_block_1_8x8.png);
+	/* background: url(../../images/img_block_1_8x8.png); */
+	background: #505050;
 }
 
-.draft-table-body .data-container .item-outer:hover {
+/* .draft-table-body .data-container .item-outer:hover {
 	border: 1px dashed #000;
-}
+} */
 
 .data-container .item-inner {
 	border: 1px solid #9db4e1;
@@ -161,16 +162,16 @@ ul {
 	width: 32px;
 	height: 32px;
 	float: left;
-	background: #05d380;
+	/* background: #05d380; */
 }
 
 .data-container .item-inner .toggle.expand {
-	background: #05d380 url(../../images/icon_arrow_carrot_down_16x16.png) no-repeat center;
+	background: url(../../images/icon_arrow_carrot_down_16x16.png) no-repeat center;
 	opacity: 1;
 }
 
 .data-container .item-inner .toggle.collapse {
-	background: #05d380 url(../../images/icon_arrow_carrot_right_16x16.png) no-repeat center;
+	background: url(../../images/icon_arrow_carrot_right_16x16.png) no-repeat center;
 	opacity: 1;
 }
 
@@ -204,7 +205,11 @@ ul {
 
 .data-container .item-inner .field-project-name {
 	width: 310px;
-	background: #05d380;
+	/* background: #05d380; */
+}
+
+.data-container .item-inner .field-project-name span{
+	text-align: left;
 }
 
 .data-container .item-inner .field-project-name span {
@@ -213,7 +218,7 @@ ul {
 
 .data-container .item-inner .field-project-nature {
 	width: 100px;
-	background: #a0acbf;
+	/* background: #a0acbf; */
 }
 
 .data-container .item-inner .field-project-nature span {
@@ -222,7 +227,7 @@ ul {
 
 .data-container .item-inner .field-funds-source {
 	width: 130px;
-	background: #ed349c;
+	/* background: #ed349c; */
 }
 
 .data-container .item-inner .field-funds-source span {
@@ -231,7 +236,7 @@ ul {
 
 .data-container .item-inner .field-department-name {
 	width: 190px;
-	background: #b9d0f5;
+	/* background: #b9d0f5; */
 }
 
 .data-container .item-inner .field-department-name span {
@@ -240,7 +245,7 @@ ul {
 
 .data-container .item-inner .field-project-source {
 	width: 160px;
-	background: #e77e62;
+	/* background: #e77e62; */
 }
 
 .data-container .item-inner .field-project-source span {
@@ -253,12 +258,12 @@ ul {
 	margin-top: 1px;
 	margin-left: 1px;
 	overflow: hidden;
-	background: #e77e62;
+	/* background: #e77e62; */
 }
 
 .data-container .item-inner .field-project-amount {
 	width: 160px;
-	background: #c4b16f;
+	/* background: #c4b16f; */
 }
 
 .data-container .item-inner .field-project-amount span {
@@ -270,12 +275,12 @@ ul {
 	height: 30px !important;
 	margin-top: 1px;
 	margin-left: 1px;
-	background: #c4b16f;
+	/* background: #c4b16f; */
 }
 
 .data-container .item-inner .field-formula-remark {
 	width: 160px;
-	background: #fad5cf;
+	/* background: #fad5cf; */
 }
 
 .data-container .item-inner .field-formula-remark span {
@@ -288,12 +293,12 @@ ul {
 	margin-top: 1px;
 	margin-left: 1px;
 	overflow: hidden;
-	background: #fad5cf;
+	/* background: #fad5cf; */
 }
 
 .data-container .item-inner .field-the-status {
 	width: 100px;
-	background: #ef586d;
+	/* background: #ef586d; */
 }
 
 .data-container .item-inner .field-the-status span {
@@ -302,7 +307,7 @@ ul {
 
 .data-container .item-inner .field-function {
 	width: 108px;
-	background: #3cceb9;
+	/* background: #3cceb9; */
 }
 
 .data-container .item-inner .field-function .the-label {

@@ -23,7 +23,16 @@ public class HospitalConstant {
 	public final static int COLLECTIONTYPE_EXPEND = 2;//支出
 	
 	//编制类型
-	public final static int TYPE_DRAFT = 0;//编制
-	public final static int TYPE_ADJUSTMENT = 1;//调整
+	public final static int DRAFT_TYPE_DRAFT = 0;//编制
+	public final static int DRAFT_TYPE_ADJUSTMENT = 1;//调整
+	
+	//流程类型
+	public final static int PROCESS_TYPE_NORMAL = 1;//常规流程
+	public final static int PROCESS_TYPE_PROJECT = 2;//项目流程
+	
+	public final static int PROCESS_INCOME_DRAFT = 1;//收入编制
+	public final static int PROCESS_EXPEND_DRAFT = 2;//支出编制
+	public final static int PROCESS_INCOME_EXECUTE = 3;//收入执行
+	public final static int PROCESS_EXPEND_EXECUTE = 4;//支出执行
 	
 }

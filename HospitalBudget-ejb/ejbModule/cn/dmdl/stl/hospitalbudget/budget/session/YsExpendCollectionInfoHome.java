@@ -43,7 +43,9 @@ public class YsExpendCollectionInfoHome extends CriterionEntityHome<Object> {
 		sql.append("rp.the_pid, ");
 		sql.append("ici.bottom_level, ");
 		sql.append("ici.attachment, ");
-		sql.append("ici.expend_collection_info_id ");
+		sql.append("ici.expend_collection_info_id, ");
+		sql.append("bcd.status, ");
+		sql.append("rp.top_level_project_id ");
 		sql.append("from hospital_budget.ys_budget_collection_dept bcd ");
 		sql.append("INNER JOIN hospital_budget.ys_expend_collection_info ici ON bcd.budget_collection_dept_id = ici.budget_collection_dept_id  ");
 		sql.append("AND ici.`delete` = 0 ");
@@ -59,12 +61,15 @@ public class YsExpendCollectionInfoHome extends CriterionEntityHome<Object> {
 		sql.append("rp.the_pid, ");
 		sql.append("ici.bottom_level, ");
 		sql.append("ici.attachment, ");
-		sql.append("ici.expend_collection_info_id ");
+		sql.append("ici.expend_collection_info_id, ");
+		sql.append("bcd.status, ");
+		sql.append("rp.top_level_project_id ");
 		sql.append("from hospital_budget.ys_budget_collection_dept bcd ");
 		sql.append("INNER JOIN hospital_budget.ys_expend_collection_info ici ON bcd.budget_collection_dept_id = ici.budget_collection_dept_id  ");
 		sql.append("AND ici.`delete` = 0 ");
 		sql.append("INNER JOIN hospital_budget.generic_project rp ON ici.generic_project_id = rp.the_id ");
 		sql.append("WHERE bcd.budget_collection_dept_id = ").append(expendCollectionDeptId).append(" ");
+		sql.insert(0, "select * from (").append(") t order by t.top_level_project_id,t.bottom_level ");
 		List<Object[]> incomeCollectionInfoList = getEntityManager().createNativeQuery(sql.toString()).getResultList();
 		//TODO 获取上一年的预算数据
 		
@@ -87,6 +92,7 @@ public class YsExpendCollectionInfoHome extends CriterionEntityHome<Object> {
 				}
 				json.element("attachment", object[8]);
 				json.element("expend_collection_info_id", object[9]);
+				json.element("status", object[10]);
 				collectionInfoArr.add(json);
 			}
 			collectionInfo.element("collection_info", collectionInfoArr);

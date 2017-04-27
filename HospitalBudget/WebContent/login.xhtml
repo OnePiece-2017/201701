@@ -16,11 +16,16 @@
 			<div class="login">
 			    <div class="message">友谊医院预算系统</div>
 			    <div id="darkbannerwrap"></div>
-			    
-				<h:inputText id="username" value="#{credentials.username}" />
+			    <div>
+			    	<img src="#{request.contextPath}/images/username_login.png" class="login-icon"></img>
+					<h:inputText id="username" value="#{credentials.username}" />
+			    </div>
 				<!-- <input name="username" placeholder="用户名" required="" type="text"> -->
 				<hr class="hr15"></hr>
-				<h:inputSecret id="password" value="#{credentials.password}" />
+				<div>
+					<img src="#{request.contextPath}/images/password_login.png" class="login-icon"></img>
+					<h:inputSecret id="password" value="#{credentials.password}" />
+				</div>
 				<!-- <input name="password" placeholder="密码" required="" type="password"> -->
 				<hr class="hr15"></hr>
 				<h:commandButton id="submit" value="登录" onclick="return beforeSubmit();"  style="width:100%;" action="#{authenticator.login}" styleClass="btn btn-info"/>

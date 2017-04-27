@@ -105,12 +105,15 @@
 			    <table class="record" width="100%" cellpadding="0" cellspacing="0">
 			        <tr>
 			            <th width="20%">项目名称</th>
-			            <th width="10%">主管科室</th>
+			            <th width="5%">主管科室</th>
 			            <th width="5%">项目性质</th>
-			            <th width="20%">项目金额(元)</th>
-			            <th width="20%">剩余金额</th>
-			            <th width="15%">调整后金额</th>
-			            <th width="10%">操作</th>
+			            <th width="10%">项目金额(元)</th>
+			            <th width="10%">剩余金额</th>
+			            <th width="10%">调整后金额</th>
+			            <th width="10%">项目来源</th>
+			            <th width="20%">计算依据及备注</th>
+			            <th width="5%">状态</th>
+			            <th width="5%">操作</th>
 			        </tr>
 				</table>
 			</div>
@@ -122,6 +125,10 @@
 				<a:actionparam name="year" assignTo="#{expendAdjustmentHome.year}" />
 				<a:actionparam name="deptId" assignTo="#{expendAdjustmentHome.deptIds}" />
 				<a:actionparam name="fundsSourceId" assignTo="#{expendAdjustmentHome.fundsSourceId}" />
+			</a:jsFunction>
+			<a:jsFunction name="adjustAction"  data="#{expendAdjustmentHome.adjuestBudget()}" oncomplete="adjustComplete(data);">
+				<a:actionparam name="year" assignTo="#{expendAdjustmentHome.year}" />
+				<a:actionparam name="adjustArrStr" assignTo="#{expendAdjustmentHome.adjuestDataStr}" />
 			</a:jsFunction>
 		</a:form>
 		<script type="text/javascript" src="#{request.contextPath}/javascript/template_list.js" charset="UTF-8" />
@@ -136,6 +143,7 @@
 		<script type="text/javascript" src="#{request.contextPath}/toolkit/utils.js" charset="UTF-8" />
 		<script type="text/javascript">
 		//<![CDATA[
+		var adjustData;
 		
 		jQuery(document).ready(function() {
 			//获取当前年
@@ -161,7 +169,7 @@
 				jQuery(this).parents("tr").remove();
 			});
 
-			jQuery(".record").on("keypress", "input", function(){
+			jQuery(".record").on("keypress", ".adjuest_amount", function(){
 				if((event.keyCode >= 48 && event.keyCode <= 57) || event.keyCode == 46){  
 		 	    	return true;
 		 	    }else{  
@@ -172,6 +180,7 @@
 
 		//筛选编制信息
 		function filterInfo(){
+			adjustData = {};
 			var year = jQuery("#budgetYear").val();
 		    var deptIds = jQuery("#departmentIds").val();
 		    if(deptIds){
@@ -226,42 +235,52 @@
 			var jsonArr= data.old_info;
 			var html = "";
 		    jQuery(jsonArr).each(function(index, val){
+			    val.is_new = false;
+		    	adjustData[val.project_id] = val;
 			    if(!val.is_root){
-			    	html += "<tr class='treegrid-" + val.project_id + " treegrid-parent-" + val.the_pid + "'>";
+			    	html += "<tr class='treegrid-" + val.project_id + " treegrid-parent-" + val.the_pid + " adjust_data'>";
 				}else{
-					html += "<tr class='root treegrid-" + val.project_id + "'>";
+					html += "<tr class='root treegrid-" + val.project_id + " adjust_data'>";
 				}
-			  	html += "<td style='text-align:left;'>" + val.project_name + "</td>";
-			  	html += "<td>" + val.dept_name + "</td>";
+			  	html += "<td style='text-align:left;' id='" + val.project_id + "' class='data_id'>" + val.project_name + "</td>";
+			  	html += "<td id='" + val.data_the_id + "'>" + val.dept_name + "</td>";
 			  	if(val.is_usual == 1){
-				  	html += "<td>常规</td>";
+				  	html += "<td class='routine'>常规</td>";
 				}else{
-					html += "<td>新增</td>";
+					html += "<td class='generic'>新增</td>";
 				}
 			  	html += "<td>" + val.budget_amount + "</td>";
 			  	html += "<td>" + val.budget_amount_surplus + "</td>";
-			  	html += "<td><input type='text' class='form-control'></td>";
+			  	html += "<td class='adjuest_amount'><input type='text' class='form-control'></td>";
+			  	html += "<td class='project_source'><input type='text' class='form-control'></td>";
+			  	html += "<td class='project_remark'><input type='text' class='form-control'></td>";
+			  	html += "<td></td>";
 			  	html += "<td><a href='javascript:;' style='text-decoration:none;'><img src='../images/icon_delete_16x16.png'></a></td>";
 			  	html += "</tr>";
 			});
 		    
 		    var jsonArrNew= data.new_info;
 		    jQuery(jsonArrNew).each(function(index, val){
+		    	val.is_new = true;
+		    	adjustData[val.project_id] = val;
 			    if(!val.is_root){
-			    	html += "<tr class='treegrid-" + val.project_id + " treegrid-parent-" + val.the_pid + "'>";
+			    	html += "<tr class='treegrid-" + val.project_id + " treegrid-parent-" + val.the_pid + " adjust_data'>";
 				}else{
-					html += "<tr class='root treegrid-" + val.project_id + "'>";
+					html += "<tr class='root treegrid-" + val.project_id + " adjust_data'>";
 				}
-			  	html += "<td style='text-align:left;'>" + val.project_name + "</td>";
+			  	html += "<td style='text-align:left;' id='" + val.project_id + "' class='data_id'>" + val.project_name + "</td>";
 			  	html += "<td>" + val.dept_name + "</td>";
 			  	if(val.is_usual == 1){
-				  	html += "<td>常规</td>";
+				  	html += "<td class='routine'>常规</td>";
 				}else{
-					html += "<td>新增</td>";
+					html += "<td class='generic'>新增</td>";
 				}
 			  	html += "<td>--</td>";
 			  	html += "<td>--</td>";
-			  	html += "<td><input type='text' class='form-control'></td>";
+			  	html += "<td class='adjuest_amount'><input type='text' class='form-control'></td>";
+			  	html += "<td class='project_source'><input type='text' class='form-control'></td>";
+			  	html += "<td class='project_remark'><input type='text' class='form-control'></td>";
+			  	html += "<td></td>";
 			  	html += "<td><a href='javascript:;' style='text-decoration:none;'><img src='../images/icon_delete_16x16.png'></a></td>";
 			  	html += "</tr>";
 			});
@@ -273,33 +292,58 @@
 
 		//通过
 		function adjust(){
-			if(checkArr.length <= 0){
-				___msg('温馨提示', '请选择具体的项目！', {
+			var adjustArr = [];
+			var adjustTrArr = jQuery(".adjust_data");
+			var amountFlag = true;
+			jQuery(adjustTrArr).each(function(){
+				if(jQuery(this).children(".adjuest_amount").children("input").val() != ""){//修改了预算
+					var data = adjustData[jQuery(this).children(".data_id").attr("id")];
+					data.adjuest_amount = jQuery(this).children(".adjuest_amount").children("input").val();
+					if(Number(data.adjuest_amount) < Number(data.budget_amount - data.budget_amount_surplus)){
+						amountFlag = false;
+						return;
+					}
+					data.project_source = jQuery(this).children(".project_source").children("input").val();
+					data.project_remark = jQuery(this).children(".project_remark").children("input").val();
+					adjustArr.push(data);
+				}
+			});
+
+			if(!amountFlag){
+				___msg('温馨提示', "调整后金额不能小于已支出金额！", {
 					closed: ___dynamic_function
 				});
-				return false;
+				return;
 			}
-			var expandJson = [];
-			jQuery(checkArr).each(function(index, val){
+			if(adjustArr.length == 0){
+				___msg('温馨提示', "无可提交内容！", {
+					closed: ___dynamic_function
+				});
+			}else{
+				var adjustArrStr = JSON.stringify(adjustArr);
+				var year = jQuery("#budgetYear").val();
+				adjustAction(year, adjustArrStr);
+			}
+			/* jQuery(checkArr).each(function(index, val){
 				expandJson.push({'step_id' : jQuery(val).attr("id").split("_")[0] , 'draft_id' : jQuery(val).attr("id").split("_")[1]});
 			});
 			var expandDraftInfo = JSON.stringify(expandJson)
-			goAheadAction(expandDraftInfo);
+			goAheadAction(expandDraftInfo); */
 		}
 
 
 		function adjustComplete(data){
-			if(data.isok == "ok"){
+		    if(data.isok == "ok"){
 				___msg('温馨提示', data.message, {
 					closed: ___dynamic_function
 				});
-				filterDraft();
+				//filterDraft();
 			}else{
 				___msg('温馨提示', data.message, {
 					closed: ___dynamic_function
 				});
 				return false;
-			}
+			} 
 		}
 
 

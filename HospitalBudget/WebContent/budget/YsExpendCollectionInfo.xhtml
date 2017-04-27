@@ -114,7 +114,7 @@
 			  	} else {
 			  		html += '<td></td>';
 			  	}
-			  	if(val.bottom_level == 1){
+			  	if(val.bottom_level == 1 && val.status == 0){
 				  	html += "<td><a href='javascript:;' style='text-decoration:none;' id='" + val.expend_collection_info_id + "'><img src='../images/icon_delete_16x16.png'></a></td>";
 				}else{
 					html += "<td></td>";
