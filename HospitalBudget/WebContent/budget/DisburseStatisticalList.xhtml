@@ -11,7 +11,8 @@
 
 	<ui:define name="head">
 		<link rel="stylesheet" type="text/css" href="#{request.contextPath}/common/css/bootstrap.min.css" />
-		<link rel="stylesheet" type="text/css" href="#{request.contextPath}/common/css/bootstrap-select.min.css" />
+		<link rel="stylesheet" type="text/css" href="#{request.contextPath}/common/css/bootstrap-datetimepicker.min.css" />
+		<link rel="stylesheet" type="text/css" href="#{request.contextPath}/common/css/bootstrap-select2.min.css" />
 		<style type="text/css">
 			.field-name {
 				float: left;
@@ -37,42 +38,93 @@
 	</ui:define>
 	<ui:define name="body">
 	#{disburseStatisticalList.wire()}
-		<div class="g-data-list-condition">
-			<h:form id="mainForm">
-				<input type="hidden" name="page" value="1" />
-				<div class="fl bs-budget-year">
-							<span class="field-name mb10">预算年份</span>
-							<select id="beginYearParam" class="selectpicker">
-								<a:repeat value="#{disburseStatisticalList.beginYear}" var="_var">
-									<option value="#{_var[0]}">#{_var[1]}</option>
-								</a:repeat>
-							</select>
-				</div>
-				<div class="fl bs-funds-source">
-							<span class="field-name mb10">资金来源</span>
-							<select id="fundsSourceId" class="selectpicker" data-live-search="true">
-								<a:repeat value="#{disburseStatisticalList.fundsSourceList}" var="_var">
-									<option value="#{_var[0]}">#{_var[1]}</option>
-								</a:repeat>
-							</select>
-				</div>
-				<div class="fl">
-					<span class="field-name mb10">主管科室</span>
-					<select id="departmentInfoId" class="selectpicker" data-live-search="true">
-						<a:repeat value="#{disburseStatisticalList.departmentInfoList}" var="_var">
-							<option value="#{_var[0]}">#{_var[1]}</option>
-						</a:repeat>
-					</select>
-				</div>
-				<div class="fl">
-					<h:commandButton styleClass="btn btn-primary mt10 ml20" action="/budget/DisburseStatisticalList.xhtml" onclick="return beforeSubmit();" value="搜索" />
-				</div>
-				<h:inputHidden id="beginYearParam" value="#{disburseStatisticalList.beginYearParam}" />
-				<h:inputHidden id="departmentInfoId" value="#{disburseStatisticalList.departmentInfoId}" />
-				<h:inputHidden id="fundsSourceId" value="#{disburseStatisticalList.fundsSourceId}" />
-			</h:form>
+	<div class="pd0-10 pt30">
+		<h:form id="mainForm">
+			<div class="g-data-list-condition">
+					<input type="hidden" name="page" value="1" />
+					<table width="100%" cellpadding="0" cellspacing="0" style=" margin-top: 19px;">
+						<tr>
+							<td width="30%">
+								<div class="fl bs-budget-year">
+									<span class="field-name mb10">年份</span>
+									<select id="budgetYear" class="selectpicker">
+										<a:repeat value="#{commonDaoHome.recentYearList}" var="_var">
+											<option value="#{_var[0]}">#{_var[1]}</option>
+										</a:repeat>
+									</select>
+								</div>
+							</td>
+							<td width="30%">
+								<div class="fl">
+									<div style="float: left; text-align: center; line-height: 36px; width: 50px;">
+										<span>科室</span>
+									</div>
+									<select id="departmentIds" class="selectpicker" multiple="multiple" data-live-search="true" title="请选择">
+										<a:repeat value="#{commonDaoHome.departmentInfoListByUserId}" var="_var">
+											<option value="#{_var[0]}">#{_var[1]}</option>
+										</a:repeat>
+									</select>
+							</div>
+							</td>
+							<td width="40%">
+								<div class="fl bs-funds-source">
+									<div style="float: left; text-align: center; line-height: 36px; width: 80px;">
+										<span>资金来源</span>
+									</div>
+									<select id="fundsSourceId" class="selectpicker" multiple="multiple">
+										<a:repeat value="#{commonDaoHome.fundsSource}" var="_var">
+											<option value="#{_var[0]}">#{_var[1]}</option>
+										</a:repeat>
+									</select>
+								</div>
+							</td>
+						</tr>
+						<tr>
+							<td>
+								<div class="fl" style="width: 300px;">
+									<div style="float: left; text-align: center; line-height: 36px; width: 70px;">
+										<span>开始时间</span>
+									</div>
+				                    <div class="form-group">
+										<div class="input-group date form_date col-md-5">
+											<input id="applyTime" type="text" value="#{expendConfrimList.applyTime}" readonly="readonly" class="form-control mb10 fix--w141" name="time" style="width: 125px;"/> 
+											<span class="input-group-addon"><span class="glyphicon glyphicon-remove"></span></span>
+											<span class="input-group-addon"><span class="glyphicon glyphicon-calendar"></span></span>
+										</div>
+									</div>  
+					            </div>
+							</td>
+							<td>
+								<div class="fl" style="width: 300px;">
+					                <div style="float: left; text-align: center; line-height: 36px; width: 70px;">
+										<span>结束时间</span>
+									</div>
+					                 <div class="form-group">
+										<div class="input-group date form_date col-md-5">
+											<input id="applyTime" type="text" value="#{expendConfrimList.applyTime}" readonly="readonly" class="form-control mb10 fix--w141" name="time" style="width: 125px;"/> 
+											<span class="input-group-addon"><span class="glyphicon glyphicon-remove"></span></span>
+											<span class="input-group-addon"><span class="glyphicon glyphicon-calendar"></span></span>
+										</div>
+									</div> 
+								</div>
+							</td>
+							<td>
+								<div class="fl">
+									<h:commandButton styleClass="btn btn-primary mr15" action="/budget/DisburseStatisticalList.xhtml" onclick="return beforeSubmit();" value="搜索" />
+									<h:commandButton styleClass="btn btn-primary mr15"  value="导出" />
+									
+								</div>
+							</td>
+						</tr>
+					</table>
+					<h:inputHidden id="beginYearParam" value="#{disburseStatisticalList.beginYearParam}" />
+					<h:inputHidden id="departmentInfoId" value="#{disburseStatisticalList.departmentInfoId}" />
+					<h:inputHidden id="fundsSourceId" value="#{disburseStatisticalList.fundsSourceId}" />
+			</div>
+		</h:form>
 		</div>
-		<div class="g-data-list-table">
+		
+		<div class="g-data-list-table" style="margin-top: 50px;">
 		    <table class="record" width="100%" cellpadding="0" cellspacing="0">
 		        <tr>
 		            <th width="10%">ID</th>
@@ -161,13 +213,30 @@
 		    </s:fragment>
 		</div>
 		<script type="text/javascript" src="#{request.contextPath}/common/js/bootstrap.min.js" />
-		<script type="text/javascript" src="#{request.contextPath}/common/js/bootstrap-select.min.js" charset="UTF-8" />
-		<script type="text/javascript" src="#{request.contextPath}/common/js/bootstrap-select-defaults-zh_CN.min.js" charset="UTF-8" />
 		<script type="text/javascript" src="#{request.contextPath}/toolkit/utils.js" />
+		<script type="text/javascript" src="#{request.contextPath}/common/js/bootstrap-datetimepicker.min.js" charset="UTF-8" />
+		<script type="text/javascript" src="#{request.contextPath}/common/js/bootstrap-datetimepicker.zh-CN.js" charset="UTF-8" />
+		<script type="text/javascript" src="#{request.contextPath}/common/js/bootstrap-select-defaults-zh_CN.min.js" charset="UTF-8" />
+		<script type="text/javascript" src="#{request.contextPath}/common/js/bootstrap-select.min.js" charset="UTF-8" />
 		<script type="text/javascript">
 		//<![CDATA[
 			jQuery(document).ready(function() {
+				jQuery("#fundsSourceId").val(1);
+				jQuery(".selectpicker").selectpicker("render");
 				jQuery(".selectpicker").selectpicker();
+
+				jQuery('.form_date').datetimepicker({
+					language: 'zh-CN',
+					format: "yyyy-mm",
+					pickerPosition: "bottom-left",
+					weekStart: 1,
+					todayBtn: 1,
+					autoclose: 1,
+					todayHighlight: 1,
+					startView: 3,
+					minView: 3,
+					forceParse: 0
+				});
 				
 			}); 
 

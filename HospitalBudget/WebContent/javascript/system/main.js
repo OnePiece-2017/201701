@@ -58,8 +58,8 @@ jQuery(document).ready(function() {
 		for (var i = 0; i < leaf.length; i++) {
 			var node = leaf[i];
 			funcCode += '<li><div class="func-outer"><div class="func-inner">';
-			funcCode += '<span class="func-logo"' + (node['iconSrc'] != null && node['iconSrc'] != '' ? ' style="background: RGBA(0, 0, 0, 0) url(' + node['iconSrc'] + ') no-repeat center;"' : '') + '></span>';
-			funcCode += '<span class="func-name"';
+			//funcCode += '<span class="func-logo"' + (node['iconSrc'] != null && node['iconSrc'] != '' ? ' style="background: RGBA(0, 0, 0, 0) url(' + node['iconSrc'] + ') no-repeat center;"' : '') + '></span>';
+			funcCode += '<span class="func-name" style="color:#f3f7fc;" ';
 			if (0 == node['leaf'].length) {
 				funcCode += ' tab-index="' + node['theId'] + '"';
 				var key = md5(String(node['theId']));
@@ -74,7 +74,7 @@ jQuery(document).ready(function() {
 			}
 			funcCode += '>' + node['theValue'] + '</span>';
 			if (node['leaf'].length > 0) {
-				funcCode += '<span class="toggle collapse"></span></div></div><ul style="display: none;">';
+				funcCode += '<span class="toggle collapse"></span></div></div><ul style="display: none;padding-left:10px;">';
 				disposeLeaf(node['leaf']);
 				funcCode += '</ul>';
 			} else if (node['tabUrl'] != null && node['tabUrl'] != '') {

@@ -22,6 +22,7 @@
 			.root {
 				background: #add595;
 			}
+			
 			.treegrid-indent{
 				width:32px;
 			}
@@ -46,6 +47,7 @@
 			
 			.sg-fu-custom--attachment {
 			}
+			
 		</style>
 	</ui:define>
 
@@ -81,25 +83,19 @@
 							</a:repeat>
 						</select>
 					</div>
-					<div class="fl" style="margin-left:10px;">
-						<a class="btn btn-primary mr15" onclick="return takeBackDraft();">追回所有预算</a>
-					</div>
 				</div>
 			</div>
 			<div style="line-height: 40px;">
-				<div style="float: left;">
+				<!-- <div style="float: left;">
 					<strong style="font-size: 20px;">支出预算审核</strong>
 					<font style="margin-left: 15px;color: #f903ed;">项目金额(合计：<span class="node-totalAmount"></span>万元)</font>
 					<strong style="font-size: 28px;position:relative;left:30%;" id="dept_name"></strong>
-				</div>
+				</div> -->
 				<div style="float: right;">
 					<table class="normal-btn">
 						<tr>
 							<td>
-								<a class="btn btn-primary mr15" onclick="return goAhead();">通过</a>
-							</td>
-							<td>
-								<a class="btn btn-primary mr15" onclick="return returnCollection();">不通过</a>
+								<a class="btn btn-primary mr15" onclick="return adjust();">提交</a>
 							</td>
 						</tr>
 					</table>
@@ -109,45 +105,30 @@
 			    <table class="record" width="100%" cellpadding="0" cellspacing="0">
 			        <tr>
 			            <th width="20%">项目名称</th>
+			            <th width="5%">主管科室</th>
 			            <th width="5%">项目性质</th>
-			            <th width="5%">部门</th>
+			            <th width="10%">项目金额(元)</th>
+			            <th width="10%">剩余金额</th>
+			            <th width="10%">调整后金额</th>
 			            <th width="10%">项目来源</th>
-			            <th width="10%">项目金额(万元)</th>
-			            <th width="10%">与上一年预算<br />同比增减(万元)</th>
-			            <th width="10%">与上一年预算<br />同比增减率</th>
-			            <th width="20%">金额计算依据及备注</th>
+			            <th width="20%">计算依据及备注</th>
 			            <th width="5%">状态</th>
 			            <th width="5%">操作</th>
 			        </tr>
-				</table>
-			</div>
-			<div class="pt50 pb95">
-				<table class="normal-btn">
-					<tr>
-						<td>
-							<s:button id="cancel" value="返回" view="/budget/YsBudgetCollectionDeptList.seam" propagation="none" styleClass="btn btn-default" />
-						</td>
-					</tr>
 				</table>
 			</div>
 		</div>
 		<h:inputHidden id="departmentInfoIdHidden" value="#{sessionToken.departmentInfoId}" />
 		<a:form>
 			<a:queue requestDelay="100" ignoreDupResponses="true" />
-			<a:jsFunction name="filterCollectionAction"  data="#{expendCheckHome.draftInfo}" oncomplete="wirePage(data);">
-				<a:actionparam name="year" assignTo="#{expendCheckHome.year}" />
-				<a:actionparam name="deptId" assignTo="#{expendCheckHome.deptIds}" />
-				<a:actionparam name="fundsSourceId" assignTo="#{expendCheckHome.fundsSourceId}" />
+			<a:jsFunction name="filterInfoAction"  data="#{expendAdjustmentHome.allAdjustInfo}" oncomplete="wirePage(data);">
+				<a:actionparam name="year" assignTo="#{expendAdjustmentHome.year}" />
+				<a:actionparam name="deptId" assignTo="#{expendAdjustmentHome.deptIds}" />
+				<a:actionparam name="fundsSourceId" assignTo="#{expendAdjustmentHome.fundsSourceId}" />
 			</a:jsFunction>
-			<a:jsFunction name="goAheadAction"  data="#{expendCheckHome.goAhead()}" oncomplete="goHeadComplete(data);">
-				<a:actionparam name="expandDraftInfo" assignTo="#{expendCheckHome.expandDraftInfo}" />
-			</a:jsFunction>
-			<a:jsFunction name="takeBackDraftAction"  data="#{expendCheckHome.takeBackDraft()}" oncomplete="takeBackDraftComplete(data);">
-				<a:actionparam name="year" assignTo="#{expendCheckHome.year}" />
-				<a:actionparam name="deptId" assignTo="#{expendCheckHome.deptIds}" />
-			</a:jsFunction>
-			<a:jsFunction name="returnCollectionAction"  data="#{expendCheckHome.returnDraft()}" oncomplete="returnDraftComplete(data);">
-				<a:actionparam name="expandDraftInfo" assignTo="#{expendCheckHome.expandDraftInfo}" />
+			<a:jsFunction name="adjustAction"  data="#{expendAdjustmentHome.adjuestBudget()}" oncomplete="adjustComplete(data);">
+				<a:actionparam name="year" assignTo="#{expendAdjustmentHome.year}" />
+				<a:actionparam name="adjustArrStr" assignTo="#{expendAdjustmentHome.adjuestDataStr}" />
 			</a:jsFunction>
 		</a:form>
 		<script type="text/javascript" src="#{request.contextPath}/javascript/template_list.js" charset="UTF-8" />
@@ -162,7 +143,53 @@
 		<script type="text/javascript" src="#{request.contextPath}/toolkit/utils.js" charset="UTF-8" />
 		<script type="text/javascript">
 		//<![CDATA[
-		jQuery(document).ready(function(){
+		var adjustData;
+		
+		jQuery(document).ready(function() {
+			//获取当前年
+		    var date=new Date;
+		    var yearStr=date.getFullYear();
+		    jQuery("#budgetYear").val(yearStr)
+		    jQuery("#departmentIds").val(jQuery("#departmentInfoIdHidden").val());
+		    jQuery("#fundsSourceId").val(1);
+		    
+		    jQuery('.selectpicker').selectpicker();
+		    jQuery('.normal-attendProject').niceScroll({
+				cursorcolor : '#5cb85c',
+				cursorwidth : 9,
+				cursoropacitymax : 0.8,
+				touchbehavior : false,
+				autohidemode : false
+		    });
+
+		    filterInfo();
+		    jQuery('#budgetYear, #departmentIds, #fundsSourceId').change(filterInfo);
+
+		    jQuery(".record").on("click","a",function(){
+				jQuery(this).parents("tr").remove();
+			});
+
+			jQuery(".record").on("keypress", ".adjuest_amount", function(){
+				if((event.keyCode >= 48 && event.keyCode <= 57) || event.keyCode == 46){  
+		 	    	return true;
+		 	    }else{  
+		 	    	return false;  
+		 	    } 
+			});
+		});
+
+		//筛选编制信息
+		function filterInfo(){
+			adjustData = {};
+			var year = jQuery("#budgetYear").val();
+		    var deptIds = jQuery("#departmentIds").val();
+		    if(deptIds){
+		    	deptIds = deptIds.toString(); 
+			}
+		    var fundsSourceId = jQuery("#fundsSourceId").val();
+		    filterInfoAction(year, deptIds, fundsSourceId);
+		}
+		/* jQuery(document).ready(function(){
 			//获取当前年
 		    var date=new Date;
 		    var yearStr=date.getFullYear();
@@ -202,175 +229,123 @@
 			var fundsSourceId = jQuery("#fundsSourceId").val();
 		    filterCollectionAction(year, deptIds, fundsSourceId);
 		}
-
+ */
 		function wirePage(data){
 			jQuery(".record  tr:not(:first)").html("");
-			var jsonArr= data.draft_info;
+			var jsonArr= data.old_info;
 			var html = "";
 		    jQuery(jsonArr).each(function(index, val){
+			    val.is_new = false;
+		    	adjustData[val.project_id] = val;
 			    if(!val.is_root){
-			    	html += "<tr class='treegrid-" + val.project_id + " treegrid-parent-" + val.the_pid + "'>";
+			    	html += "<tr class='treegrid-" + val.project_id + " treegrid-parent-" + val.the_pid + " adjust_data'>";
 				}else{
-					html += "<tr class='root treegrid-" + val.project_id + "'>";
+					html += "<tr class='root treegrid-" + val.project_id + " adjust_data'>";
 				}
-			  	html += "<td style='text-align:left;'>" + val.project_name + "</td>";
+			  	html += "<td style='text-align:left;' id='" + val.project_id + "' class='data_id'>" + val.project_name + "</td>";
+			  	html += "<td id='" + val.data_the_id + "'>" + val.dept_name + "</td>";
 			  	if(val.is_usual == 1){
-				  	html += "<td>常规</td>";
+				  	html += "<td class='routine'>常规</td>";
 				}else{
-					html += "<td>新增</td>";
+					html += "<td class='generic'>新增</td>";
 				}
+			  	html += "<td>" + val.budget_amount + "</td>";
+			  	html += "<td>" + val.budget_amount_surplus + "</td>";
+			  	html += "<td class='adjuest_amount'><input type='text' class='form-control'></td>";
+			  	html += "<td class='project_source'><input type='text' class='form-control'></td>";
+			  	html += "<td class='project_remark'><input type='text' class='form-control'></td>";
+			  	html += "<td></td>";
+			  	html += "<td><a href='javascript:;' style='text-decoration:none;'><img src='../images/icon_delete_16x16.png'></a></td>";
+			  	html += "</tr>";
+			});
+		    
+		    var jsonArrNew= data.new_info;
+		    jQuery(jsonArrNew).each(function(index, val){
+		    	val.is_new = true;
+		    	adjustData[val.project_id] = val;
+			    if(!val.is_root){
+			    	html += "<tr class='treegrid-" + val.project_id + " treegrid-parent-" + val.the_pid + " adjust_data'>";
+				}else{
+					html += "<tr class='root treegrid-" + val.project_id + " adjust_data'>";
+				}
+			  	html += "<td style='text-align:left;' id='" + val.project_id + "' class='data_id'>" + val.project_name + "</td>";
 			  	html += "<td>" + val.dept_name + "</td>";
-			  	html += "<td class='field-popup'>" + ___genStdHtml___a_abbr(val.project_source, 13) + "</td>";
-			  	html += "<td>" + val.project_amount + "</td>";
-			  	html += "<td>" + val.with_last_year_num + "</td>";
-			  	html += "<td>" + val.with_last_year_percent + "</td>";
-			  	html += "<td class='field-popup'>" + ___genStdHtml___a_abbr(val.formula_remark, 13) + "</td>";
-			  	if (val.attachment != null && val.attachment !== '') {
-			  		html += '<td class="field-attachment" id="temp_attachment_' + index + '" fu-source="' + val.attachment + '">附件</td>';
-			  	} else {
-			  		html += '<td></td>';
-			  	}
-			  	html += '<td><input type="checkbox" class="icheck" id="' + val.process_step_info_id + '_' + val.ys_expand_draft_id + '" name="' + val.top_level_project_id + '"></td>';
+			  	if(val.is_usual == 1){
+				  	html += "<td class='routine'>常规</td>";
+				}else{
+					html += "<td class='generic'>新增</td>";
+				}
+			  	html += "<td>--</td>";
+			  	html += "<td>--</td>";
+			  	html += "<td class='adjuest_amount'><input type='text' class='form-control'></td>";
+			  	html += "<td class='project_source'><input type='text' class='form-control'></td>";
+			  	html += "<td class='project_remark'><input type='text' class='form-control'></td>";
+			  	html += "<td></td>";
+			  	html += "<td><a href='javascript:;' style='text-decoration:none;'><img src='../images/icon_delete_16x16.png'></a></td>";
 			  	html += "</tr>";
 			});
 			jQuery(".record").append(html);
 			jQuery('.record').treegrid();
-			jQuery(".node-totalAmount").html(data.total_amount);
-
-			jQuery('.icheck').iCheck({
-				checkboxClass: 'icheckbox_square-blue',
-				radioClass: 'iradio_square-blue',
-				increaseArea: '20%'
-			});
 			
-			jQuery('td.field-popup').click(function() {
-				___sgMessagebox({
-					type: 'warning',
-					title: '温馨提示',
-					message: jQuery(this).find('a').attr('title'),
-					fadeInMillis: 0,
-					fadeOutMillis: 1000 * 60,
-					fadeInCallback: null,
-					fadeOutCallback: null
-				});
-			});
-			
-			jQuery('td.field-attachment').click(function() {
-				showLayer();
-				var tempHandler = jQuery(this);// 临时句柄
-				if (jQuery(this).hasClass('activated')) {
-					setTimeout(function() {
-						hideLayer();
-					}, 512);// 防止恶意点击
-				} else {
-					sgFileupload['reinstall']({
-					    'target' : this.id,
-					    'alias' : null,
-					    'source' : jQuery(this).attr('fu-source'),
-					    'class' : 'sg-fu-custom--attachment',
-					    'completed' : function() {
-						    tempHandler.addClass('activated');
-						    tempHandler.click();
-					    }
-					}); // 重新安装附件插件
-				}
-			});
 		}
 
 
 		//通过
-		function goAhead(){
-			var checkArr = jQuery(".icheck:checked");
-			if(checkArr.length <= 0){
-				___msg('温馨提示', '请选择具体的项目！', {
-					closed: ___dynamic_function
-				});
-				return false;
-			}
-			var expandJson = [];
-			jQuery(checkArr).each(function(index, val){
-				expandJson.push({'step_id' : jQuery(val).attr("id").split("_")[0] , 'draft_id' : jQuery(val).attr("id").split("_")[1]});
-			});
-			var expandDraftInfo = JSON.stringify(expandJson)
-			goAheadAction(expandDraftInfo);
-		}
-
-
-		function goHeadComplete(data){
-			if(data.isok == "ok"){
-				___msg('温馨提示', data.message, {
-					closed: ___dynamic_function
-				});
-				filterDraft();
-			}else{
-				___msg('温馨提示', data.message, {
-					closed: ___dynamic_function
-				});
-				return false;
-			}
-		}
-
-		function takeBackDraft(){
-			if(confirm('确定要追回该科室的预算吗')){
-				var year = jQuery("#budgetYear").val();
-			    var deptIds = jQuery("#departmentIds").val();
-			    console.log(deptIds);
-			    if(deptIds){
-			    	deptIds = deptIds.toString(); 
-				}else{
-					___msg('温馨提示', '请选择具体的科室', {
-						closed: ___dynamic_function
-					});
+		function adjust(){
+			var adjustArr = [];
+			var adjustTrArr = jQuery(".adjust_data");
+			var amountFlag = true;
+			jQuery(adjustTrArr).each(function(){
+				if(jQuery(this).children(".adjuest_amount").children("input").val() != ""){//修改了预算
+					var data = adjustData[jQuery(this).children(".data_id").attr("id")];
+					data.adjuest_amount = jQuery(this).children(".adjuest_amount").children("input").val();
+					if(Number(data.adjuest_amount) < Number(data.budget_amount - data.budget_amount_surplus)){
+						amountFlag = false;
+						return;
+					}
+					data.project_source = jQuery(this).children(".project_source").children("input").val();
+					data.project_remark = jQuery(this).children(".project_remark").children("input").val();
+					adjustArr.push(data);
 				}
-			    takeBackDraftAction(year, deptIds);
-			}else{
-				return false;
-			}
-		}
+			});
 
-		function takeBackDraftComplete(data){
-			if(data.isok == "ok"){
-				___msg('温馨提示', data.message, {
+			if(!amountFlag){
+				___msg('温馨提示', "调整后金额不能小于已支出金额！", {
+					closed: ___dynamic_function
+				});
+				return;
+			}
+			if(adjustArr.length == 0){
+				___msg('温馨提示', "无可提交内容！", {
 					closed: ___dynamic_function
 				});
 			}else{
-				___msg('温馨提示', data.message, {
-					closed: ___dynamic_function
-				});
-				return false;
+				var adjustArrStr = JSON.stringify(adjustArr);
+				var year = jQuery("#budgetYear").val();
+				adjustAction(year, adjustArrStr);
 			}
-		}
-
-		function returnCollection(){
-			var checkArr = jQuery(".icheck:checked");
-			if(checkArr.length <= 0){
-				___msg('温馨提示', '请选择具体的项目！', {
-					closed: ___dynamic_function
-				});
-				return false;
-			}
-			var expandJson = [];
-			jQuery(checkArr).each(function(index, val){
+			/* jQuery(checkArr).each(function(index, val){
 				expandJson.push({'step_id' : jQuery(val).attr("id").split("_")[0] , 'draft_id' : jQuery(val).attr("id").split("_")[1]});
 			});
 			var expandDraftInfo = JSON.stringify(expandJson)
-			returnCollectionAction(expandDraftInfo);
+			goAheadAction(expandDraftInfo); */
 		}
 
 
-		function returnDraftComplete(data){
-			if(data.isok == "ok"){
+		function adjustComplete(data){
+		    if(data.isok == "ok"){
 				___msg('温馨提示', data.message, {
 					closed: ___dynamic_function
 				});
-				filterDraft();
+				//filterDraft();
 			}else{
 				___msg('温馨提示', data.message, {
 					closed: ___dynamic_function
 				});
 				return false;
-			}
+			} 
 		}
+
 
 		//]]>
 		</script>

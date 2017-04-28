@@ -22,6 +22,7 @@ import cn.dmdl.stl.hospitalbudget.common.session.CriterionEntityHome;
 import cn.dmdl.stl.hospitalbudget.util.CommonToolLocal;
 import cn.dmdl.stl.hospitalbudget.util.DateTimeHelper;
 import cn.dmdl.stl.hospitalbudget.util.Helper;
+import cn.dmdl.stl.hospitalbudget.util.HospitalConstant;
 
 @Name("expendDraftHome")
 public class ExpendDraftHome extends CriterionEntityHome<Object> {
@@ -322,7 +323,7 @@ public class ExpendDraftHome extends CriterionEntityHome<Object> {
 		if (args != null && !"".equals(args)) {
 			JSONObject argsJson = JSONObject.fromObject(args);
 			if (argsJson != null && argsJson.has("budgetYear")) {
-				List<Object[]> list = commonTool.selectIntermediate("ys_expand_draft", new String[] { projectIdField, "project_amount", "project_source", "formula_remark", "attachment", "status" }, "status in (0, 1, 2, 3, 4)" + " and year = " + argsJson.get("budgetYear") + " and insert_user = " + sessionToken.getUserInfoId() + " and " + projectIdField + " in (select the_id from " + projectTable + " where project_type = 2 and top_level_project_id in (select project_id from " + projectCompilerTable + " where user_info_id = " + sessionToken.getUserInfoId() + "))");
+				List<Object[]> list = commonTool.selectIntermediate("ys_expand_draft", new String[] { projectIdField, "project_amount", "project_source", "formula_remark", "attachment", "status" }, "status in (0, 1, 2, 3, 4)" + " and draft_type = " + HospitalConstant.DRAFT_TYPE_DRAFT + " and year = " + argsJson.get("budgetYear") + " and insert_user = " + sessionToken.getUserInfoId() + " and " + projectIdField + " in (select the_id from " + projectTable + " where project_type = 2 and top_level_project_id in (select project_id from " + projectCompilerTable + " where user_info_id = " + sessionToken.getUserInfoId() + "))");
 				if (list != null && list.size() > 0) {
 					for (Object[] objects : list) {
 						JSONObject value = new JSONObject();

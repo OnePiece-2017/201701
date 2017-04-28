@@ -19,13 +19,15 @@ body {
 }
 
 .div-main-top {
-	background-color: #86cef0;
+	/* background-color: #86cef0; */
+	background-color: #596B8F;
 	width: 100%;
 	height: 60px;
 }
 
 .div-main-left {
-	background-color: #8dd5f7;
+	/* background-color: #8dd5f7; */
+	background-color: #425375;
 	width: 192px;
 	min-width: 192px;
 	min-height: 530px;
@@ -44,15 +46,15 @@ body {
 
 .div-main-left .function-container .func-outer {
 	border: 1px dotted rgba(119, 133, 212, 0.37);
-	width: 326px;
+	width: 166px;
 	height: 38px;
 	border-radius: 4px;
 	cursor: pointer;
 }
 
 .div-main-left .function-container .func-inner {
-	border: 1px solid #9db4e1;
-	width: 320px;
+	/* border: 1px solid #9db4e1; */
+	width: 164px;
 	height: 32px;
 	border-radius: 4px;
 	margin-top: 2px;
@@ -86,11 +88,13 @@ body {
 }
 
 .div-main-left .function-container .func-inner span.toggle.expand {
-	background: url(../../images/icon_arrow_carrot_down_16x16.png) no-repeat center;
+	/* background: url(../../images/icon_arrow_carrot_down_16x16.png) no-repeat center; */
+	background: url(../../images/ico_menubtnbt.jpg) no-repeat center;
 }
 
 .div-main-left .function-container .func-inner span.toggle.collapse {
-	background: url(../../images/icon_arrow_carrot_right_16x16.png) no-repeat center;
+	/* background: url(../../images/icon_arrow_carrot_right_16x16.png) no-repeat center; */
+	background: url(../../images/ico_menubtnrt.jpg) no-repeat center;
 }
 
 .div-main-left .function-container .func-inner span.func-unopened {
@@ -157,7 +161,7 @@ body {
 }
 
 #node_welcome {
-	background: url(../../images/img_welcome_1920x664.jpg);
+	background: url(../../images/index_background.jpg);
 }
 
 .div-main-right .jeasyui-tabs-loading-wrapper {
