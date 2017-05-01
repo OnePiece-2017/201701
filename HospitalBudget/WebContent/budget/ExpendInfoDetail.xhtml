@@ -14,6 +14,7 @@
 		<link rel="stylesheet" type="text/css" href="#{request.contextPath}/common/css/bootstrap.min.css" />
 		<link rel="stylesheet" type="text/css" href="#{request.contextPath}/icheck/skins/square/blue.css" />
 		<link rel="stylesheet" type="text/css" href="#{request.contextPath}/toastr/toastr.min.css" />
+		<link rel="stylesheet" type="text/css" href="#{request.contextPath}/sg-fileupload/css/kernel.css" />
 		<style type="text/css">
 			.row-input {
 				width: 100%;
@@ -35,6 +36,7 @@
 			.node-totalAmount {
 				font-weight: bold;
 			}
+			.hand_span {cursor:hand}
 		</style>
 	</ui:define>
 
@@ -96,12 +98,11 @@
 				            <th width="13%">可支出金额</th>
 				            <th width="13%">本次预算内支出</th>
 				            <th width="13%">附件</th>
-				            <th width="5%">操作</th>
 				        </tr>
 				         <a:repeat value="#{expendInfoDetail.projectList}" var="_obj" rowKeyVar="_index">
 				        <tr class="root" style="font-size: 14px;font-weight: normal;">
 				        	<td>#{_index + 1}</td>
-				            <td>#{_obj[0]}</td>
+				            <td class="project_name">#{_obj[0]}</td>
 				            <td>#{_obj[5]}</td>
 				            <td>#{_obj[1]}</td>
 				            <td>#{_obj[2]}</td>
@@ -110,17 +111,10 @@
 				            	#{_obj[4]}
 				            </td>
 				            <td>
-				            	#{_obj[6]}
+				            	<span id="attachment_#{_index}" class="operation-item opr-attachment"  fu-source="#{_obj[8]}" style="cursor:pointer;color:blue">附件</span>
 							</td>
-				            <td>
-				            	
-				            </td>
 				       </tr>
 				       </a:repeat>
-				    </table>
-				</div>
-				<div class="g-data-list-table normal-attendProject" style="border-radius: 0;height:156px;">
-				    <table class="record" width="100%" cellpadding="0" cellspacing="0">
 				    </table>
 				</div>
 				<div class="pt50 pb95">
@@ -142,10 +136,31 @@
 		<script type="text/javascript" src="#{request.contextPath}/common/js/bootstrap-select-defaults-zh_CN.min.js" charset="UTF-8" />
 		<script type="text/javascript" src="#{request.contextPath}/icheck/js/icheck.min.js" charset="UTF-8" />
 		<script type="text/javascript" src="#{request.contextPath}/toastr/toastr.min.js" />
+		<script type="text/javascript" src="#{request.contextPath}/sg-fileupload/js/kernel.js" />
 		<script type="text/javascript" src="#{request.contextPath}/toolkit/utils.js" charset="UTF-8" />
 		<script type="text/javascript">
 		//<![CDATA[
 			jQuery(document).ready(function() {
+				jQuery('.opr-attachment').click(function() {
+					showLayer();
+					var tempHandler = jQuery(this);// 临时句柄
+					if (jQuery(this).hasClass('activated')) {
+						setTimeout(function() {
+							hideLayer();
+						}, 512);// 防止恶意点击
+					} else {
+						sgFileupload['reinstall']({
+						    'target' :jQuery(this).attr('id'),
+						    'alias' : jQuery(this).parents('.root').find('.project_name').html(),
+						    'source' : jQuery(this).attr('fu-source') == undefined ? "" : jQuery(this).attr('fu-source'),
+						    'class' : 'sg-fu-custom--attachment',
+						    'completed' : function() {
+							    tempHandler.addClass('activated');
+							    tempHandler.click();
+						    }
+						}); // 重新安装附件插件
+					}
+				});
 			});
 			
 			//提交前
@@ -164,6 +179,7 @@
 					___msg('温馨提示', data.message);
 				}
 			}
+			
 		//]]>
 		</script>
 	</ui:define>

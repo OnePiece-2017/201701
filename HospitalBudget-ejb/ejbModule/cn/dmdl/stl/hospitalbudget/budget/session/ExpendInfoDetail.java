@@ -88,7 +88,7 @@ public class ExpendInfoDetail extends CriterionEntityHome<ExpendApplyInfo>{
 		projectSql.append(" nepi2.budget_amount_surplus as amount_surplus2, ");//10
 		projectSql.append(" eap.expend_money as expend_money2, ");//11
 		projectSql.append(" eap.generic_project_id, ");//12
-		projectSql.append(" fs2.the_value as source_name2 ");//13
+		projectSql.append(" fs2.the_value as source_name2,eap.attachment ");//13
 		projectSql.append(" FROM expend_apply_project eap ");
 		projectSql.append(" LEFT JOIN expend_apply_info eai ON eap.expend_apply_info_id = eai.expend_apply_info_id ");
 		projectSql.append(" LEFT JOIN routine_project up on up.the_id=eap.project_id ");
@@ -103,7 +103,7 @@ public class ExpendInfoDetail extends CriterionEntityHome<ExpendApplyInfo>{
 		float allMoney = 0f;
 		if(list.size() > 0){
 			for(Object[] obj : list){
-				Object[] projectDetail = new Object[8];
+				Object[] projectDetail = new Object[9];
 				if(null == obj[12] && null != obj[5]){
 					projectDetail[0] = obj[0];
 					projectDetail[1] = obj[1];
@@ -114,6 +114,7 @@ public class ExpendInfoDetail extends CriterionEntityHome<ExpendApplyInfo>{
 					projectDetail[5] = obj[6];
 					projectDetail[6] = "";
 					projectDetail[7] = obj[5];
+					projectDetail[8] = obj[14];
 				}else{
 					projectDetail[0] = obj[7];
 					projectDetail[1] = obj[8];
@@ -124,6 +125,7 @@ public class ExpendInfoDetail extends CriterionEntityHome<ExpendApplyInfo>{
 					projectDetail[5] = obj[13];
 					projectDetail[6] = "";
 					projectDetail[7] = obj[12];
+					projectDetail[8] = obj[14];
 				}
 				projectList.add(projectDetail);
 			}

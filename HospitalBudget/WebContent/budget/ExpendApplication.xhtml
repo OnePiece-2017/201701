@@ -16,6 +16,7 @@
 		<link rel="stylesheet" type="text/css" href="#{request.contextPath}/icheck/skins/square/blue.css" />
 		<link rel="stylesheet" type="text/css" href="#{request.contextPath}/stylesheet/fix.css" />
 		<link rel="stylesheet" type="text/css" href="#{request.contextPath}/stylesheet/template_list.css" />
+		<link rel="stylesheet" type="text/css" href="#{request.contextPath}/sg-fileupload/css/kernel.css" />
 		<style type="text/css">
 			.bs-w440 .bootstrap-select:not([class*="span"]):not([class*="col-"]):not([class*="form-control"]):not(.input-group-btn) {
 			    width: 440px;
@@ -301,7 +302,7 @@
 				    <a:repeat value="#{expendApplyInfoHome.expendList}" var="_obj" rowKeyVar="_index">
 				        <tr class="root expendtr" style="font-size: 14px;font-weight: normal;">
 				        	<td >#{_index + 1}</td>
-				            <td >#{_obj[0]}</td>
+				            <td class="project_name">#{_obj[0]}</td>
 				            <td >#{_obj[5]}</td>
 				            <td >#{_obj[1]}</td>
 				            <td id="projectFrozen_#{_index}">#{_obj[2]}</td>
@@ -309,7 +310,9 @@
 				             <td >
 				            	<input id="money_#{_index}" name="money" class="form-control row-text-simplify" value="#{_obj[4]}" type="text" onblur="totalMoney()"/>
 				            </td>
-				            <td >#{_obj[6]}</td>
+				            <td >
+				            	<span id="attachment_#{_index}" class="operation-item opr-attachment"  fu-source="#{_obj[9]}" style="cursor:pointer;color:blue">附件</span>
+				            </td>
 				            <td >
 				            	<a name="delete" title="删除" style="text-decoration: none; cursor: pointer;" onclick="deleteList()">
 									<img src="../images/icon_delete_16x16.png"/>
@@ -579,10 +582,6 @@
 		       	<button type="button" class="btn btn-primary" onclick="toAddProject()">确定</button>
 		        <button type="button" class="btn btn-default" data-dismiss="modal">返回</button>
 		    </div>
-		    <h:form style="display:none" id="addProduct">
-		    	<h:inputHidden value="#{purchaseProductHome.productInfoId}" id="productInfoId"/>
-		    	<h:commandButton id="addButton"   value="添加商品" action="#{purchaseProductHome.addPurchaseProduct()}"></h:commandButton>
-		    </h:form>
 		</div>
 		</div>
 		</div>
@@ -594,7 +593,7 @@
 				<a:actionparam name="departmentId" assignTo="#{expendApplyInfoHome.departmentId}" />
 				<a:actionparam name="fundsSourceId" assignTo="#{expendApplyInfoHome.fundsSourceId}" />
 			</a:jsFunction>
-			<a:jsFunction name="save" action="#{expendApplyInfoHome.save}" data="#{expendApplyInfoHome.saveResult}" oncomplete="saveComplete(data)">
+			<a:jsFunction name="save" action="#{expendApplyInfoHome.save}" data="#{expendApplyInfoHome.saveResult}" oncomplete="saveComplete(data)"  reRender="formnum">
 				<a:actionparam name="year" assignTo="#{expendApplyInfoHome.year}" />
 				<a:actionparam name="applyUser" assignTo="#{expendApplyInfoHome.applyUser}" />
 				<a:actionparam name="applySn" assignTo="#{expendApplyInfoHome.applySn}" />
@@ -649,6 +648,7 @@
 		<script type="text/javascript" src="#{request.contextPath}/common/js/bootstrap-select-defaults-zh_CN.min.js" charset="UTF-8" />
 		<script type="text/javascript" src="#{request.contextPath}/common/js/bootstrap-select.min.js" charset="UTF-8" />
 		<script type="text/javascript" src="#{request.contextPath}/icheck/js/icheck.min.js" charset="UTF-8" />
+		<script type="text/javascript" src="#{request.contextPath}/sg-fileupload/js/kernel.js" />
 		<script type="text/javascript" src="#{request.contextPath}/toolkit/utils.js" />
 		<script type="text/javascript">
 		//<![CDATA[
@@ -679,6 +679,26 @@
 						jQuery('#register').selectpicker({noneSelectedText:"全部"});
 						jQuery('#register').selectpicker('deselectAll');
 					}
+					jQuery('.opr-attachment').click(function() {
+						showLayer();
+						var tempHandler = jQuery(this);// 临时句柄
+						if (jQuery(this).hasClass('activated')) {
+							setTimeout(function() {
+								hideLayer();
+							}, 512);// 防止恶意点击
+						} else {
+							sgFileupload['reinstall']({
+							    'target' :jQuery(this).attr('id'),
+							    'alias' : jQuery(this).parents('.expendtr').find('.project_name').html(),
+							    'source' : jQuery(this).attr('fu-source') == undefined ? "" : jQuery(this).attr('fu-source'),
+							    'class' : 'sg-fu-custom--attachment',
+							    'completed' : function() {
+								    tempHandler.addClass('activated');
+								    tempHandler.click();
+							    }
+							}); // 重新安装附件插件
+						}
+					});
 				}
 				//初始化部分数据
 				var userId = #{sessionToken.userInfoId};
@@ -718,6 +738,7 @@
 					pickerPosition: "bottom-left"
 				});
 				huidiao();
+				
 			}
 
 			//提交校验
@@ -937,11 +958,13 @@
 					var projectType = jQuery("#project_type_" + i).text();
 					var projectFrozen = jQuery("#projectFrozen_" + i).text();
 					var projectSurplus = jQuery("#canUseMoney_" + i).text();
+					var attachment = sgFileupload['getSource'](jQuery(this).find('.opr-attachment').attr('id'));
 					var money = jQuery("#money_" + i).val();
 					json += '{"project_id":"' + projectId + '",';
 					json += '"project_type":"' + projectType + '",';
 					json += '"frozen_money":"' + projectFrozen + '",';
 					json += '"project_surplus":"' + projectSurplus + '",';
+					json += '"attachment":"' + attachment + '",';
 					json += '"expend_money":"' + money + '"},';
 				});
 				json = json.substring(0,json.length-1);
@@ -971,7 +994,7 @@
 				modalInit(year);
 			}
 			function toAddModelComplete(){
-				var deptId = #{sessionToken.departmentInfoId};
+				var deptId = "#{sessionToken.departmentInfoId}";
 				if(deptId){
 					jQuery('#depart').val(deptId);
 					jQuery('#depart').selectpicker("render");
@@ -1000,6 +1023,26 @@
 				});
 				jQuery("#addModal").modal("hide");
 				huidiao();
+				jQuery('.opr-attachment').click(function() {
+					showLayer();
+					var tempHandler = jQuery(this);// 临时句柄
+					if (jQuery(this).hasClass('activated')) {
+						setTimeout(function() {
+							hideLayer();
+						}, 512);// 防止恶意点击
+					} else {
+						sgFileupload['reinstall']({
+						    'target' :jQuery(this).attr('id'),
+						    'alias' : jQuery(this).parents('.expendtr').find('.project_name').html(),
+						    'source' : jQuery(this).attr('fu-source') == undefined ? "" : jQuery(this).attr('fu-source'),
+						    'class' : 'sg-fu-custom--attachment',
+						    'completed' : function() {
+							    tempHandler.addClass('activated');
+							    tempHandler.click();
+						    }
+						}); // 重新安装附件插件
+					}
+				});
 			}
 
 			function fundsSource(){
