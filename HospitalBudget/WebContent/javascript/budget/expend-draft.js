@@ -118,8 +118,11 @@ function parseProject(projectArray, namespace, projectNature) {
 				html += '				<span>' + node['projectName'] + '</span>';
 				html += '			</div>';
 				html += '			<div class="generic-field edge-end field-project-nature">';
-				html += '				<span>' + projectNature + '</span>';
+				html += '				<select style="width:100%; height:100%;">2<option value="1">常规</option><option value="2" selected="selected">新增</option><option value="3">平移</option></select>';
 				html += '			</div>';
+/*				html += '			<div class="generic-field edge-end field-project-nature">';
+				html += '				<span>' + projectNature + '</span>';
+				html += '			</div>';*/
 				html += '			<div class="generic-field edge-end field-funds-source">';
 				html += '				<span>' + node['fundsSource'] + '</span>';
 				html += '			</div>';

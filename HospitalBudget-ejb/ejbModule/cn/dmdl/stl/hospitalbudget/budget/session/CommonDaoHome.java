@@ -52,6 +52,23 @@ public class CommonDaoHome extends CriterionEntityHome<Object>{
 	}
 	
 	/**
+	 * 获取项目性质
+	 * @return
+	 */
+	@SuppressWarnings("unchecked")
+	public List<Object[]> getProjectNature(){
+		List<Object[]> list = new ArrayList<Object[]>();
+		String dataSql = "select the_id, the_value from ys_project_nature where deleted = 0";
+		List<Object[]> dataList = getEntityManager().createNativeQuery(dataSql).getResultList();
+		if (dataList != null && dataList.size() > 0) {
+			for (Object[] data : dataList) {
+				list.add(new Object[] { data[0], data[1] });
+			}
+		}
+		return list;
+	}
+	
+	/**
 	 * 获取全部科室目录
 	 * @return
 	 */
