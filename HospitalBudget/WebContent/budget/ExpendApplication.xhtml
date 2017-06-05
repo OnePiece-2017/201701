@@ -311,7 +311,7 @@
 				            	<input id="money_#{_index}" name="money" class="form-control row-text-simplify" value="#{_obj[4]}" type="text" onblur="totalMoney()"/>
 				            </td>
 				            <td >
-				            	<span id="attachment_#{_index}" class="operation-item opr-attachment"  fu-source="#{_obj[9]}" style="cursor:pointer;color:blue">附件</span>
+				            	<span id="attachment_#{_index}" class="operation-item opr-attachment"  fu-source="#{_obj[9]}" style="cursor:pointer;#{_obj[9] ne null and _obj[9] ne '' ? 'color:blue' : ''}">附件</span>
 				            </td>
 				            <td >
 				            	<a name="delete" title="删除" style="text-decoration: none; cursor: pointer;" onclick="deleteList()">
@@ -640,6 +640,7 @@
 			<a:jsFunction name="addProject" action="#{expendApplyInfoHome.addProject}" reRender="listPanl" oncomplete="addProjectComplete()">
 				<a:actionparam name="projectId" assignTo="#{expendApplyInfoHome.projectId}" />
 				<a:actionparam name="projectType" assignTo="#{expendApplyInfoHome.projectType}" />
+				<a:actionparam name="projectJson" assignTo="#{expendApplyInfoHome.projectJson}" />
 			</a:jsFunction>
 		</a:form>
 		<script type="text/javascript" src="#{request.contextPath}/common/js/bootstrap.min.js" />
@@ -967,8 +968,13 @@
 					json += '"attachment":"' + attachment + '",';
 					json += '"expend_money":"' + money + '"},';
 				});
-				json = json.substring(0,json.length-1);
-				json += "]}"; 
+				if(json == '{"expend_list":['){
+					json = '{"expend_list":[]}';
+				}else{
+					json = json.substring(0,json.length-1);
+					json += "]}"; 
+				}
+				
 				return json;
 			}
 
@@ -1007,7 +1013,8 @@
 				var project = jQuery("#projectId").val();
 				var projectId = project.substring(0,project.lastIndexOf("_"));
 				var projectType = project.substring((project.lastIndexOf("_")+1),project.length);
-				addProject(projectId,projectType);
+				var json = getJson();
+				addProject(projectId,projectType,json);
 			}
 			function addProjectComplete(){
 				jQuery(".form_datetime_second").datetimepicker({

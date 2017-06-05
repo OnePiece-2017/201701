@@ -126,6 +126,9 @@ var ______sgFileupload = {
 												    ______sgFileupload.storage[______sgFileupload.currentTarget]['changed'] = false;
 												    var message = '保存数据成功！';
 												    message += (top.toastr != null ? '<br>' : '\n') + '别名〔' + ______sgFileupload.storage[______sgFileupload.currentTarget]['alias'] + '〕';
+												   //alert(target)
+												    jQuery("#" + target).css("color","blue");
+												    //jQuery("#" + target).attr("fu-source",);
 												    if (top.toastr != null) {
 													    top.toastr.options = {
 													        'closeButton' : false,
