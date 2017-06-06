@@ -88,7 +88,6 @@
 		<script type="text/javascript" src="#{request.contextPath}/common/js/bootstrap-select.min.js" charset="UTF-8" />
 		<script type="text/javascript" src="#{request.contextPath}/common/js/bootstrap-select-defaults-zh_CN.min.js" charset="UTF-8" />
 		<script type="text/javascript" src="#{request.contextPath}/icheck/js/icheck.min.js" charset="UTF-8" />
-		<script type="text/javascript" src="#{request.contextPath}/sg-fileupload/js/kernel.js" />
 		<script type="text/javascript" src="#{request.contextPath}/toolkit/utils.js" charset="UTF-8" />
 		<script type="text/javascript">
 		//<![CDATA[
@@ -127,34 +126,11 @@
 					html += '<tr class="data-row">';
 					html += '	<td>' + val.year + '</td>';
 					html += '	<td>' + val.dept_name + '</td>';
-					html += '	<td class="project_name">' + val.project_name + '</td>';
-					html += '	<td>';
-					html += '		<span id="attachment_' + index + '" class="operation-item opr-attachment"  fu-source="" style="cursor:pointer;">附件</span>';
-					html += '		<a href="../budget/AuditContractList.seam?projectId=' + val.generic_project_id + '"  title="查看" style="text-decoration: none;"><img src="../images/icon_view_16x16.png"></a></td>';
+					html += '	<td>' + val.project_name + '</td>';
+					html += '	<td><a href="../budget/AuditContractList.seam?projectId=' + val.generic_project_id + '"  title="查看" style="text-decoration: none;"><img src="../images/icon_view_16x16.png"></a></td>';
 					html += '</tr>';
 				});
 				jQuery("#expend_table").append(html);
-
-				jQuery('.opr-attachment').click(function() {
-					showLayer();
-					var tempHandler = jQuery(this);// 临时句柄
-					if (jQuery(this).hasClass('activated')) {
-						setTimeout(function() {
-							hideLayer();
-						}, 512);// 防止恶意点击
-					} else {
-						sgFileupload['reinstall']({
-						    'target' :jQuery(this).attr('id'),
-						    'alias' : jQuery(this).parent().parent().find('.project_name').html(),
-						    'source' : jQuery(this).attr('fu-source') == undefined ? "" : jQuery(this).attr('fu-source'),
-						    'class' : 'sg-fu-custom--attachment',
-						    'completed' : function() {
-							    tempHandler.addClass('activated');
-							    tempHandler.click();
-						    }
-						}); // 重新安装附件插件
-					}
-				});
 			}
 		//]]>
 		</script>
