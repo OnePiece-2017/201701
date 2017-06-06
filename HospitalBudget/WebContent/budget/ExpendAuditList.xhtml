@@ -1,0 +1,139 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:s="http://jboss.com/products/seam/taglib"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:a="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich"
+	template="/layout/template_edit.xhtml">
+
+	<ui:define name="head">
+		<link rel="stylesheet" type="text/css" href="#{request.contextPath}/stylesheet/template_list.css" />
+		<link rel="stylesheet" type="text/css" href="#{request.contextPath}/common/css/bootstrap.min.css" />
+		<link rel="stylesheet" type="text/css" href="#{request.contextPath}/common/css/bootstrap-select.min.css" />
+		<link rel="stylesheet" type="text/css" href="#{request.contextPath}/icheck/skins/square/blue.css" />
+		<style type="text/css">
+			
+			.normal-attendProject .root {
+				background: #add595;
+			}
+			
+			.node-summaryInfo {
+				font-weight: bold;
+			}
+		</style>
+	</ui:define>
+
+	<ui:define name="body">
+		<div class="pd0-10 pt30">
+			<div class="g-data-list-condition">
+				<div class="fl">
+					<div style="float: left; text-align: center; line-height: 36px; width: 70px;">
+						<span>年份</span>
+					</div>
+					<div class="fl">
+						<select id="budgetYear" class="selectpicker">
+							<a:repeat value="#{commonDaoHome.recentYearList}" var="_var">
+								<option value="#{_var[0]}">#{_var[1]}</option>
+							</a:repeat>
+						</select>
+					</div>
+					<div style="float: left; text-align: center; line-height: 36px; width: 70px;">
+						<span>科室</span>
+					</div>
+					<div class="fl">
+						<select id="departmentIds" class="selectpicker" data-live-search="true" title="全部科室">
+							<a:repeat value="#{commonDaoHome.departmentInfoListByUserId}" var="_var">
+								<option value="#{_var[0]}">#{_var[1]}</option>
+							</a:repeat>
+						</select>
+					</div>
+					<div style="float: left; text-align: center; line-height: 36px; width: 70px;">
+						<span>资金来源</span>
+					</div>
+					<div class="fl">
+						<select id="fundsSourceId" class="selectpicker">
+							<a:repeat value="#{commonDaoHome.fundsSource}" var="_var">
+								<option value="#{_var[0]}">#{_var[1]}</option>
+							</a:repeat>
+						</select>
+					</div>
+				</div>
+			</div>
+			
+			<strong style="font-size: 20px;">审计项目</strong>
+			<div class="g-data-list-table freeze-attendProject" id="expend_freez_head" >
+			    <table class="record" id="expend_table" width="100%" cellpadding="0" cellspacing="0">
+			        <tr>
+			            <th width="10%">年份</th>
+			            <th width="30%">科室</th>
+			            <th width="50%">项目名称</th>
+			            <th width="10%">操作</th>
+			        </tr>
+			    </table>
+			</div>
+		</div>
+		<a:form>
+			<a:queue requestDelay="100" ignoreDupResponses="true" />
+			<a:jsFunction name="filterProjectAction"  data="#{expendAuditHome.expendAuditProject}" oncomplete="wirePage(data);">
+				<a:actionparam name="year" assignTo="#{expendAuditHome.year}" />
+				<a:actionparam name="deptId" assignTo="#{expendAuditHome.deptId}" />
+				<a:actionparam name="fundsSourceId" assignTo="#{expendAuditHome.fundsSourceId}" />
+			</a:jsFunction>
+		</a:form>
+		<script type="text/javascript" src="#{request.contextPath}/javascript/template_list.js" charset="UTF-8" />
+		<script type="text/javascript" src="#{request.contextPath}/common/js/bootstrap.min.js" />
+		<script type="text/javascript" src="#{request.contextPath}/common/js/bootstrap-select.min.js" charset="UTF-8" />
+		<script type="text/javascript" src="#{request.contextPath}/common/js/bootstrap-select-defaults-zh_CN.min.js" charset="UTF-8" />
+		<script type="text/javascript" src="#{request.contextPath}/icheck/js/icheck.min.js" charset="UTF-8" />
+		<script type="text/javascript" src="#{request.contextPath}/toolkit/utils.js" charset="UTF-8" />
+		<script type="text/javascript">
+		//<![CDATA[
+			jQuery(document).ready(function() {
+				//获取当前年
+			    var date=new Date;
+			    var yearStr=date.getFullYear();
+			    jQuery("#budgetYear").val(yearStr)
+			    
+			    jQuery("#fundsSourceId").val(1);
+			    jQuery('.selectpicker').selectpicker();
+			    jQuery('.normal-attendProject').niceScroll({
+					cursorcolor : '#5cb85c',
+					cursorwidth : 9,
+					cursoropacitymax : 0.8,
+					touchbehavior : false,
+					autohidemode : false
+			    });
+
+			    filterProject();
+			    jQuery('#budgetYear, #departmentIds, #fundsSourceId').change(filterProject);
+			});
+
+			function filterProject(){
+				var year = jQuery("#budgetYear").val();
+			    var deptId = jQuery("#departmentIds").val();
+				var fundsSourceId = jQuery("#fundsSourceId").val();
+				filterProjectAction(year, deptId, fundsSourceId);
+			}
+
+			function wirePage(data){
+				var projectInfo = eval(data.data);
+				jQuery("#expend_table  tr:not(:first)").html("");
+				var html = "";
+				jQuery(projectInfo).each(function(index, val){
+					html += '<tr class="data-row">';
+					html += '	<td>' + val.year + '</td>';
+					html += '	<td>' + val.dept_name + '</td>';
+					html += '	<td>' + val.project_name + '</td>';
+					html += '	<td><a href="../budget/AuditContractList.seam?projectId=' + val.generic_project_id + '"  title="查看" style="text-decoration: none;"><img src="../images/icon_view_16x16.png"></a></td>';
+					html += '</tr>';
+				});
+				jQuery("#expend_table").append(html);
+			}
+		//]]>
+		</script>
+	</ui:define>
+
+</ui:composition>

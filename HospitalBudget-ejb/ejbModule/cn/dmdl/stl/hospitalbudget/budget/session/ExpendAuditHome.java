@@ -1,0 +1,155 @@
+package cn.dmdl.stl.hospitalbudget.budget.session;
+
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
+
+import net.sf.json.JSONObject;
+
+import org.jboss.seam.annotations.Name;
+
+import cn.dmdl.stl.hospitalbudget.common.session.CriterionEntityHome;
+import cn.dmdl.stl.hospitalbudget.util.DataSourceManager;
+import cn.dmdl.stl.hospitalbudget.util.HospitalConstant;
+
+@Name("expendAuditHome")
+public class ExpendAuditHome extends CriterionEntityHome<Object>{
+	
+	private String year;
+	private Integer deptId;
+	private Integer fundsSourceId;
+
+	private Integer genericProjectId;
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+	
+	public void wire(){
+		
+	}
+	
+	/**
+	 * 获取合同列表
+	 * @return
+	 */
+	public JSONObject getAuditContract(){
+		JSONObject auditContractJson = new JSONObject();
+		StringBuilder sql = new StringBuilder();
+		sql.append("select t.audit_contract_info_id,t.audit_title,t.audit_amount,t.attachment FROM ys_audit_contract_info t ");
+		sql.append("where t.deleted = 0 and t.generic_project_id = ? ");
+		Connection connection = DataSourceManager.open(DataSourceManager.BY_JDBC_DEFAULT);
+		PreparedStatement preparedStatement = null;
+		ResultSet resultSet = null;
+		try {
+			preparedStatement = connection.prepareStatement(sql.toString());
+			preparedStatement.setInt(1, genericProjectId);
+			resultSet = preparedStatement.executeQuery();
+			List<JSONObject> list = new ArrayList<JSONObject>(); 
+			while(resultSet.next()){
+				JSONObject json = new JSONObject();
+				json.element("audit_contract_info_id", resultSet.getInt("audit_contract_info_id"));
+				json.element("audit_title", resultSet.getString("audit_title"));
+				json.element("audit_amount", resultSet.getDouble("audit_amount"));
+				json.element("attachment", resultSet.getString("attachment"));
+				list.add(json);
+			}
+			auditContractJson.element("data", list);
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} finally{
+			DataSourceManager.close(connection, preparedStatement, resultSet);
+		}
+		System.out.println(auditContractJson);
+		return auditContractJson;
+	}
+
+	
+	/**
+	 * 获取审计项目列表
+	 * @return
+	 */
+	public JSONObject getExpendAuditProject(){
+		JSONObject expendAuditProjectJson = new JSONObject();
+		StringBuilder sql = new StringBuilder();
+		Connection connection = DataSourceManager.open(DataSourceManager.BY_JDBC_DEFAULT);
+		PreparedStatement preparedStatement = null;
+		ResultSet resultSet = null;
+		try {
+			List<Object> paramList = new ArrayList<Object>();
+			sql.append("SELECT t.`year`,t.generic_project_id,gp.the_value,di.the_value as dept_name FROM normal_expend_plan_info t  ");
+			sql.append("INNER JOIN generic_project gp ON t.generic_project_id = gp.the_id ");
+			sql.append("INNER JOIN ys_department_info di ON gp.department_info_id = di.the_id ");
+			sql.append("where gp.is_audit = ? ");
+			paramList.add(HospitalConstant.PROJECT_IS_AUDIT);
+			if(null != deptId){
+				sql.append("AND t.dept_id = ? ");
+				paramList.add(deptId);
+			}
+			if(null != year){
+				sql.append("AND t.`year` = ? ");
+				paramList.add(year);
+			}
+			if(null != fundsSourceId){
+				sql.append("AND gp.funds_source_id = ? ");
+				paramList.add(fundsSourceId);
+			}
+			preparedStatement = connection.prepareStatement(sql.toString());
+			DataSourceManager.setParams(preparedStatement, paramList);
+			resultSet = preparedStatement.executeQuery();
+			List<JSONObject> list = new ArrayList<JSONObject>(); 
+			while(resultSet.next()){
+				JSONObject json = new JSONObject();
+				json.element("year", resultSet.getString("year"));
+				json.element("generic_project_id", resultSet.getInt("generic_project_id"));
+				json.element("project_name", resultSet.getString("the_value"));
+				json.element("dept_name", resultSet.getString("dept_name"));
+				list.add(json);
+			}
+			expendAuditProjectJson.element("data", list);
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} finally{
+			DataSourceManager.close(connection, preparedStatement, resultSet);
+		}
+		return expendAuditProjectJson;
+	}
+
+	public String getYear() {
+		return year;
+	}
+
+	public void setYear(String year) {
+		this.year = year;
+	}
+
+	public Integer getDeptId() {
+		return deptId;
+	}
+
+	public void setDeptId(Integer deptId) {
+		this.deptId = deptId;
+	}
+
+	public Integer getFundsSourceId() {
+		return fundsSourceId;
+	}
+
+	public void setFundsSourceId(Integer fundsSourceId) {
+		this.fundsSourceId = fundsSourceId;
+	}
+
+	public Integer getGenericProjectId() {
+		return genericProjectId;
+	}
+
+	public void setGenericProjectId(Integer genericProjectId) {
+		this.genericProjectId = genericProjectId;
+	}
+	
+	
+
+}

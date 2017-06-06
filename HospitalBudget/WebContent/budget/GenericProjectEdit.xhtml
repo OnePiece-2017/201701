@@ -15,6 +15,7 @@
 		<link rel="stylesheet" type="text/css" href="#{request.contextPath}/sg-messagebox/css/sg-messagebox.css" />
 		<link rel="stylesheet" type="text/css" href="#{request.contextPath}/sg-reminder/css/sg-reminder.css" />
 		<link rel="stylesheet" type="text/css" href="#{request.contextPath}/sg-inputbox/css/sg-inputbox.css" />
+		<link rel="stylesheet" type="text/css" href="#{request.contextPath}/icheck/skins/square/blue.css" />
 		<style type="text/css">
 			#node-subproject {
 				width: 100%;
@@ -333,6 +334,45 @@
 							</td>
 						</tr>
 						<tr>
+							<td width="50%">
+								<div class="pb20">
+									<table>
+										<tr>
+											<td valign="middle">
+												<span class="field-name mb10">立项年份</span>
+											</td>
+											<td valign="middle">
+												<select id="startYear" class="selectpicker">
+													<a:repeat value="#{commonDaoHome.recentYearList}" var="_var">
+														<option value="#{_var[0]}">#{_var[1]}</option>
+													</a:repeat>
+												</select>
+												<h:inputHidden id="startYearHidden" value="#{genericProjectHome.startYear}" />
+											</td>
+											<td valign="middle">
+												<font color="red" style="margin-left: 3px;">*</font>
+											</td>
+										</tr>
+									</table>
+								</div>
+							</td>
+							<td width="50%">
+								<div class="pb20">
+									<table>
+										<tr>
+											<td valign="middle">
+												<span class="field-name mb10">是否为审计项目</span>
+											</td>
+											<td valign="middle">
+												<input type="checkbox" class="icheck" id="is_audit"></input>
+											</td>
+											<h:inputHidden id="isAuditHidden" value="#{genericProjectHome.isAudit}" />
+										</tr>
+									</table>
+								</div>
+							</td>
+						</tr>
+						<tr>
 							<td colspan="2">
 								<div class="pb20">
 									<table>
@@ -522,6 +562,7 @@
 		<script type="text/javascript" src="#{request.contextPath}/sg-messagebox/js/sg-messagebox.js" />
 		<script type="text/javascript" src="#{request.contextPath}/sg-reminder/js/sg-reminder.js" />
 		<script type="text/javascript" src="#{request.contextPath}/sg-inputbox/js/sg-inputbox.js" />
+		<script type="text/javascript" src="#{request.contextPath}/icheck/js/icheck.min.js" charset="UTF-8" />
 		<script type="text/javascript">
 		//<![CDATA[
 			var g_personJson = #{genericProjectHome.personJson};
@@ -582,6 +623,9 @@
 			
 				jQuery('#fundsSourceId').val(jQuery('#mainForm\\:fundsSourceIdHidden').val());
 				jQuery('#fundsSourceId').selectpicker('render');
+				
+				jQuery('#startYear').val(jQuery('#mainForm\\:startYearHidden').val());
+				jQuery('#startYear').selectpicker('render');
 			
 				setTimeout('subprojectOutputFlush();', 0);//解决Chrome元素渲染速度问题
 				
@@ -597,6 +641,17 @@
 				    threshold : 1024,
 				    notify : true
 				});
+
+				jQuery('.icheck').iCheck({
+					checkboxClass: 'icheckbox_square-blue',
+					radioClass: 'iradio_square-blue',
+					increaseArea: '20%'
+				});
+
+				var isAudit = jQuery('#mainForm\\:isAuditHidden').val();
+				if(isAudit == 1){
+					jQuery('#is_audit').iCheck('check');
+				}
 			});
 			
 			function setSubprojectInteractive(show) {
@@ -1063,6 +1118,24 @@
 					return false;
 				}
 				jQuery('#mainForm\\:fundsSourceIdHidden').val(fundsSourceId);
+
+				var startYear = jQuery('#startYear').val();
+				if (fundsSourceId == null || fundsSourceId == '') {
+					___dynamic_function = function() {
+						___selectpickerExpand('startYear');
+					};
+					___msg('温馨提示', '请选择立项年份！', {
+						closed: ___dynamic_function
+					});
+					return false;
+				}
+				jQuery('#mainForm\\:startYearHidden').val(startYear);
+
+				if(jQuery("#is_audit").is(":checked")){
+					jQuery('#mainForm\\:isAuditHidden').val(1);
+				}else{
+					jQuery('#mainForm\\:isAuditHidden').val(0);
+				}
 			
 				var budgetAmount = jQuery('#mainForm\\:budgetAmount').val();
 				___dynamic_function = function() {

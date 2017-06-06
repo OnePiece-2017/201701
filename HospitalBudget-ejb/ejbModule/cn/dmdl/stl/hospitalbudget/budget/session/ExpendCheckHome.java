@@ -133,7 +133,6 @@ public class ExpendCheckHome extends CriterionEntityHome<Object>{
 			}
 			draftInfojson.element("draft_info", draftInfoArray);
 			draftInfojson.element("total_amount", totalAmount/10000);
-			System.out.println(draftInfojson);
 		} catch (SQLException e) {
 			e.printStackTrace();
 		} catch (UnsupportedEncodingException e) {
