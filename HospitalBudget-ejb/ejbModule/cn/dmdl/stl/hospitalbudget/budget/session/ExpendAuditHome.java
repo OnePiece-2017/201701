@@ -23,13 +23,36 @@ public class ExpendAuditHome extends CriterionEntityHome<Object>{
 	private Integer fundsSourceId;
 
 	private Integer genericProjectId;
+	private Integer contractId;
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
 	
-	public void wire(){
-		
+	/**
+	 * 删除合同
+	 * @return
+	 */
+	public JSONObject deleteContract(){
+		JSONObject json = new JSONObject();
+		Connection connection = DataSourceManager.open(DataSourceManager.BY_JDBC_DEFAULT);
+		PreparedStatement preparedStatement = null;
+		ResultSet resultSet = null;
+		try {
+			preparedStatement = connection.prepareStatement("update ys_audit_contract_info t set t.deleted = 1 where t.audit_contract_info_id = ? ");
+			preparedStatement.setInt(1, contractId);
+			preparedStatement.executeUpdate();
+			json.element("isok", "ok");
+			json.element("isok", "删除成功！");
+		} catch (SQLException e) {
+			e.printStackTrace();
+			json.element("isok", "err");
+			json.element("message", "系统错误！");
+			return json;
+		} finally{
+			DataSourceManager.close(connection, preparedStatement, resultSet);
+		}
+		return json;
 	}
 	
 	/**
@@ -63,7 +86,6 @@ public class ExpendAuditHome extends CriterionEntityHome<Object>{
 		} finally{
 			DataSourceManager.close(connection, preparedStatement, resultSet);
 		}
-		System.out.println(auditContractJson);
 		return auditContractJson;
 	}
 
@@ -148,6 +170,14 @@ public class ExpendAuditHome extends CriterionEntityHome<Object>{
 
 	public void setGenericProjectId(Integer genericProjectId) {
 		this.genericProjectId = genericProjectId;
+	}
+
+	public Integer getContractId() {
+		return contractId;
+	}
+
+	public void setContractId(Integer contractId) {
+		this.contractId = contractId;
 	}
 	
 	

@@ -11,6 +11,9 @@
 
 	<ui:define name="head">
 		<link rel="stylesheet" type="text/css" href="#{request.contextPath}/common/css/bootstrap.min.css" />
+		<link rel="stylesheet" type="text/css" href="#{request.contextPath}/sg-reminder/css/sg-reminder.css" />
+		<link rel="stylesheet" type="text/css" href="#{request.contextPath}/sg-inputbox/css/sg-inputbox.css" />
+		<link rel="stylesheet" type="text/css" href="#{request.contextPath}/sg-fileupload/css/kernel.css" />
 	</ui:define>
 
 	<ui:define name="body">
@@ -73,6 +76,20 @@
 									</table>
 								</div>
 							</td>
+							<td width="50%">
+								<div class="pb20">
+									<table>
+										<tr>
+											<td valign="middle">
+												<a id="audit_contract_{#ysAuditContractInfoHome.ysAuditContractInfoAuditContractInfoId}" class="btn btn-success mr15" fu-source=" " onclick="attachment(this);">附件上传</a>
+											</td>
+											<td valign="middle">
+												<a></a>
+											</td>
+										</tr>
+									</table>
+								</div>
+							</td>
 						</tr>
 					</table>
 				</div>
@@ -93,6 +110,9 @@
 		</h:form>
 		<script type="text/javascript" src="#{request.contextPath}/common/js/bootstrap.min.js" />
 		<script type="text/javascript" src="#{request.contextPath}/toolkit/utils.js" />
+		<script type="text/javascript" src="#{request.contextPath}/sg-reminder/js/sg-reminder.js" />
+		<script type="text/javascript" src="#{request.contextPath}/sg-inputbox/js/sg-inputbox.js" />
+		<script type="text/javascript" src="#{request.contextPath}/sg-fileupload/js/kernel.js" />
 		<script type="text/javascript">
 		//<![CDATA[
 			jQuery(document).ready(function() {
@@ -130,6 +150,37 @@
 						return false;
 					}
 				}
+			}
+
+			function attachment(obj){
+				showLayer();
+				var tempHandler = jQuery(this);// 临时句柄
+				if (jQuery(this).hasClass('activated')) {
+					setTimeout(function() {
+						hideLayer();
+					}, 512);// 防止恶意点击
+				} else {
+					sgFileupload['reinstall']({
+					    'target' : obj.id,
+					    'alias' : '1',
+					    'source' : jQuery(obj).attr('fu-source'),
+					    'class' : 'sg-fu-custom--attachment',
+					    'completed' : function() {
+					    	tempHandler.addClass('activated');
+						    tempHandler.click();
+					    }
+					}); // 重新安装附件插件
+				}
+			}
+
+			function showLayer() {
+				jQuery('.sg-mask-layer-wrapper .sg-mask-layer-contents').addClass('is-loading');
+				jQuery('.sg-mask-layer-wrapper').show();
+			}
+
+			function hideLayer() {
+				jQuery('.sg-mask-layer-wrapper .sg-mask-layer-contents').removeClass('is-loading');
+				jQuery('.sg-mask-layer-wrapper').hide();
 			}
 		//]]>
 		</script>

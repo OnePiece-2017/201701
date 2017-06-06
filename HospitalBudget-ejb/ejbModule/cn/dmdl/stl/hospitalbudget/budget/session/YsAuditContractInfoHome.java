@@ -4,7 +4,6 @@ import java.util.Date;
 
 import org.jboss.seam.annotations.Name;
 
-import cn.dmdl.stl.hospitalbudget.budget.entity.GenericProject;
 import cn.dmdl.stl.hospitalbudget.budget.entity.YsAuditContractInfo;
 import cn.dmdl.stl.hospitalbudget.common.session.CriterionEntityHome;
 
