@@ -35,6 +35,7 @@ public class ExpendApplyInfoHome extends CriterionEntityHome<ExpendApplyInfo>{
 	private List<Object[]> reciveCompanyList;//收款单位列表
 	private List<Object[]> projectList;//主项目列表
 	private List<Object[]> expendList;//选中列表
+	private List<Object[]> contractList;//合同列表
 	
 	private Integer expendApplyInfoId;//编辑使用-申请单号
 	private String applySn;//单据编号
@@ -60,6 +61,7 @@ public class ExpendApplyInfoHome extends CriterionEntityHome<ExpendApplyInfo>{
 	private JSONObject saveResult;
 	private String expendAllMoney;//总支出金额
 	private List<Object> companyList;//收款单位列表
+	private Integer contractId;//合同id
 	@SuppressWarnings("unchecked")
 	public void wire(){
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
@@ -389,7 +391,9 @@ public class ExpendApplyInfoHome extends CriterionEntityHome<ExpendApplyInfo>{
 	 * 选择项目后查询项目列表
 	 * @return
 	 */
+	@SuppressWarnings("unchecked")
 	public void selectProject(){
+		contractId = 0;
 		if(null != projectId && -1 != projectId){
 			if(projectType == 1){
 				StringBuffer sql = new StringBuffer();
@@ -403,7 +407,6 @@ public class ExpendApplyInfoHome extends CriterionEntityHome<ExpendApplyInfo>{
 				sql.append(" LEFT JOIN routine_project rp ON nepi.project_id = rp.the_id ");
 				sql.append(" LEFT JOIN ys_funds_source fs on rp.funds_source_id=fs.the_id ");
 				sql.append(" WHERE nepi.project_id= ").append(projectId);
-				@SuppressWarnings("unchecked")
 				List<Object[]> list = getEntityManager().createNativeQuery(sql.toString()).getResultList();
 				if(list.size() > 0){
 					Object[] obj = list.get(0);
@@ -435,7 +438,6 @@ public class ExpendApplyInfoHome extends CriterionEntityHome<ExpendApplyInfo>{
 				sql.append(" LEFT JOIN generic_project rp ON nepi.generic_project_id = rp.the_id ");
 				sql.append(" LEFT JOIN ys_funds_source fs on rp.funds_source_id=fs.the_id ");
 				sql.append(" WHERE nepi.generic_project_id= ").append(projectId);
-				@SuppressWarnings("unchecked")
 				List<Object[]> list = getEntityManager().createNativeQuery(sql.toString()).getResultList();
 				if(list.size() > 0){
 					Object[] obj = list.get(0);
@@ -455,12 +457,34 @@ public class ExpendApplyInfoHome extends CriterionEntityHome<ExpendApplyInfo>{
 						canUseMoney = obj[4].toString();
 					}
 				}
+				//查询该项目的合同
+				Integer deptId = sessionToken.getDepartmentInfoId();
+				if(deptId != null){
+					String contractSql = "select yaci.audit_contract_info_id,yaci.audit_title from ys_audit_contract_info yaci where yaci.deleted=0 "
+							+ "and yaci.dept_id=? and yaci.generic_project_id=?";
+					List<Object[]> clist = getEntityManager().createNativeQuery(contractSql).setParameter(1, deptId).setParameter(2, projectId).getResultList();
+					if(null != clist && clist.size() > 0){
+						contractId = Integer.parseInt(clist.get(0)[0].toString());
+					}
+				}
+				
 			}
 		}else{
 			totalMoney = "";//已到账金额
 			usedMoney = "";//已使用金额
 			canUseMoney = "";//可使用金额
 		}
+		
+		//查询合同
+		//列表
+		String contractSql = "select yaci.audit_contract_info_id,yaci.audit_title from ys_audit_contract_info yaci where yaci.deleted=0";
+		List<Object[]> clist = getEntityManager().createNativeQuery(contractSql).getResultList();
+		if(null != clist && clist.size() > 0){
+			contractList = clist;
+		}else{
+			contractList = new ArrayList<Object[]>();
+		}
+		
 	}
 	
 	/**
@@ -1396,6 +1420,26 @@ public class ExpendApplyInfoHome extends CriterionEntityHome<ExpendApplyInfo>{
 
 	public void setCompanyList(List<Object> companyList) {
 		this.companyList = companyList;
+	}
+
+
+	public List<Object[]> getContractList() {
+		return contractList;
+	}
+
+
+	public void setContractList(List<Object[]> contractList) {
+		this.contractList = contractList;
+	}
+
+
+	public Integer getContractId() {
+		return contractId;
+	}
+
+
+	public void setContractId(Integer contractId) {
+		this.contractId = contractId;
 	}
 
 }

@@ -576,6 +576,28 @@
 							</div>
 						</td>
 					</tr>
+					<tr style="display:none;height:100px" class="contractTr">
+						<td width="50%">
+							<div class="pb20">
+								<table>
+									<tr>
+										<td valign="middle">
+											<span class="field-name mb10" style="width:90px">合同:</span>
+										</td>
+										<td valign="top" class="modaltd">
+										<rich:panel id="contractPanl" style="margin:0; border:none; padding: 0;">
+											<select id="contractSel" class="selectpicker" >
+												<a:repeat value="#{expendApplyInfoHome.contractList}" var="_var">
+													<option value="#{_var[0]}" >#{_var[1]}</option>
+												</a:repeat>
+											</select>
+										</rich:panel>
+										</td>
+									</tr>
+								</table>
+							</div>
+						</td>
+					</tr>
 				</table>
 		    </div>
 		    <div class="modal-footer">
@@ -587,7 +609,7 @@
 		</div>
 		<a:form>
 			<a:queue requestDelay="100" ignoreDupResponses="true" />
-			<a:jsFunction name="selectProject" action="#{expendApplyInfoHome.selectProject}" reRender="departPanl,fundsSourcePanl,projectPanl,totalMoneyPanl,usedMoneyPanl,canUseMoneyPanl" oncomplete="changeProjectComplete()">
+			<a:jsFunction name="selectProject" action="#{expendApplyInfoHome.selectProject}" reRender="departPanl,fundsSourcePanl,projectPanl,totalMoneyPanl,usedMoneyPanl,canUseMoneyPanl,contractPanl"  data="#{expendApplyInfoHome.contractId}" oncomplete="changeProjectComplete(data)">
 				<a:actionparam name="projectId" assignTo="#{expendApplyInfoHome.projectId}" />
 				<a:actionparam name="projectType" assignTo="#{expendApplyInfoHome.projectType}" />
 				<a:actionparam name="departmentId" assignTo="#{expendApplyInfoHome.departmentId}" />
@@ -622,7 +644,7 @@
 				<a:actionparam name="register" assignTo="#{expendApplyInfoHome.register}" />
 				<a:actionparam name="comment" assignTo="#{expendApplyInfoHome.comment}" />
 			</a:jsFunction>
-			<a:jsFunction name="clearList" action="#{expendApplyInfoHome.clearList}" reRender="listPanl" oncomplete="changeProjectComplete()">
+			<a:jsFunction name="clearList" action="#{expendApplyInfoHome.clearList}" reRender="listPanl" oncomplete="changeProjectComplete(0)">
 			</a:jsFunction>
 			<a:jsFunction name="selectDepart" action="#{expendApplyInfoHome.selectDepart}" reRender="departPanl,fundsSourcePanl,projectPanl,totalMoneyPanl,usedMoneyPanl,canUseMoneyPanl" oncomplete="huidiao()">
 				<a:actionparam name="departmentId" assignTo="#{expendApplyInfoHome.departmentId}" />
@@ -726,7 +748,7 @@
 				selectProject(projectId,projectType,depart,fundsSource);
 			}
 			//选择项目回调
-			function changeProjectComplete(){
+			function changeProjectComplete(data){
 				jQuery(".form_datetime_second").datetimepicker({
 					format: "yyyy-mm-dd",  
 					autoclose: true,
@@ -739,7 +761,12 @@
 					pickerPosition: "bottom-left"
 				});
 				huidiao();
-				
+				if(data != 0){
+					jQuery("#contractSel").selectpicker("val",data);
+					jQuery(".contractTr").show();
+				}else{
+					jQuery(".contractTr").hide();
+				}
 			}
 
 			//提交校验
