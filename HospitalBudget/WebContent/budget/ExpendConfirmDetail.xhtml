@@ -114,7 +114,7 @@
 				            	#{_obj[4]}
 				            </td>
 				            <td>
-				            	<span id="attachment_#{_index}" class="operation-item opr-attachment"  fu-source="#{_obj[8]}" style="cursor:pointer;color:blue">附件</span>
+				            	<span id="attachment_#{_index}" class="operation-item opr-attachment"  fu-source="#{_obj[8]}" style="cursor:pointer;#{_obj[8] ne null and _obj[8] ne '' ? 'color:blue' : ''}">附件</span>
 							</td>
 				       </tr>
 				       </a:repeat>

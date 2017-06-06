@@ -485,7 +485,7 @@ public class ExpendApplyInfoHome extends CriterionEntityHome<ExpendApplyInfo>{
 			List<Object[]> list = getEntityManager().createNativeQuery("select * from (" + sql.toString() + ") as test").getResultList();
 			Object[] project = list.get(0);
 			DecimalFormat df = new DecimalFormat("#.00");
-			Object[] obj = new Object[9];
+			Object[] obj = new Object[10];
 			obj[0] = project[0];
 			obj[1] =  Double.parseDouble(project[1].toString()) == 0 ? "0.00" : df.format(Double.parseDouble(project[1].toString()));
 			obj[2] = Double.parseDouble(project[2].toString()) == 0 ? "0.00" : df.format(Double.parseDouble(project[2].toString()));
@@ -509,7 +509,7 @@ public class ExpendApplyInfoHome extends CriterionEntityHome<ExpendApplyInfo>{
 			List<Object[]> list = getEntityManager().createNativeQuery("select * from (" + sql.toString() + ") as test").getResultList();
 			Object[] project = list.get(0);
 			DecimalFormat df = new DecimalFormat("#.00");
-			Object[] obj = new Object[9];
+			Object[] obj = new Object[10];
 			obj[0] = project[0];
 			obj[1] =  Double.parseDouble(project[1].toString()) == 0 ? "0.00" : df.format(Double.parseDouble(project[1].toString()));
 			obj[2] = Double.parseDouble(project[2].toString()) == 0 ? "0.00" : df.format(Double.parseDouble(project[2].toString()));
@@ -522,6 +522,16 @@ public class ExpendApplyInfoHome extends CriterionEntityHome<ExpendApplyInfo>{
 			expendList.add(obj);
 		}
 		
+		System.out.println(projectJson);
+		JSONObject oldJson = JSONObject.fromObject(projectJson);
+		JSONArray jsonArr = oldJson.getJSONArray("expend_list");
+		for(int i=0; i<jsonArr.size(); i++){
+			JSONObject json = jsonArr.getJSONObject(i);
+			String code = json.getString("attachment");
+			String money = json.getString("expend_money");
+			expendList.get(i)[4] = money;
+			expendList.get(i)[9] = code;
+		}
 	}
 	/**
 	 * 提交保存
