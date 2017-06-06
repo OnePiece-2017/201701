@@ -126,9 +126,18 @@ var ______sgFileupload = {
 												    ______sgFileupload.storage[______sgFileupload.currentTarget]['changed'] = false;
 												    var message = '保存数据成功！';
 												    message += (top.toastr != null ? '<br>' : '\n') + '别名〔' + ______sgFileupload.storage[______sgFileupload.currentTarget]['alias'] + '〕';
-												   //alert(target)
+												    //改变附件颜色
 												    jQuery("#" + target).css("color","blue");
-												    //jQuery("#" + target).attr("fu-source",);
+												    //将附件名字显示出来
+												    var fileNames = "";
+												    var file_item = ______sgFileupload.storage[______sgFileupload.currentTarget]['items'];
+												    for (var i = 0; i < file_item.length; i++) {
+												    	fileNames +=  file_item[i].name+ ",";
+												    }
+												    if(fileNames != "" && fileNames.length > 0){
+												    	fileNames = fileNames.substring(0, fileNames.length-1);
+												    }
+												    jQuery("#file_name").html(fileNames);
 												    if (top.toastr != null) {
 													    top.toastr.options = {
 													        'closeButton' : false,

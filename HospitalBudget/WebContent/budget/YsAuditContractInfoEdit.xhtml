@@ -80,11 +80,13 @@
 								<div class="pb20">
 									<table>
 										<tr>
-											<td valign="middle">
-												<a id="audit_contract_{#ysAuditContractInfoHome.ysAuditContractInfoAuditContractInfoId}" class="btn btn-success mr15" fu-source=" " onclick="attachment(this);">附件上传</a>
+											<td valign="middle" id="fileUpTd">
+												<!-- <a id="audit_contract_{#ysAuditContractInfoHome.ysAuditContractInfoAuditContractInfoId}" class="btn btn-success mr15" fu-source=" " onclick="attachment(this);">附件上传</a> -->
+												<span id="attachment_up" class="operation-item opr-attachment btn btn-success mr15"  fu-source="" style="cursor:pointer;">附件上传</span>
+												<h:inputHidden id="audit_attachment" value="#{ysAuditContractInfoHome.instance.attachment}" styleClass="form-control mb10 fix--w220" />
 											</td>
 											<td valign="middle">
-												<a></a>
+												<span id="file_name"></span>
 											</td>
 										</tr>
 									</table>
@@ -117,6 +119,27 @@
 		//<![CDATA[
 			jQuery(document).ready(function() {
 
+				//附件上传
+				jQuery('.opr-attachment').click(function() {
+						showLayer();
+						var tempHandler = jQuery(this);// 临时句柄
+						if (jQuery(this).hasClass('activated')) {
+							setTimeout(function() {
+								hideLayer();
+							}, 512);// 防止恶意点击
+						} else {
+							sgFileupload['reinstall']({
+							    'target' :jQuery(this).attr('id'),
+							    'alias' : jQuery("#mainForm\\:audit_title").val() == "" ? "暂无合同名" : jQuery("#mainForm\\:audit_title").val(),
+							    'source' : jQuery(this).attr('fu-source') == undefined ? "" : jQuery(this).attr('fu-source'),
+							    'class' : 'sg-fu-custom--attachment',
+							    'completed' : function() {
+								    tempHandler.addClass('activated');
+								    tempHandler.click();
+							    }
+							}); // 重新安装附件插件
+						}
+					});
 			    var message = '#{ysFundsSourceHome.message}';
 			    if (message != '') {
 					___msg('温馨提示', message, {closed: ___dynamic_function});
@@ -150,9 +173,11 @@
 						return false;
 					}
 				}
+				var filecode= sgFileupload['getSource'](jQuery("#fileUpTd").find('.opr-attachment').attr('id'));
+				var attachment = jQuery('#mainForm\\:audit_attachment').val(filecode);
 			}
 
-			function attachment(obj){
+			/* function attachment(obj){
 				showLayer();
 				var tempHandler = jQuery(this);// 临时句柄
 				if (jQuery(this).hasClass('activated')) {
@@ -171,7 +196,7 @@
 					    }
 					}); // 重新安装附件插件
 				}
-			}
+			} */
 
 			function showLayer() {
 				jQuery('.sg-mask-layer-wrapper .sg-mask-layer-contents').addClass('is-loading');

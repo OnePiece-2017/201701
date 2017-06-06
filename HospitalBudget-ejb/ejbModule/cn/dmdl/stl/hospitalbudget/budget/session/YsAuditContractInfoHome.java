@@ -46,7 +46,7 @@ public class YsAuditContractInfoHome extends CriterionEntityHome<YsAuditContract
 		joinTransaction();
 		instance.setGenericProjectId(genericProjectId);
 		instance.setDeptId(sessionToken.getDepartmentInfoId());
-		instance.setAttachment("");
+		//instance.setAttachment("");
 		instance.setInsertUser(sessionToken.getUserInfoId());
 		instance.setInsertTime(new Date());
 		getEntityManager().persist(instance);
