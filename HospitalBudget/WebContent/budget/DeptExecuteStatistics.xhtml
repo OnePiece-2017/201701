@@ -110,7 +110,7 @@
 							</td>
 							<td>
 								<div class="fl">
-									<h:commandButton styleClass="btn btn-primary mr15" action="/budget/deptExecuteStatisticsList.xhtml" onclick="return beforeSubmit();" value="搜索" />
+									<h:commandButton styleClass="btn btn-primary mr15" onclick="return beforeSubmit();" value="搜索" />
 									<h:commandButton styleClass="btn btn-primary mr15"  value="导出" />
 									
 								</div>
@@ -210,6 +210,10 @@
 		//<![CDATA[
 			jQuery(document).ready(function() {
 				jQuery("#fundsSourceId").val(1);
+				//获取当前年
+			    var date=new Date;
+			    var yearStr=date.getFullYear();
+			    jQuery("#budgetYear").val(yearStr)
 				jQuery(".selectpicker").selectpicker("render");
 				jQuery(".selectpicker").selectpicker();
 

@@ -36,6 +36,7 @@ public class ExpendApplyInfoHome extends CriterionEntityHome<ExpendApplyInfo>{
 	private List<Object[]> projectList;//主项目列表
 	private List<Object[]> expendList;//选中列表
 	private List<Object[]> contractList;//合同列表
+	private JSONObject contractJson;
 	
 	private Integer expendApplyInfoId;//编辑使用-申请单号
 	private String applySn;//单据编号
@@ -393,7 +394,11 @@ public class ExpendApplyInfoHome extends CriterionEntityHome<ExpendApplyInfo>{
 	 */
 	@SuppressWarnings("unchecked")
 	public void selectProject(){
-		contractId = 0;
+		if(null == contractJson){
+			contractJson = new JSONObject();
+		}
+		contractJson.element("is_audit", false);
+		contractList = new ArrayList<Object[]>();
 		if(null != projectId && -1 != projectId){
 			if(projectType == 1){
 				StringBuffer sql = new StringBuffer();
@@ -433,7 +438,8 @@ public class ExpendApplyInfoHome extends CriterionEntityHome<ExpendApplyInfo>{
 				sql.append(" fs.the_id, ");
 				sql.append(" nepi.budget_amount, ");
 				sql.append(" nepi.budget_amount_frozen, ");
-				sql.append(" nepi.budget_amount_surplus ");
+				sql.append(" nepi.budget_amount_surplus, ");
+				sql.append(" rp.is_audit ");
 				sql.append(" FROM normal_expend_plan_info nepi ");
 				sql.append(" LEFT JOIN generic_project rp ON nepi.generic_project_id = rp.the_id ");
 				sql.append(" LEFT JOIN ys_funds_source fs on rp.funds_source_id=fs.the_id ");
@@ -456,15 +462,20 @@ public class ExpendApplyInfoHome extends CriterionEntityHome<ExpendApplyInfo>{
 					if(null != obj[4]){
 						canUseMoney = obj[4].toString();
 					}
-				}
-				//查询该项目的合同
-				Integer deptId = sessionToken.getDepartmentInfoId();
-				if(deptId != null){
-					String contractSql = "select yaci.audit_contract_info_id,yaci.audit_title from ys_audit_contract_info yaci where yaci.deleted=0 "
-							+ "and yaci.dept_id=? and yaci.generic_project_id=?";
-					List<Object[]> clist = getEntityManager().createNativeQuery(contractSql).setParameter(1, deptId).setParameter(2, projectId).getResultList();
-					if(null != clist && clist.size() > 0){
-						contractId = Integer.parseInt(clist.get(0)[0].toString());
+					if(null != obj[5] && Boolean.parseBoolean(obj[5].toString())){
+						contractJson.element("is_audit", true);
+						//查询该项目的合同
+						Integer deptId = sessionToken.getDepartmentInfoId();
+						if(deptId != null){
+							String contractSql = "select yaci.audit_contract_info_id,yaci.audit_title from ys_audit_contract_info yaci where yaci.deleted=0 "
+									+ "and yaci.dept_id=? and yaci.generic_project_id=?";
+							List<Object[]> clist = getEntityManager().createNativeQuery(contractSql).setParameter(1, deptId).setParameter(2, projectId).getResultList();
+							if(null != clist && clist.size() > 0){
+								contractId = Integer.parseInt(clist.get(0)[0].toString());
+								contractJson.element("contract_id", contractId);
+								contractList = clist;
+							}
+						}
 					}
 				}
 				
@@ -477,13 +488,13 @@ public class ExpendApplyInfoHome extends CriterionEntityHome<ExpendApplyInfo>{
 		
 		//查询合同
 		//列表
-		String contractSql = "select yaci.audit_contract_info_id,yaci.audit_title from ys_audit_contract_info yaci where yaci.deleted=0";
-		List<Object[]> clist = getEntityManager().createNativeQuery(contractSql).getResultList();
-		if(null != clist && clist.size() > 0){
-			contractList = clist;
-		}else{
-			contractList = new ArrayList<Object[]>();
-		}
+//		String contractSql = "select yaci.audit_contract_info_id,yaci.audit_title from ys_audit_contract_info yaci where yaci.deleted=0";
+//		List<Object[]> clist = getEntityManager().createNativeQuery(contractSql).getResultList();
+//		if(null != clist && clist.size() > 0){
+//			contractList = clist;
+//		}else{
+//			contractList = new ArrayList<Object[]>();
+//		}
 		
 	}
 	
@@ -1440,6 +1451,16 @@ public class ExpendApplyInfoHome extends CriterionEntityHome<ExpendApplyInfo>{
 
 	public void setContractId(Integer contractId) {
 		this.contractId = contractId;
+	}
+
+
+	public JSONObject getContractJson() {
+		return contractJson;
+	}
+
+
+	public void setContractJson(JSONObject contractJson) {
+		this.contractJson = contractJson;
 	}
 
 }

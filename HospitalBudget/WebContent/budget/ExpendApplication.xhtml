@@ -110,6 +110,10 @@
 			.addbg{
 			        background:#87A900;
 			    }
+			    
+			.modal-footer{
+				border: none;
+			}
 		</style>
 	</ui:define>
 	<ui:define name="body">
@@ -429,7 +433,7 @@
 		</h:form>
 		<div class="modal fade" id="addModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
 		<div class="modal-dialog pano_dialog add_dialog ">
-		<div class="modal-content" style="width: 600px;height: 400px;font-size: 13px;">
+		<div class="modal-content" style="width: 600px;height: 470px;font-size: 13px;">
 		    <div class="modal-header-modal clear" style="font-size: 13px;">
 		        <h4 style="margin-left: 15px;" >选择项目</h4>
 		        <i class="i_close" data-dismiss="modal"></i>
@@ -525,59 +529,7 @@
 								</table>
 							</div>
 						</td>
-						<td width="50%">
-							<div class="pb20">
-								<table>
-									<tr>
-										<td valign="middle">
-											<span class="field-name mb10" style="width:90px">已到账金额:</span>
-										</td>
-										<td valign="middle" class="modaltd">
-										<rich:panel id="totalMoneyPanl" style="margin:0; border:none; padding: 0;">
-											<input id="totalMoney" value="#{expendApplyInfoHome.totalMoney}" class=" mb10 border" style="height:34px;width:159px;"  readonly="readonly"/>
-										</rich:panel>
-										</td>
-									</tr>
-								</table>
-							</div>
-						</td>
-					</tr>
-					<tr>
-						<td width="50%">
-							<div class="pb20">
-								<table>
-									<tr>
-										<td valign="middle">
-											<span class="field-name mb10" style="width:90px">已使用金额:</span>
-										</td>
-										<td valign="top" class="modaltd">
-										<rich:panel id="usedMoneyPanl" style="margin:0; border:none; padding: 0;">
-											<input id="usedMoney" value="#{expendApplyInfoHome.usedMoney}" class=" mb10 border" style="height:34px;width:159px;"  readonly="readonly"/>
-										</rich:panel>
-										</td>
-									</tr>
-								</table>
-							</div>
-						</td>
-						<td width="50%">
-							<div class="pb20">
-								<table>
-									<tr>
-										<td valign="middle">
-											<span class="field-name mb10" style="width:90px">可使用金额:</span>
-										</td>
-										<td valign="middle" class="modaltd">
-										<rich:panel id="canUseMoneyPanl" style="margin:0; border:none; padding: 0;">
-											<input id="canUseMoney" value="#{expendApplyInfoHome.canUseMoney}" class=" mb10 border" style="height:34px;width:159px;"  readonly="readonly"/>
-										</rich:panel>
-										</td>
-									</tr>
-								</table>
-							</div>
-						</td>
-					</tr>
-					<tr style="display:none;height:100px" class="contractTr">
-						<td width="50%">
+						<td width="50%" style="display:none;" class="contractTr">
 							<div class="pb20">
 								<table>
 									<tr>
@@ -597,11 +549,64 @@
 								</table>
 							</div>
 						</td>
+
+					</tr>
+					<tr>
+						<td width="50%">
+							<div class="pb20">
+								<table>
+									<tr>
+										<td valign="middle">
+											<span class="field-name mb10" style="width:90px">已到账金额:</span>
+										</td>
+										<td valign="middle" class="modaltd">
+										<rich:panel id="totalMoneyPanl" style="margin:0; border:none; padding: 0;">
+											<input id="totalMoney" value="#{expendApplyInfoHome.totalMoney}" class=" mb10 border" style="height:34px;width:159px;"  readonly="readonly"/>
+										</rich:panel>
+										</td>
+									</tr>
+								</table>
+							</div>
+						</td>
+						<td width="50%">
+							<div class="pb20">
+								<table>
+									<tr>
+										<td valign="middle">
+											<span class="field-name mb10" style="width:90px">已使用金额:</span>
+										</td>
+										<td valign="top" class="modaltd">
+										<rich:panel id="usedMoneyPanl" style="margin:0; border:none; padding: 0;">
+											<input id="usedMoney" value="#{expendApplyInfoHome.usedMoney}" class=" mb10 border" style="height:34px;width:159px;"  readonly="readonly"/>
+										</rich:panel>
+										</td>
+									</tr>
+								</table>
+							</div>
+						</td>
+					</tr>
+					<tr>
+						<td width="50%">
+							<div class="pb20">
+								<table>
+									<tr>
+										<td valign="middle">
+											<span class="field-name mb10" style="width:90px">可使用金额:</span>
+										</td>
+										<td valign="middle" class="modaltd">
+										<rich:panel id="canUseMoneyPanl" style="margin:0; border:none; padding: 0;">
+											<input id="canUseMoney" value="#{expendApplyInfoHome.canUseMoney}" class=" mb10 border" style="height:34px;width:159px;"  readonly="readonly"/>
+										</rich:panel>
+										</td>
+									</tr>
+								</table>
+							</div>
+						</td>
 					</tr>
 				</table>
 		    </div>
 		    <div class="modal-footer">
-		       	<button type="button" class="btn btn-primary" onclick="toAddProject()">确定</button>
+		       	<button type="button" class="btn btn-primary" onclick="return toAddProject()">确定</button>
 		        <button type="button" class="btn btn-default" data-dismiss="modal">返回</button>
 		    </div>
 		</div>
@@ -609,7 +614,7 @@
 		</div>
 		<a:form>
 			<a:queue requestDelay="100" ignoreDupResponses="true" />
-			<a:jsFunction name="selectProject" action="#{expendApplyInfoHome.selectProject}" reRender="departPanl,fundsSourcePanl,projectPanl,totalMoneyPanl,usedMoneyPanl,canUseMoneyPanl,contractPanl"  data="#{expendApplyInfoHome.contractId}" oncomplete="changeProjectComplete(data)">
+			<a:jsFunction name="selectProject" action="#{expendApplyInfoHome.selectProject}" reRender="departPanl,fundsSourcePanl,projectPanl,totalMoneyPanl,usedMoneyPanl,canUseMoneyPanl,contractPanl"  data="#{expendApplyInfoHome.contractJson}" oncomplete="changeProjectComplete(data)">
 				<a:actionparam name="projectId" assignTo="#{expendApplyInfoHome.projectId}" />
 				<a:actionparam name="projectType" assignTo="#{expendApplyInfoHome.projectType}" />
 				<a:actionparam name="departmentId" assignTo="#{expendApplyInfoHome.departmentId}" />
@@ -761,8 +766,8 @@
 					pickerPosition: "bottom-left"
 				});
 				huidiao();
-				if(data != 0){
-					jQuery("#contractSel").selectpicker("val",data);
+				if(data.is_audit){
+					jQuery("#contractSel").selectpicker("val",data.contract_id);
 					jQuery(".contractTr").show();
 				}else{
 					jQuery(".contractTr").hide();
@@ -1040,6 +1045,12 @@
 				var project = jQuery("#projectId").val();
 				var projectId = project.substring(0,project.lastIndexOf("_"));
 				var projectType = project.substring((project.lastIndexOf("_")+1),project.length);
+				var contractId = jQuery("#contractSel").val();
+				if(jQuery(".contractTr").is(":visible") && !contractId){
+					___msg('温馨提示', "审计项目请选择一个合同！");
+					flag = false;
+					return;
+				} 
 				var json = getJson();
 				addProject(projectId,projectType,json);
 			}
