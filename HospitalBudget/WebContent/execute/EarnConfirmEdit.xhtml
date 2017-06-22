@@ -615,28 +615,21 @@
 			
 				jQuery('.selectpicker').selectpicker();
 			
-				var message = '#{routineProjectHome.message}';
-				if (message != '') {
-					___msg('温馨提示', message, {
-						closed: ___dynamic_function
-					});
-				}
-			
 				jQuery('#projectType').val(jQuery('#mainForm\\:projectTypeHidden').val());
 				jQuery('#projectType').selectpicker('render');
 			
 				jQuery('#departmentInfoId').val(jQuery('#mainForm\\:departmentInfoIdHidden').val());
 				jQuery('#departmentInfoId').selectpicker('render');
 			
-				jQuery('#fundsSourceId').val(jQuery('#mainForm\\:fundsSourceIdHidden').val());
-				jQuery('#fundsSourceId').selectpicker('render');
+			/* 	jQuery('#fundsSourceId').val(jQuery('#mainForm\\:fundsSourceIdHidden').val());
+				jQuery('#fundsSourceId').selectpicker('render'); */
 			
-				setTimeout('subprojectOutputFlush();', 0);//解决Chrome元素渲染速度问题  
+				/* setTimeout('subprojectOutputFlush();', 0);//解决Chrome元素渲染速度问题 */  
 				
-			    var message = '#{earnConfirmHome.message}';
+			    /* var message = '#{earnConfirmHome.message}';
 			    if (message != '') {
 					___msg('温馨提示', message);
-			    }
+			    } */
 
 				jQuery('.form_year').datetimepicker({
 					language: 'zh-CN',
@@ -669,8 +662,7 @@
 			    jQuery('#theType').selectpicker('render');
 
 				jQuery('#departmentInfoId').val(jQuery('#mainForm\\:departmentInfoIdHidden').val());
-			    jQuery('#departmentInfoId').selectpicker('render'); 
-
+			    jQuery('#departmentInfoId').selectpicker('render');
 			});
 
 			function setSubprojectInteractive(show) {
@@ -828,8 +820,8 @@
 			
 			function loadSubprojectItem() {
 				//清除节点
-				/* jQuery('.subproject-set .row-data').remove();
-				jQuery('.subproject-set .row-data-ul').remove(); 
+				jQuery('.subproject-set .row-data').remove();
+				jQuery('.subproject-set .row-data-ul').remove();
 			 	var recursionCreate = function(pid) {
 					for (var key in g_subproject_all) {
 						if (pid == g_subproject_all[key]['pid']) {
@@ -843,11 +835,11 @@
 						subprojectAdd_handle(key);
 						recursionCreate(key); 
 					}
-				} */
+				} 
 
-				for (var key in g_subproject_all) {
+				/* for (var key in g_subproject_all) {
 					subprojectAdd_handle(key);
-				}
+				} */
 				subprojectOutputFlush();
 			}
 			
@@ -902,7 +894,7 @@
 					jQuery('#node-subproject .toggle-child:last').css('opacity', '0');
 					jQuery('#node-subproject').getNiceScroll().resize();
 					jQuery('#node-subproject').getNiceScroll(0).doScrollTop(document.getElementById('node-subproject').scrollHeight, 0);
-				}
+				} 
 				subprojectOutputFlush();
 			}
 			
@@ -1055,12 +1047,12 @@
 				jQuery('#mainForm\\:process_type').val(process_type);
 
 				jQuery('#mainForm\\:subprojectInfoHidden').val(JSON.stringify(g_subproject_all));
+				console.log('update');
 			}
 			
 			function debugInfo() {
 				___log('这是--------'+JSON.stringify(g_subproject_all));
 			}
-
 		//]]>
 		</script>
 	</ui:define>

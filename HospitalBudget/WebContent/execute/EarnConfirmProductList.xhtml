@@ -1,0 +1,217 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:s="http://jboss.com/products/seam/taglib"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:rich="http://richfaces.org/rich"
+    template="layout/template.xhtml">
+
+<ui:define name="body">
+
+    <h:form id="earnConfirmProductSearch" styleClass="edit">
+
+        <rich:simpleTogglePanel label="EarnConfirmProduct Search Filter" switchType="ajax">
+
+            <s:decorate template="layout/display.xhtml">
+                <ui:define name="label">Remark</ui:define>
+                <h:inputText id="remark" value="#{earnConfirmProductList.earnConfirmProduct.remark}"/>
+            </s:decorate>
+
+            <s:decorate template="layout/display.xhtml">
+                <ui:define name="label">File url</ui:define>
+                <h:inputText id="fileUrl" value="#{earnConfirmProductList.earnConfirmProduct.fileUrl}"/>
+            </s:decorate>
+
+            <s:decorate template="layout/display.xhtml">
+                <ui:define name="label">Match</ui:define>
+                <h:selectOneRadio id="logic" value="#{earnConfirmProductList.restrictionLogicOperator}" styleClass="radio">
+                    <f:selectItem itemLabel="All" itemValue="and"/>
+                    <f:selectItem itemLabel="Any" itemValue="or"/>
+                </h:selectOneRadio>
+            </s:decorate>
+
+        </rich:simpleTogglePanel>
+
+        <div class="actionButtons">
+            <h:commandButton id="search" value="Search" action="/EarnConfirmProductList.xhtml"/>
+            <s:button id="reset" value="Reset" includePageParams="false"/>
+        </div>
+
+    </h:form>
+
+    <rich:panel>
+        <f:facet name="header">EarnConfirmProduct Search Results (#{empty earnConfirmProductList.resultList ? 0 : (earnConfirmProductList.paginated ? earnConfirmProductList.resultCount : earnConfirmProductList.resultList.size)})</f:facet>
+    <div class="results" id="earnConfirmProductList">
+
+    <h:outputText value="The earnConfirmProduct search returned no results."
+               rendered="#{empty earnConfirmProductList.resultList}"/>
+
+    <rich:dataTable id="earnConfirmProductList"
+                var="_earnConfirmProduct"
+              value="#{earnConfirmProductList.resultList}"
+           rendered="#{not empty earnConfirmProductList.resultList}">
+        <h:column>
+            <f:facet name="header">
+                <ui:include src="layout/sort.xhtml">
+                    <ui:param name="entityList" value="#{earnConfirmProductList}"/>
+                    <ui:param name="propertyLabel" value="Earn confirm product id"/>
+                    <ui:param name="propertyPath" value="earnConfirmProduct.earnConfirmProductId"/>
+                </ui:include>
+            </f:facet>
+            <h:outputText value="#{_earnConfirmProduct.earnConfirmProductId}"/>
+        </h:column>
+        <h:column>
+            <f:facet name="header">
+                <ui:include src="layout/sort.xhtml">
+                    <ui:param name="entityList" value="#{earnConfirmProductList}"/>
+                    <ui:param name="propertyLabel" value="Earn confirm id"/>
+                    <ui:param name="propertyPath" value="earnConfirmProduct.earnConfirmId"/>
+                </ui:include>
+            </f:facet>
+            <h:outputText value="#{_earnConfirmProduct.earnConfirmId}"/>
+        </h:column>
+        <h:column>
+            <f:facet name="header">
+                <ui:include src="layout/sort.xhtml">
+                    <ui:param name="entityList" value="#{earnConfirmProductList}"/>
+                    <ui:param name="propertyLabel" value="Actual amount"/>
+                    <ui:param name="propertyPath" value="earnConfirmProduct.actualAmount"/>
+                </ui:include>
+            </f:facet>
+            <h:outputText value="#{_earnConfirmProduct.actualAmount}"/>
+        </h:column>
+        <h:column>
+            <f:facet name="header">
+                <ui:include src="layout/sort.xhtml">
+                    <ui:param name="entityList" value="#{earnConfirmProductList}"/>
+                    <ui:param name="propertyLabel" value="Budget amount year"/>
+                    <ui:param name="propertyPath" value="earnConfirmProduct.budgetAmountYear"/>
+                </ui:include>
+            </f:facet>
+            <h:outputText value="#{_earnConfirmProduct.budgetAmountYear}"/>
+        </h:column>
+        <h:column>
+            <f:facet name="header">
+                <ui:include src="layout/sort.xhtml">
+                    <ui:param name="entityList" value="#{earnConfirmProductList}"/>
+                    <ui:param name="propertyLabel" value="Confirm amount"/>
+                    <ui:param name="propertyPath" value="earnConfirmProduct.confirmAmount"/>
+                </ui:include>
+            </f:facet>
+            <h:outputText value="#{_earnConfirmProduct.confirmAmount}"/>
+        </h:column>
+        <h:column>
+            <f:facet name="header">
+                <ui:include src="layout/sort.xhtml">
+                    <ui:param name="entityList" value="#{earnConfirmProductList}"/>
+                    <ui:param name="propertyLabel" value="Not confirm amount"/>
+                    <ui:param name="propertyPath" value="earnConfirmProduct.notConfirmAmount"/>
+                </ui:include>
+            </f:facet>
+            <h:outputText value="#{_earnConfirmProduct.notConfirmAmount}"/>
+        </h:column>
+        <h:column>
+            <f:facet name="header">
+                <ui:include src="layout/sort.xhtml">
+                    <ui:param name="entityList" value="#{earnConfirmProductList}"/>
+                    <ui:param name="propertyLabel" value="Confirm date"/>
+                    <ui:param name="propertyPath" value="earnConfirmProduct.confirmDate"/>
+                </ui:include>
+            </f:facet>
+            <h:outputText value="#{_earnConfirmProduct.confirmDate}">
+                <s:convertDateTime type="both" dateStyle="short"/>
+            </h:outputText>
+        </h:column>
+        <h:column>
+            <f:facet name="header">
+                <ui:include src="layout/sort.xhtml">
+                    <ui:param name="entityList" value="#{earnConfirmProductList}"/>
+                    <ui:param name="propertyLabel" value="Remark"/>
+                    <ui:param name="propertyPath" value="earnConfirmProduct.remark"/>
+                </ui:include>
+            </f:facet>
+            <h:outputText value="#{_earnConfirmProduct.remark}"/>
+        </h:column>
+        <h:column>
+            <f:facet name="header">
+                <ui:include src="layout/sort.xhtml">
+                    <ui:param name="entityList" value="#{earnConfirmProductList}"/>
+                    <ui:param name="propertyLabel" value="File url"/>
+                    <ui:param name="propertyPath" value="earnConfirmProduct.fileUrl"/>
+                </ui:include>
+            </f:facet>
+            <h:outputText value="#{_earnConfirmProduct.fileUrl}"/>
+        </h:column>
+        <rich:column styleClass="action">
+            <f:facet name="header">Action</f:facet>
+            <s:link view="/#{empty from ? 'EarnConfirmProduct' : from}.xhtml"
+                   value="#{empty from ? 'View' : 'Select'}"
+             propagation="#{empty from ? 'none' : 'default'}"
+                      id="earnConfirmProductViewId">
+                <f:param name="earnConfirmProductEarnConfirmProductId"
+                        value="#{_earnConfirmProduct.earnConfirmProductId}"/>
+            </s:link>
+            #{' '}
+            <s:link view="/EarnConfirmProductEdit.xhtml"
+                   value="Edit"
+             propagation="none"
+                      id="earnConfirmProductEdit"
+                rendered="#{empty from}">
+                <f:param name="earnConfirmProductEarnConfirmProductId"
+                        value="#{_earnConfirmProduct.earnConfirmProductId}"/>
+            </s:link>
+        </rich:column>
+    </rich:dataTable>
+
+    </div>
+    </rich:panel>
+
+    <div class="tableControl">
+
+        <s:link view="/EarnConfirmProductList.xhtml"
+            rendered="#{earnConfirmProductList.previousExists}"
+               value="#{messages.left}#{messages.left} First Page"
+                  id="firstPage">
+          <f:param name="firstResult" value="0"/>
+        </s:link>
+
+        <s:link view="/EarnConfirmProductList.xhtml"
+            rendered="#{earnConfirmProductList.previousExists}"
+               value="#{messages.left} Previous Page"
+                  id="previousPage">
+            <f:param name="firstResult"
+                    value="#{earnConfirmProductList.previousFirstResult}"/>
+        </s:link>
+
+        <s:link view="/EarnConfirmProductList.xhtml"
+            rendered="#{earnConfirmProductList.nextExists}"
+               value="Next Page #{messages.right}"
+                  id="nextPage">
+            <f:param name="firstResult"
+                    value="#{earnConfirmProductList.nextFirstResult}"/>
+        </s:link>
+
+        <s:link view="/EarnConfirmProductList.xhtml"
+            rendered="#{earnConfirmProductList.nextExists}"
+               value="Last Page #{messages.right}#{messages.right}"
+                  id="lastPage">
+            <f:param name="firstResult"
+                    value="#{earnConfirmProductList.lastFirstResult}"/>
+        </s:link>
+
+    </div>
+
+    <s:div styleClass="actionButtons" rendered="#{empty from}">
+        <s:button view="/EarnConfirmProductEdit.xhtml"
+                    id="create"
+           propagation="none"
+                 value="Create earnConfirmProduct">
+            <f:param name="earnConfirmProductEarnConfirmProductId"/>
+        </s:button>
+    </s:div>
+
+</ui:define>
+
+</ui:composition>

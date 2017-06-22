@@ -1,0 +1,110 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:s="http://jboss.com/products/seam/taglib"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:rich="http://richfaces.org/rich"
+    template="layout/template.xhtml">
+
+<ui:define name="body">
+
+    <rich:panel>
+        <f:facet name="header">Earn confirm Details</f:facet>
+
+        <s:decorate id="earnConfirmId" template="layout/display.xhtml">
+            <ui:define name="label">Earn confirm id</ui:define>
+            <h:outputText value="#{earnConfirmHome.instance.earnConfirmId}"/>
+        </s:decorate>
+
+        <s:decorate id="receiptsCode" template="layout/display.xhtml">
+            <ui:define name="label">Receipts code</ui:define>
+            <h:outputText value="#{earnConfirmHome.instance.receiptsCode}"/>
+        </s:decorate>
+
+        <s:decorate id="reimbursementDepartmentId" template="layout/display.xhtml">
+            <ui:define name="label">Reimbursement department id</ui:define>
+            <h:outputText value="#{earnConfirmHome.instance.reimbursementDepartmentId}"/>
+        </s:decorate>
+
+        <s:decorate id="reimbursementMan" template="layout/display.xhtml">
+            <ui:define name="label">Reimbursement man</ui:define>
+            <h:outputText value="#{earnConfirmHome.instance.reimbursementMan}"/>
+        </s:decorate>
+
+        <s:decorate id="voucherCode" template="layout/display.xhtml">
+            <ui:define name="label">Voucher code</ui:define>
+            <h:outputText value="#{earnConfirmHome.instance.voucherCode}"/>
+        </s:decorate>
+
+        <s:decorate id="paymentUnit" template="layout/display.xhtml">
+            <ui:define name="label">Payment unit</ui:define>
+            <h:outputText value="#{earnConfirmHome.instance.paymentUnit}"/>
+        </s:decorate>
+
+        <s:decorate id="invoiceCode" template="layout/display.xhtml">
+            <ui:define name="label">Invoice code</ui:define>
+            <h:outputText value="#{earnConfirmHome.instance.invoiceCode}"/>
+        </s:decorate>
+
+        <s:decorate id="chequeCode" template="layout/display.xhtml">
+            <ui:define name="label">Cheque code</ui:define>
+            <h:outputText value="#{earnConfirmHome.instance.chequeCode}"/>
+        </s:decorate>
+
+        <s:decorate id="totalAmount" template="layout/display.xhtml">
+            <ui:define name="label">Total amount</ui:define>
+            <h:outputText value="#{earnConfirmHome.instance.totalAmount}"/>
+        </s:decorate>
+
+        <s:decorate id="postingDate" template="layout/display.xhtml">
+            <ui:define name="label">Posting date</ui:define>
+            <h:outputText value="#{earnConfirmHome.instance.postingDate}">
+                <s:convertDateTime type="both" dateStyle="short"/>
+            </h:outputText>
+        </s:decorate>
+
+        <s:decorate id="registerDate" template="layout/display.xhtml">
+            <ui:define name="label">Register date</ui:define>
+            <h:outputText value="#{earnConfirmHome.instance.registerDate}">
+                <s:convertDateTime type="both" dateStyle="short"/>
+            </h:outputText>
+        </s:decorate>
+
+        <s:decorate id="remark" template="layout/display.xhtml">
+            <ui:define name="label">Remark</ui:define>
+            <h:outputText value="#{earnConfirmHome.instance.remark}"/>
+        </s:decorate>
+
+        <s:decorate id="insertTime" template="layout/display.xhtml">
+            <ui:define name="label">Insert time</ui:define>
+            <h:outputText value="#{earnConfirmHome.instance.insertTime}">
+                <s:convertDateTime type="both" dateStyle="short"/>
+            </h:outputText>
+        </s:decorate>
+
+        <s:decorate id="state" template="layout/display.xhtml">
+            <ui:define name="label">State</ui:define>
+            <h:outputText value="#{earnConfirmHome.instance.state}"/>
+        </s:decorate>
+
+        <div style="clear:both"/>
+
+    </rich:panel>
+
+    <div class="actionButtons">
+
+        <s:button view="/EarnConfirmEdit.xhtml"
+                    id="edit"
+                 value="Edit"/>
+
+        <s:button view="/#{empty earnConfirmFrom ? 'EarnConfirmList' : earnConfirmFrom}.xhtml"
+                    id="done"
+                 value="Done"/>
+
+    </div>
+
+</ui:define>
+
+</ui:composition>

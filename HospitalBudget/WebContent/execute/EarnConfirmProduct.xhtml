@@ -1,0 +1,77 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:s="http://jboss.com/products/seam/taglib"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:rich="http://richfaces.org/rich"
+    template="layout/template.xhtml">
+
+<ui:define name="body">
+
+    <rich:panel>
+        <f:facet name="header">Earn confirm product Details</f:facet>
+
+
+        <s:decorate id="earnConfirmId" template="layout/display.xhtml">
+            <ui:define name="label">Earn confirm id</ui:define>
+            <h:outputText value="#{earnConfirmProductHome.instance.earnConfirmId}"/>
+        </s:decorate>
+
+        <s:decorate id="actualAmount" template="layout/display.xhtml">
+            <ui:define name="label">Actual amount</ui:define>
+            <h:outputText value="#{earnConfirmProductHome.instance.actualAmount}"/>
+        </s:decorate>
+
+        <s:decorate id="budgetAmountYear" template="layout/display.xhtml">
+            <ui:define name="label">Budget amount year</ui:define>
+            <h:outputText value="#{earnConfirmProductHome.instance.budgetAmountYear}"/>
+        </s:decorate>
+
+        <s:decorate id="confirmAmount" template="layout/display.xhtml">
+            <ui:define name="label">Confirm amount</ui:define>
+            <h:outputText value="#{earnConfirmProductHome.instance.confirmAmount}"/>
+        </s:decorate>
+
+        <s:decorate id="notConfirmAmount" template="layout/display.xhtml">
+            <ui:define name="label">Not confirm amount</ui:define>
+            <h:outputText value="#{earnConfirmProductHome.instance.notConfirmAmount}"/>
+        </s:decorate>
+
+        <s:decorate id="confirmDate" template="layout/display.xhtml">
+            <ui:define name="label">Confirm date</ui:define>
+            <h:outputText value="#{earnConfirmProductHome.instance.confirmDate}">
+                <s:convertDateTime type="both" dateStyle="short"/>
+            </h:outputText>
+        </s:decorate>
+
+        <s:decorate id="remark" template="layout/display.xhtml">
+            <ui:define name="label">Remark</ui:define>
+            <h:outputText value="#{earnConfirmProductHome.instance.remark}"/>
+        </s:decorate>
+
+        <s:decorate id="fileUrl" template="layout/display.xhtml">
+            <ui:define name="label">File url</ui:define>
+            <h:outputText value="#{earnConfirmProductHome.instance.fileUrl}"/>
+        </s:decorate>
+
+        <div style="clear:both"/>
+
+    </rich:panel>
+
+    <div class="actionButtons">
+
+        <s:button view="/EarnConfirmProductEdit.xhtml"
+                    id="edit"
+                 value="Edit"/>
+
+        <s:button view="/#{empty earnConfirmProductFrom ? 'EarnConfirmProductList' : earnConfirmProductFrom}.xhtml"
+                    id="done"
+                 value="Done"/>
+
+    </div>
+
+</ui:define>
+
+</ui:composition>

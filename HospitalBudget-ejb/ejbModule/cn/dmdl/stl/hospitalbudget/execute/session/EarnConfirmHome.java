@@ -195,6 +195,23 @@ public class EarnConfirmHome extends CriterionEntityHome<EarnConfirm> {
 	
 	@Override
 	public String update() {
+		System.out.println("单据编号-----------"+receiptsCode);
+		instance.setReceiptsCode(receiptsCode);
+		instance.setYsDepartmentInfo(getEntityManager().find(YsDepartmentInfo.class, departmentInfoId));
+		instance.setReimbursementMan(reimbursementMan);
+		instance.setVoucherCode(voucherCode);
+		instance.setPaymentUnit(paymentUnit);
+		instance.setInvoiceCode(invoiceCode);
+		instance.setChequeCode(chequeCode);
+		instance.setTotalAmount(totalAmount);
+		System.out.println("------------"+process_type);
+		instance.setPostingDate(DateTimeHelper.strToDate(postingDate, DateTimeHelper.PATTERN_DATE));
+		instance.setRegisterMan(registerMan);
+		instance.setRegisterDate(DateTimeHelper.strToDate(registerDate, DateTimeHelper.PATTERN_DATE));
+		instance.setProcess_type(1);
+		instance.setInsertTime(new Date());
+		instance.setState(false);
+		getEntityManager().persist(instance);
 		System.out.println("--------update-----"+subprojectInfo);
 		return "updated";
 	}

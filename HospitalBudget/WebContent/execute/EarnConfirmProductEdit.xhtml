@@ -1,0 +1,137 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:s="http://jboss.com/products/seam/taglib"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:a="http://richfaces.org/a4j"
+    xmlns:rich="http://richfaces.org/rich"
+    template="layout/template.xhtml">
+
+<ui:define name="body">
+
+    <h:form id="earnConfirmProduct" styleClass="edit">
+
+        <rich:panel>
+            <f:facet name="header">#{earnConfirmProductHome.managed ? 'Edit' : 'Add'} Earn confirm product</f:facet>
+
+
+
+            <s:decorate id="earnConfirmIdField" template="layout/edit.xhtml">
+                <ui:define name="label">Earn confirm id</ui:define>
+                <h:inputText id="earnConfirmId"
+                       required="true"
+                          value="#{earnConfirmProductHome.instance.earnConfirmId}">
+                    <a:support event="onblur" reRender="earnConfirmIdField" bypassUpdates="true" ajaxSingle="true"/>
+                </h:inputText>
+            </s:decorate>
+
+
+            <s:decorate id="actualAmountField" template="layout/edit.xhtml">
+                <ui:define name="label">Actual amount</ui:define>
+                <h:inputText id="actualAmount"
+                       required="true"
+                          value="#{earnConfirmProductHome.instance.actualAmount}">
+                    <a:support event="onblur" reRender="actualAmountField" bypassUpdates="true" ajaxSingle="true"/>
+                </h:inputText>
+            </s:decorate>
+
+
+            <s:decorate id="budgetAmountYearField" template="layout/edit.xhtml">
+                <ui:define name="label">Budget amount year</ui:define>
+                <h:inputText id="budgetAmountYear"
+                          value="#{earnConfirmProductHome.instance.budgetAmountYear}">
+                    <a:support event="onblur" reRender="budgetAmountYearField" bypassUpdates="true" ajaxSingle="true"/>
+                </h:inputText>
+            </s:decorate>
+
+
+            <s:decorate id="confirmAmountField" template="layout/edit.xhtml">
+                <ui:define name="label">Confirm amount</ui:define>
+                <h:inputText id="confirmAmount"
+                       required="true"
+                          value="#{earnConfirmProductHome.instance.confirmAmount}">
+                    <a:support event="onblur" reRender="confirmAmountField" bypassUpdates="true" ajaxSingle="true"/>
+                </h:inputText>
+            </s:decorate>
+
+
+            <s:decorate id="notConfirmAmountField" template="layout/edit.xhtml">
+                <ui:define name="label">Not confirm amount</ui:define>
+                <h:inputText id="notConfirmAmount"
+                       required="true"
+                          value="#{earnConfirmProductHome.instance.notConfirmAmount}">
+                    <a:support event="onblur" reRender="notConfirmAmountField" bypassUpdates="true" ajaxSingle="true"/>
+                </h:inputText>
+            </s:decorate>
+
+
+            <s:decorate id="confirmDateField" template="layout/edit.xhtml">
+                <ui:define name="label">Confirm date</ui:define>
+                <rich:calendar id="confirmDate"
+                          value="#{earnConfirmProductHome.instance.confirmDate}" datePattern="MM/dd/yyyy hh:mm a"/>
+            </s:decorate>
+
+
+            <s:decorate id="remarkField" template="layout/edit.xhtml">
+                <ui:define name="label">Remark</ui:define>
+                <h:inputTextarea id="remark"
+                               cols="80"
+                               rows="6"
+                              value="#{earnConfirmProductHome.instance.remark}"/>
+            </s:decorate>
+
+
+            <s:decorate id="fileUrlField" template="layout/edit.xhtml">
+                <ui:define name="label">File url</ui:define>
+                <h:inputTextarea id="fileUrl"
+                               cols="80"
+                               rows="6"
+                              value="#{earnConfirmProductHome.instance.fileUrl}"/>
+            </s:decorate>
+
+            <div style="clear:both">
+                <span class="required">*</span>
+                required fields
+            </div>
+
+        </rich:panel>
+
+        <div class="actionButtons">
+
+            <h:commandButton id="save"
+                          value="Save"
+                         action="#{earnConfirmProductHome.persist}"
+                       disabled="#{!earnConfirmProductHome.wired}"
+                       rendered="#{!earnConfirmProductHome.managed}"/>
+
+            <h:commandButton id="update"
+                          value="Save"
+                         action="#{earnConfirmProductHome.update}"
+                       rendered="#{earnConfirmProductHome.managed}"/>
+
+            <h:commandButton id="delete"
+                          value="Delete"
+                         action="#{earnConfirmProductHome.remove}"
+                      immediate="true"
+                       rendered="#{earnConfirmProductHome.managed}"/>
+
+            <s:button id="cancelEdit"
+                   value="Cancel"
+             propagation="end"
+                    view="/EarnConfirmProduct.xhtml"
+                rendered="#{earnConfirmProductHome.managed}"/>
+
+            <s:button id="cancelAdd"
+                   value="Cancel"
+             propagation="end"
+                    view="/#{empty earnConfirmProductFrom ? 'EarnConfirmProductList' : earnConfirmProductFrom}.xhtml"
+                rendered="#{!earnConfirmProductHome.managed}"/>
+
+        </div>
+    </h:form>
+
+</ui:define>
+
+</ui:composition>
