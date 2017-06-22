@@ -16,6 +16,7 @@
 		<link rel="stylesheet" type="text/css" href="#{request.contextPath}/icheck/skins/square/blue.css" />
 		<link rel="stylesheet" type="text/css" href="#{request.contextPath}/stylesheet/fix.css" />
 		<link rel="stylesheet" type="text/css" href="#{request.contextPath}/stylesheet/template_list.css" />
+		<link rel="stylesheet" type="text/css" href="#{request.contextPath}/sg-fileupload/css/kernel.css" />
 		<style type="text/css">
 			.bs-w440 .bootstrap-select:not([class*="span"]):not([class*="col-"]):not([class*="form-control"]):not(.input-group-btn) {
 			    width: 440px;
@@ -109,6 +110,10 @@
 			.addbg{
 			        background:#87A900;
 			    }
+			    
+			.modal-footer{
+				border: none;
+			}
 		</style>
 	</ui:define>
 	<ui:define name="body">
@@ -301,7 +306,7 @@
 				    <a:repeat value="#{expendApplyInfoHome.expendList}" var="_obj" rowKeyVar="_index">
 				        <tr class="root expendtr" style="font-size: 14px;font-weight: normal;">
 				        	<td >#{_index + 1}</td>
-				            <td >#{_obj[0]}</td>
+				            <td class="project_name">#{_obj[0]}</td>
 				            <td >#{_obj[5]}</td>
 				            <td >#{_obj[1]}</td>
 				            <td id="projectFrozen_#{_index}">#{_obj[2]}</td>
@@ -309,7 +314,9 @@
 				             <td >
 				            	<input id="money_#{_index}" name="money" class="form-control row-text-simplify" value="#{_obj[4]}" type="text" onblur="totalMoney()"/>
 				            </td>
-				            <td >#{_obj[6]}</td>
+				            <td >
+				            	<span id="attachment_#{_index}" class="operation-item opr-attachment"  fu-source="#{_obj[9]}" style="cursor:pointer;#{_obj[9] ne null and _obj[9] ne '' ? 'color:blue' : ''}">附件</span>
+				            </td>
 				            <td >
 				            	<a name="delete" title="删除" style="text-decoration: none; cursor: pointer;" onclick="deleteList()">
 									<img src="../images/icon_delete_16x16.png"/>
@@ -426,7 +433,7 @@
 		</h:form>
 		<div class="modal fade" id="addModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
 		<div class="modal-dialog pano_dialog add_dialog ">
-		<div class="modal-content" style="width: 600px;height: 400px;font-size: 13px;">
+		<div class="modal-content" style="width: 600px;height: 470px;font-size: 13px;">
 		    <div class="modal-header-modal clear" style="font-size: 13px;">
 		        <h4 style="margin-left: 15px;" >选择项目</h4>
 		        <i class="i_close" data-dismiss="modal"></i>
@@ -522,6 +529,29 @@
 								</table>
 							</div>
 						</td>
+						<td width="50%" style="display:none;" class="contractTr">
+							<div class="pb20">
+								<table>
+									<tr>
+										<td valign="middle">
+											<span class="field-name mb10" style="width:90px">合同:</span>
+										</td>
+										<td valign="top" class="modaltd">
+										<rich:panel id="contractPanl" style="margin:0; border:none; padding: 0;">
+											<select id="contractSel" class="selectpicker" >
+												<a:repeat value="#{expendApplyInfoHome.contractList}" var="_var">
+													<option value="#{_var[0]}" >#{_var[1]}</option>
+												</a:repeat>
+											</select>
+										</rich:panel>
+										</td>
+									</tr>
+								</table>
+							</div>
+						</td>
+
+					</tr>
+					<tr>
 						<td width="50%">
 							<div class="pb20">
 								<table>
@@ -538,8 +568,6 @@
 								</table>
 							</div>
 						</td>
-					</tr>
-					<tr>
 						<td width="50%">
 							<div class="pb20">
 								<table>
@@ -556,6 +584,8 @@
 								</table>
 							</div>
 						</td>
+					</tr>
+					<tr>
 						<td width="50%">
 							<div class="pb20">
 								<table>
@@ -576,25 +606,21 @@
 				</table>
 		    </div>
 		    <div class="modal-footer">
-		       	<button type="button" class="btn btn-primary" onclick="toAddProject()">确定</button>
+		       	<button type="button" class="btn btn-primary" onclick="return toAddProject()">确定</button>
 		        <button type="button" class="btn btn-default" data-dismiss="modal">返回</button>
 		    </div>
-		    <h:form style="display:none" id="addProduct">
-		    	<h:inputHidden value="#{purchaseProductHome.productInfoId}" id="productInfoId"/>
-		    	<h:commandButton id="addButton"   value="添加商品" action="#{purchaseProductHome.addPurchaseProduct()}"></h:commandButton>
-		    </h:form>
 		</div>
 		</div>
 		</div>
 		<a:form>
 			<a:queue requestDelay="100" ignoreDupResponses="true" />
-			<a:jsFunction name="selectProject" action="#{expendApplyInfoHome.selectProject}" reRender="departPanl,fundsSourcePanl,projectPanl,totalMoneyPanl,usedMoneyPanl,canUseMoneyPanl" oncomplete="changeProjectComplete()">
+			<a:jsFunction name="selectProject" action="#{expendApplyInfoHome.selectProject}" reRender="departPanl,fundsSourcePanl,projectPanl,totalMoneyPanl,usedMoneyPanl,canUseMoneyPanl,contractPanl"  data="#{expendApplyInfoHome.contractJson}" oncomplete="changeProjectComplete(data)">
 				<a:actionparam name="projectId" assignTo="#{expendApplyInfoHome.projectId}" />
 				<a:actionparam name="projectType" assignTo="#{expendApplyInfoHome.projectType}" />
 				<a:actionparam name="departmentId" assignTo="#{expendApplyInfoHome.departmentId}" />
 				<a:actionparam name="fundsSourceId" assignTo="#{expendApplyInfoHome.fundsSourceId}" />
 			</a:jsFunction>
-			<a:jsFunction name="save" action="#{expendApplyInfoHome.save}" data="#{expendApplyInfoHome.saveResult}" oncomplete="saveComplete(data)">
+			<a:jsFunction name="save" action="#{expendApplyInfoHome.save}" data="#{expendApplyInfoHome.saveResult}" oncomplete="saveComplete(data)"  reRender="formnum">
 				<a:actionparam name="year" assignTo="#{expendApplyInfoHome.year}" />
 				<a:actionparam name="applyUser" assignTo="#{expendApplyInfoHome.applyUser}" />
 				<a:actionparam name="applySn" assignTo="#{expendApplyInfoHome.applySn}" />
@@ -623,7 +649,7 @@
 				<a:actionparam name="register" assignTo="#{expendApplyInfoHome.register}" />
 				<a:actionparam name="comment" assignTo="#{expendApplyInfoHome.comment}" />
 			</a:jsFunction>
-			<a:jsFunction name="clearList" action="#{expendApplyInfoHome.clearList}" reRender="listPanl" oncomplete="changeProjectComplete()">
+			<a:jsFunction name="clearList" action="#{expendApplyInfoHome.clearList}" reRender="listPanl" oncomplete="changeProjectComplete(0)">
 			</a:jsFunction>
 			<a:jsFunction name="selectDepart" action="#{expendApplyInfoHome.selectDepart}" reRender="departPanl,fundsSourcePanl,projectPanl,totalMoneyPanl,usedMoneyPanl,canUseMoneyPanl" oncomplete="huidiao()">
 				<a:actionparam name="departmentId" assignTo="#{expendApplyInfoHome.departmentId}" />
@@ -641,6 +667,7 @@
 			<a:jsFunction name="addProject" action="#{expendApplyInfoHome.addProject}" reRender="listPanl" oncomplete="addProjectComplete()">
 				<a:actionparam name="projectId" assignTo="#{expendApplyInfoHome.projectId}" />
 				<a:actionparam name="projectType" assignTo="#{expendApplyInfoHome.projectType}" />
+				<a:actionparam name="projectJson" assignTo="#{expendApplyInfoHome.projectJson}" />
 			</a:jsFunction>
 		</a:form>
 		<script type="text/javascript" src="#{request.contextPath}/common/js/bootstrap.min.js" />
@@ -649,6 +676,7 @@
 		<script type="text/javascript" src="#{request.contextPath}/common/js/bootstrap-select-defaults-zh_CN.min.js" charset="UTF-8" />
 		<script type="text/javascript" src="#{request.contextPath}/common/js/bootstrap-select.min.js" charset="UTF-8" />
 		<script type="text/javascript" src="#{request.contextPath}/icheck/js/icheck.min.js" charset="UTF-8" />
+		<script type="text/javascript" src="#{request.contextPath}/sg-fileupload/js/kernel.js" />
 		<script type="text/javascript" src="#{request.contextPath}/toolkit/utils.js" />
 		<script type="text/javascript">
 		//<![CDATA[
@@ -679,6 +707,26 @@
 						jQuery('#register').selectpicker({noneSelectedText:"全部"});
 						jQuery('#register').selectpicker('deselectAll');
 					}
+					jQuery('.opr-attachment').click(function() {
+						showLayer();
+						var tempHandler = jQuery(this);// 临时句柄
+						if (jQuery(this).hasClass('activated')) {
+							setTimeout(function() {
+								hideLayer();
+							}, 512);// 防止恶意点击
+						} else {
+							sgFileupload['reinstall']({
+							    'target' :jQuery(this).attr('id'),
+							    'alias' : jQuery(this).parents('.expendtr').find('.project_name').html(),
+							    'source' : jQuery(this).attr('fu-source') == undefined ? "" : jQuery(this).attr('fu-source'),
+							    'class' : 'sg-fu-custom--attachment',
+							    'completed' : function() {
+								    tempHandler.addClass('activated');
+								    tempHandler.click();
+							    }
+							}); // 重新安装附件插件
+						}
+					});
 				}
 				//初始化部分数据
 				var userId = #{sessionToken.userInfoId};
@@ -705,7 +753,7 @@
 				selectProject(projectId,projectType,depart,fundsSource);
 			}
 			//选择项目回调
-			function changeProjectComplete(){
+			function changeProjectComplete(data){
 				jQuery(".form_datetime_second").datetimepicker({
 					format: "yyyy-mm-dd",  
 					autoclose: true,
@@ -718,6 +766,12 @@
 					pickerPosition: "bottom-left"
 				});
 				huidiao();
+				if(data.is_audit){
+					jQuery("#contractSel").selectpicker("val",data.contract_id);
+					jQuery(".contractTr").show();
+				}else{
+					jQuery(".contractTr").hide();
+				}
 			}
 
 			//提交校验
@@ -937,15 +991,22 @@
 					var projectType = jQuery("#project_type_" + i).text();
 					var projectFrozen = jQuery("#projectFrozen_" + i).text();
 					var projectSurplus = jQuery("#canUseMoney_" + i).text();
+					var attachment = sgFileupload['getSource'](jQuery(this).find('.opr-attachment').attr('id'));
 					var money = jQuery("#money_" + i).val();
 					json += '{"project_id":"' + projectId + '",';
 					json += '"project_type":"' + projectType + '",';
 					json += '"frozen_money":"' + projectFrozen + '",';
 					json += '"project_surplus":"' + projectSurplus + '",';
+					json += '"attachment":"' + attachment + '",';
 					json += '"expend_money":"' + money + '"},';
 				});
-				json = json.substring(0,json.length-1);
-				json += "]}"; 
+				if(json == '{"expend_list":['){
+					json = '{"expend_list":[]}';
+				}else{
+					json = json.substring(0,json.length-1);
+					json += "]}"; 
+				}
+				
 				return json;
 			}
 
@@ -971,7 +1032,7 @@
 				modalInit(year);
 			}
 			function toAddModelComplete(){
-				var deptId = #{sessionToken.departmentInfoId};
+				var deptId = "#{sessionToken.departmentInfoId}";
 				if(deptId){
 					jQuery('#depart').val(deptId);
 					jQuery('#depart').selectpicker("render");
@@ -984,7 +1045,14 @@
 				var project = jQuery("#projectId").val();
 				var projectId = project.substring(0,project.lastIndexOf("_"));
 				var projectType = project.substring((project.lastIndexOf("_")+1),project.length);
-				addProject(projectId,projectType);
+				var contractId = jQuery("#contractSel").val();
+				if(jQuery(".contractTr").is(":visible") && !contractId){
+					___msg('温馨提示', "审计项目请选择一个合同！");
+					flag = false;
+					return;
+				} 
+				var json = getJson();
+				addProject(projectId,projectType,json);
 			}
 			function addProjectComplete(){
 				jQuery(".form_datetime_second").datetimepicker({
@@ -1000,6 +1068,26 @@
 				});
 				jQuery("#addModal").modal("hide");
 				huidiao();
+				jQuery('.opr-attachment').click(function() {
+					showLayer();
+					var tempHandler = jQuery(this);// 临时句柄
+					if (jQuery(this).hasClass('activated')) {
+						setTimeout(function() {
+							hideLayer();
+						}, 512);// 防止恶意点击
+					} else {
+						sgFileupload['reinstall']({
+						    'target' :jQuery(this).attr('id'),
+						    'alias' : jQuery(this).parents('.expendtr').find('.project_name').html(),
+						    'source' : jQuery(this).attr('fu-source') == undefined ? "" : jQuery(this).attr('fu-source'),
+						    'class' : 'sg-fu-custom--attachment',
+						    'completed' : function() {
+							    tempHandler.addClass('activated');
+							    tempHandler.click();
+						    }
+						}); // 重新安装附件插件
+					}
+				});
 			}
 
 			function fundsSource(){

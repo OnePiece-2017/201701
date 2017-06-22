@@ -48,6 +48,8 @@ public class GenericProject implements java.io.Serializable {
 	private Date updateTime;
 	private Integer updateUser;
 	private boolean deleted;
+	private boolean isAudit;
+	private String startYear;
 
 	public GenericProject() {
 	}
@@ -212,6 +214,24 @@ public class GenericProject implements java.io.Serializable {
 
 	public void setDeleted(boolean deleted) {
 		this.deleted = deleted;
+	}
+
+	@Column(name="is_audit", nullable = false)
+	public boolean isAudit() {
+		return isAudit;
+	}
+
+	public void setAudit(boolean isAudit) {
+		this.isAudit = isAudit;
+	}
+	
+	@Column(name="start_year")
+	public String getStartYear() {
+		return startYear;
+	}
+
+	public void setStartYear(String startYear) {
+		this.startYear = startYear;
 	}
 
 }

@@ -108,9 +108,10 @@
 			            <th width="5%">主管科室</th>
 			            <th width="5%">项目性质</th>
 			            <th width="10%">项目金额(元)</th>
-			            <th width="10%">剩余金额</th>
-			            <th width="10%">调整后金额</th>
-			            <th width="10%">项目来源</th>
+			            <th width="7%">剩余金额</th>
+			            <th width="7%">调整金额</th>
+			            <th width="7%">调整后金额</th>
+			            <th width="10%">批准文号</th>
 			            <th width="20%">计算依据及备注</th>
 			            <th width="5%">状态</th>
 			            <th width="5%">操作</th>
@@ -170,12 +171,28 @@
 			});
 
 			jQuery(".record").on("keypress", ".adjuest_amount", function(){
-				if((event.keyCode >= 48 && event.keyCode <= 57) || event.keyCode == 46){  
+				if((event.keyCode >= 48 && event.keyCode <= 57) || event.keyCode == 46 || event.keyCode == 43 || event.keyCode == 45){  
 		 	    	return true;
 		 	    }else{  
 		 	    	return false;  
 		 	    } 
+			}); 
+			
+
+			jQuery(".record").on("blur", ".adjuest_input", function(){
+				var adjustAmount = jQuery(this).val();
+				if(adjustAmount == ""){
+					jQuery(this).parents("tr").children(".result_amount").html("");
+				}else if(!isNaN(adjustAmount)){//是数字
+					var amount = jQuery(this).parents("tr").children(".budget_amount").html();
+					if(isNaN(amount)){//不是数字
+						jQuery(this).parents("tr").children(".result_amount").html(adjustAmount);
+					}else{
+						jQuery(this).parents("tr").children(".result_amount").html(Number(amount) + Number(adjustAmount));
+					}
+				}
 			});
+			
 		});
 
 		//筛选编制信息
@@ -249,9 +266,10 @@
 				}else{
 					html += "<td class='generic'>新增</td>";
 				}
-			  	html += "<td>" + val.budget_amount + "</td>";
+			  	html += "<td class='budget_amount'>" + val.budget_amount + "</td>";
 			  	html += "<td>" + val.budget_amount_surplus + "</td>";
-			  	html += "<td class='adjuest_amount'><input type='text' class='form-control'></td>";
+			  	html += "<td class='adjuest_amount'><input type='text' class='form-control adjuest_input'></td>";
+			  	html += "<td class='result_amount'></td>";
 			  	html += "<td class='project_source'><input type='text' class='form-control'></td>";
 			  	html += "<td class='project_remark'><input type='text' class='form-control'></td>";
 			  	html += "<td></td>";
@@ -275,9 +293,10 @@
 				}else{
 					html += "<td class='generic'>新增</td>";
 				}
+			  	html += "<td class='budget_amount'>--</td>";
 			  	html += "<td>--</td>";
-			  	html += "<td>--</td>";
-			  	html += "<td class='adjuest_amount'><input type='text' class='form-control'></td>";
+			  	html += "<td class='adjuest_amount'><input type='text' class='form-control adjuest_input'></td>";
+			  	html += "<td class='result_amount'></td>";
 			  	html += "<td class='project_source'><input type='text' class='form-control'></td>";
 			  	html += "<td class='project_remark'><input type='text' class='form-control'></td>";
 			  	html += "<td></td>";
@@ -289,26 +308,46 @@
 			
 		}
 
-
 		//通过
 		function adjust(){
 			var adjustArr = [];
 			var adjustTrArr = jQuery(".adjust_data");
 			var amountFlag = true;
+			var isNumberFlag = true;
 			jQuery(adjustTrArr).each(function(){
 				if(jQuery(this).children(".adjuest_amount").children("input").val() != ""){//修改了预算
 					var data = adjustData[jQuery(this).children(".data_id").attr("id")];
-					data.adjuest_amount = jQuery(this).children(".adjuest_amount").children("input").val();
-					if(Number(data.adjuest_amount) < Number(data.budget_amount - data.budget_amount_surplus)){
-						amountFlag = false;
+					//data.adjuest_amount = jQuery(this).children(".adjuest_amount").children("input").val();
+					var amount = jQuery(this).children(".budget_amount").html();
+					var adjustAmount = jQuery(this).children(".adjuest_amount").children("input").val();
+					if(isNaN(adjustAmount)){
+						isNumberFlag = false;
 						return;
+					}else{
+						if(isNaN(amount)){//不是数字
+							data.adjuest_amount = adjustAmount;
+						}else{//是数字
+							data.adjuest_amount = Number(amount) + Number(adjustAmount);
+							if(Number(data.adjuest_amount) < Number(data.budget_amount - data.budget_amount_surplus)){
+								amountFlag = false;
+								return;
+							}
+						}
 					}
 					data.project_source = jQuery(this).children(".project_source").children("input").val();
 					data.project_remark = jQuery(this).children(".project_remark").children("input").val();
 					adjustArr.push(data);
+					console.log(data);
 				}
 			});
 
+			
+			if(!isNumberFlag){
+				___msg('温馨提示', "请输入合法的数字！", {
+					closed: ___dynamic_function
+				});
+				return;
+			}
 			if(!amountFlag){
 				___msg('温馨提示', "调整后金额不能小于已支出金额！", {
 					closed: ___dynamic_function

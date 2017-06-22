@@ -70,10 +70,6 @@
 				        			<f:param name="expendApplyInfoId" value="#{_result[0]}" />
 				        			<img src="../images/icon_edit_16x16.png" />
 				        		</s:link>
-				        		<s:link title="删除" view="/budget/ExpendApplication.xhtml" onclick="return confirm('是否删除？');" action="#{expendApplyInfoHome.remove()}" style="text-decoration: none;" >
-				        			<f:param name="expendApplyInfoId" value="#{_result[0]}" />
-				        			<img src="../images/icon_delete_16x16.png" />
-				        		</s:link>
 			        		</s:fragment>
 			        		<a class="icon_link" title="打印" href="#" onclick="batchPrintMember(#{_result[0]});return false;"><img src="../images/tableIco_print2.png" /></a>
 						</td>

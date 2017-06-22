@@ -1,5 +1,6 @@
 package cn.dmdl.stl.hospitalbudget.budget.session;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -35,6 +36,8 @@ public class GenericProjectHome extends CriterionEntityHome<GenericProject> {
 	private JSONObject personJson;// 人员json
 	private String subprojectInfo;// 子项目（前台-->后台）
 	private JSONObject subprojectInfoJson;// 子项目（后台-->前台）
+	private String startYear;
+	private Integer isAudit;
 
 	@Override
 	public String persist() {
@@ -54,6 +57,10 @@ public class GenericProjectHome extends CriterionEntityHome<GenericProject> {
 		}
 		instance.setTheLevel(1);// 级别为1
 		instance.setBottomLevel(true);// 假定最底级
+		instance.setStartYear(startYear);
+		if(isAudit == 1){
+			instance.setAudit(true);
+		}
 		instance.setInsertTime(new Date());
 		instance.setInsertUser(sessionToken.getUserInfoId());
 		getEntityManager().persist(instance);
@@ -102,6 +109,9 @@ public class GenericProjectHome extends CriterionEntityHome<GenericProject> {
 				instance2nd.setYsFundsSource(instance.getYsFundsSource());// 继承顶级资金来源
 				instance2nd.setYsDepartmentInfo(instance.getYsDepartmentInfo());// 继承顶级主管科室
 				instance2nd.setTopLevelProjectId(instance.getTheId());// 绑定顶级项目id
+				if(isAudit == 1){
+					instance2nd.setAudit(true);
+				}
 				instance2nd.setInsertTime(new Date());
 				instance2nd.setInsertUser(sessionToken.getUserInfoId());
 				getEntityManager().persist(instance2nd);
@@ -146,6 +156,9 @@ public class GenericProjectHome extends CriterionEntityHome<GenericProject> {
 				instance3rdPlus.setYsFundsSource(instance.getYsFundsSource());// 继承顶级资金来源
 				instance3rdPlus.setYsDepartmentInfo(instance.getYsDepartmentInfo());// 继承顶级主管科室
 				instance3rdPlus.setTopLevelProjectId(instance.getTheId());// 绑定顶级项目id
+				if(isAudit == 1){
+					instance3rdPlus.setAudit(true);
+				}
 				if (subprojectInfoOne.containsKey("is_new") || null == mergeIdSet) {
 					instance3rdPlus.setInsertTime(new Date());
 					instance3rdPlus.setInsertUser(sessionToken.getUserInfoId());
@@ -218,6 +231,10 @@ public class GenericProjectHome extends CriterionEntityHome<GenericProject> {
 		}
 		instance.setTheLevel(1);// 级别为1
 		instance.setBottomLevel(true);// 假定最底级
+		instance.setStartYear(startYear);
+		if(isAudit == 1){
+			instance.setAudit(true);
+		}
 		instance.setUpdateTime(new Date());
 		instance.setUpdateUser(sessionToken.getUserInfoId());
 		getEntityManager().merge(instance);
@@ -262,6 +279,9 @@ public class GenericProjectHome extends CriterionEntityHome<GenericProject> {
 				// 修改by liyu 增加原数据修改机制
 				instance2nd.setUpdateTime(new Date());
 				instance2nd.setUpdateUser(sessionToken.getUserInfoId());
+				if(isAudit == 1){
+					instance2nd.setAudit(true);
+				}
 				if (subprojectInfoOne.containsKey("is_new")) {
 					instance2nd.setInsertTime(new Date());
 					instance2nd.setInsertUser(sessionToken.getUserInfoId());
@@ -539,9 +559,17 @@ public class GenericProjectHome extends CriterionEntityHome<GenericProject> {
 		wireBudgetPerson();// 预算人员list
 		wirePersonJson();// 人员json
 
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy");
+        Date date = new Date();
+        startYear = sdf.format(date);
 		if (!isFirstTime) {
 			departmentInfoId = instance.getYsDepartmentInfo() != null ? instance.getYsDepartmentInfo().getTheId() : null;
-
+			if(null != instance.getStartYear() && !instance.getStartYear().isEmpty()){
+				startYear = instance.getStartYear();
+			}
+			if(instance.isAudit()){
+				isAudit = 1;
+			}
 			if (isManaged()) {
 				// 加载一级项目编制人
 				List<Object> budgetPersonCompilerIdsList = getEntityManager().createNativeQuery("select IFNULL(GROUP_CONCAT(user_info_id), '') as result from generic_project_compiler where project_id = " + instance.getTheId()).getResultList();
@@ -673,6 +701,22 @@ public class GenericProjectHome extends CriterionEntityHome<GenericProject> {
 
 	public JSONObject getSubprojectInfoJson() {
 		return subprojectInfoJson;
+	}
+
+	public String getStartYear() {
+		return startYear;
+	}
+
+	public void setStartYear(String startYear) {
+		this.startYear = startYear;
+	}
+
+	public Integer getIsAudit() {
+		return isAudit;
+	}
+
+	public void setIsAudit(Integer isAudit) {
+		this.isAudit = isAudit;
 	}
 
 }

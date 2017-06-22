@@ -37,7 +37,7 @@
 		</style>
 	</ui:define>
 	<ui:define name="body">
-	#{disburseStatisticalList.wire()}
+	#{expendCompanyList.wire()}
 	<div class="pd0-10 pt30">
 		<h:form id="mainForm">
 			<div class="g-data-list-condition">
@@ -110,16 +110,16 @@
 							</td>
 							<td>
 								<div class="fl">
-									<h:commandButton styleClass="btn btn-primary mr15" action="/budget/DisburseStatisticalList.xhtml" onclick="return beforeSubmit();" value="搜索" />
+									<h:commandButton styleClass="btn btn-primary mr15"  onclick="return beforeSubmit();" value="搜索" />
 									<h:commandButton styleClass="btn btn-primary mr15"  value="导出" />
 									
 								</div>
 							</td>
 						</tr>
 					</table>
-					<h:inputHidden id="beginYearParam" value="#{disburseStatisticalList.beginYearParam}" />
-					<h:inputHidden id="departmentInfoId" value="#{disburseStatisticalList.departmentInfoId}" />
-					<h:inputHidden id="fundsSourceId" value="#{disburseStatisticalList.fundsSourceId}" />
+					<h:inputHidden id="beginYearParam" value="#{expendCompanyList.beginYearParam}" />
+					<h:inputHidden id="departmentInfoId" value="#{expendCompanyList.departmentInfoId}" />
+					<h:inputHidden id="fundsSourceId" value="#{expendCompanyList.fundsSourceId}" />
 			</div>
 		</h:form>
 		</div>
@@ -127,15 +127,10 @@
 		<div class="g-data-list-table" style="margin-top: 50px;">
 		    <table class="record" width="100%" cellpadding="0" cellspacing="0">
 		        <tr>
-		            <th width="10%">ID</th>
-		            <th width="30%">项目名称</th>
-		            <th width="10%">项目类型</th>
-		            <th width="10%">预算金额</th>
-		            <th width="10%">已支出金额</th>
-		            <th width="10%">可支出金额</th>
-		            <th width="10%">执行率</th>
+		            <th width="50%">收款单位</th>
+		            <th width="50%">收款金额</th>
 		        </tr>
-		        <a:repeat value="#{disburseStatisticalList.resultList}" var="_result" rowKeyVar="_row">
+		        <a:repeat value="#{expendCompanyList.resultList}" var="_result" rowKeyVar="_row">
 		        	<tr class="node-record #{_row % 2 eq 0 ? 'odd' : 'even'}">
 			        	<td>
 			        		<h:outputText value="#{_result[0]}" />
@@ -143,25 +138,10 @@
 			        	<td>
 			        		<h:outputText value="#{_result[1]}" />
 			        	</td>
-			        	<td>
-			        		<h:outputText value="#{_result[2] == 1 ? '一般项目' : '常规项目' }" />
-			        	</td>
-			        	<td>
-			        		<h:outputText value="#{_result[4]}" />
-			        	</td>
-			        	<td>
-			        		<h:outputText value="#{_result[5]}" />
-			        	</td>
-			        	<td>
-			        		<h:outputText value="#{_result[6]}" />
-			        	</td>
-			        	<td>
-			        		<h:outputText value="#{_result[7]}" />%
-			        	</td>
 		        	</tr>
 		        </a:repeat>
 		    </table>
-		    #{paginationModel.init(disburseStatisticalList)}
+		    #{paginationModel.init(expendCompanyList)}
 		    <s:fragment rendered="#{paginationModel.query != null}">
 				<table class="pagination-model" style="width: auto; margin: 40px auto;" cellpadding="0" cellspacing="0">
 					<tr>
@@ -222,11 +202,9 @@
 		//<![CDATA[
 			jQuery(document).ready(function() {
 				jQuery("#fundsSourceId").val(1);
-				//获取当前年
-			    var date=new Date;
+				var date=new Date;
 			    var yearStr=date.getFullYear();
 			    jQuery("#budgetYear").val(yearStr)
-				
 				jQuery(".selectpicker").selectpicker("render");
 				jQuery(".selectpicker").selectpicker();
 

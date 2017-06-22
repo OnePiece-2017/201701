@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<page xmlns="http://jboss.com/products/seam/pages"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xsi:schemaLocation="http://jboss.com/products/seam/pages http://jboss.com/products/seam/pages-2.2.xsd"
+      no-conversation-view-id="/YsAuditContractInfoList.xhtml"
+      login-required="true">
+
+   <begin-conversation join="true" flush-mode="MANUAL"/>
+
+   <action execute="#{ysAuditContractInfoHome.wire}"/>
+
+   <param name="ysAuditContractInfoFrom"/>
+   <param name="ysAuditContractInfoAuditContractInfoId" value="#{ysAuditContractInfoHome.ysAuditContractInfoAuditContractInfoId}"/>
+   <param name="genericProjectId" value="#{ysAuditContractInfoHome.genericProjectId}"/>
+
+
+   <navigation from-action="#{ysAuditContractInfoHome.persist}">
+      <rule if-outcome="persisted">
+         <end-conversation/>
+         <redirect view-id="/AuditContractList.xhtml"/>
+      </rule>
+   </navigation>
+
+   <navigation from-action="#{ysAuditContractInfoHome.update}">
+      <rule if-outcome="updated">
+         <end-conversation/>
+         <redirect view-id="/YsAuditContractInfo.xhtml"/>
+      </rule>
+   </navigation>
+
+   <navigation from-action="#{ysAuditContractInfoHome.remove}">
+      <rule if-outcome="removed">
+         <end-conversation/>
+         <redirect view-id="/YsAuditContractInfoList.xhtml"/>
+      </rule>
+   </navigation>
+
+</page>

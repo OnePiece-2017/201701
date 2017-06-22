@@ -35,4 +35,7 @@ public class HospitalConstant {
 	public final static int PROCESS_INCOME_EXECUTE = 3;//收入执行
 	public final static int PROCESS_EXPEND_EXECUTE = 4;//支出执行
 	
+	//项目类型
+	public final static int PROJECT_IS_AUDIT = 1;//是审计项目
+	
 }

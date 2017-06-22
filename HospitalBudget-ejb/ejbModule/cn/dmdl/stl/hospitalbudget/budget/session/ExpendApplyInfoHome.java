@@ -35,6 +35,8 @@ public class ExpendApplyInfoHome extends CriterionEntityHome<ExpendApplyInfo>{
 	private List<Object[]> reciveCompanyList;//收款单位列表
 	private List<Object[]> projectList;//主项目列表
 	private List<Object[]> expendList;//选中列表
+	private List<Object[]> contractList;//合同列表
+	private JSONObject contractJson;
 	
 	private Integer expendApplyInfoId;//编辑使用-申请单号
 	private String applySn;//单据编号
@@ -60,6 +62,7 @@ public class ExpendApplyInfoHome extends CriterionEntityHome<ExpendApplyInfo>{
 	private JSONObject saveResult;
 	private String expendAllMoney;//总支出金额
 	private List<Object> companyList;//收款单位列表
+	private Integer contractId;//合同id
 	@SuppressWarnings("unchecked")
 	public void wire(){
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
@@ -140,7 +143,7 @@ public class ExpendApplyInfoHome extends CriterionEntityHome<ExpendApplyInfo>{
 			projectSql.append(" eap.expend_money as expend_money2, ");//12
 			projectSql.append(" eap.generic_project_id, ");//13
 			projectSql.append(" fs2.the_value as source_name2, ");//14
-			projectSql.append(" 2 ");//15
+			projectSql.append(" 2,eap.attachment  ");//15
 			projectSql.append(" FROM expend_apply_project eap ");
 			projectSql.append(" LEFT JOIN expend_apply_info eai ON eap.expend_apply_info_id = eai.expend_apply_info_id ");
 			projectSql.append(" LEFT JOIN routine_project up on up.the_id=eap.project_id ");
@@ -157,7 +160,7 @@ public class ExpendApplyInfoHome extends CriterionEntityHome<ExpendApplyInfo>{
 			float allMoney = 0f;
 			if(list.size() > 0){
 				for(Object[] obj : list){
-					Object[] projectDetail = new Object[9];
+					Object[] projectDetail = new Object[10];
 					if(null != obj[5] && null == obj[13]){
 						projectDetail[0] = obj[0];
 						projectDetail[1] = obj[1];
@@ -169,6 +172,7 @@ public class ExpendApplyInfoHome extends CriterionEntityHome<ExpendApplyInfo>{
 						projectDetail[6] = "";
 						projectDetail[7] = obj[5];
 						projectDetail[8] = obj[7];
+						projectDetail[9] = obj[16];
 						expendList.add(projectDetail);
 					}else{
 						projectDetail[0] = obj[8];
@@ -181,6 +185,7 @@ public class ExpendApplyInfoHome extends CriterionEntityHome<ExpendApplyInfo>{
 						projectDetail[6] = "";
 						projectDetail[7] = obj[13];
 						projectDetail[8] = obj[15];
+						projectDetail[9] = obj[16];
 						expendList.add(projectDetail);
 					}
 				}
@@ -196,7 +201,7 @@ public class ExpendApplyInfoHome extends CriterionEntityHome<ExpendApplyInfo>{
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
 		String secondCode = sdf.format(new Date());
 		String thirdCode;
-		String sql = "select eai.expend_apply_code from expend_apply_info eai where eai.expend_apply_code like '" + firstCode + secondCode + "%' ORDER BY eai.expend_apply_info_id";
+		String sql = "select eai.expend_apply_code from expend_apply_info eai where eai.expend_apply_code like '" + firstCode + secondCode + "%' ORDER BY eai.expend_apply_info_id desc";
 		List<Object> list = getEntityManager().createNativeQuery(sql).getResultList();
 		if(null != list && list.size() > 0){
 			String lastCode = list.get(0).toString();
@@ -387,7 +392,13 @@ public class ExpendApplyInfoHome extends CriterionEntityHome<ExpendApplyInfo>{
 	 * 选择项目后查询项目列表
 	 * @return
 	 */
+	@SuppressWarnings("unchecked")
 	public void selectProject(){
+		if(null == contractJson){
+			contractJson = new JSONObject();
+		}
+		contractJson.element("is_audit", false);
+		contractList = new ArrayList<Object[]>();
 		if(null != projectId && -1 != projectId){
 			if(projectType == 1){
 				StringBuffer sql = new StringBuffer();
@@ -401,7 +412,6 @@ public class ExpendApplyInfoHome extends CriterionEntityHome<ExpendApplyInfo>{
 				sql.append(" LEFT JOIN routine_project rp ON nepi.project_id = rp.the_id ");
 				sql.append(" LEFT JOIN ys_funds_source fs on rp.funds_source_id=fs.the_id ");
 				sql.append(" WHERE nepi.project_id= ").append(projectId);
-				@SuppressWarnings("unchecked")
 				List<Object[]> list = getEntityManager().createNativeQuery(sql.toString()).getResultList();
 				if(list.size() > 0){
 					Object[] obj = list.get(0);
@@ -428,12 +438,12 @@ public class ExpendApplyInfoHome extends CriterionEntityHome<ExpendApplyInfo>{
 				sql.append(" fs.the_id, ");
 				sql.append(" nepi.budget_amount, ");
 				sql.append(" nepi.budget_amount_frozen, ");
-				sql.append(" nepi.budget_amount_surplus ");
+				sql.append(" nepi.budget_amount_surplus, ");
+				sql.append(" rp.is_audit ");
 				sql.append(" FROM normal_expend_plan_info nepi ");
 				sql.append(" LEFT JOIN generic_project rp ON nepi.generic_project_id = rp.the_id ");
 				sql.append(" LEFT JOIN ys_funds_source fs on rp.funds_source_id=fs.the_id ");
 				sql.append(" WHERE nepi.generic_project_id= ").append(projectId);
-				@SuppressWarnings("unchecked")
 				List<Object[]> list = getEntityManager().createNativeQuery(sql.toString()).getResultList();
 				if(list.size() > 0){
 					Object[] obj = list.get(0);
@@ -452,13 +462,40 @@ public class ExpendApplyInfoHome extends CriterionEntityHome<ExpendApplyInfo>{
 					if(null != obj[4]){
 						canUseMoney = obj[4].toString();
 					}
+					if(null != obj[5] && Boolean.parseBoolean(obj[5].toString())){
+						contractJson.element("is_audit", true);
+						//查询该项目的合同
+						Integer deptId = sessionToken.getDepartmentInfoId();
+						if(deptId != null){
+							String contractSql = "select yaci.audit_contract_info_id,yaci.audit_title from ys_audit_contract_info yaci where yaci.deleted=0 "
+									+ "and yaci.dept_id=? and yaci.generic_project_id=?";
+							List<Object[]> clist = getEntityManager().createNativeQuery(contractSql).setParameter(1, deptId).setParameter(2, projectId).getResultList();
+							if(null != clist && clist.size() > 0){
+								contractId = Integer.parseInt(clist.get(0)[0].toString());
+								contractJson.element("contract_id", contractId);
+								contractList = clist;
+							}
+						}
+					}
 				}
+				
 			}
 		}else{
 			totalMoney = "";//已到账金额
 			usedMoney = "";//已使用金额
 			canUseMoney = "";//可使用金额
 		}
+		
+		//查询合同
+		//列表
+//		String contractSql = "select yaci.audit_contract_info_id,yaci.audit_title from ys_audit_contract_info yaci where yaci.deleted=0";
+//		List<Object[]> clist = getEntityManager().createNativeQuery(contractSql).getResultList();
+//		if(null != clist && clist.size() > 0){
+//			contractList = clist;
+//		}else{
+//			contractList = new ArrayList<Object[]>();
+//		}
+		
 	}
 	
 	/**
@@ -483,7 +520,7 @@ public class ExpendApplyInfoHome extends CriterionEntityHome<ExpendApplyInfo>{
 			List<Object[]> list = getEntityManager().createNativeQuery("select * from (" + sql.toString() + ") as test").getResultList();
 			Object[] project = list.get(0);
 			DecimalFormat df = new DecimalFormat("#.00");
-			Object[] obj = new Object[9];
+			Object[] obj = new Object[10];
 			obj[0] = project[0];
 			obj[1] =  Double.parseDouble(project[1].toString()) == 0 ? "0.00" : df.format(Double.parseDouble(project[1].toString()));
 			obj[2] = Double.parseDouble(project[2].toString()) == 0 ? "0.00" : df.format(Double.parseDouble(project[2].toString()));
@@ -507,7 +544,7 @@ public class ExpendApplyInfoHome extends CriterionEntityHome<ExpendApplyInfo>{
 			List<Object[]> list = getEntityManager().createNativeQuery("select * from (" + sql.toString() + ") as test").getResultList();
 			Object[] project = list.get(0);
 			DecimalFormat df = new DecimalFormat("#.00");
-			Object[] obj = new Object[9];
+			Object[] obj = new Object[10];
 			obj[0] = project[0];
 			obj[1] =  Double.parseDouble(project[1].toString()) == 0 ? "0.00" : df.format(Double.parseDouble(project[1].toString()));
 			obj[2] = Double.parseDouble(project[2].toString()) == 0 ? "0.00" : df.format(Double.parseDouble(project[2].toString()));
@@ -520,6 +557,16 @@ public class ExpendApplyInfoHome extends CriterionEntityHome<ExpendApplyInfo>{
 			expendList.add(obj);
 		}
 		
+		System.out.println(projectJson);
+		JSONObject oldJson = JSONObject.fromObject(projectJson);
+		JSONArray jsonArr = oldJson.getJSONArray("expend_list");
+		for(int i=0; i<jsonArr.size(); i++){
+			JSONObject json = jsonArr.getJSONObject(i);
+			String code = json.getString("attachment");
+			String money = json.getString("expend_money");
+			expendList.get(i)[4] = money;
+			expendList.get(i)[9] = code;
+		}
 	}
 	/**
 	 * 提交保存
@@ -540,6 +587,7 @@ public class ExpendApplyInfoHome extends CriterionEntityHome<ExpendApplyInfo>{
 			applySn = queryNextCode();
 			saveResult.accumulate("invoke_result", "INVOKE_FAIL");
 			saveResult.accumulate("message", "编码已经存在，已为您刷新编码！请重新提交");
+			//saveResult.accumulate("code",applySn);
 			return "";
 		}
 		joinTransaction();
@@ -658,6 +706,7 @@ public class ExpendApplyInfoHome extends CriterionEntityHome<ExpendApplyInfo>{
 			String frozenMoney = project.getString("frozen_money");
 			String surplusMoney = project.getString("project_surplus");
 			String projectType = project.getString("project_type");
+			String attachment = project.getString("attachment");
 			allMoney += Float.parseFloat(expendMoney);
 			//保存支出申请单详细列表
 			ExpendApplyProject eap = new ExpendApplyProject();
@@ -675,6 +724,9 @@ public class ExpendApplyInfoHome extends CriterionEntityHome<ExpendApplyInfo>{
 			eap.setInsertUser(sessionToken.getUserInfoId());
 			eap.setInsertTime(new Date());
 			eap.setDeleted(false);
+			if(null != attachment && !"undefined".equals(attachment) && !"null".equals(attachment)){
+				eap.setAttachment(attachment);
+			}
 			getEntityManager().persist(eap);
 			
 			
@@ -687,6 +739,7 @@ public class ExpendApplyInfoHome extends CriterionEntityHome<ExpendApplyInfo>{
 			efp.setProjectId(eap.getProjectId());
 			efp.setGenericProjectId(eap.getGenericProjectId());
 			efp.setDeleted(false);
+			efp.setConfirm_money(eap.getExpendMoney());
 			getEntityManager().persist(efp);
 			//to-do 预算下达金额减去支出金额
 			
@@ -848,6 +901,7 @@ public class ExpendApplyInfoHome extends CriterionEntityHome<ExpendApplyInfo>{
 			String frozenMoney = project.getString("frozen_money");
 			String surplusMoney = project.getString("project_surplus");
 			String expendMoney = project.getString("expend_money");
+			String attachment = project.getString("attachment");
 			allMoney += Float.parseFloat(expendMoney);
 			//编辑支出申请单详细列表
 			ExpendApplyProject eap = null;
@@ -868,6 +922,9 @@ public class ExpendApplyInfoHome extends CriterionEntityHome<ExpendApplyInfo>{
 			eap.setExpendBeforFrozen(Float.parseFloat(frozenMoney));
 			eap.setExpendBeforSurplus(Float.parseFloat(surplusMoney));
 			eap.setExpendMoney(Float.parseFloat(expendMoney));
+			if(null != attachment && !"undefined".equals(attachment) && !"null".equals(attachment)){
+				eap.setAttachment(attachment);
+			}
 			eap.setDeleted(false);
 			if(!editFlag){
 				eap.setInsertUser(sessionToken.getUserInfoId());
@@ -892,6 +949,7 @@ public class ExpendApplyInfoHome extends CriterionEntityHome<ExpendApplyInfo>{
 				}
 				efp.setExpendBeforFrozen(eap.getExpendBeforFrozen());
 				efp.setExpendBeforSurplus(eap.getExpendBeforSurplus());
+				efp.setConfirm_money(eap.getExpendMoney());
 				efp.setDeleted(false);
 				getEntityManager().persist(efp);
 			}else{
@@ -922,6 +980,7 @@ public class ExpendApplyInfoHome extends CriterionEntityHome<ExpendApplyInfo>{
 					efp.setDeleted(false);
 					efp.setExpendBeforFrozen(eap.getExpendBeforFrozen());
 					efp.setExpendBeforSurplus(eap.getExpendBeforSurplus());
+					efp.setConfirm_money(eap.getExpendMoney());
 					getEntityManager().persist(efp);
 				}
 			}
@@ -1372,6 +1431,36 @@ public class ExpendApplyInfoHome extends CriterionEntityHome<ExpendApplyInfo>{
 
 	public void setCompanyList(List<Object> companyList) {
 		this.companyList = companyList;
+	}
+
+
+	public List<Object[]> getContractList() {
+		return contractList;
+	}
+
+
+	public void setContractList(List<Object[]> contractList) {
+		this.contractList = contractList;
+	}
+
+
+	public Integer getContractId() {
+		return contractId;
+	}
+
+
+	public void setContractId(Integer contractId) {
+		this.contractId = contractId;
+	}
+
+
+	public JSONObject getContractJson() {
+		return contractJson;
+	}
+
+
+	public void setContractJson(JSONObject contractJson) {
+		this.contractJson = contractJson;
 	}
 
 }

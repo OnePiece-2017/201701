@@ -106,7 +106,7 @@ public class ExpendApplyConfirmHome extends CriterionEntityHome<ExpendApplyInfo>
 			projectSql.append(" nepi.budget_amount AS budget_amount2, ");//8
 			projectSql.append(" nepi.budget_amount_frozen AS amount_frozen2, ");//9
 			projectSql.append(" nepi.budget_amount_surplus AS amount_surplus2,");//10
-			projectSql.append(" fs2.the_value AS source_name2,ecp.project_id,ecp.generic_project_id ");//11 12 13
+			projectSql.append(" fs2.the_value AS source_name2,ecp.project_id,ecp.generic_project_id,eap.attachment ");//11 12 13
 			projectSql.append(" FROM expend_confirm_project ecp ");
 			projectSql.append(" LEFT JOIN expend_apply_project eap ON ecp.expend_apply_project_id = eap.expend_apply_project_id ");
 			projectSql.append(" LEFT JOIN routine_project up ON ecp.project_id=up.the_id ");
@@ -131,6 +131,7 @@ public class ExpendApplyConfirmHome extends CriterionEntityHome<ExpendApplyInfo>
 						projectDetail[6] = "";
 						projectDetail[7] = obj[5];
 						projectDetail[8] = 1;
+						projectDetail[9] = obj[14];
 						projectList.add(projectDetail);
 					}else{
 						projectDetail[0] = obj[7];
@@ -142,6 +143,7 @@ public class ExpendApplyConfirmHome extends CriterionEntityHome<ExpendApplyInfo>
 						projectDetail[6] = "";
 						projectDetail[7] = obj[5];
 						projectDetail[8] = 2;
+						projectDetail[9] = obj[14];
 						projectList.add(projectDetail);
 					}
 				}
