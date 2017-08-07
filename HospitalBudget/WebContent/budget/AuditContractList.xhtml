@@ -29,14 +29,18 @@
 	<ui:define name="body">
 		<div class="pd0-10 pt30">
 			<div class="g-data-list-condition">
+				<s:button id="cancel" value="返回" view="/budget/ExpendAuditList.xhtml" propagation="none" styleClass="btn btn-default" />
 				<div style="float: right;">
 					<table class="normal-btn">
 						<tr>
 							<td>
-								<s:link value="添加" view="/budget/YsAuditContractInfoEdit.xhtml" styleClass="btn btn-success fr mt10 mr10">
-									<f:param name="ysAuditContractInfoAuditContractInfoId" />
-									<f:param name="genericProjectId" value="#{expendAuditHome.genericProjectId}"></f:param>
-								</s:link>
+								<s:div rendered="#{!businessCheckHome.isAuditFinished(expendAuditHome.genericProjectId)}">
+									<s:link value="添加" view="/budget/YsAuditContractInfoEdit.xhtml" styleClass="btn btn-success fr mt10 mr10">
+										<f:param name="ysAuditContractInfoAuditContractInfoId" />
+										<f:param name="genericProjectId" value="#{expendAuditHome.genericProjectId}"></f:param>
+									</s:link>
+									<a class="btn btn-success fr mt10 mr10" onclick="return audit(#{expendAuditHome.genericProjectId});">审计</a>
+								</s:div>
 							</td>
 						</tr>
 					</table>
@@ -44,6 +48,7 @@
 			</div>
 			
 			<strong style="font-size: 20px;">审计项目</strong>
+			<font style="margin-left: 15px;color: #f903ed;">审计金额<span class="node-summaryInfo">#{businessCheckHome.getAuditAmount(expendAuditHome.genericProjectId)}</span>元</font>
 			<div class="g-data-list-table freeze-attendProject" id="expend_freez_head" >
 			    <table class="record" id="expend_table" width="100%" cellpadding="0" cellspacing="0">
 			        <tr>
@@ -61,6 +66,10 @@
 			</a:jsFunction>
 			<a:jsFunction name="deleteContractAction"  data="#{expendAuditHome.deleteContract()}" oncomplete="deleteComplete(data);">
 				<a:actionparam name="contractId" assignTo="#{expendAuditHome.contractId}"/>
+			</a:jsFunction>
+			<a:jsFunction name="auditAction"  data="#{expendAuditHome.auditProject()}" oncomplete="auditComplete(data);">
+				<a:actionparam name="genericProjectId" assignTo="#{expendAuditHome.genericProjectId}"/>
+				<a:actionparam name="amount" assignTo="#{expendAuditHome.auditAmount}"/>
 			</a:jsFunction>
 		</a:form>
 		<script type="text/javascript" src="#{request.contextPath}/javascript/template_list.js" charset="UTF-8" />
@@ -103,6 +112,33 @@
 						closed: ___dynamic_function
 					});
 					filterContractAction();
+				}else{
+					___msg('温馨提示', data.message, {
+						closed: ___dynamic_function
+					});
+					return false;
+				}
+			}
+
+			function audit(genericProjectId){
+				var amount = prompt("请输入审计金额:","");
+				if(amount == null || isNaN(amount)){
+					___msg('温馨提示', "请输入合法数字", {
+						closed: ___dynamic_function
+					});
+					return false;
+				}else{
+					alert(amount);
+					auditAction(genericProjectId, amount);
+				}
+			}
+
+			function auditComplete(data){
+				if(data.isok == "ok"){
+					___msg('温馨提示', data.message, {
+						closed: ___dynamic_function
+					});
+					jQuery("#cancel").click();
 				}else{
 					___msg('温馨提示', data.message, {
 						closed: ___dynamic_function

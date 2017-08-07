@@ -18,12 +18,15 @@ import cn.dmdl.stl.hospitalbudget.util.HospitalConstant;
 @Name("expendAuditHome")
 public class ExpendAuditHome extends CriterionEntityHome<Object>{
 	
+	private BusinessCheckHome businessCheckHome = new BusinessCheckHome();
+	
 	private String year;
 	private Integer deptId;
 	private Integer fundsSourceId;
 
 	private Integer genericProjectId;
 	private Integer contractId;
+	private double auditAmount;
 	/**
 	 * 
 	 */
@@ -43,7 +46,7 @@ public class ExpendAuditHome extends CriterionEntityHome<Object>{
 			preparedStatement.setInt(1, contractId);
 			preparedStatement.executeUpdate();
 			json.element("isok", "ok");
-			json.element("isok", "删除成功！");
+			json.element("message", "删除成功！");
 		} catch (SQLException e) {
 			e.printStackTrace();
 			json.element("isok", "err");
@@ -54,6 +57,44 @@ public class ExpendAuditHome extends CriterionEntityHome<Object>{
 		}
 		return json;
 	}
+	
+	
+	/**
+	 * 审计项目
+	 * @return
+	 */
+	public JSONObject auditProject(){
+		JSONObject json = new JSONObject();
+		//业务验证 审计金额不能大于项目预算金额
+		double projectBudgetAmount = businessCheckHome.getGenericProjectTotalAmount(genericProjectId);
+		if(auditAmount > projectBudgetAmount){
+			json.element("isok", "err");
+			json.element("message", "审计金额不能大于项目总金额！ 项目金额：" + projectBudgetAmount);
+			return json;
+		}
+		Connection connection = DataSourceManager.open(DataSourceManager.BY_JDBC_DEFAULT);
+		PreparedStatement preparedStatement = null;
+		ResultSet resultSet = null;
+		try {
+			preparedStatement = connection.prepareStatement("update generic_project t set t.audit_status = ?,t.audit_amount = ? where t.the_id = ? ");
+			preparedStatement.setInt(1, HospitalConstant.PROJECT_IS_AUDIT_FINISH);
+			preparedStatement.setDouble(2, auditAmount);
+			preparedStatement.setInt(3, genericProjectId);
+			preparedStatement.executeUpdate();
+			json.element("isok", "ok");
+			json.element("message", "审计成功！");
+		} catch (SQLException e) {
+			e.printStackTrace();
+			json.element("isok", "err");
+			json.element("message", "系统错误！");
+			return json;
+		} finally{
+			DataSourceManager.close(connection, preparedStatement, resultSet);
+		}
+		return json;
+	}
+	
+	
 	
 	/**
 	 * 获取合同列表
@@ -102,7 +143,7 @@ public class ExpendAuditHome extends CriterionEntityHome<Object>{
 		ResultSet resultSet = null;
 		try {
 			List<Object> paramList = new ArrayList<Object>();
-			sql.append("SELECT t.`year`,t.generic_project_id,gp.the_value,di.the_value as dept_name FROM normal_expend_plan_info t  ");
+			sql.append("SELECT t.`year`,t.generic_project_id,gp.the_value,di.the_value as dept_name,gp.audit_amount FROM normal_expend_plan_info t  ");
 			sql.append("INNER JOIN generic_project gp ON t.generic_project_id = gp.the_id ");
 			sql.append("INNER JOIN ys_department_info di ON gp.department_info_id = di.the_id ");
 			sql.append("where gp.is_audit = ? ");
@@ -129,6 +170,7 @@ public class ExpendAuditHome extends CriterionEntityHome<Object>{
 				json.element("generic_project_id", resultSet.getInt("generic_project_id"));
 				json.element("project_name", resultSet.getString("the_value"));
 				json.element("dept_name", resultSet.getString("dept_name"));
+				json.element("audit_amount", null == resultSet.getObject("audit_amount") ? "" : resultSet.getDouble("audit_amount"));
 				list.add(json);
 			}
 			expendAuditProjectJson.element("data", list);
@@ -178,6 +220,14 @@ public class ExpendAuditHome extends CriterionEntityHome<Object>{
 
 	public void setContractId(Integer contractId) {
 		this.contractId = contractId;
+	}
+
+	public double getAuditAmount() {
+		return auditAmount;
+	}
+
+	public void setAuditAmount(double auditAmount) {
+		this.auditAmount = auditAmount;
 	}
 	
 	

@@ -4,13 +4,21 @@
     "http://www.jboss.org/j2ee/dtd/jboss-ds_1_5.dtd">
 <datasources>
    
-   <local-tx-datasource>
+    <local-tx-datasource>
+      <jndi-name>HospitalBudgetDatasource</jndi-name>
+      <use-java-context>true</use-java-context>
+      <connection-url>jdbc:mysql://127.0.0.1:3306/hospital_budget</connection-url>
+      <driver-class>com.mysql.jdbc.Driver</driver-class>
+      <user-name>root</user-name>
+      <password>tiaozhan14</password>
+   </local-tx-datasource> 
+<!-- 	<local-tx-datasource>
       <jndi-name>HospitalBudgetDatasource</jndi-name>
       <use-java-context>true</use-java-context>
       <connection-url>jdbc:mysql://115.28.222.156:3306/hospital_budget</connection-url>
       <driver-class>com.mysql.jdbc.Driver</driver-class>
       <user-name>root</user-name>
       <password>yangzhiyuan2015</password>
-   </local-tx-datasource>
+   </local-tx-datasource>  -->
     
 </datasources>

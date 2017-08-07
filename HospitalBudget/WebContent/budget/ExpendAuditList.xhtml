@@ -69,7 +69,8 @@
 			        <tr>
 			            <th width="10%">年份</th>
 			            <th width="30%">科室</th>
-			            <th width="50%">项目名称</th>
+			            <th width="30%">项目名称</th>
+			            <th width="20%">审计金额</th>
 			            <th width="10%">操作</th>
 			        </tr>
 			    </table>
@@ -127,6 +128,7 @@
 					html += '	<td>' + val.year + '</td>';
 					html += '	<td>' + val.dept_name + '</td>';
 					html += '	<td>' + val.project_name + '</td>';
+					html += '	<td>' + val.audit_amount + '</td>';
 					html += '	<td><a href="../budget/AuditContractList.seam?projectId=' + val.generic_project_id + '"  title="查看" style="text-decoration: none;"><img src="../images/icon_view_16x16.png"></a></td>';
 					html += '</tr>';
 				});

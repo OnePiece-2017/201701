@@ -17,7 +17,7 @@
    <navigation from-action="#{ysAuditContractInfoHome.persist}">
       <rule if-outcome="persisted">
          <end-conversation/>
-         <redirect view-id="/AuditContractList.xhtml"/>
+         <redirect view-id="/budget/AuditContractList.seam?projectId=#{ysAuditContractInfoHome.genericProjectId}"/>
       </rule>
    </navigation>
 

@@ -38,4 +38,7 @@ public class HospitalConstant {
 	//项目类型
 	public final static int PROJECT_IS_AUDIT = 1;//是审计项目
 	
+	//项目审计状态
+	public final static int PROJECT_IS_AUDIT_FINISH = 1;//已审计
+	
 }

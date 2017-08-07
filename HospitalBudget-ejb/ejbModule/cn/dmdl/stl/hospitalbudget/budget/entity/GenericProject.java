@@ -50,6 +50,8 @@ public class GenericProject implements java.io.Serializable {
 	private boolean deleted;
 	private boolean isAudit;
 	private String startYear;
+	private int auditStatus;
+	private Double auditAmount;
 
 	public GenericProject() {
 	}
@@ -232,6 +234,24 @@ public class GenericProject implements java.io.Serializable {
 
 	public void setStartYear(String startYear) {
 		this.startYear = startYear;
+	}
+
+	@Column(name="audit_status", nullable = false)
+	public int getAuditStatus() {
+		return auditStatus;
+	}
+
+	public void setAuditStatus(int auditStatus) {
+		this.auditStatus = auditStatus;
+	}
+
+	@Column(name = "audit_amount", precision = 22, scale = 0)
+	public Double getAuditAmount() {
+		return auditAmount;
+	}
+
+	public void setAuditAmount(Double auditAmount) {
+		this.auditAmount = auditAmount;
 	}
 
 }

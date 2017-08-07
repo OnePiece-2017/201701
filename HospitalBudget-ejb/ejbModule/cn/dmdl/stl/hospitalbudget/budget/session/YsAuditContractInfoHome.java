@@ -2,6 +2,7 @@ package cn.dmdl.stl.hospitalbudget.budget.session;
 
 import java.util.Date;
 
+import org.jboss.seam.annotations.AutoCreate;
 import org.jboss.seam.annotations.Name;
 
 import cn.dmdl.stl.hospitalbudget.budget.entity.YsAuditContractInfo;
@@ -16,6 +17,8 @@ public class YsAuditContractInfoHome extends CriterionEntityHome<YsAuditContract
 	private static final long serialVersionUID = 1L;
 	
 	private Integer genericProjectId;
+	
+	private BusinessCheckHome businessCheckHome = new BusinessCheckHome();
 
 	public void setYsAuditContractInfoAuditContractInfoId(Integer id) {
 		setId(id);
@@ -43,6 +46,15 @@ public class YsAuditContractInfoHome extends CriterionEntityHome<YsAuditContract
 	
 	@Override
 	public String persist() {
+		//业务校验，合同总金额不能大于项目金额
+		setMessage("");
+		double projectBudgetAmount = businessCheckHome.getGenericProjectTotalAmount(genericProjectId);
+		double contractAmount = businessCheckHome.getAuditContractTotalAmount(genericProjectId) + instance.getAuditAmount();
+		if(contractAmount > projectBudgetAmount){
+			setMessage("合同总金额不能超过项目总预算金额！合同金额： " + contractAmount + "  项目金额：" + projectBudgetAmount);
+			return null;
+		}
+		
 		joinTransaction();
 		instance.setGenericProjectId(genericProjectId);
 		instance.setDeptId(sessionToken.getDepartmentInfoId());
