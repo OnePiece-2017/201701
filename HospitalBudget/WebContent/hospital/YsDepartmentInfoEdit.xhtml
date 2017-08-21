@@ -72,9 +72,9 @@
 											</td>
 											<td valign="top">
 												<font>收入预算部门</font>
-												<input type="checkbox" class="icheck" name="budgetAttribute" value="1" />
+												<input id="income_check" type="checkbox" class="icheck" name="budgetAttribute" value="1" />
 												<font>支出预算部门</font>
-												<input type="checkbox" class="icheck" name="budgetAttribute" value="2" />
+												<input id="expend_check" type="checkbox" class="icheck" name="budgetAttribute" value="2" />
 												<h:inputHidden id="budgetAttributeHidden" value="#{ysDepartmentInfoHome.instance.budgetAttribute}" />
 											</td>
 											<td valign="middle">
@@ -145,6 +145,16 @@
 			    ___dynamic_function = function() {
 					jQuery('#mainForm\\:theValue').focus();
 			    };
+
+			    //加载项目预算类型
+			    var budgetAttributeArr = jQuery("#mainForm\\:budgetAttributeHidden").val().split(",");
+			    for(var i=0;i<budgetAttributeArr.length;i++){
+					if(budgetAttributeArr[i] == 1){
+						jQuery("#income_check").iCheck("check");
+					}else if(budgetAttributeArr[i] == 2){
+						jQuery("#expend_check").iCheck("check");
+					}
+				}
 			    if (message != '') {
 					___msg('温馨提示', message, {closed: ___dynamic_function});
 			    }

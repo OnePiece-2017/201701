@@ -226,7 +226,7 @@ public class ExpendExecutHome extends CriterionEntityHome<Object> {
 		projectSql.append(" eap.project_id,fs.the_value as source_name ");
 		projectSql.append(" FROM expend_apply_project eap ");
 		projectSql.append(" LEFT JOIN expend_apply_info eai ON eap.expend_apply_info_id = eai.expend_apply_info_id ");
-		projectSql.append(" LEFT JOIN usual_project up on up.the_id=eap.project_id ");
+		projectSql.append(" LEFT JOIN routine_project up on up.the_id=eap.project_id ");
 		projectSql.append(" LEFT JOIN normal_expend_plan_info expi on  expi.project_id=eap.project_id and expi.`year` = eai.`year` ");
 		projectSql.append(" LEFT JOIN ys_funds_source fs on up.funds_source_id=fs.the_id ");
 		projectSql.append(" where eap.deleted=0 ");

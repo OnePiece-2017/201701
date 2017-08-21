@@ -253,7 +253,6 @@ public class EarnConfirmHome extends CriterionEntityHome<EarnConfirm> {
 		sql.append(" left join ys_funds_source yfs1 on yfs1.the_id = rp.funds_source_id ");
 		sql.append(" where gpe.user_info_id = ? or rpe.user_info_id = ? ");
 		System.out.println("user--------------"+sessionToken.getUserInfoId());
-//		String dataSql = "select the_id, the_value from ys_general_project where deleted = 0";
 		List<Object[]> dataList = getEntityManager().createNativeQuery(sql.toString()).setParameter(1, sessionToken.getUserInfoId()).setParameter(2, sessionToken.getUserInfoId()).getResultList();
 		if (dataList != null && dataList.size() > 0) {
 			for (Object[] data : dataList) {
