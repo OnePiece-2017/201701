@@ -28,8 +28,8 @@ body {
 .div-main-left {
 	/* background-color: #8dd5f7; */
 	background-color: #425375;
-	width: 192px;
-	min-width: 192px;
+	/* width: 192px; 
+	min-width: 192px;*/
 	min-height: 530px;
 	float: left;
 }
@@ -45,9 +45,9 @@ body {
 }
 
 .div-main-left .function-container .func-outer {
-	border: 1px dotted rgba(119, 133, 212, 0.37);
+	/* border: 1px dotted rgba(119, 133, 212, 0.37);
 	width: 166px;
-	height: 38px;
+	height: 38px; */
 	border-radius: 4px;
 	cursor: pointer;
 }
@@ -150,6 +150,7 @@ body {
 }
 
 .div-main-right {
+	width: 100%;
 	min-width: 598px;
 	min-height: 530px;
 	float: left;
@@ -181,4 +182,20 @@ body {
 
 .div-main-right .jeasyui-tabs-loading-on-cancel {
 	
+}
+.user-panel>.info{
+	padding:10px 5px 5px 15px;
+}
+.user-panel{
+	box-sizing: border-box;
+}
+.wrapper{
+	min-width: 1320px;
+}
+.main-sidebar{
+	padding-top: 0;
+}
+
+.tabs-header, .tabs-tool{
+	background-color: #fff;
 }

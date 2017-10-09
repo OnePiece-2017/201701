@@ -12,6 +12,7 @@
 	<ui:define name="head">
 		<link rel="stylesheet" type="text/css" href="#{request.contextPath}/common/css/bootstrap.min.css" />
 		<link rel="stylesheet" type="text/css" href="#{request.contextPath}/common/css/bootstrap-datetimepicker.min.css" />
+		<link rel="stylesheet" type="text/css" href="#{request.contextPath}/lte/css/font-awesome.min.css" />
 		<link rel="stylesheet" type="text/css" href="#{request.contextPath}/common/css/bootstrap-select2.min.css" />
 	</ui:define>
 	<ui:define name="body">
@@ -24,17 +25,17 @@
 					</div>
 				</div> 
 				<div class="fl">
-					<h:commandButton styleClass="btn btn-primary mt10 ml20" action="/budget/QueryExpendApplay.xhtml" value="搜索" />
+					<h:commandButton styleClass="btn btn-block btn-primary mt10 ml20" action="/budget/QueryExpendApplay.xhtml" value="搜索" />
 				</div>
 				<div class="fr">
-						<s:link value="添加" view="/budget/ExpendApplication.xhtml" styleClass="btn btn-success fr mt10 mr10">
+						<s:link value="添加" view="/budget/ExpendApplication.xhtml" styleClass="btn btn-block btn-success fr mt10 mr10">
 						</s:link>
 				</div>
 			</h:form>
 		</div>
 		<div class="g-data-list-table">
 			
-		    <table class="record" width="100%" cellpadding="0" cellspacing="0">
+		    <table class="record table table-hover table-striped" width="100%" cellpadding="0" cellspacing="0">
 		        <tr>
 		            <th width="6%">序号</th>
 		            <th width="13%">单据编号</th>
@@ -48,7 +49,7 @@
 		            <th width="8%">操作</th>
 		        </tr>
 		        <a:repeat value="#{expendApplayList.resultList}" var="_result" rowKeyVar="_row">
-		        	<tr class="node-record #{_row % 2 eq 0 ? 'odd' : 'even'}">
+		        	<tr class="node-record">
 			        	<td>#{_row + 1}</td>
 			        	<td>
 			        		#{_result[1]}
@@ -63,15 +64,20 @@
 			        	<td>
 			        		<s:link title="查看" view="/budget/ExpendInfoDetail.xhtml" style="text-decoration: none;">
 			        			<f:param name="expendApplyInfoId" value="#{_result[0]}" />
-			        			<img src="../images/icon_view_16x16.png" />
+			        			<!-- <img src="../images/icon_view_16x16.png" /> -->
+			        			<i class="fa fa-search"></i>
 			        		</s:link>
 			        		<s:fragment rendered="#{_result[10] ne 1}">
 				        		<s:link title="编辑" view="/budget/ExpendApplication.xhtml" style="text-decoration: none;" >
 				        			<f:param name="expendApplyInfoId" value="#{_result[0]}" />
-				        			<img src="../images/icon_edit_16x16.png" />
+				        			<!-- <img src="../images/icon_edit_16x16.png" /> -->
+				        			<i class="fa fa-pencil"></i>
 				        		</s:link>
 			        		</s:fragment>
-			        		<a class="icon_link" title="打印" href="#" onclick="batchPrintMember(#{_result[0]});return false;"><img src="../images/tableIco_print2.png" /></a>
+			        		<a class="icon_link" title="打印" href="#" onclick="batchPrintMember(#{_result[0]});return false;">
+			        			<!-- <img src="../images/tableIco_print2.png" /> -->
+			        			<i class="fa fa-print"></i>
+			        		</a>
 						</td>
 		        	</tr>
 		        </a:repeat>

@@ -11,44 +11,65 @@
 	<ui:define name="head">
 		<link rel="stylesheet" type="text/css" href="#{request.contextPath}/toastr/toastr.min.css" />
 		<link rel="stylesheet" type="text/css" href="#{request.contextPath}/easyui/css/easyui.css" />
+		<link rel="stylesheet" type="text/css" href="#{request.contextPath}/lte/css/font-awesome.min.css" />
+		<link rel="stylesheet" type="text/css" href="#{request.contextPath}/lte/css/ionicons.min.css" />
+		<link rel="stylesheet" type="text/css" href="#{request.contextPath}/lte/css/AdminLTE.min.css" />
+		<link rel="stylesheet" type="text/css" href="#{request.contextPath}/lte/css/skin-blue.min.css" />
 		<link rel="stylesheet" type="text/css" href="#{request.contextPath}/stylesheet/system/main.css" />
+		<style>
+			a{ text-decoration: none;}
+		</style>
 	</ui:define>
 	<ui:define name="body">
-		<div class="div-main">
+		<div class="div-main wrapper">
 			<!-- 顶级遮罩层 -->
 			<div class="main-mask-layer-wrapper">
 				<div class="main-mask-layer-contents"></div>
 			</div>
 			<!-- 横幅 -->
-			<div class="div-main-top sg-themes--home-banner">
-				<img src="#{request.contextPath}/images/ico_02.png" style="float: left; margin-top: 10px; margin-left: 20px;"/>
-				<h:outputLabel value="#{sessionToken.fullname}" styleClass="sg-themes--home-banner-user-info" style="float: left;margin-left: 10px;color: #f3f7fc;margin-top: 18px;" />
-				<s:link value="退出" view="/logout.xhtml" onclick="return beforeLogout();" rendered="#{identity.loggedIn}" propagation="none" styleClass="fr mr10 mt10 sg-themes--home-banner-logout-button" style="color: #f3f7fc; text-decoration: none; outline: none; font-size: 25px;" />
-				<label id="remoteClock" class="sg-themes--home-banner-remote-clock" style="float: right;margin-right: 28px;color: #f3f7fc;margin-top: 19px;">加载中...</label>
+			<div class="sg-themes--home-banner main-header">
+				<div class="navbar navbar-static-top">
+					<!-- <a href="#" class="sidebar-toggle" data-toggle="push-menu" role="button">
+						<span class="sr-only">Toggle navigation</span>
+					</a> -->
+					<s:link value="退出" view="/logout.xhtml" onclick="return beforeLogout();" rendered="#{identity.loggedIn}" propagation="none" styleClass="fr mr10 sg-themes--home-banner-logout-button" style="color: #f3f7fc; text-decoration: none; outline: none; font-size: 25px; margin-top:7px;" />
+					<label id="remoteClock" class="sg-themes--home-banner-remote-clock" style="float: right;margin-right: 28px;color: #f3f7fc;margin-top: 15px;">加载中...</label>
+				</div>
 			</div>
 			<!-- 菜单栏 -->
-			<div class="div-main-left sg-themes--home-menu">
+			<div class="div-main-left sg-themes--home-menu main-sidebar sidebar">
 				<div class="menu-mask-layer-wrapper">
 					<div class="menu-mask-layer-contents"></div>
 				</div>
-				<ul class="function-container"><!-- js填充 --></ul>
+				<div class="user-panel">
+				<div class="pull-left image">
+					<img src="#{request.contextPath}/images/ico_02.png" class="img-circle"/>
+				</div>
+				<div class="pull-left info">
+					<h:outputLabel value="#{sessionToken.fullname}" styleClass="sg-themes--home-banner-user-info" />
+					<!-- <p>Alexander Pierce</p>
+					Status
+					<a href="#"><i class="fa fa-circle text-success"></i> Online</a> -->
+					</div>
+				</div>
+				<ul class="sidebar-menu tree function-container" data-widget="tree"><!-- js填充 --></ul>
 			</div>
 			<!-- 数据展示区域 -->
-			<div class="div-main-right">
+			<div class="div-main-right content-wrapper">
 				<div id="node_crud" class="easyui-tabs sg-themes--home-data-exhibition-area" data-options="tabWidth: 150" style="width: 100%; height: 100%; display: none;" />
-				<div id="node_welcome" class="sg-themes--welcome-bg" style="width: 100%; height: 100%; display: none;">
-					<iframe src="welcome.seam" style="width: 100%; height: 100%; border: 0;" />
+				<div id="node_welcome" class="sg-themes--welcome-bg" style="width: 100% !important; height: 100%; display: none;">
+					<iframe src="welcome.seam" style="width: 100% !important; height: 100%; border: 0;" />
 				</div>
 			</div>
 		</div>
 		<script type="text/javascript" src="#{request.contextPath}/toastr/toastr.min.js" />
 		<script type="text/javascript" src="#{request.contextPath}/easyui/js/jquery.easyui.min.js" />
 		<script type="text/javascript" src="#{request.contextPath}/js-md5/md5.min.js" />
+		<script type="text/javascript" src="#{request.contextPath}/lte/js/adminlte.min.js" />
 		<script type="text/javascript" src="#{request.contextPath}/javascript/system/main.js" />
 		<script type="text/javascript">
 		//<![CDATA[
 			menuInfoJsonArray = #{sessionToken.menuInfoJsonArray};// 功能菜单
-			
 		    var urlKeySet = {};// 声明全局url键集合
 		    
 			jQuery(document).ready(function() {

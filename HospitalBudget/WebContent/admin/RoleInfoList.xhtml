@@ -11,6 +11,7 @@
 
 	<ui:define name="head">
 		<link rel="stylesheet" type="text/css" href="#{request.contextPath}/common/css/bootstrap.min.css" />
+		<link rel="stylesheet" type="text/css" href="#{request.contextPath}/lte/css/font-awesome.min.css" />
 		<script type="text/javascript" src="#{request.contextPath}/common/js/bootstrap.min.js" />
 	</ui:define>
 	<ui:define name="body">
@@ -21,19 +22,19 @@
 					<h:inputText id="keyword" value="#{roleInfoList.keyword}" styleClass="form-control mt10 ml10 keyword" />
 				</div>
 				<div class="fl">
-					<h:commandButton styleClass="btn btn-primary mt10 ml20" action="/admin/RoleInfoList.xhtml" value="搜索" />
+					<h:commandButton styleClass="btn btn-block btn-primary mt10 ml20" action="/admin/RoleInfoList.xhtml" value="搜索" />
 				</div>
 				<s:fragment rendered="#{s:hasRole('role_management/create')}">
 					<div class="fr">
-						<s:link value="添加" view="/admin/RoleInfoEdit.xhtml" styleClass="btn btn-success fr mt10 mr10">
+						<s:link value="添加" view="/admin/RoleInfoEdit.xhtml" styleClass="btn btn-block btn-success fr mt10 mr10">
 							<f:param name="roleInfoRoleInfoId" />
 						</s:link>
 					</div>
 				</s:fragment>
 			</h:form>
 		</div>
-		<div class="g-data-list-table">
-		    <table class="record" width="100%" cellpadding="0" cellspacing="0">
+		<div class="g-data-list-table box box-body table-responsive no-padding">
+		    <table class="record table table-hover table-striped" width="100%" cellpadding="0" cellspacing="0">
 		        <tr>
 		            <th width="20%">ID</th>
 		            <th width="20%">名称</th>
@@ -41,7 +42,7 @@
 		            <th width="20%">操作</th>
 		        </tr>
 		        <a:repeat value="#{roleInfoList.resultList}" var="_result" rowKeyVar="_row">
-		        	<tr class="node-record #{_row % 2 eq 0 ? 'odd' : 'even'}">
+		        	<tr class="node-record">
 			        	<td>
 			        		<h:outputText value="#{_result.roleInfoId}" />
 			        	</td>
@@ -54,23 +55,28 @@
 			        	<td>
 			        		<s:link title="查看" view="/admin/RoleInfo.xhtml" style="text-decoration: none;" rendered="#{s:hasRole('role_management/retrieve')}">
 			        			<f:param name="roleInfoRoleInfoId" value="#{_result.roleInfoId}" />
-			        			<img src="../images/icon_view_16x16.png" />
+			        			<!-- <img src="../images/icon_view_16x16.png" /> -->
+			        			<i class="fa fa-search"></i>
 			        		</s:link>
 			        		<s:link title="编辑" view="/admin/RoleInfoEdit.xhtml" style="text-decoration: none;" rendered="#{s:hasRole('role_management/update')}">
 			        			<f:param name="roleInfoRoleInfoId" value="#{_result.roleInfoId}" />
-			        			<img src="../images/icon_edit_16x16.png" />
+			        			<!-- <img src="../images/icon_edit_16x16.png" /> -->
+			        			<i class="fa fa-pencil"></i>
 			        		</s:link>
 			        		<s:link title="预览权限" view="/admin/GrantPrivileges.xhtml" style="text-decoration: none;" rendered="#{s:hasRole('role_management/preview_privileges')}">
 			        			<f:param name="roleInfoRoleInfoId" value="#{_result.roleInfoId}" />
-			        			<img src="../images/icon_more_16x16.png" />
+			        			<!-- <img src="../images/icon_more_16x16.png" /> -->
+			        			<i class="fa fa-info"></i>
 			        		</s:link>
 			        		<s:link title="授予权限" view="/admin/GrantPrivilegesEdit.xhtml" style="text-decoration: none;" rendered="#{s:hasRole('role_management/grant_privileges')}">
 			        			<f:param name="roleInfoRoleInfoId" value="#{_result.roleInfoId}" />
-			        			<img src="../images/icon_to_do_16x16.png" />
+			        			<!-- <img src="../images/icon_to_do_16x16.png" /> -->
+			        			<i class="fa fa-key"></i>
 			        		</s:link>
 			        		<s:link title="删除" view="/admin/RoleInfoEdit.xhtml" onclick="return confirm('是否删除？');" action="#{roleInfoHome.remove}" style="text-decoration: none;" rendered="#{s:hasRole('role_management/delete')}">
 			        			<f:param name="roleInfoRoleInfoId" value="#{_result.roleInfoId}" />
-			        			<img src="../images/icon_delete_16x16.png" />
+			        			<!-- <img src="../images/icon_delete_16x16.png" /> -->
+			        			<i class="fa fa-times"></i>
 			        		</s:link>
 			        	</td>
 		        	</tr>

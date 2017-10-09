@@ -12,7 +12,13 @@
 	<ui:define name="head">
 		<link rel="stylesheet" type="text/css" href="#{request.contextPath}/common/css/bootstrap.min.css" />
 		<link rel="stylesheet" type="text/css" href="#{request.contextPath}/common/css/bootstrap-select.min.css" />
+		<link rel="stylesheet" type="text/css" href="#{request.contextPath}/lte/css/font-awesome.min.css" />
 		<link rel="stylesheet" type="text/css" href="#{request.contextPath}/icheck/skins/square/blue.css" />
+		<style>
+			.bootstrap-select{
+				margin-bottom: 0 !important;
+			}
+		</style>
 	</ui:define>
 	<ui:define name="body">
 	#{usualProjectHome.wire()}
@@ -98,7 +104,7 @@
 			</h:form>
 		</div>
 		<div class="g-data-list-table">
-		    <table class="record" width="100%" cellpadding="0" cellspacing="0">
+		    <table class="record table table-hover table-striped" width="100%" cellpadding="0" cellspacing="0">
 		        <tr>
 		            <!-- <th width="10%">ID</th> -->
 		            <th width="20%">订单号</th>
@@ -112,7 +118,7 @@
 		            <th width="10%">操作</th>
 		        </tr>
 		        <a:repeat value="#{taskUntreatedList.resultList}" var="_result" rowKeyVar="_row">
-		        	<tr class="node-record #{_row % 2 eq 0 ? 'odd' : 'even'}">
+		        	<tr class="node-record">
 			        	<!-- <td>
 			        		<h:outputText value="#{_result[0]}" />
 			        	</td> -->
@@ -143,11 +149,13 @@
 			        	<td>
 			        		<s:link title="办理" view="/budget/TransactRevenue.xhtml" style="text-decoration: none;" rendered="#{_result[5] == 1 and _result[6] == 0}">
 			        			<f:param name="taskOrderId" value="#{_result[0]}" />
-			        			<img src="../images/icon_law_16x16.png" />
+			        			<!-- <img src="../images/icon_law_16x16.png" /> -->
+			        			<i class="fa fa-gavel"></i>
 			        		</s:link>
 			        		<s:link title="办理" view="/budget/TransactExpend.xhtml" style="text-decoration: none;" rendered="#{_result[5] == 2 and _result[6] == 0}">
 			        			<f:param name="taskOrderId" value="#{_result[0]}" />
-			        			<img src="../images/icon_law_16x16.png" />
+			        			<!-- <img src="../images/icon_law_16x16.png" /> -->
+			        			<i class="fa fa-gavel"></i>
 			        		</s:link>
 			        		<!-- <s:link title="办理" view="/budget/ExpendExecut.xhtml" style="text-decoration: none;" rendered="#{_result[5] == 4 and _result[6] == 0}">
 			        			<f:param name="taskOrderId" value="#{_result[0]}" />
@@ -155,11 +163,13 @@
 			        		</s:link> -->
 			        		<s:link title="修正" view="/budget/ReviseRevenue.xhtml" style="text-decoration: none;" rendered="#{_result[5] == 1 and _result[6] == 3}">
 			        			<f:param name="taskOrderId" value="#{_result[0]}" />
-			        			<img src="../images/icon_pen_16x16.png" />
+			        			<!-- <img src="../images/icon_pen_16x16.png" /> -->
+			        			<i class="fa fa-pencil-square-o"></i>
 			        		</s:link>
 			        		<s:link title="修正" view="/budget/ReviseExpend.xhtml" style="text-decoration: none;" rendered="#{_result[5] == 2 and _result[6] == 3}">
 			        			<f:param name="taskOrderId" value="#{_result[0]}" />
-			        			<img src="../images/icon_pen_16x16.png" />
+			        			<!-- <img src="../images/icon_pen_16x16.png" /> -->
+			        			<i class="fa fa-pencil-square-o"></i>
 			        		</s:link>
 			        		<!-- <s:link title="修正" view="/budget/ExpendApplicationEdit.xhtml" style="text-decoration: none;" rendered="#{_result[5] == 4 and _result[6] == 3}">
 			        			<f:param name="taskOrderId" value="#{_result[0]}" />

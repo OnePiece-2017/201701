@@ -44,5 +44,10 @@
 }
 
 .fix--bc-darkturquoise {
-	background-color: #1ed7ed !important;
+	background-color: #eee !important;
+}
+.fix--bc-green{
+	background-color: #00a65a !important;
+	border: none !important;
+	color: #fff !important;
 }

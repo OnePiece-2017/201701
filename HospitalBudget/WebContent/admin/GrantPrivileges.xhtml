@@ -19,7 +19,8 @@
 				height: auto;
 				text-align: left;
 				margin-bottom: 10px;
-				background-color: #a3ece9;
+				color: #3c8dbc;
+				text-indent: 15px;
 			}
 			
 			.part-right {
@@ -55,10 +56,10 @@
 			</div>
 			<a:repeat value="#{grantPrivilegesHome.permissionAssignmentColligateList}" var="_pac">
 				<div class="pd0-10">
-					<div class="pt30 fs14" style="overflow: hidden;">
+					<div class="pt30 fs14" style="overflow: hidden; border-bottom:1px solid #eee;">
 						<div style="height: auto;">
 							<div class="part-left">
-						    	<strong style="font-size: 15px; font-style: italic;">#{_pac[0]}</strong>
+						    	<strong style="font-size: 15px;">#{_pac[0]}</strong>
 						    </div>
 						    <div class="part-right">
 						    	<ul>

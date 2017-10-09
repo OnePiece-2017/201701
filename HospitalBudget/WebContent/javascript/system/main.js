@@ -36,7 +36,8 @@ jQuery(document).ready(function() {
 	});
 
 	jQuery('.div-main-left').niceScroll({
-	    cursorcolor : '#4d0acf',
+	    cursorcolor : '#222d32',
+	    cursorborder: "1px solid #e1e1e1",
 	    cursorwidth : 6,
 	    cursoropacitymax : 0.8,
 	    touchbehavior : false,
@@ -44,7 +45,8 @@ jQuery(document).ready(function() {
 	});
 
 	jQuery('body').niceScroll({
-	    cursorcolor : '#86cef0',
+	    cursorcolor : '#3c8dbc',
+	    cursorborder: "1px solid #e1e1e1",
 	    cursorwidth : 8,
 	    cursoropacitymax : 0.8,
 	    touchbehavior : false,
@@ -57,9 +59,9 @@ jQuery(document).ready(function() {
 	var disposeLeaf = function(leaf) {
 		for (var i = 0; i < leaf.length; i++) {
 			var node = leaf[i];
-			funcCode += '<li><div class="func-outer"><div class="func-inner">';
+			funcCode += '<li class="treeview"><a href="javascript:;" class="func-outer"><i class="fa fa-circle-o"></i>';
 			//funcCode += '<span class="func-logo"' + (node['iconSrc'] != null && node['iconSrc'] != '' ? ' style="background: RGBA(0, 0, 0, 0) url(' + node['iconSrc'] + ') no-repeat center;"' : '') + '></span>';
-			funcCode += '<span class="func-name" style="color:#f3f7fc;" ';
+			funcCode += '<span class="func-name" ';
 			if (0 == node['leaf'].length) {
 				funcCode += ' tab-index="' + node['theId'] + '"';
 				var key = md5(String(node['theId']));
@@ -74,11 +76,11 @@ jQuery(document).ready(function() {
 			}
 			funcCode += '>' + node['theValue'] + '</span>';
 			if (node['leaf'].length > 0) {
-				funcCode += '<span class="toggle collapse"></span></div></div><ul style="display: none;padding-left:10px;">';
+				funcCode += '<span class="pull-right-container"><i class="fa fa-angle-left pull-right"></i></span></div></div><ul class="treeview-menu">';
 				disposeLeaf(node['leaf']);
 				funcCode += '</ul>';
 			} else if (node['tabUrl'] != null && node['tabUrl'] != '') {
-				funcCode += '</div></div>';
+				funcCode += '</a>';
 			} else {
 				funcCode += '<span class="func-unopened" title="该功能处于停用状态！"></span></div></div>';
 			}
@@ -89,6 +91,20 @@ jQuery(document).ready(function() {
 		disposeLeaf(menuInfoJsonArray);
 	}
 	jQuery('.function-container').html(funcCode);
+	jQuery('.function-container>li:eq(0)').find('.fa').eq(0).removeClass('fa-circle-o').addClass('fa-cogs');
+	jQuery('.function-container>li:eq(1)').find('.fa').eq(0).removeClass('fa-circle-o').addClass('fa-credit-card');
+	jQuery('.function-container>li:eq(2)').find('.fa').eq(0).removeClass('fa-circle-o').addClass('fa-jpy');
+	jQuery('.function-container>li:eq(3)').find('.fa').eq(0).removeClass('fa-circle-o').addClass('fa-tasks');
+	jQuery('.function-container>li:eq(4)').find('.fa').eq(0).removeClass('fa-circle-o').addClass('fa-bars');
+	jQuery('.function-container>li:eq(5)').find('.fa').eq(0).removeClass('fa-circle-o').addClass('fa-briefcase');
+	jQuery('.function-container>li:eq(6)').find('.fa').eq(0).removeClass('fa-circle-o').addClass('fa-bullseye');
+	jQuery('.function-container>li:eq(7)').find('.fa').eq(0).removeClass('fa-circle-o').addClass('fa-user');
+	jQuery('.function-container>li:eq(8)').find('.fa').eq(0).removeClass('fa-circle-o').addClass('fa-sitemap');
+	jQuery('.function-container>li:eq(9)').find('.fa').eq(0).removeClass('fa-circle-o').addClass('fa-bar-chart');
+	jQuery('.function-container li').click(function() {
+		jQuery(this).addClass('active').siblings().removeClass('active');
+		
+	});
 	jQuery('.function-container .func-outer').click(function() {
 		showMenuMaskLayer();
 		var cache_ul = jQuery(this).next('ul');
@@ -234,7 +250,7 @@ function selfAdaptionScreen() {
 	var subtrahendHeight = mainWidth > 800 ? 60 : 70;
 	jQuery('.div-main-left').css('height', mainHeight - subtrahendHeight);// 采用内联样式，拥有最高的优先权，并合并原有style，类似于jQuery.extend
 	jQuery('.div-main-left .menu-mask-layer-wrapper').css('height', mainHeight - subtrahendHeight);
-	jQuery('.div-main-right').css('width', mainWidth - subtrahendWidth);
+	jQuery('.div-main-right').css('width', mainWidth - subtrahendWidth-29);
 	jQuery('.div-main-right').css('height', mainHeight - subtrahendHeight);
 	jQuery('body').getNiceScroll().resize();
 	jQuery('body').getNiceScroll(0).doScrollLeft(0, 0);

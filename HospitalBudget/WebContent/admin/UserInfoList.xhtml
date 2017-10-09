@@ -11,7 +11,9 @@
 
 	<ui:define name="head">
 		<link rel="stylesheet" type="text/css" href="#{request.contextPath}/common/css/bootstrap.min.css" />
+		<link rel="stylesheet" type="text/css" href="#{request.contextPath}/lte/css/font-awesome.min.css" />
 		<script type="text/javascript" src="#{request.contextPath}/common/js/bootstrap.min.js" />
+		
 	</ui:define>
 	<ui:define name="body">
 		<div class="g-data-list-condition">
@@ -21,19 +23,19 @@
 					<h:inputText id="keyword" value="#{userInfoList.keyword}" styleClass="form-control mt10 ml10 keyword" />
 				</div>
 				<div class="fl">
-					<h:commandButton styleClass="btn btn-primary mt10 ml20" action="/admin/UserInfoList.xhtml" value="搜索" />
+					<h:commandButton styleClass="btn btn-block btn-primary mt10 ml20" action="/admin/UserInfoList.xhtml" value="搜索" />
 				</div>
 				<s:fragment rendered="#{s:hasRole('user_management/create')}">
 					<div class="fr">
-						<s:link value="添加" view="/admin/UserInfoEdit.xhtml" styleClass="btn btn-success fr mt10 mr10">
+						<s:link value="添加" view="/admin/UserInfoEdit.xhtml" styleClass="btn btn-block btn-success fr mt10 mr10">
 							<f:param name="userInfoUserInfoId" />
 						</s:link>
 					</div>
 				</s:fragment>
 			</h:form>
 		</div>
-		<div class="g-data-list-table">
-		    <table class="record" width="100%" cellpadding="0" cellspacing="0">
+		<div class="g-data-list-table box box-body table-responsive no-padding">
+		    <table class="record table table-hover table-striped" width="100%" cellpadding="0" cellspacing="0">
 		        <tr>
 		            <th width="5%">ID</th>
 		            <th width="15%">用户名</th>
@@ -44,7 +46,7 @@
 		            <th width="15%">操作</th>
 		        </tr>
 		        <a:repeat value="#{userInfoList.resultList}" var="_result" rowKeyVar="_row">
-		        	<tr class="node-record #{_row % 2 eq 0 ? 'odd' : 'even'}">
+		        	<tr class="node-record">
 			        	<td>
 			        		<h:outputText value="#{_result.userInfoId}" />
 			        	</td>
@@ -66,19 +68,23 @@
 			        	<td>
 			        		<s:link title="查看" view="/admin/UserInfo.xhtml" style="text-decoration: none;" rendered="#{s:hasRole('user_management/retrieve')}">
 			        			<f:param name="userInfoUserInfoId" value="#{_result.userInfoId}" />
-			        			<img src="../images/icon_view_16x16.png" />
+			        			<!-- <img src="../images/icon_view_16x16.png" /> -->
+			        			<i class="fa fa-search"></i>
 			        		</s:link>
 			        		<s:link title="编辑" view="/admin/UserInfoEdit.xhtml" style="text-decoration: none;" rendered="#{s:hasRole('user_management/update')}">
 			        			<f:param name="userInfoUserInfoId" value="#{_result.userInfoId}" />
-			        			<img src="../images/icon_edit_16x16.png" />
+			        			<!-- <img src="../images/icon_edit_16x16.png" /> -->
+			        			<i class="fa fa-pencil"></i>
 			        		</s:link>
 			        		<s:link title="修改密码" view="/admin/ModifyUserPassword.xhtml" style="text-decoration: none;" rendered="#{s:hasRole('user_management/modify_user_password')}">
 			        			<f:param name="userInfoUserInfoId" value="#{_result.userInfoId}" />
-			        			<img src="../images/icon_lock_16x16.png" />
+			        			<!-- <img src="../images/icon_lock_16x16.png" /> -->
+			        			<i class="fa fa-lock"></i>
 			        		</s:link>
 			        		<s:link title="删除" view="/admin/UserInfoEdit.xhtml" onclick="return confirm('是否删除？');" action="#{userInfoHome.remove}" style="text-decoration: none;" rendered="#{s:hasRole('user_management/delete')}">
 			        			<f:param name="userInfoUserInfoId" value="#{_result.userInfoId}" />
-			        			<img src="../images/icon_delete_16x16.png" />
+			        			<!-- <img src="../images/icon_delete_16x16.png" /> -->
+			        			<i class="fa fa-times"></i>
 			        		</s:link>
 			        	</td>
 		        	</tr>

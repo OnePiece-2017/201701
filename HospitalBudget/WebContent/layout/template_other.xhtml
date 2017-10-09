@@ -31,9 +31,24 @@
 				jQuery.noConflict();
 				var ___contextRoot = '#{configureCache.getValue("context.root")}';
 			</script>
+			<style>
+				@media (max-width: 767px){
+					.content-wrapper, .main-footer{
+						margin-left:230px !important;
+					}
+					.main-sidebar{
+						transform: translate(0, 0) !important;
+						-webkit-transform: translate(0, 0) !important;
+					}
+					.main-header .navbar{
+						margin-left:230px !important;
+						width: auto !important;
+					}
+				}
+			</style>
 			<ui:insert name="head" />
 		</head>
-		<body class="sg-themes--template-other-body">
+		<body class="sg-themes--template-other-body skin-blue">
 			<!-- Remodal的额外代码 -->
 			<script type="text/javascript" src="#{request.contextPath}/remodal/js/remodal_extra.js" charset="UTF-8" />
 			<ui:insert name="body" />

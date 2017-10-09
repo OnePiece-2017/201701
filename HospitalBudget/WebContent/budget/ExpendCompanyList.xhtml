@@ -56,7 +56,7 @@
 							</td>
 							<td width="30%">
 								<div class="fl">
-									<div style="float: left; text-align: center; line-height: 36px; width: 50px;">
+									<div style="float: left; text-align: right; line-height: 36px; width: 85px; padding-right:15px; box-sizing:border-box;">
 										<span>科室</span>
 									</div>
 									<select id="departmentIds" class="selectpicker" multiple="multiple" data-live-search="true" title="请选择">
@@ -68,7 +68,7 @@
 							</td>
 							<td width="40%">
 								<div class="fl bs-funds-source">
-									<div style="float: left; text-align: center; line-height: 36px; width: 80px;">
+									<div style="float: left; text-align: right; line-height: 36px; width: 85px; padding-right:15px; box-sizing:border-box;">
 										<span>资金来源</span>
 									</div>
 									<select id="fundsSourceId" class="selectpicker" multiple="multiple">
@@ -81,8 +81,8 @@
 						</tr>
 						<tr>
 							<td>
-								<div class="fl" style="width: 300px;">
-									<div style="float: left; text-align: center; line-height: 36px; width: 70px;">
+								<div class="fl" style="width: 100%;">
+									<div style="float: left; text-align: center; line-height: 36px; width: 84px;">
 										<span>开始时间</span>
 									</div>
 				                    <div class="form-group">
@@ -95,8 +95,8 @@
 					            </div>
 							</td>
 							<td>
-								<div class="fl" style="width: 300px;">
-					                <div style="float: left; text-align: center; line-height: 36px; width: 70px;">
+								<div class="fl" style="width: 100%;">
+					                <div style="float: left; text-align: center; line-height: 36px; width: 84px;">
 										<span>结束时间</span>
 									</div>
 					                 <div class="form-group">
@@ -109,7 +109,7 @@
 								</div>
 							</td>
 							<td>
-								<div class="fl">
+								<div class="fl" style="margin-top:-15px;">
 									<h:commandButton styleClass="btn btn-primary mr15"  onclick="return beforeSubmit();" value="搜索" />
 									<h:commandButton styleClass="btn btn-primary mr15"  value="导出" />
 									
@@ -125,13 +125,13 @@
 		</div>
 		
 		<div class="g-data-list-table" style="margin-top: 50px;">
-		    <table class="record" width="100%" cellpadding="0" cellspacing="0">
+		    <table class="record table table-hover table-striped" width="100%" cellpadding="0" cellspacing="0">
 		        <tr>
 		            <th width="50%">收款单位</th>
 		            <th width="50%">收款金额</th>
 		        </tr>
 		        <a:repeat value="#{expendCompanyList.resultList}" var="_result" rowKeyVar="_row">
-		        	<tr class="node-record #{_row % 2 eq 0 ? 'odd' : 'even'}">
+		        	<tr class="node-record">
 			        	<td>
 			        		<h:outputText value="#{_result[0]}" />
 			        	</td>
