@@ -924,7 +924,7 @@
   border-bottom-width: 0;
   position: relative;
   padding: 0;
-  padding-top: 2px;
+  padding-top: 8px;
   overflow: hidden;
 }
 .tabs-scroller-left,
@@ -974,7 +974,7 @@
 }
 .tabs {
   list-style-type: none;
-  height: 26px;
+  height: 30px !important;
   margin: 0px;
   padding: 0px;
   padding-left: 4px;
@@ -995,8 +995,8 @@
   text-decoration: none;
   margin: 0;
   padding: 0 10px;
-  height: 25px;
-  line-height: 25px;
+  height: 30px !important;
+  line-height: 30px;
   text-align: center;
   white-space: nowrap;
   border-width: 1px;
