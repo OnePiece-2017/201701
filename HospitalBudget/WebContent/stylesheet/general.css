@@ -15,6 +15,7 @@
 	width: 300px;
 }
 
+
 .mt10 {
 	margin-top: 14px;
 }
@@ -46,6 +47,9 @@
 .pd0-10 {
 	padding: 0 10px;
 }
+.pd0-15 {
+	padding: 0 15px;
+}
 
 .pb30 {
 	padding-bottom: 30px;
@@ -55,6 +59,12 @@
 	padding-bottom: 20px;
 }
 
+.pt10 {
+	padding-top: 10px;
+}
+.pt20 {
+	padding-top: 20px;
+}
 .pt30 {
 	padding-top: 30px;
 }
@@ -76,7 +86,7 @@
 }
 
 .fs14 {
-	font-size: 14px;
+	font-size: 12px;
 }
 
 .a-abbr {
@@ -89,4 +99,8 @@
 /* 阻止remodal修改body的padding-right */
 body {
 	padding-right: 0px !important;
+}
+.btn{
+	font-size: 12px !important;
+	padding: 8px 12px !important;
 }

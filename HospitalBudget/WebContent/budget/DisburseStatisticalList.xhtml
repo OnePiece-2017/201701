@@ -17,7 +17,7 @@
 			.field-name {
 				float: left;
 				width: 85px;
-				padding-right: 15px;
+				padding-right: 18px;
 				font-family: '微软雅黑';
 				text-align: right;
 				line-height: 34px;
@@ -25,7 +25,10 @@
 			}
 			
 			.bs-budget-year .bootstrap-select:not([class*="span"]):not([class*="col-"]):not([class*="form-control"]):not(.input-group-btn) {
-				width: 128px;
+				width: 150px;
+			}
+			.bs-budget-year .bootstrap-select:not([class*="span"]):not([class*="col-"]):not([class*="form-control"]):not(.input-group-btn){
+				width: 150px;
 			}
 			
 			.bs-funds-source .bootstrap-select:not([class*="span"]):not([class*="col-"]):not([class*="form-control"]):not(.input-group-btn) {
@@ -38,7 +41,7 @@
 	</ui:define>
 	<ui:define name="body">
 	#{disburseStatisticalList.wire()}
-	<div class="pd0-10 pt30">
+	<div class="pd0-10">
 		<h:form id="mainForm">
 			<div class="g-data-list-condition">
 					<input type="hidden" name="page" value="1" />
@@ -56,9 +59,7 @@
 							</td>
 							<td width="30%">
 								<div class="fl">
-									<div style="float: left; text-align: center; line-height: 36px; width: 85px; padding-right:15px; box-sizing:border-box;">
-										<span>科室</span>
-									</div>
+									<span class="field-name mb10">科室</span>
 									<select id="departmentIds" class="selectpicker" multiple="multiple" data-live-search="true" title="请选择">
 										<a:repeat value="#{commonDaoHome.departmentInfoListByUserId}" var="_var">
 											<option value="#{_var[0]}">#{_var[1]}</option>
@@ -87,7 +88,7 @@
 									</div>
 				                    <div class="form-group">
 										<div class="input-group date form_date col-md-5">
-											<input id="applyTime" type="text" value="#{expendConfrimList.applyTime}" readonly="readonly" class="form-control mb10 fix--w141" name="time" style="width: 125px;"/> 
+											<input id="applyTime" type="text" value="#{expendConfrimList.applyTime}" readonly="readonly" class="form-control mb10 fix--w150" name="time" style="width: 125px;"/> 
 											<span class="input-group-addon"><span class="glyphicon glyphicon-remove"></span></span>
 											<span class="input-group-addon"><span class="glyphicon glyphicon-calendar"></span></span>
 										</div>
@@ -101,7 +102,7 @@
 									</div>
 					                 <div class="form-group">
 										<div class="input-group date form_date col-md-5">
-											<input id="applyTime" type="text" value="#{expendConfrimList.applyTime}" readonly="readonly" class="form-control mb10 fix--w141" name="time" style="width: 125px;"/> 
+											<input id="applyTime" type="text" value="#{expendConfrimList.applyTime}" readonly="readonly" class="form-control mb10 fix--w150" name="time" style="width: 125px;"/> 
 											<span class="input-group-addon"><span class="glyphicon glyphicon-remove"></span></span>
 											<span class="input-group-addon"><span class="glyphicon glyphicon-calendar"></span></span>
 										</div>
@@ -109,7 +110,7 @@
 								</div>
 							</td>
 							<td>
-								<div class="fl">
+								<div class="fl" style="margin-top: -16px; margin-left:10px;">
 									<h:commandButton styleClass="btn btn-primary mr15" action="/budget/DisburseStatisticalList.xhtml" onclick="return beforeSubmit();" value="搜索" />
 									<h:commandButton styleClass="btn btn-primary mr15"  value="导出" />
 									

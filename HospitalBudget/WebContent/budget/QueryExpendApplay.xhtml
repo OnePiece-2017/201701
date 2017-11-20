@@ -16,11 +16,13 @@
 	</ui:define>
 	<style type="text/css">
 			.bootstrap-select:not([class*="span"]):not([class*="col-"]):not([class*="form-control"]):not(.input-group-btn){
-				width: 120px;
+				width: 150px;
 			}
-			.rich-panel.rich-panel-body {
+			.rich-panel .rich-panel-body {
 				padding: 7px;
 			}
+			.field-name{display: block;margin-bottom: 10px;width: 100%;height: 34px;line-height: 34px;}
+			
 	</style>
 	<ui:define name="body">
 	#{queryExpendApplay.wire()}
@@ -28,23 +30,23 @@
 			<h:form id="mainForm">
 				<input type="hidden" name="page" value="1" />
 				<div>
-				<div class="fl" style="width: 400px;margin-top: 8px;margin-left: 60px;">
+				<div class="fl" style="width: 400px;margin-top: 16px;margin-left: 60px;">
 					<table>
 						<tr >
 							<td  width="30%" style="width:76px;">
-								<span class="field-name mb10">项目名称:</span>
+								<span class="field-name mb10">项目名称</span>
 							</td>
 							<td  width="70%">
-								<input value="#{queryExpendApplay.projectName}"  class="form-control" id="projectName" style="padding: 6px 1px;"/>
+								<input value="#{queryExpendApplay.projectName}"  class="form-control" id="projectName" style="padding: 6px 1px; width:150px;"/>
 							</td>
 						</tr>
 					</table>
 					</div>
-					<div class="fl" style="width:400px;margin-top: 8px;margin-left:60px;">
+					<div class="fl" style="width:400px;margin-top: 16px;margin-left:60px;">
 						<table>
 							<tr>
 								<td valign="middle" width="30%">
-									<span class="field-name mb10">科室:</span>
+									<span class="field-name mb10" style="margin-top: -2px;display: block;">科室</span>
 								</td>
 								<td valign="middle" width="70%">
 									<select id="depart" class="selectpicker">
@@ -65,12 +67,12 @@
 					<table>
 						<tr>
 							<td  width="30%">
-								<span class="field-name mb10">申请时间:</span>
+								<span class="field-name mb10" style="margin-top: -2px;display: block;">申请时间</span>
 							</td>
 							<td  width="70%">
 	                            <div class="form-group" style="width: 178px;">
 									<div class="input-group date form_date col-md-5">
-										<input  type="text" id="applyTime" value="#{queryExpendApplay.expendTime}" readonly="readonly" class="form-control mb10 fix--w141" name="time" style="width: 125px;"/> 
+										<input  type="text" id="applyTime" value="#{queryExpendApplay.expendTime}" readonly="readonly" class="form-control mb10 fix--w150" name="time" style="width: 125px;"/> 
 										<span class="input-group-addon"><span class="glyphicon glyphicon-remove"></span></span>
 										<span class="input-group-addon"><span class="glyphicon glyphicon-calendar"></span></span>
 									</div>
@@ -83,7 +85,7 @@
 					<table>
 						<tr>
 							<td valign="middle" width="30%">
-								<span class="field-name mb10">资金来源:</span>
+								<span class="field-name mb10" style="margin-top: -2px;display: block;">资金来源</span>
 							</td>
 							<td valign="middle" width="70%">
 								<select id="fundsSource" class="selectpicker">
@@ -109,7 +111,7 @@
 					<h:commandButton styleClass="btn btn-primary mt10 ml20" action="/budget/QueryExpendApplay.xhtml" value="搜索" onclick="searchBefore()" style="margin-left: 10px;margin-top: 8px;"/>
 				</div>
 				<div class="fl" >
-					<rich:panel id="exportPanel" style="margin:0; border:none; padding: 0;">
+					<rich:panel id="exportPanel" style="margin-top:-2px; border:none; padding: 0;">
 						<s:link  styleClass="btn btn-primary mr15" view="/budget/QueryExpendApplay.xhtml" action="#{queryExpendApplay.expExcel()}" >导出
                  			<f:param name="departId" value="#{queryExpendApplay.departId}"/>
                  			<f:param name="expendTime" value="#{queryExpendApplay.expendTime}"/>

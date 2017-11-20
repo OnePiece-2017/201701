@@ -42,18 +42,18 @@
 	<ui:define name="body">
 		<!-- sortable回显数据初始化 -->
 		#{permissionAssignmentList.sortableInit4displayOrder()}
-		<div class="g-data-list-condition">
+		<div class="g-data-list-condition pd0-15">
 			<h:form id="mainForm">
 				<input type="hidden" name="page" value="1" />
 				<div class="fl w300">
-					<h:inputText id="keyword" value="#{permissionAssignmentList.keyword}" styleClass="form-control mt10 ml10 keyword" />
+					<h:inputText id="keyword" value="#{permissionAssignmentList.keyword}" styleClass="form-control mt10 keyword" />
 				</div>
-				<div class="fl">
-					<h:commandButton styleClass="btn btn-block btn-primary mt10 ml20" action="/admin/PermissionAssignmentList.xhtml" value="搜索" />
+				<div class="fl ml20">
+					<h:commandButton styleClass="btn btn-block btn-primary mt10" action="/admin/PermissionAssignmentList.xhtml" value="搜索" />
 				</div>
 				<s:fragment rendered="#{s:hasRole('permission_assignment/sort')}">
-					<div class="fl">
-						<a href="#" class="btn btn-block btn-success mt10 ml10" data-reveal-id="revealModal4displayOrder" data-animation="fade">排序</a>
+					<div class="fl ml10">
+						<a href="#" class="btn btn-block btn-success mt10" data-reveal-id="revealModal4displayOrder" data-animation="fade">排序</a>
 					</div>
 				</s:fragment>
 				<s:fragment rendered="#{s:hasRole('permission_assignment/create')}">
