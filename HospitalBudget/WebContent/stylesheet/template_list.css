@@ -1,6 +1,7 @@
 body {
 	min-width: 800px;
 	min-height: 600px;
+	font-size:12px !important;
 }
 
 .g-data-list-condition {
@@ -34,7 +35,7 @@ body {
 .g-data-list-table .record th {
 	height: 42px;
 	background: f9f9f9;
-	font-size: 15px;
+	font-size: 12px;
 	font-weight: normal;
 }
 

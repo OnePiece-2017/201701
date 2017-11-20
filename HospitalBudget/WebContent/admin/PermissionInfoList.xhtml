@@ -15,14 +15,14 @@
 		<script type="text/javascript" src="#{request.contextPath}/common/js/bootstrap.min.js" />
 	</ui:define>
 	<ui:define name="body">
-		<div class="g-data-list-condition">
+		<div class="g-data-list-condition pd0-15">
 			<h:form id="mainForm">
 				<input type="hidden" name="page" value="1" />
 				<div class="fl w300">
-					<h:inputText id="keyword" value="#{permissionInfoList.keyword}" styleClass="form-control mt10 ml10 keyword" />
+					<h:inputText id="keyword" value="#{permissionInfoList.keyword}" styleClass="form-control mt10 keyword" />
 				</div>
-				<div class="fl">
-					<h:commandButton styleClass="btn btn-block btn-primary mt10 ml20" action="/admin/PermissionInfoList.xhtml" value="搜索" />
+				<div class="fl ml20">
+					<h:commandButton styleClass="btn btn-block btn-primary mt10" action="/admin/PermissionInfoList.xhtml" value="搜索" />
 				</div>
 				<s:fragment rendered="#{s:hasRole('permission_management/create')}">
 					<div class="fr">

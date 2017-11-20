@@ -47,8 +47,8 @@ body {
 .div-main-left .function-container .func-outer {
 	/* border: 1px dotted rgba(119, 133, 212, 0.37);
 	width: 166px;
-	height: 38px; */
-	border-radius: 4px;
+	height: 38px; 
+	border-radius: 4px;*/
 	cursor: pointer;
 }
 
@@ -196,6 +196,7 @@ body {
 }
 .main-sidebar{
 	padding-top: 0;
+	font-size: 14px;
 }
 
 .tabs-header, .tabs-tool{
