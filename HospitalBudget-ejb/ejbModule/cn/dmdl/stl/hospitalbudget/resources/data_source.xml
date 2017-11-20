@@ -5,7 +5,7 @@
 	<connection key="hospital_budget" for="1" enabled="true">
 		<url>jdbc:mysql://127.0.0.1:3306/hospital_budget</url>
 		<username>root</username>
-		<password>genganran</password>
+		<password>tiaozhan14</password>
 		<parameter>
 			<item>autoReconnect=true</item>
 			<item>useUnicode=true</item>
@@ -23,9 +23,9 @@
 		</parameter>
 	</connection>
 	<connection key="hospital_budget" for="3" enabled="true">
-		<url>jdbc:mysql://115.28.222.156:3306/hospital_budget</url>
-		<username>root</username>
-		<password>yangzhiyuan2015</password>
+		<url>jdbc:mysql://127.0.0.1:3306/hospital_budget</url>
+		<username>bfh_budget</username>
+		<password>bfh_budget</password>
 		<parameter>
 			<item>autoReconnect=true</item>
 			<item>useUnicode=true</item>
