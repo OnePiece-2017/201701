@@ -183,8 +183,11 @@
 			    if (message != null && message != '') {
 					___msg('温馨提示', message);
 			    }
-			    
-			    jQuery('#budgetYear').val(new Date().getFullYear());
+			    var year = new Date().getFullYear();
+			    if(new Date().getMonth()+1 > 10){
+			    	year = year +1;
+				}
+			    jQuery('#budgetYear').val(year);
 			    jQuery('.selectpicker').selectpicker();
 			    
 			    jQuery('.normal-candidateProject .record').prepend(jQuery('.freeze-candidateProject tbody').html());

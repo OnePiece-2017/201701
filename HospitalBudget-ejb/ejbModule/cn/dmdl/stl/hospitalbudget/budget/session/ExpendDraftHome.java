@@ -446,6 +446,9 @@ public class ExpendDraftHome extends CriterionEntityHome<Object> {
 		if (firstTime) {
 			wireBudgetYearList();// 预算年份list
 			budgetYear = Calendar.getInstance().get(Calendar.YEAR);
+			if(Calendar.getInstance().get(Calendar.MONTH) + 1 > 10){
+				budgetYear ++;
+			}
 			wireFundsSource();// 资金来源list
 			if (fundsSourceList != null && fundsSourceList.size() > 1) {
 				fundsSourceId = Integer.valueOf(fundsSourceList.get(1)[0].toString());
