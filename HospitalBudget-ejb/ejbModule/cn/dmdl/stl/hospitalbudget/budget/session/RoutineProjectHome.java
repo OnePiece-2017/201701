@@ -435,6 +435,9 @@ public class RoutineProjectHome extends CriterionEntityHome<RoutineProject> {
 		userSql.append(" from user_info");
 		userSql.append(" inner join user_info_extend on user_info_extend.user_info_extend_id = user_info.user_info_extend_id");
 		userSql.append(" where user_info.deleted = 0 and user_info.enabled = 1 and user_info.department_info_id is not null");
+		if(null != sessionToken.getDepartmentInfoId()){
+			userSql.append(" and user_info.department_info_id=").append(sessionToken.getDepartmentInfoId());
+		}
 		List<Object[]> userList = getEntityManager().createNativeQuery(userSql.toString()).getResultList();
 		if (userList != null && userList.size() > 0) {
 			for (Object[] user : userList) {
@@ -496,6 +499,9 @@ public class RoutineProjectHome extends CriterionEntityHome<RoutineProject> {
 		dataSql.append(" from user_info");
 		dataSql.append(" inner join user_info_extend on user_info_extend.user_info_extend_id = user_info.user_info_extend_id");
 		dataSql.append(" where user_info.deleted = 0");
+		if(null != sessionToken.getDepartmentInfoId()){
+			dataSql.append(" and user_info.department_info_id=").append(sessionToken.getDepartmentInfoId());
+		}
 		List<Object[]> dataList = getEntityManager().createNativeQuery(dataSql.toString()).getResultList();
 		if (dataList != null && dataList.size() > 0) {
 			for (Object[] data : dataList) {
