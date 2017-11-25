@@ -564,7 +564,9 @@ public class GenericProjectHome extends CriterionEntityHome<GenericProject> {
 		wireFundsSource();// 资金来源list
 		wireBudgetPerson();// 预算人员list
 		wirePersonJson();// 人员json
-
+		if(null != sessionToken.getUserInfoId()){
+			budgetPersonCompilerIds = sessionToken.getUserInfoId().toString();
+		}
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy");
         Date date = new Date();
         startYear = sdf.format(date);

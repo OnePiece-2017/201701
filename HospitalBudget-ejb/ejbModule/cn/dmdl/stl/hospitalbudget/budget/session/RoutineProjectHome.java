@@ -537,7 +537,9 @@ public class RoutineProjectHome extends CriterionEntityHome<RoutineProject> {
 		wireFundsSource();// 资金来源list
 		wireBudgetPerson();// 预算人员list
 		wirePersonJson();// 人员json
-
+		if(null != sessionToken.getUserInfoId()){
+			budgetPersonCompilerIds = sessionToken.getUserInfoId().toString();
+		}
 		if (!isFirstTime) {
 			departmentInfoId = instance.getYsDepartmentInfo() != null ? instance.getYsDepartmentInfo().getTheId() : null;
 
