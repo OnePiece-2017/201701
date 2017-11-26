@@ -24,8 +24,18 @@
 	</connection>
 	<connection key="hospital_budget" for="3" enabled="true">
 		<url>jdbc:mysql://127.0.0.1:3306/hospital_budget</url>
-		<username>bfh_budget</username>
-		<password>bfh_budget</password>
+		<username>nseer</username>
+		<password>BTSnseer#.wl</password>
+		<parameter>
+			<item>autoReconnect=true</item>
+			<item>useUnicode=true</item>
+			<item>characterEncoding=utf-8</item>
+		</parameter>
+	</connection>
+	<connection key="hospital_budget" for="4" enabled="true">
+		<url>jdbc:mysql://192.192.151.102:3306/hospital_budget</url>
+		<username>bfh_rms</username>
+		<password>bfh_rms</password>
 		<parameter>
 			<item>autoReconnect=true</item>
 			<item>useUnicode=true</item>
