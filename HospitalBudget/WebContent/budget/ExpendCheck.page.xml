@@ -6,5 +6,7 @@
    <restrict>#{s:hasRole('expend_check')}</restrict>
    <param name="expendCheckFrom"/>
 
-
+	<param name="year" value="#{expendCheckHome.year}"/>
+	<param name="deptIds" value="#{expendCheckHome.deptIds}"/>
+	<param name="fundsSourceId" value="#{expendCheckHome.fundsSourceId}"/>
 </page>

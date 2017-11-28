@@ -1,5 +1,6 @@
 package cn.dmdl.stl.hospitalbudget.budget.session;
 
+import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.sql.Connection;
@@ -9,13 +10,28 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.Map.Entry;
+
+import javax.faces.context.FacesContext;
+import javax.servlet.http.HttpServletResponse;
 
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 
+import org.apache.poi.hssf.usermodel.HSSFCell;
+import org.apache.poi.hssf.usermodel.HSSFCellStyle;
+import org.apache.poi.hssf.usermodel.HSSFFont;
+import org.apache.poi.hssf.usermodel.HSSFRow;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.hssf.util.HSSFColor;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.ss.util.CellRangeAddress;
+import org.apache.poi.ss.util.RegionUtil;
 import org.jboss.seam.annotations.Name;
 
 import cn.dmdl.stl.hospitalbudget.common.session.CriterionEntityHome;
@@ -584,7 +600,306 @@ public class ExpendCheckHome extends CriterionEntityHome<Object>{
 		result.element("message", "退回成功！");
 		return result;
 	}
+	/**
+	 * 导出
+	 */
+	public void expExcel(){
+		FacesContext ctx = FacesContext.getCurrentInstance();
+		ctx.responseComplete();
+		HttpServletResponse response = (HttpServletResponse) ctx
+				.getExternalContext().getResponse();
+		Workbook workbook = new HSSFWorkbook();
+		// 标题字体
+		HSSFCellStyle colTitleStyle = (HSSFCellStyle) workbook
+				.createCellStyle();
+		HSSFFont titleFont = (HSSFFont) workbook.createFont();
+		titleFont.setFontName("宋体");
+		titleFont.setFontHeightInPoints((short) 16);// 字体大小
+		colTitleStyle.setAlignment(HSSFCellStyle.ALIGN_CENTER);
+		colTitleStyle.setVerticalAlignment(HSSFCellStyle.VERTICAL_CENTER);
+		colTitleStyle.setFont(titleFont);
+		colTitleStyle.setBorderBottom((short) 1);
+		colTitleStyle.setBorderLeft((short) 1);
+		colTitleStyle.setBorderRight((short) 1);
+		colTitleStyle.setBorderTop((short) 1);
+		colTitleStyle.setFillBackgroundColor(HSSFColor.YELLOW.index);
+		// 普通单元格样式
+		HSSFCellStyle colStyle = (HSSFCellStyle) workbook.createCellStyle();
+		HSSFFont colFont = (HSSFFont) workbook.createFont();
+		colFont.setFontName("宋体");
+		colFont.setFontHeightInPoints((short) 11);// 字体大小
+		colStyle.setAlignment(HSSFCellStyle.ALIGN_CENTER);
+		colStyle.setVerticalAlignment(HSSFCellStyle.VERTICAL_CENTER);
+		colStyle.setFont(colFont);
+		colStyle.setBorderBottom((short) 1);
+		colStyle.setBorderLeft((short) 1);
+		colStyle.setBorderRight((short) 1);
+		colStyle.setBorderTop((short) 1);
+		colStyle.setFillForegroundColor(HSSFColor.YELLOW.index);
+
+		int count = 1;
+		String headStr = "支出审核表";
+		Sheet sheet = workbook.createSheet();
+		workbook.setSheetName(count - 1, headStr);
+		int rowIndex = 0;
+		int colIndex = 0;
+
+		CellRangeAddress range = null;
+
+		// 第一行
+		HSSFRow rowTitle = (HSSFRow) sheet.createRow(rowIndex);
+		rowTitle.setHeightInPoints(30f);
+		HSSFCell cellTitle = rowTitle.createCell(colIndex);
+		cellTitle.setCellType(HSSFCell.CELL_TYPE_STRING);
+		cellTitle.setCellValue("支出审核");
+		cellTitle.setCellStyle(colTitleStyle);
+		range = new CellRangeAddress(0, 0, 0, 6);
+		sheet.addMergedRegion(range);
+		excelAddBorder(1, range, sheet, workbook);
+		
+		rowIndex ++;
+		HSSFRow row1 = (HSSFRow) sheet.createRow(rowIndex);
+		row1.setHeightInPoints(20f);
+		HSSFCell nameCol = row1.createCell(colIndex);
+		nameCol.setCellType(HSSFCell.CELL_TYPE_STRING);
+		nameCol.setCellValue("项目名称");
+		nameCol.setCellStyle(colStyle);
+		nameCol.getSheet().setColumnWidth(
+				nameCol.getColumnIndex(), 35 * 120);
+		colIndex++;
+
+		HSSFCell natureCol = row1.createCell(colIndex);
+		natureCol.setCellType(HSSFCell.CELL_TYPE_STRING);
+		natureCol.setCellValue("项目性质");
+		natureCol.setCellStyle(colStyle);
+		natureCol.getSheet().setColumnWidth(natureCol.getColumnIndex(),
+				35 * 120);
+		colIndex++;
+
+		HSSFCell symbolCol = row1.createCell(colIndex);
+		symbolCol.setCellType(HSSFCell.CELL_TYPE_STRING);
+		symbolCol.setCellValue("批准文号");
+		symbolCol.setCellStyle(colStyle);
+		symbolCol.getSheet().setColumnWidth(symbolCol.getColumnIndex(),
+				35 * 120);
+		colIndex++;
+
+		HSSFCell moneyCol = row1.createCell(colIndex);
+		moneyCol.setCellType(HSSFCell.CELL_TYPE_STRING);
+		moneyCol.setCellValue("项目金额（万元）");
+		moneyCol.setCellStyle(colStyle);
+		moneyCol.getSheet().setColumnWidth(moneyCol.getColumnIndex(),
+				35 * 120);
+		colIndex++;
+		
+		HSSFCell addMoneyCol = row1.createCell(colIndex);
+		addMoneyCol.setCellType(HSSFCell.CELL_TYPE_STRING);
+		addMoneyCol.setCellValue("与上一年预算同比增减（万元）");
+		addMoneyCol.setCellStyle(colStyle);
+		addMoneyCol.getSheet().setColumnWidth(addMoneyCol.getColumnIndex(),
+				35 * 200);
+		colIndex++;
+		
+		HSSFCell addPercentCol = row1.createCell(colIndex);
+		addPercentCol.setCellType(HSSFCell.CELL_TYPE_STRING);
+		addPercentCol.setCellValue("与上一年预算同比增率");
+		addPercentCol.setCellStyle(colStyle);
+		addPercentCol.getSheet().setColumnWidth(addPercentCol.getColumnIndex(),
+				35 * 200);
+		colIndex++;
+		
+		HSSFCell commentCol = row1.createCell(colIndex);
+		commentCol.setCellType(HSSFCell.CELL_TYPE_STRING);
+		commentCol.setCellValue("金额额计算依据及备注");
+		commentCol.setCellStyle(colStyle);
+		commentCol.getSheet().setColumnWidth(commentCol.getColumnIndex(),
+				35 * 200);
+		colIndex++;
+		
+		JSONArray draftInfoArray = new JSONArray();
+		StringBuilder sql = new StringBuilder();
+		sql.append("select ed.ys_expand_draft_id, ");
+		sql.append("rp.the_value as project_name, ");
+		sql.append("1 as is_usual, ");
+		sql.append("di.the_value as dept_name, ");
+		sql.append("ed.project_source, ");
+		sql.append("ed.project_amount, ");
+		sql.append("ed.with_last_year_num, ");
+		sql.append("ed.with_last_year_percent, ");
+		sql.append("ed.formula_remark, ");
+		sql.append("ed.attachment, ");
+		sql.append("ed.status, ");
+		sql.append("rp.the_id as project_id, ");
+		sql.append("rp.the_pid, ");
+		sql.append("rp.bottom_level, ");
+		sql.append("rp.top_level_project_id, ");
+		sql.append("edp.process_step_info_id ");
+		sql.append("from ys_expand_draft ed ");
+		sql.append("INNER JOIN routine_project rp ON ed.routine_project_id = rp.the_id AND rp.funds_source_id = ").append(fundsSourceId).append(" ");
+		sql.append("INNER JOIN ys_department_info di ON rp.department_info_id = di.the_id  ");
+		sql.append("INNER JOIN ys_expand_draft_process edp ON ed.ys_expand_draft_id = edp.ys_expand_draft_id ");
+		sql.append("AND edp.user_id = ").append(sessionToken.getUserInfoId()).append(" ");
+		sql.append("WHERE ed.delete = 0 AND ed.year = '").append(year).append("' ");
+		sql.append("GROUP BY ed.ys_expand_draft_id ");
+		sql.append("UNION ");
+		sql.append("select ed.ys_expand_draft_id, ");
+		sql.append("rp.the_value as project_name, ");
+		sql.append("2 as is_usual, ");
+		sql.append("di.the_value as dept_name, ");
+		sql.append("ed.project_source, ");
+		sql.append("ed.project_amount, ");
+		sql.append("ed.with_last_year_num, ");
+		sql.append("ed.with_last_year_percent, ");
+		sql.append("ed.formula_remark, ");
+		sql.append("ed.attachment, ");
+		sql.append("ed.status, ");
+		sql.append("rp.the_id as project_id, ");
+		sql.append("rp.the_pid, ");
+		sql.append("rp.bottom_level, ");
+		sql.append("rp.top_level_project_id, ");
+		sql.append("edp.process_step_info_id ");
+		sql.append("from ys_expand_draft ed ");
+		sql.append("INNER JOIN generic_project rp ON ed.generic_project_id = rp.the_id AND rp.funds_source_id = ").append(fundsSourceId).append(" ");
+		sql.append("INNER JOIN ys_department_info di ON rp.department_info_id = di.the_id  ");
+		sql.append("INNER JOIN ys_expand_draft_process edp ON ed.ys_expand_draft_id = edp.ys_expand_draft_id ");
+		sql.append("AND edp.user_id = ").append(sessionToken.getUserInfoId()).append(" ");
+		sql.append("WHERE ed.delete = 0 AND ed.year = '").append(year).append("' AND ed.status = ").append(HospitalConstant.DRAFTSTATUS_AUDIT).append(" ");
+		sql.append("GROUP BY ed.ys_expand_draft_id ");
+		sql.insert(0, "select * from (").append(") t order by t.top_level_project_id,t.bottom_level ");
+		Connection connection = DataSourceManager.open(DataSourceManager.BY_JDBC_DEFAULT);
+		PreparedStatement preparedStatement = null;
+		ResultSet resultSet = null;
+		try {
+			preparedStatement = connection.prepareStatement(sql.toString());
+			resultSet = preparedStatement.executeQuery();
+			double totalAmount = 0;
+			while(resultSet.next()){
+				JSONObject json = new JSONObject();
+				json.element("ys_expand_draft_id", resultSet.getInt("ys_expand_draft_id"));
+				json.element("project_name", resultSet.getString("project_name"));
+				json.element("is_usual", resultSet.getInt("is_usual"));
+				json.element("dept_name", resultSet.getString("dept_name"));
+				json.element("project_source", URLDecoder.decode(resultSet.getString("project_source"), "utf-8"));
+				json.element("project_amount", resultSet.getDouble("project_amount")/10000);
+				json.element("with_last_year_num", resultSet.getDouble("with_last_year_num"));
+				json.element("with_last_year_percent", resultSet.getDouble("with_last_year_percent"));
+				json.element("formula_remark", URLDecoder.decode(resultSet.getString("formula_remark"), "utf-8"));
+				json.element("attachment", resultSet.getString("attachment"));
+				json.element("status", resultSet.getInt("status"));
+				if(resultSet.getInt("is_usual") == 1){
+					json.element("project_id", "10" + resultSet.getInt("project_id"));//为了多级表格展示处理
+					json.element("the_pid", "10" + resultSet.getInt("the_pid"));
+					json.element("top_level_project_id", "r" + resultSet.getInt("top_level_project_id"));
+				}else{
+					json.element("project_id", "20" + resultSet.getInt("project_id"));
+					json.element("the_pid", "20" + resultSet.getInt("the_pid"));
+					json.element("top_level_project_id", "g" + resultSet.getInt("top_level_project_id"));
+				}
+				if(resultSet.getInt("the_pid") == 0){
+					json.element("is_root", 1);
+				}
+				json.element("bottom_level", resultSet.getInt("bottom_level"));
+				if(resultSet.getInt("bottom_level") == 1){
+					totalAmount += resultSet.getDouble("project_amount");
+				}
+				json.element("process_step_info_id", resultSet.getInt("process_step_info_id"));
+				draftInfoArray.add(json);
+			}
+			
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} catch (UnsupportedEncodingException e) {
+			e.printStackTrace();
+		}finally{
+			DataSourceManager.close(connection, preparedStatement, resultSet);
+		}
+		
+		
+		for(int i = 0;i < draftInfoArray.size(); i++){
+			JSONObject json = draftInfoArray.getJSONObject(i);
+			rowIndex ++;
+			int col = 0;
+			row1 = (HSSFRow) sheet.createRow(rowIndex);
+			row1.setHeightInPoints(20f);
+			nameCol = row1.createCell(col);
+			nameCol.setCellType(HSSFCell.CELL_TYPE_STRING);
+			nameCol.setCellValue(json.get("project_name").toString());
+			nameCol.setCellStyle(colStyle);
+			nameCol.getSheet().setColumnWidth(
+					nameCol.getColumnIndex(), 35 * 120);
+			col++;
+			
+			natureCol = row1.createCell(col);
+			natureCol.setCellType(HSSFCell.CELL_TYPE_STRING);
+			natureCol.setCellValue("1".equals(json.get("is_usual").toString()) ? "常规" : "新增");
+			natureCol.setCellStyle(colStyle);
+			natureCol.getSheet().setColumnWidth(
+					natureCol.getColumnIndex(), 35 * 120);
+			col++;
+			
+			symbolCol = row1.createCell(col);
+			symbolCol.setCellType(HSSFCell.CELL_TYPE_STRING);
+			symbolCol.setCellValue(json.get("project_source").toString());
+			symbolCol.setCellStyle(colStyle);
+			symbolCol.getSheet().setColumnWidth(
+					symbolCol.getColumnIndex(), 35 * 120);
+			col++;
+			
+			moneyCol = row1.createCell(col);
+			moneyCol.setCellType(HSSFCell.CELL_TYPE_STRING);
+			moneyCol.setCellValue(json.get("project_amount").toString());
+			moneyCol.setCellStyle(colStyle);
+			moneyCol.getSheet().setColumnWidth(
+					moneyCol.getColumnIndex(), 35 * 120);
+			col++;
+			
+			addMoneyCol = row1.createCell(col);
+			addMoneyCol.setCellType(HSSFCell.CELL_TYPE_STRING);
+			addMoneyCol.setCellValue(json.get("with_last_year_num").toString());
+			addMoneyCol.setCellStyle(colStyle);
+			addMoneyCol.getSheet().setColumnWidth(
+					addMoneyCol.getColumnIndex(), 35 * 200);
+			col++;
+			
+			addPercentCol = row1.createCell(col);
+			addPercentCol.setCellType(HSSFCell.CELL_TYPE_STRING);
+			addPercentCol.setCellValue(json.get("with_last_year_percent").toString());
+			addPercentCol.setCellStyle(colStyle);
+			addPercentCol.getSheet().setColumnWidth(
+					addPercentCol.getColumnIndex(), 35 * 200);
+			col++;
+			
+			commentCol = row1.createCell(col);
+			commentCol.setCellType(HSSFCell.CELL_TYPE_STRING);
+			commentCol.setCellValue(json.get("formula_remark").toString());
+			commentCol.setCellStyle(colStyle);
+			commentCol.getSheet().setColumnWidth(
+					commentCol.getColumnIndex(), 35 * 200);
+			col++;
+			
+		}
+		
+		response.setContentType("application/vnd.ms-excel");
+		try {
+			response.setHeader("Content-Disposition", "attachment;filename="
+					+ new String("预算审核.xls".getBytes(),
+							"iso-8859-1"));
+			workbook.write(response.getOutputStream());
+		} catch (UnsupportedEncodingException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
 	
+	/** * 添加excel合并后边框属性 */
+	public void excelAddBorder(int arg0, CellRangeAddress range, Sheet sheet,
+			Workbook workbook) {
+		RegionUtil.setBorderBottom(1, range, sheet, workbook);
+		RegionUtil.setBorderLeft(1, range, sheet, workbook);
+		RegionUtil.setBorderRight(1, range, sheet, workbook);
+		RegionUtil.setBorderTop(1, range, sheet, workbook);
+	}
 	public String getYear() {
 		return year;
 	}

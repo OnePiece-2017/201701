@@ -25,7 +25,9 @@
 			.treegrid-indent{
 				width:32px;
 			}
-			
+			.rich-panel-body{
+				    padding: 0px;
+			}
 			.field-name {
 				float: left;
 				width: 85px;
@@ -80,8 +82,17 @@
 							</a:repeat>
 						</select>
 					</div>
-					<div class="fl" style="margin-left:10px;">
-						<a class="btn btn-primary mr15" onclick="return takeBackDraft();">追回所有预算</a>
+					<div class="fl" style="margin-left:10px;width:210px">
+						<div style="float:left;"><a class="btn btn-primary mr15" onclick="return takeBackDraft();">追回所有预算</a></div>
+						<rich:panel id="exportPanel" style="margin:0; border:none; padding: 0;float:left;    padding: 0px;padding-left: 10px;">
+							<s:link  styleClass="btn btn-primary mr15" view="/budget/ExpendCheck.xhtml" action="#{expendCheckHome.expExcel()}" >导出
+                     				<f:param name="year" value="#{expendCheckHome.year}"/>
+                     				<f:param name="deptIds" value="#{expendCheckHome.deptIds}"/>
+                     				<f:param name="fundsSourceId" value="#{expendCheckHome.fundsSourceId}"/>
+                      		</s:link>
+                     	</rich:panel>
+                     	<a:form >
+                       	</a:form>
 					</div>
 				</div>
 			</div>
@@ -133,7 +144,7 @@
 		<h:inputHidden id="departmentInfoIdHidden" value="#{sessionToken.departmentInfoId}" />
 		<a:form>
 			<a:queue requestDelay="100" ignoreDupResponses="true" />
-			<a:jsFunction name="filterCollectionAction"  data="#{expendCheckHome.draftInfo}" oncomplete="wirePage(data);">
+			<a:jsFunction name="filterCollectionAction"  data="#{expendCheckHome.draftInfo}" oncomplete="wirePage(data);" reRender="exportPanel">
 				<a:actionparam name="year" assignTo="#{expendCheckHome.year}" />
 				<a:actionparam name="deptId" assignTo="#{expendCheckHome.deptIds}" />
 				<a:actionparam name="fundsSourceId" assignTo="#{expendCheckHome.fundsSourceId}" />
@@ -141,7 +152,7 @@
 			<a:jsFunction name="goAheadAction"  data="#{expendCheckHome.goAhead()}" oncomplete="goHeadComplete(data);">
 				<a:actionparam name="expandDraftInfo" assignTo="#{expendCheckHome.expandDraftInfo}" />
 			</a:jsFunction>
-			<a:jsFunction name="takeBackDraftAction"  data="#{expendCheckHome.takeBackDraft()}" oncomplete="takeBackDraftComplete(data);">
+			<a:jsFunction name="takeBackDraftAction"  data="#{expendCheckHome.takeBackDraft()}" oncomplete="takeBackDraftComplete(data);" reRender="exportPanel">
 				<a:actionparam name="year" assignTo="#{expendCheckHome.year}" />
 				<a:actionparam name="deptId" assignTo="#{expendCheckHome.deptIds}" />
 			</a:jsFunction>
