@@ -50,6 +50,8 @@ public class ExpendDraftHome extends CriterionEntityHome<Object> {
 	public final String PROJECT_TYPE_GENERIC = "generic";
 	public final String PROJECT_TYPE_ROUTINE = "routine";
 
+	private String projectNatureArrStr;
+	
 	/** 预算年份 */
 	public void wireBudgetYearList() {
 		if (budgetYearList != null) {
@@ -111,6 +113,22 @@ public class ExpendDraftHome extends CriterionEntityHome<Object> {
 				disposeLeaf(departmentInfoList, nexusMap, valueMap, 1, nexusMap.get(root));
 			}
 		}
+	}
+	
+	@SuppressWarnings("unchecked")
+	public void wireProjectNature(){
+		JSONArray projectNatureArr = new JSONArray();
+		String dataSql = "select t.the_id,t.the_value from hospital_budget.ys_project_nature t where t.deleted = 0";
+		List<Object[]> dataList = getEntityManager().createNativeQuery(dataSql).getResultList();
+		if (dataList != null && dataList.size() > 0) {
+			for (Object[] data : dataList) {
+				JSONObject json = new JSONObject();
+				json.element("id", data[0]);
+				json.element("name", data[1]);
+				projectNatureArr.add(json);
+			}
+		}
+		projectNatureArrStr = projectNatureArr.toString();
 	}
 
 	@SuppressWarnings("unchecked")
@@ -456,6 +474,7 @@ public class ExpendDraftHome extends CriterionEntityHome<Object> {
 			wireDepartmentInfo();// 主管科室list
 			departmentInfoId = sessionToken.getDepartmentInfoId();
 
+			wireProjectNature();
 			firstTime = false;
 		}
 	}
@@ -526,6 +545,14 @@ public class ExpendDraftHome extends CriterionEntityHome<Object> {
 
 	public void setGainTamperData2args(String gainTamperData2args) {
 		this.gainTamperData2args = gainTamperData2args;
+	}
+
+	public String getProjectNatureArrStr() {
+		return projectNatureArrStr;
+	}
+
+	public void setProjectNatureArrStr(String projectNatureArrStr) {
+		this.projectNatureArrStr = projectNatureArrStr;
 	}
 
 }
