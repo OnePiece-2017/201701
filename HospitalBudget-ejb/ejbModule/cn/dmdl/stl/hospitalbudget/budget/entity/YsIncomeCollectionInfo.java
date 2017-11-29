@@ -144,8 +144,8 @@ public class YsIncomeCollectionInfo implements java.io.Serializable {
 		this.projectAmount = projectAmount;
 	}
 
-	@Column(name = "formula_remark", length = 300)
-	@Length(max = 300)
+	@Column(name = "formula_remark", length = 500)
+	@Length(max = 500)
 	public String getFormulaRemark() {
 		return this.formulaRemark;
 	}
