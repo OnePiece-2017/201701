@@ -266,6 +266,9 @@ function recoverProject(projectArray, namespace) {
 				} else {
 					itemOuter.find('.field-project-source textarea').val(projectSource);
 				}
+				var projectNature = (projectArray[i]['projectNature']);
+				itemOuter.find('.field-project-nature select').val(projectNature);
+				
 				var formulaRemark = (projectArray[i]['formulaRemark']);
 				if (itemOuter.hasClass('read-only')) {
 					itemOuter.find('.field-formula-remark span').html(formulaRemark);
@@ -359,6 +362,9 @@ function saveData() {
 
 		// 金额计算依据及备注
 		var formulaRemark = jQuery(this).find('.field-formula-remark textarea').val();
+		
+		//项目性质
+		var projectNature = jQuery(this).find('.field-project-nature select').val();
 
 		// 附件
 		var attachment = sgFileupload['getSource'](jQuery(this).find('.field-function .opr-attachment').attr('id'));
@@ -368,6 +374,7 @@ function saveData() {
 		    'projectId' : jQuery(this).attr('project-id'),
 		    'projectAmount' : Number(projectAmount).toFixed(FIX_RANGE_NUM) * 1E4,
 		    'projectSource' : projectSource,
+		    'projectNature' : projectNature,
 		    'formulaRemark' : formulaRemark,
 		    'attachment' : attachment
 		});
@@ -434,6 +441,9 @@ function submitData() {
 		if (readLine) {// 只读行，父类项目
 			// 预算金额
 			var projectAmount = jQuery(this).find('.field-project-amount span').html();
+			
+			//项目性质
+			var projectNature = jQuery(this).find('.field-project-nature select').val();
 
 			// 项目来源
 			var projectSource = "";
@@ -449,6 +459,7 @@ function submitData() {
 			    'projectId' : jQuery(this).attr('project-id'),
 			    'projectAmount' : Number(projectAmount).toFixed(FIX_RANGE_NUM) * 1E4,
 			    'projectSource' : projectSource,
+			    'projectNature' : projectNature,
 			    'formulaRemark' : formulaRemark,
 			    'attachment' : attachment
 			});
@@ -467,6 +478,9 @@ function submitData() {
 
 			// 项目来源
 			var projectSource = jQuery(this).find('.field-project-source textarea').val();
+			
+			//项目性质
+			var projectNature = jQuery(this).find('.field-project-nature select').val();
 
 			// 金额计算依据及备注
 			var formulaRemark = jQuery(this).find('.field-formula-remark textarea').val();
@@ -479,6 +493,7 @@ function submitData() {
 			    'projectId' : jQuery(this).attr('project-id'),
 			    'projectAmount' : Number(projectAmount).toFixed(FIX_RANGE_NUM) * 1E4,
 			    'projectSource' : projectSource,
+			    'projectNature' : projectNature,
 			    'formulaRemark' : formulaRemark,
 			    'attachment' : attachment
 			});

@@ -111,8 +111,8 @@ public class YsExpendCollectionInfo implements java.io.Serializable {
 		this.year = year;
 	}
 
-	@Column(name = "project_source", length = 45)
-	@Length(max = 45)
+	@Column(name = "project_source", length = 1024)
+	@Length(max = 1024)
 	public String getProjectSource() {
 		return this.projectSource;
 	}

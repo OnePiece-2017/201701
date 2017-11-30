@@ -13,7 +13,8 @@
       <jar-file>../../vehicles.jar</jar-file>
       -->
       <properties>
-         <property name="hibernate.dialect" value="org.hibernate.dialect.MySQLDialect"/>
+         <!-- <property name="hibernate.dialect" value="org.hibernate.dialect.MySQLDialect"/> -->
+         <property name="hibernate.dialect" value="cn.dmdl.stl.hospitalbudget.resources.MySQLDialectForHospital"/>
          <property name="hibernate.hbm2ddl.auto" value="none"/>
          <property name="hibernate.show_sql" value="false"/>
          <property name="hibernate.format_sql" value="true"/>

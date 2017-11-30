@@ -36,6 +36,7 @@ import org.jboss.seam.annotations.Name;
 
 import cn.dmdl.stl.hospitalbudget.common.session.CriterionEntityHome;
 import cn.dmdl.stl.hospitalbudget.util.Assit;
+import cn.dmdl.stl.hospitalbudget.util.CommonDaoUtil;
 import cn.dmdl.stl.hospitalbudget.util.DataSourceManager;
 import cn.dmdl.stl.hospitalbudget.util.HospitalConstant;
 
@@ -57,6 +58,7 @@ public class ExpendCheckHome extends CriterionEntityHome<Object>{
 	 * @return
 	 */
 	public JSONObject getDraftInfo(){
+		Map<String, String> projectNatureMap = CommonDaoUtil.getProjectNatureMap();
 		JSONObject draftInfojson = new JSONObject();
 		StringBuilder sql = new StringBuilder();
 		sql.append("select ed.ys_expand_draft_id, ");
@@ -64,6 +66,7 @@ public class ExpendCheckHome extends CriterionEntityHome<Object>{
 		sql.append("1 as is_usual, ");
 		sql.append("di.the_value as dept_name, ");
 		sql.append("ed.project_source, ");
+		sql.append("ed.project_nature, ");
 		sql.append("ed.project_amount, ");
 		sql.append("ed.with_last_year_num, ");
 		sql.append("ed.with_last_year_percent, ");
@@ -88,6 +91,7 @@ public class ExpendCheckHome extends CriterionEntityHome<Object>{
 		sql.append("2 as is_usual, ");
 		sql.append("di.the_value as dept_name, ");
 		sql.append("ed.project_source, ");
+		sql.append("ed.project_nature, ");
 		sql.append("ed.project_amount, ");
 		sql.append("ed.with_last_year_num, ");
 		sql.append("ed.with_last_year_percent, ");
@@ -121,6 +125,7 @@ public class ExpendCheckHome extends CriterionEntityHome<Object>{
 				json.element("project_name", resultSet.getString("project_name"));
 				json.element("is_usual", resultSet.getInt("is_usual"));
 				json.element("dept_name", resultSet.getString("dept_name"));
+				json.element("project_nature", projectNatureMap.get(resultSet.getString("project_nature")));
 				json.element("project_source", URLDecoder.decode(resultSet.getString("project_source"), "utf-8"));
 				json.element("project_amount", resultSet.getDouble("project_amount")/10000);
 				json.element("with_last_year_num", resultSet.getDouble("with_last_year_num"));

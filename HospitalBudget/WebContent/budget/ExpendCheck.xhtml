@@ -227,11 +227,12 @@
 					html += "<tr class='root treegrid-" + val.project_id + "'>";
 				}
 			  	html += "<td style='text-align:left;'>" + val.project_name + "</td>";
-			  	if(val.is_usual == 1){
+			  	html += "<td>" + val.project_nature + "</td>";
+			  	/* if(val.is_usual == 1){
 				  	html += "<td>常规</td>";
 				}else{
 					html += "<td>新增</td>";
-				}
+				} */
 			  	html += "<td>" + val.dept_name + "</td>";
 			  	html += "<td class='field-popup'>" + ___genStdHtml___a_abbr(val.project_source, 13) + "</td>";
 			  	html += "<td>" + val.project_amount + "</td>";

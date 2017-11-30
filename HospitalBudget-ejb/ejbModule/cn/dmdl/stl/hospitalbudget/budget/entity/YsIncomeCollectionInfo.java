@@ -21,7 +21,7 @@ import org.hibernate.validator.NotNull;
 @Entity
 @Table(name = "ys_income_collection_info", catalog = "hospital_budget")
 public class YsIncomeCollectionInfo implements java.io.Serializable {
-
+	private static final long serialVersionUID = 1L;
 	private Integer incomeCollectionInfoId;
 	private int version;
 	private int budgetCollectionDeptId;
@@ -107,8 +107,8 @@ public class YsIncomeCollectionInfo implements java.io.Serializable {
 		this.year = year;
 	}
 
-	@Column(name = "project_source", length = 45)
-	@Length(max = 45)
+	@Column(name = "project_source", length = 1024)
+	@Length(max = 1024)
 	public String getProjectSource() {
 		return this.projectSource;
 	}

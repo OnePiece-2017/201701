@@ -341,7 +341,7 @@ public class ExpendDraftHome extends CriterionEntityHome<Object> {
 		if (args != null && !"".equals(args)) {
 			JSONObject argsJson = JSONObject.fromObject(args);
 			if (argsJson != null && argsJson.has("budgetYear")) {
-				List<Object[]> list = commonTool.selectIntermediate("ys_expand_draft", new String[] { projectIdField, "project_amount", "project_source", "formula_remark", "attachment", "status" }, "status in (0, 1, 2, 3, 4)" + " and draft_type = " + HospitalConstant.DRAFT_TYPE_DRAFT + " and year = " + argsJson.get("budgetYear") + " and insert_user = " + sessionToken.getUserInfoId() + " and " + projectIdField + " in (select the_id from " + projectTable + " where project_type = 2 and top_level_project_id in (select project_id from " + projectCompilerTable + " where user_info_id = " + sessionToken.getUserInfoId() + "))");
+				List<Object[]> list = commonTool.selectIntermediate("ys_expand_draft", new String[] { projectIdField, "project_amount", "project_source", "formula_remark", "attachment", "status" ,"project_nature"}, "status in (0, 1, 2, 3, 4)" + " and draft_type = " + HospitalConstant.DRAFT_TYPE_DRAFT + " and year = " + argsJson.get("budgetYear") + " and insert_user = " + sessionToken.getUserInfoId() + " and " + projectIdField + " in (select the_id from " + projectTable + " where project_type = 2 and top_level_project_id in (select project_id from " + projectCompilerTable + " where user_info_id = " + sessionToken.getUserInfoId() + "))");
 				if (list != null && list.size() > 0) {
 					for (Object[] objects : list) {
 						JSONObject value = new JSONObject();
@@ -358,6 +358,7 @@ public class ExpendDraftHome extends CriterionEntityHome<Object> {
 						value.accumulate("formulaRemark", formulaRemark);
 						value.accumulate("attachment", objects[4] != null ? objects[4].toString() : "");
 						value.accumulate("theStatus", objects[5]);
+						value.accumulate("projectNature", objects[6]);
 						result.add(value);
 					}
 				}
@@ -366,6 +367,14 @@ public class ExpendDraftHome extends CriterionEntityHome<Object> {
 		return result;
 	}
 
+	/**
+	 * 构建编制数据
+	 * @param buildDataAction
+	 * @param projectArray
+	 * @param projectIdField
+	 * @param projectType
+	 * @return
+	 */
 	public boolean buildDataBySection(int buildDataAction, JSONArray projectArray, String projectIdField, String projectType) {
 		boolean result = true;
 		try {
@@ -381,6 +390,7 @@ public class ExpendDraftHome extends CriterionEntityHome<Object> {
 					Map<String, Object> columnToValue = new HashMap<String, Object>();
 					columnToValue.put("project_amount", data.get("projectAmount"));
 					columnToValue.put("project_source", projectSource);
+					columnToValue.put("project_nature", data.get("projectNature"));
 					columnToValue.put("formula_remark", formulaRemark);
 					columnToValue.put("attachment", attachment);
 					columnToValue.put("top_level_project_id", backtrackTopId(projectType, projectId));
@@ -389,7 +399,7 @@ public class ExpendDraftHome extends CriterionEntityHome<Object> {
 					commonTool.updateIntermediate("ys_expand_draft", columnToValue, "ys_expand_draft_id = " + expandDraftId);// 理论上只应有一条匹配记录
 				} else {
 					synchronized (Helper.getInstance()) {
-						commonTool.insertIntermediate("ys_expand_draft", new String[] { projectIdField, "year", "project_amount", "project_source", "formula_remark", "attachment", "top_level_project_id", "with_last_year_num", "with_last_year_percent", "insert_time", "insert_user", "status" }, new Object[] { data.get("projectId"), data.get("budgetYear"), data.get("projectAmount"), projectSource, formulaRemark, attachment, backtrackTopId(projectType, projectId), 0.1, 0.2, DateTimeHelper.dateToStr(new Date(), DateTimeHelper.PATTERN_DATE_TIME), sessionToken.getUserInfoId(), buildDataAction != BUILD_DATA_ACTION_SAVE ? 1 : 0 });
+						commonTool.insertIntermediate("ys_expand_draft", new String[] { projectIdField, "year", "project_amount", "project_source", "formula_remark", "attachment", "top_level_project_id", "with_last_year_num", "with_last_year_percent", "insert_time", "insert_user", "status" , "project_nature"}, new Object[] { data.get("projectId"), data.get("budgetYear"), data.get("projectAmount"), projectSource, formulaRemark, attachment, backtrackTopId(projectType, projectId), 0.1, 0.2, DateTimeHelper.dateToStr(new Date(), DateTimeHelper.PATTERN_DATE_TIME), sessionToken.getUserInfoId(), buildDataAction != BUILD_DATA_ACTION_SAVE ? 1 : 0 , data.get("projectNature")});
 						expandDraftId = commonTool.selectIntermediate("ys_expand_draft", new String[] { "max(ys_expand_draft_id)" }, null).get(0);
 					}
 				}
