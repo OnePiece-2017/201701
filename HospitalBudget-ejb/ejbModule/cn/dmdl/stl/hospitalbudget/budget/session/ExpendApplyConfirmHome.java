@@ -1,5 +1,8 @@
 package cn.dmdl.stl.hospitalbudget.budget.session;
 
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.text.DecimalFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -12,6 +15,8 @@ import java.util.Map;
 
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
+
+
 
 
 
@@ -49,6 +54,7 @@ import cn.dmdl.stl.hospitalbudget.budget.entity.TaskOrder;
 import cn.dmdl.stl.hospitalbudget.budget.entity.TaskUser;
 import cn.dmdl.stl.hospitalbudget.common.session.CriterionEntityHome;
 import cn.dmdl.stl.hospitalbudget.util.Assit;
+import cn.dmdl.stl.hospitalbudget.util.SqlServerJDBCUtil;
 
 @Name("expendApplyConfirmHome")
 public class ExpendApplyConfirmHome extends CriterionEntityHome<ExpendApplyInfo>{
@@ -184,6 +190,25 @@ public class ExpendApplyConfirmHome extends CriterionEntityHome<ExpendApplyInfo>
 		ExpendApplyInfo eai = getEntityManager().find(ExpendApplyInfo.class, eci.getExpend_apply_info_id());
 		eai.setExpendApplyStatus(1);
 		getEntityManager().merge(eai);
+		if(eai.getExplendSource() == 1){
+			Connection conn = SqlServerJDBCUtil.GetConnection();
+			PreparedStatement ps = null;
+			ResultSet rs = null;
+			String updateSql = "update HMMIS_BUDG.dbo.budg_application4expenditure set state=1 and state_date= ? where bill_code=? ";
+			try{
+				java.util.Date date = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss").parse(new SimpleDateFormat("yyyy-MM-dd hh:mm:ss").format(new Date()));//获取系统时间
+				java.sql.Timestamp date1=new java.sql.Timestamp(date.getTime());//
+				ps = conn.prepareStatement(updateSql);
+				ps.setTimestamp(1, date1);
+				ps.setString(2, eai.getExpendApplyCode());
+				ps.executeUpdate();
+			}catch(Exception e){
+				System.out.println(e.getMessage());
+			}finally{
+				SqlServerJDBCUtil.CloseAll(conn, ps, rs);
+			}
+			
+		}
 		//确认单项目表
 		JSONObject jsonObject = JSONObject.fromObject(projectJson);
 		JSONArray expendList = jsonObject.getJSONArray("expend_list");
@@ -261,7 +286,25 @@ public class ExpendApplyConfirmHome extends CriterionEntityHome<ExpendApplyInfo>
 		ExpendApplyInfo eai = getEntityManager().find(ExpendApplyInfo.class, eci.getExpend_apply_info_id());
 		eai.setExpendApplyStatus(2);
 		getEntityManager().merge(eai);
-		
+		if(eai.getExplendSource() == 1){
+			Connection conn = SqlServerJDBCUtil.GetConnection();
+			PreparedStatement ps = null;
+			ResultSet rs = null;
+			String updateSql = "update HMMIS_BUDG.dbo.budg_application4expenditure set state=0 and state_date= ? where bill_code=? ";
+			try{
+				java.util.Date date = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss").parse(new SimpleDateFormat("yyyy-MM-dd hh:mm:ss").format(new Date()));//获取系统时间
+				java.sql.Timestamp date1=new java.sql.Timestamp(date.getTime());//
+				ps = conn.prepareStatement(updateSql);
+				ps.setTimestamp(1, date1);
+				ps.setString(2, eai.getExpendApplyCode());
+				ps.executeUpdate();
+			}catch(Exception e){
+				System.out.println(e.getMessage());
+			}finally{
+				SqlServerJDBCUtil.CloseAll(conn, ps, rs);
+			}
+			
+		}
 		//确认单项目表
 		JSONObject jsonObject = JSONObject.fromObject(projectJson);
 		JSONArray expendList = jsonObject.getJSONArray("expend_list");

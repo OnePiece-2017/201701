@@ -16,6 +16,7 @@
 		<link rel="stylesheet" type="text/css" href="#{request.contextPath}/common/css/bootstrap-select2.min.css" />
 	</ui:define>
 	<ui:define name="body">
+	#{expendApplayList.wire()}
 		<div class="g-data-list-condition">
 			<h:form id="mainForm">
 				<input type="hidden" name="page" value="1" />
@@ -67,7 +68,7 @@
 			        			<!-- <img src="../images/icon_view_16x16.png" /> -->
 			        			<i class="fa fa-search"></i>
 			        		</s:link>
-			        		<s:fragment rendered="#{_result[10] ne 1}">
+			        		<s:fragment rendered="#{_result[10] ne 1 and _result[11] ne 1}">
 				        		<s:link title="编辑" view="/budget/ExpendApplication.xhtml" style="text-decoration: none;" >
 				        			<f:param name="expendApplyInfoId" value="#{_result[0]}" />
 				        			<!-- <img src="../images/icon_edit_16x16.png" /> -->

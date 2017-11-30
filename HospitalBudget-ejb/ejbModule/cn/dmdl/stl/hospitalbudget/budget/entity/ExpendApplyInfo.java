@@ -42,6 +42,7 @@ public class ExpendApplyInfo implements java.io.Serializable{
 	private Date registTime;//登记时间
 	private Integer register;//登记人
 	private Integer expendApplyStatus;//申请单状态 0初始状态 1确认完成 2 确认驳回
+	private int explendSource;
 	
 	@Id
 	@GeneratedValue(strategy = IDENTITY)
@@ -233,6 +234,13 @@ public class ExpendApplyInfo implements java.io.Serializable{
 	}
 	public void setExpendApplyStatus(Integer expendApplyStatus) {
 		this.expendApplyStatus = expendApplyStatus;
+	}
+	@Column(name = "explend_source")
+	public int getExplendSource() {
+		return explendSource;
+	}
+	public void setExplendSource(int explendSource) {
+		this.explendSource = explendSource;
 	}
 	
 	
