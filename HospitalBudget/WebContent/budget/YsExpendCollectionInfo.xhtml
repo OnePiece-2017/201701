@@ -39,7 +39,7 @@
 			            <th width="20%">项目名称</th>
 			            <th width="5%">项目性质</th>
 			            <th width="10%">项目来源</th>
-			            <th width="10%">项目金额(元)</th>
+			            <th width="10%">项目金额(万元)</th>
 			            <th width="10%">与上一年预算<br />同比增减(万元)</th>
 			            <th width="10%">与上一年预算<br />同比增减率</th>
 			            <th width="25%">金额计算依据及备注</th>
@@ -99,11 +99,12 @@
 					console.log(1);
 				}
 			  	html += "<td style='text-align:left;'>" + val.project_name + "</td>";
-			  	if(val.is_usual == 1){
+			  	/* if(val.is_usual == 1){
 				  	html += "<td>常规</td>";
 				}else{
 					html += "<td>新增</td>";
-				}
+				} */
+				html += "<td>" + val.project_nature + "</td>";
 			  	html += "<td class='field-popup'>" + ___genStdHtml___a_abbr(val.project_source, 13) + "</td>";
 			  	html += "<td>" + val.project_amount + "</td>";
 			  	html += "<td>--</td>";

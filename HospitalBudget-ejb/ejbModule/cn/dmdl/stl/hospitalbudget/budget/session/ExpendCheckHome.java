@@ -231,6 +231,7 @@ public class ExpendCheckHome extends CriterionEntityHome<Object>{
 					sql.append("select ed.`year`, ");
 					sql.append("1 as is_usual, ");
 					sql.append("ed.project_source, ");
+					sql.append("ed.project_nature, ");
 					sql.append("ed.top_level_project_id, ");
 					sql.append("ed.routine_project_id as project_id, ");
 					sql.append("ed.project_amount, ");
@@ -245,6 +246,7 @@ public class ExpendCheckHome extends CriterionEntityHome<Object>{
 					sql.append("select ed.`year`, ");
 					sql.append("2 as is_usual, ");
 					sql.append("ed.project_source, ");
+					sql.append("ed.project_nature, ");
 					sql.append("ed.top_level_project_id, ");
 					sql.append("ed.generic_project_id as project_id, ");
 					sql.append("ed.project_amount, ");
@@ -267,6 +269,7 @@ public class ExpendCheckHome extends CriterionEntityHome<Object>{
 						Map<String, Object> map = new HashMap<String, Object>();
 						map.put("year", resultSet.getString("year"));
 						map.put("project_source", resultSet.getString("project_source"));
+						map.put("project_nature", resultSet.getString("project_nature"));
 						map.put("top_level_project_id", resultSet.getInt("top_level_project_id"));
 						map.put("project_amount", resultSet.getDouble("project_amount"));
 						map.put("formula_remark", resultSet.getString("formula_remark"));
@@ -346,12 +349,13 @@ public class ExpendCheckHome extends CriterionEntityHome<Object>{
 					//存储详情表数据
 					for(Map<String, Object> routineInfo : routineProjectList){
 						preparedStatement = connection.prepareStatement("INSERT INTO ys_expend_collection_info(budget_collection_dept_id, "
-								+ "year, project_source, routine_project_id, bottom_level, project_amount, formula_remark, attachment, insert_time, insert_user, version) "
-								+ "VALUES (?,?,?,?,?,?,?,?,now(),?,?)");
+								+ "year, project_source, project_nature, routine_project_id, bottom_level, project_amount, formula_remark, attachment, insert_time, insert_user, version) "
+								+ "VALUES (?,?,?,?,?,?,?,?,?,now(),?,?)");
 						List<Object> parmList = new ArrayList<Object>();
 						parmList.add(collectionDeptIdMap.get(routineInfo.get("department_info_id")));
 						parmList.add(year);
 						parmList.add(routineInfo.get("project_source"));
+						parmList.add(routineInfo.get("project_nature"));
 						parmList.add(routineInfo.get("routine_project_id"));
 						parmList.add(routineInfo.get("bottom_level"));
 						parmList.add(routineInfo.get("project_amount"));
@@ -369,12 +373,13 @@ public class ExpendCheckHome extends CriterionEntityHome<Object>{
 					
 					for(Map<String, Object> gemerocInfo : genericProjectList){
 						preparedStatement = connection.prepareStatement("INSERT INTO ys_expend_collection_info(budget_collection_dept_id, "
-								+ "year, project_source, generic_project_id, bottom_level, project_amount, formula_remark, attachment, insert_time, insert_user, version) "
-								+ "VALUES (?,?,?,?,?,?,?,?,now(),?,?)");
+								+ "year, project_source, project_nature, generic_project_id, bottom_level, project_amount, formula_remark, attachment, insert_time, insert_user, version) "
+								+ "VALUES (?,?,?,?,?,?,?,?,?,now(),?,?)");
 						List<Object> parmList = new ArrayList<Object>();
 						parmList.add(collectionDeptIdMap.get(gemerocInfo.get("department_info_id")));
 						parmList.add(year);
 						parmList.add(gemerocInfo.get("project_source"));
+						parmList.add(gemerocInfo.get("project_nature"));
 						parmList.add(gemerocInfo.get("generic_project_id"));
 						parmList.add(gemerocInfo.get("bottom_level"));
 						parmList.add(gemerocInfo.get("project_amount"));
@@ -503,10 +508,10 @@ public class ExpendCheckHome extends CriterionEntityHome<Object>{
 					//插入历史版本
 					sql.delete(0, sql.length());
 					sql.append("INSERT INTO `ys_expend_collection_info_log` ");
-					sql.append("(`budget_collection_dept_id`, `year`, `project_source`, `routine_project_id`, `generic_project_id`, ");
+					sql.append("(`budget_collection_dept_id`, `year`, `project_source`, `project_nature`, `routine_project_id`, `generic_project_id`, ");
 					sql.append("`bottom_level`, `project_amount`, `formula_remark`, `attachment`, `insert_time`, ");
 					sql.append("`insert_user`, `version`, `delete`) ");
-					sql.append("SELECT budget_collection_dept_id, year, project_source, routine_project_id, generic_project_id, ");
+					sql.append("SELECT budget_collection_dept_id, year, project_source, project_nature, routine_project_id, generic_project_id, ");
 					sql.append("bottom_level, project_amount, formula_remark, attachment, insert_time, ");
 					sql.append("insert_user, version, `delete` FROM ys_expend_collection_info where budget_collection_dept_id = ? ");
 					preparedStatement = connection.prepareStatement(sql.toString());

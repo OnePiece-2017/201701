@@ -6,6 +6,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.util.List;
+import java.util.Map;
 
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
@@ -13,6 +14,7 @@ import net.sf.json.JSONObject;
 import org.jboss.seam.annotations.Name;
 
 import cn.dmdl.stl.hospitalbudget.common.session.CriterionEntityHome;
+import cn.dmdl.stl.hospitalbudget.util.CommonDaoUtil;
 import cn.dmdl.stl.hospitalbudget.util.DataSourceManager;
 
 @Name("ysExpendCollectionInfoHome")
@@ -32,6 +34,7 @@ public class YsExpendCollectionInfoHome extends CriterionEntityHome<Object> {
 	 */
 	@SuppressWarnings("unchecked")
 	public JSONObject getCollectionExpendInfo(){
+		Map<String, String> projectNatureMap = CommonDaoUtil.getProjectNatureMap();
 		//获取明细数据
 		StringBuilder sql = new StringBuilder();
 		sql.append("select rp.the_value as project_name, ");
@@ -45,7 +48,8 @@ public class YsExpendCollectionInfoHome extends CriterionEntityHome<Object> {
 		sql.append("ici.attachment, ");
 		sql.append("ici.expend_collection_info_id, ");
 		sql.append("bcd.status, ");
-		sql.append("rp.top_level_project_id ");
+		sql.append("rp.top_level_project_id, ");
+		sql.append("ici.project_nature ");
 		sql.append("from hospital_budget.ys_budget_collection_dept bcd ");
 		sql.append("INNER JOIN hospital_budget.ys_expend_collection_info ici ON bcd.budget_collection_dept_id = ici.budget_collection_dept_id  ");
 		sql.append("AND ici.`delete` = 0 ");
@@ -63,7 +67,8 @@ public class YsExpendCollectionInfoHome extends CriterionEntityHome<Object> {
 		sql.append("ici.attachment, ");
 		sql.append("ici.expend_collection_info_id, ");
 		sql.append("bcd.status, ");
-		sql.append("rp.top_level_project_id ");
+		sql.append("rp.top_level_project_id, ");
+		sql.append("ici.project_nature ");
 		sql.append("from hospital_budget.ys_budget_collection_dept bcd ");
 		sql.append("INNER JOIN hospital_budget.ys_expend_collection_info ici ON bcd.budget_collection_dept_id = ici.budget_collection_dept_id  ");
 		sql.append("AND ici.`delete` = 0 ");
@@ -93,6 +98,7 @@ public class YsExpendCollectionInfoHome extends CriterionEntityHome<Object> {
 				json.element("attachment", object[8]);
 				json.element("expend_collection_info_id", object[9]);
 				json.element("status", object[10]);
+				json.element("project_nature", projectNatureMap.get(object[12].toString()));
 				collectionInfoArr.add(json);
 			}
 			collectionInfo.element("collection_info", collectionInfoArr);
