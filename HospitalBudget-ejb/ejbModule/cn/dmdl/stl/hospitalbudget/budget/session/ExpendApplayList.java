@@ -20,6 +20,7 @@ import org.jboss.seam.annotations.Name;
 import cn.dmdl.stl.hospitalbudget.budget.entity.ExpendApplyInfo;
 import cn.dmdl.stl.hospitalbudget.budget.entity.ExpendApplyProject;
 import cn.dmdl.stl.hospitalbudget.budget.entity.ExpendConfirmInfo;
+import cn.dmdl.stl.hospitalbudget.budget.entity.ExpendConfirmProject;
 import cn.dmdl.stl.hospitalbudget.common.session.CriterionNativeQuery;
 import cn.dmdl.stl.hospitalbudget.util.SessionToken;
 import cn.dmdl.stl.hospitalbudget.util.SqlServerJDBCUtil;
@@ -53,7 +54,22 @@ public class ExpendApplayList extends CriterionNativeQuery<Object[]> {
 		Connection conn = SqlServerJDBCUtil.GetConnection();
 		PreparedStatement ps = null;
 		ResultSet rs = null;
-		String sql = "select iow_date,bill_code,ven_code,this_payment_money,oper,main_INVOICE_NO,budg_year_money,budg_year_out_money,disbursable_money from HMMIS_BUDG.dbo.budg_application4expenditure where is_sync=0";
+		//String sql = "select iow_date,bill_code,ven_code,this_payment_money,oper,main_INVOICE_NO,budg_year_money,budg_year_out_money,disbursable_money from HMMIS_BUDG.dbo.budg_application4expenditure where is_sync=0";
+		String sql = "select a.iow_date,"//入库时间
+				+ "a.bill_code,"//付款申请单据号
+				+ "a.ven_code,"//收款单位
+				+ "a.this_payment_money,"//本次付款金额
+				+ "a.oper,"//操作人
+				+ "a.main_INVOICE_NO,"//汇总发票号
+				+ "a.budg_year_money,"//年预算金额
+				+ "a.budg_year_out_money,"//已支出金额
+				+ "a.disbursable_money, "//可支出金额
+				+ "b.budg_year,"//年度
+				+ "b.budg_code "//预算类型编码
+				+ "from HMMIS_BUDG.dbo.budg_application4expenditure a,"
+				+ "HMMIS_BUDG.dbo.budg_type_dict b "
+				+ "where a.budg_code=b.budg_code "
+				+ "and a.is_sync=0";
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 		String updateSql = "update HMMIS_BUDG.dbo.budg_application4expenditure set is_sync=1 where bill_code=? ";
 		List<String> codeList = new ArrayList<String>();
@@ -61,16 +77,18 @@ public class ExpendApplayList extends CriterionNativeQuery<Object[]> {
 			ps = conn.prepareStatement(sql);
 			rs = ps.executeQuery();
 			while(rs.next()){
-				String expendApplyCode = rs.getString("bill_code");
-				Date venDate = rs.getDate("iow_date");
-				String oper = rs.getString("oper");
+				String expendApplyCode = rs.getString("bill_code");//单号
+				Date venDate = rs.getDate("iow_date");//申请时间
+				String oper = rs.getString("oper");//操作人
 				String reciveCompany = rs.getString("ven_code");
 				String invoiceNum = rs.getString("main_INVOICE_NO");
-				Float totalMoney = rs.getFloat("this_payment_money");
-				Float budg_year_money = rs.getFloat("budg_year_money");
-				Float budg_year_out_money = rs.getFloat("budg_year_out_money");
-				Float disbursable_money = rs.getFloat("disbursable_money");
+				Float totalMoney = rs.getFloat("this_payment_money");//支出
+				Float budg_year_money = rs.getFloat("budg_year_money");//年预算
+				Float budg_year_out_money = rs.getFloat("budg_year_out_money");//已支出
+				Float disbursable_money = rs.getFloat("disbursable_money");//可支出
+				String year = rs.getString("budg_year");//预算nian
 				String userSql = "select user_info_id from user_info where username='"+oper+"'";
+				String budgCode = rs.getString("budg_code");
 				
 				List<Object> userList = getEntityManager().createNativeQuery(userSql).getResultList();
 				int userId = 0;
@@ -81,7 +99,7 @@ public class ExpendApplayList extends CriterionNativeQuery<Object[]> {
 				//申请单
 				ExpendApplyInfo expendApplyInfo = new ExpendApplyInfo();
 				expendApplyInfo.setExpendApplyCode(expendApplyCode);
-				expendApplyInfo.setYear(venDate.getYear()+"");
+				expendApplyInfo.setYear(year);
 				expendApplyInfo.setApplyUserId(userId);
 				expendApplyInfo.setReciveCompany(reciveCompany);
 				expendApplyInfo.setInvoiceNum(invoiceNum);
@@ -101,7 +119,7 @@ public class ExpendApplayList extends CriterionNativeQuery<Object[]> {
 				
 				ExpendConfirmInfo eci = new ExpendConfirmInfo();
 				eci.setExpend_apply_info_id(expendApplyInfo.getExpendApplyInfoId());
-				eci.setInsertUser(sessionToken.getUserInfoId());
+				eci.setInsertUser(userId);
 				eci.setInsertTime(expendApplyInfo.getInsertTime());
 				eci.setTotalMoney(0f);
 				eci.setConfirm_status(0);
@@ -109,23 +127,35 @@ public class ExpendApplayList extends CriterionNativeQuery<Object[]> {
 				eci.setDeleted(false);
 				getEntityManager().persist(eci);
 				
-				String nepiSql = "select normal_expend_plan_id,project_id,generic_project_id from normal_expend_plan_info where normal_expend_plan_id=10";
+				String nepiSql = "select normal_expend_plan_id,project_id,generic_project_id from normal_expend_plan_info where normal_expend_plan_id=" + budgCode;
 				List<Object[]> nepiList= getEntityManager().createNativeQuery(nepiSql).getResultList();
 				if(null != nepiList &&nepiList.size() > 0){
-					ExpendApplyProject eap = new ExpendApplyProject();
+					ExpendApplyProject eap = new ExpendApplyProject();//申请项目
+					ExpendConfirmProject efp = new ExpendConfirmProject();//确认项目
 					eap.setExpendApplyInfoId(expendApplyInfo.getExpendApplyInfoId());
 					if(null != nepiList.get(0)[1]){
 						eap.setProjectId(Integer.valueOf(nepiList.get(0)[1].toString()));
 					}else{
 						eap.setGenericProjectId(Integer.valueOf(nepiList.get(0)[2].toString()));
 					}
-					eap.setExpendBeforFrozen(0f);
+					eap.setExpendBeforFrozen(budg_year_out_money);
 					eap.setExpendBeforSurplus(disbursable_money);
 					eap.setExpendMoney(totalMoney);
 					eap.setInsertUser(userId);
 					eap.setInsertTime(expendApplyInfo.getInsertTime());
 					eap.setDeleted(false);
 					getEntityManager().persist(eap);
+					
+					
+					efp.setExpend_confirm_info_id(eci.getExpend_confirm_info_id());
+					efp.setExpend_apply_project_id(eap.getExpendApplyProjectId());
+					efp.setExpendBeforFrozen(eap.getExpendBeforFrozen());
+					efp.setExpendBeforSurplus(eap.getExpendBeforSurplus());
+					efp.setProjectId(eap.getProjectId());
+					efp.setGenericProjectId(eap.getGenericProjectId());
+					efp.setDeleted(false);
+					efp.setConfirm_money(eap.getExpendMoney());
+					getEntityManager().persist(efp);
 				}
 				
 			}

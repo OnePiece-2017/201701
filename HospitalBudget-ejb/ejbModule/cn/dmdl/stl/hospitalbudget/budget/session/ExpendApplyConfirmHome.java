@@ -350,7 +350,25 @@ public class ExpendApplyConfirmHome extends CriterionEntityHome<ExpendApplyInfo>
 			eai.setExpendApplyStatus(1);
 			getEntityManager().merge(eai);
 			
-			
+			if(eai.getExplendSource() == 1){
+				Connection conn = SqlServerJDBCUtil.GetConnection();
+				PreparedStatement ps = null;
+				ResultSet rs = null;
+				String updateSql = "update HMMIS_BUDG.dbo.budg_application4expenditure set state=1 and state_date= ? where bill_code=? ";
+				try{
+					java.util.Date date = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss").parse(new SimpleDateFormat("yyyy-MM-dd hh:mm:ss").format(new Date()));//获取系统时间
+					java.sql.Timestamp date1=new java.sql.Timestamp(date.getTime());//
+					ps = conn.prepareStatement(updateSql);
+					ps.setTimestamp(1, date1);
+					ps.setString(2, eai.getExpendApplyCode());
+					ps.executeUpdate();
+				}catch(Exception e){
+					System.out.println(e.getMessage());
+				}finally{
+					SqlServerJDBCUtil.CloseAll(conn, ps, rs);
+				}
+				
+			}
 			eci.setUpdateTime(new Date());
 			eci.setTotalMoney(eai.getTotalMoney());
 			eci.setConfirmUser(sessionToken.getUserInfoId());
