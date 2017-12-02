@@ -167,18 +167,23 @@ body {
 }
 
 .div-main-right .jeasyui-tabs-loading-wrapper {
-	background: url(../../images/img_block_1_8x8.png);
+	/* background: url(../../images/img_block_1_8x8.png); */
+	text-align: center;
+	padding-top: 100px;
+	box-sizing: border-box;
 }
 
 .div-main-right .jeasyui-tabs-loading-contents {
 	width: 128px;
 	height: 128px;
 	position: absolute;
+	top:50%;
+	left: 50%;
 	background: url(../../images/ani/ajax.gif) no-repeat center;
 	background-size: 128px 128px;
 	opacity: 0.32;
-	margin-left: 32px;
-	margin-top: 32px;
+	margin-left: -64px;
+	margin-top: -64px;
 }
 
 .div-main-right .jeasyui-tabs-loading-on-cancel {
