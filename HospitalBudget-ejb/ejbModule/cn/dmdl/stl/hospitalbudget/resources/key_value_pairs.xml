@@ -48,10 +48,10 @@
 
 	<!-- org.apache.commons.fileupload.disk.DiskFileItemFactory.repository -->
 	<item key="fileupload.repository" for="1" enabled="true">
-		<value>D:/.temp/</value>
+		<value>D:/new_budget/temp/</value>
 	</item>
 	<item key="fileupload.repository" for="2" enabled="true">
-		<value>D:/.temp/</value>
+		<value>C:/hospital_budget/temp/</value>
 	</item>
 	<item key="fileupload.repository" for="3" enabled="true">
 		<value>D:/.temp/</value>
@@ -59,10 +59,10 @@
 
 	<!-- 根存储路径 -->
 	<item key="storage.path.root" for="1" enabled="true">
-		<value>D:/.webroot/upload/</value>
+		<value>D:/new_budget/upload/</value>
 	</item>
 	<item key="storage.path.root" for="2" enabled="true">
-		<value>D:/.webroot/upload/</value>
+		<value>C:/hospital_budget/upload/</value>
 	</item>
 	<item key="storage.path.root" for="3" enabled="true">
 		<value>D:/.webroot/upload/</value>
