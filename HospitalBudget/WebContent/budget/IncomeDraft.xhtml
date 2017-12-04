@@ -1,0 +1,196 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:s="http://jboss.com/products/seam/taglib"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:a="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich"
+	template="/layout/template_edit.xhtml">
+
+	<ui:define name="head">
+		<link rel="stylesheet" type="text/css" href="#{request.contextPath}/common/css/bootstrap.min.css" />
+		<link rel="stylesheet" type="text/css" href="#{request.contextPath}/common/css/bootstrap-select.min.css" />
+		<style type="text/css">
+			.field-name {
+				float: left;
+				width: 85px;
+				padding-right: 15px;
+				font-family: '微软雅黑';
+				text-align: right;
+				line-height: 34px;
+				display: block;
+			}
+			
+			.bs-budget-year .bootstrap-select:not([class*="span"]):not([class*="col-"]):not([class*="form-control"]):not(.input-group-btn) {
+				width: 128px;
+			}
+			
+			.bs-funds-source .bootstrap-select:not([class*="span"]):not([class*="col-"]):not([class*="form-control"]):not(.input-group-btn) {
+				width: 192px;
+			}
+			
+			.sg-fu-custom--attachment {
+			}
+		</style>
+		<link rel="stylesheet" type="text/css" href="#{request.contextPath}/sg-reminder/css/sg-reminder.css" />
+		<link rel="stylesheet" type="text/css" href="#{request.contextPath}/sg-inputbox/css/sg-inputbox.css" />
+		<link rel="stylesheet" type="text/css" href="#{request.contextPath}/sg-fileupload/css/kernel.css" />
+		<link rel="stylesheet" type="text/css" href="#{request.contextPath}/stylesheet/budget/income-draft.css" />
+	</ui:define>
+
+	<ui:define name="body">
+		#{incomeDraftHome.wire()}
+			<div class="pd0-10">
+				<div class="pt20 fs14">
+					<div style="width: 100%; height: 34px;">
+						<div class="fl bs-budget-year">
+							<span class="field-name mb10">预算年份</span>
+							<select id="budgetYear" class="selectpicker">
+								<a:repeat value="#{incomeDraftHome.budgetYearList}" var="_var">
+									<option value="#{_var[0]}">#{_var[1]}</option>
+								</a:repeat>
+							</select>
+						</div>
+						<div class="fl bs-funds-source">
+							<span class="field-name mb10">资金来源</span>
+							<select id="fundsSourceId" class="selectpicker" data-live-search="true">
+								<a:repeat value="#{incomeDraftHome.fundsSourceList}" var="_var">
+									<option value="#{_var[0]}">#{_var[1]}</option>
+								</a:repeat>
+							</select>
+						</div>
+						<div class="fl">
+							<span class="field-name mb10">主管科室</span>
+							<select id="departmentInfoId" class="selectpicker" data-live-search="true">
+								<a:repeat value="#{commonDaoHome.departmentInfoListByUserId}" var="_var">
+									<option value="#{_var[0]}">#{_var[1]}</option>
+								</a:repeat>
+							</select>
+						</div>
+					</div>
+				</div>
+				<div class="not-exist-data-panel">
+					<img class="icon" src="../images/icon_info_32x32.png" />
+					<strong class="message">暂无数据！</strong>
+				</div>
+				<div class="draft-table-head exist-data-panel">
+					<div class="task-name">
+						<span>支出预算编制</span>
+					</div>
+					<div class="total-amount-label">
+						<span>总金额（单位：万元）</span>
+					</div>
+					<div class="total-amount-value">
+						<span>0.00</span>
+					</div>
+					<div class="btn-reference">
+						<span>参考</span>
+					</div>
+					<div class="btn-reminder-service stopped">
+						<span title="当输入控件获得焦点时&#10;提示相关约束信息&#10;例如：&#10;字段【金额计算依据及备注】">提示</span>
+					</div>
+				</div>
+				<!-- <div class="draft-table"> -->
+					<div class="draft-table-title exist-data-panel">
+						<ul class="data-container">
+							<li>
+								<div class="item-outer">
+									<div class="item-inner">
+										<div class="toggle">
+											<span></span>
+										</div>
+										<div class="generic-field edge-end field-id">
+											<span>ID</span>
+										</div>
+										<div class="generic-field edge-end field-project-name">
+											<span>项目名称</span>
+										</div>
+										<div class="generic-field edge-end field-project-nature">
+											<span>项目性质</span>
+										</div>
+										<div class="generic-field edge-end field-funds-source">
+											<span>资金来源</span>
+										</div>
+										<!-- <div class="generic-field edge-end field-department-name">
+											<span>主管科室</span>
+										</div> -->
+										<div class="generic-field edge-end field-project-source">
+											<span>批准文号</span>
+										</div>
+										<div class="generic-field edge-end field-project-amount">
+											<span>预算金额（万元）</span>
+										</div>
+										<div class="generic-field edge-end field-formula-remark">
+											<span>金额计算依据及备注</span>
+										</div>
+										<div class="generic-field edge-end field-the-status">
+											<span>状态</span>
+										</div>
+										<div class="generic-field field-function">
+											<span class="the-label">操作</span>
+										</div>
+									</div>
+								</div>
+							</li>
+						</ul>
+					</div>
+					<div class="draft-table-body exist-data-panel">
+						<ul class="data-container"><!-- js填充 --></ul>
+					</div>
+				<!-- </div> -->
+				<div class="pt50 pb95 exist-data-panel">
+					<table class="normal-btn">
+						<tr>
+							<td>
+								<h:inputHidden id="budgetYearHidden" value="#{incomeDraftHome.budgetYear}" />
+								<h:inputHidden id="fundsSourceIdHidden" value="#{incomeDraftHome.fundsSourceId}" />
+								<h:inputHidden id="departmentInfoIdHidden" value="#{incomeDraftHome.departmentInfoId}" />
+								<a class="btn btn-success mr15" onclick="saveData();">保存</a>
+								<a class="btn btn-primary mr15" onclick="submitData();">提交</a>
+							</td>
+						</tr>
+					</table>
+					<br />
+					<br />
+				</div>
+			</div>
+		<a:form>
+			<a:queue requestDelay="100" ignoreDupResponses="true" />
+			<a:jsFunction name="gainOriginalData2trigger" action="#{incomeDraftHome.gainOriginalData2action}" data="#{incomeDraftHome.gainOriginalData2result}" oncomplete="gainOriginalData2callback(data);">
+				<a:actionparam name="gainOriginalData2args" assignTo="#{incomeDraftHome.gainOriginalData2args}" />
+			</a:jsFunction>
+			<a:jsFunction name="gainTamperData2trigger" action="#{incomeDraftHome.gainTamperData2action}" data="#{incomeDraftHome.gainTamperData2result}" oncomplete="gainTamperData2callback(data);">
+				<a:actionparam name="gainTamperData2args" assignTo="#{incomeDraftHome.gainTamperData2args}" />
+			</a:jsFunction>
+			<a:jsFunction name="saveData2trigger" action="#{incomeDraftHome.saveData2action}" data="#{incomeDraftHome.saveData2result}" oncomplete="saveData2callback(data);">
+				<a:actionparam name="saveData2args" assignTo="#{incomeDraftHome.saveData2args}" />
+			</a:jsFunction>
+			<a:jsFunction name="submitData2trigger" action="#{incomeDraftHome.submitData2action}" data="#{incomeDraftHome.submitData2result}" oncomplete="submitData2callback(data);">
+				<a:actionparam name="submitData2args" assignTo="#{incomeDraftHome.submitData2args}" />
+			</a:jsFunction>
+		</a:form>
+		<script type="text/javascript" src="#{request.contextPath}/common/js/bootstrap.min.js" />
+		<script type="text/javascript" src="#{request.contextPath}/common/js/bootstrap-select.min.js" charset="UTF-8" />
+		<script type="text/javascript" src="#{request.contextPath}/common/js/bootstrap-select-defaults-zh_CN.min.js" charset="UTF-8" />
+		<script type="text/javascript" src="#{request.contextPath}/sg-reminder/js/sg-reminder.js" />
+		<script type="text/javascript" src="#{request.contextPath}/sg-inputbox/js/sg-inputbox.js" />
+		<script type="text/javascript" src="#{request.contextPath}/sg-fileupload/js/kernel.js" />
+		<script type="text/javascript" src="#{request.contextPath}/javascript/budget/income-draft.js" />
+		<script type="text/javascript" src="#{request.contextPath}/toolkit/utils.js" />
+		<script type="text/javascript">
+		//<![CDATA[
+			jQuery(document).ready(function() {
+			    var message = '#{incomeDraftHome.message}';
+			    if (message != '') {
+					___msg('温馨提示', message);
+			    }
+			});
+
+			var projectNatureArr = eval('#{incomeDraftHome.projectNatureArrStr}');
+		//]]>
+		</script>
+	</ui:define>
+
+</ui:composition>
