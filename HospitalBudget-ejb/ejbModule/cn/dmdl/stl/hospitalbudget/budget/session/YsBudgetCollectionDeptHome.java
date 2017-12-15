@@ -15,6 +15,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
 
 import javax.faces.context.FacesContext;
 import javax.servlet.http.HttpServletResponse;
@@ -36,6 +37,7 @@ import org.jboss.seam.annotations.Name;
 
 import cn.dmdl.stl.hospitalbudget.common.session.CriterionEntityHome;
 import cn.dmdl.stl.hospitalbudget.hospital.entity.YsDepartmentInfo;
+import cn.dmdl.stl.hospitalbudget.hospital.entity.YsProjectNature;
 import cn.dmdl.stl.hospitalbudget.util.Assit;
 import cn.dmdl.stl.hospitalbudget.util.DataSourceManager;
 import cn.dmdl.stl.hospitalbudget.util.HospitalConstant;
@@ -410,7 +412,7 @@ public class YsBudgetCollectionDeptHome extends CriterionEntityHome<Object> {
 		int colIndex = 0;
 
 		CellRangeAddress range = null;
-
+		List<YsProjectNature> pnList = queryAllProjectNature();
 		// 第一行
 		HSSFRow rowTitle = (HSSFRow) sheet.createRow(rowIndex);
 		rowTitle.setHeightInPoints(30f);
@@ -418,7 +420,7 @@ public class YsBudgetCollectionDeptHome extends CriterionEntityHome<Object> {
 		cellTitle.setCellType(HSSFCell.CELL_TYPE_STRING);
 		cellTitle.setCellValue("预算汇总");
 		cellTitle.setCellStyle(colTitleStyle);
-		range = new CellRangeAddress(0, 0, 0, 3);
+		range = new CellRangeAddress(0, 0, 0, 3+pnList.size());
 		sheet.addMergedRegion(range);
 		excelAddBorder(1, range, sheet, workbook);
 		
@@ -440,7 +442,27 @@ public class YsBudgetCollectionDeptHome extends CriterionEntityHome<Object> {
 		moneyCol.getSheet().setColumnWidth(moneyCol.getColumnIndex(),
 				35 * 160);
 		colIndex++;
-
+		
+		//各科室表头
+		
+		Map<Integer,String> natureNameMap = new HashMap<Integer,String>();
+	
+		Double[]  pnTotal = new Double[pnList.size()]; 
+		for(int t=0;t<pnTotal.length; t++){
+			pnTotal[t] = 0d;
+		}
+		for(int pn=0;pn<pnList.size();pn++){
+			YsProjectNature ypn = pnList.get(pn);
+			row1.createCell(colIndex);
+			row1.getCell(colIndex).setCellType(HSSFCell.CELL_TYPE_STRING);
+			row1.getCell(colIndex).setCellValue("其中："+ypn.getTheValue());
+			row1.getCell(colIndex).setCellStyle(colStyle);
+			row1.getCell(colIndex).getSheet().setColumnWidth(row1.getCell(colIndex).getColumnIndex(),
+					35 * 160);
+			colIndex++;
+			natureNameMap.put(ypn.getTheId(), ypn.getTheValue());
+		}
+		
 		HSSFCell adjustMoney = row1.createCell(colIndex);
 		adjustMoney.setCellType(HSSFCell.CELL_TYPE_STRING);
 		adjustMoney.setCellValue("调整金额");
@@ -448,7 +470,7 @@ public class YsBudgetCollectionDeptHome extends CriterionEntityHome<Object> {
 		adjustMoney.getSheet().setColumnWidth(adjustMoney.getColumnIndex(),
 				35 * 160);
 		colIndex++;
-
+		
 		HSSFCell adjustPercet = row1.createCell(colIndex);
 		adjustPercet.setCellType(HSSFCell.CELL_TYPE_STRING);
 		adjustPercet.setCellValue("调整比例");
@@ -458,15 +480,16 @@ public class YsBudgetCollectionDeptHome extends CriterionEntityHome<Object> {
 		colIndex++;
 		filterBudgetCollectionInfo();
 		JSONArray incomeArray = budgetCollectionInfo.getJSONArray("expend");
-		for(int i = 0;i < incomeArray.size(); i++){
-			JSONObject json = incomeArray.getJSONObject(i);
+		List<Object[]> sheet1Data = getAllExportData(incomeArray);
+		for(int i = 0;i < sheet1Data.size(); i++){
+			Object[] obj = sheet1Data.get(i);
 			rowIndex ++;
 			int col = 0;
 			row1 = (HSSFRow) sheet.createRow(rowIndex);
 			row1.setHeightInPoints(20f);
 			deptCol = row1.createCell(col);
 			deptCol.setCellType(HSSFCell.CELL_TYPE_STRING);
-			deptCol.setCellValue(json.get("dept_name").toString());
+			deptCol.setCellValue(obj[0].toString());
 			deptCol.setCellStyle(colStyle);
 			deptCol.getSheet().setColumnWidth(
 					deptCol.getColumnIndex(), 35 * 160);
@@ -474,15 +497,27 @@ public class YsBudgetCollectionDeptHome extends CriterionEntityHome<Object> {
 			
 			moneyCol = row1.createCell(col);
 			moneyCol.setCellType(HSSFCell.CELL_TYPE_STRING);
-			moneyCol.setCellValue(json.get("total_amount").toString());
+			moneyCol.setCellValue(obj[1].toString());
 			moneyCol.setCellStyle(colStyle);
 			moneyCol.getSheet().setColumnWidth(
 					moneyCol.getColumnIndex(), 35 * 160);
 			col++;
+			//各科室性质钱
+			for(int pn=0;pn<pnList.size();pn++){
+				YsProjectNature ypn = pnList.get(pn);
+				row1.createCell(col);
+				row1.getCell(col).setCellType(HSSFCell.CELL_TYPE_STRING);
+				row1.getCell(col).setCellValue(new Double(obj[2+pn].toString())/10000);
+				row1.getCell(col).setCellStyle(colStyle);
+				row1.getCell(col).getSheet().setColumnWidth(row1.getCell(col).getColumnIndex(),
+						35 * 160);
+				pnTotal[pn] += new Double(obj[2+pn].toString())/10000;
+				col++;
+			}
 			
 			adjustMoney = row1.createCell(col);
 			adjustMoney.setCellType(HSSFCell.CELL_TYPE_STRING);
-			adjustMoney.setCellValue(json.get("with_last_year_num").toString());
+			adjustMoney.setCellValue(obj[obj.length-2].toString());
 			adjustMoney.setCellStyle(colStyle);
 			adjustMoney.getSheet().setColumnWidth(
 					adjustMoney.getColumnIndex(), 35 * 160);
@@ -490,7 +525,7 @@ public class YsBudgetCollectionDeptHome extends CriterionEntityHome<Object> {
 			
 			adjustPercet = row1.createCell(col);
 			adjustPercet.setCellType(HSSFCell.CELL_TYPE_STRING);
-			adjustPercet.setCellValue(json.get("with_last_year_percent").toString());
+			adjustPercet.setCellValue(obj[obj.length-1].toString());
 			adjustPercet.setCellStyle(colStyle);
 			adjustPercet.getSheet().setColumnWidth(
 					adjustPercet.getColumnIndex(), 35 * 90);
@@ -517,6 +552,17 @@ public class YsBudgetCollectionDeptHome extends CriterionEntityHome<Object> {
 				moneyCol.getColumnIndex(), 35 * 160);
 		col++;
 		
+		//各科室性质钱
+		for(int pn=0;pn<pnList.size();pn++){
+			YsProjectNature ypn = pnList.get(pn);
+			row1.createCell(col);
+			row1.getCell(col).setCellType(HSSFCell.CELL_TYPE_STRING);
+			row1.getCell(col).setCellValue(pnTotal[pn]);
+			row1.getCell(col).setCellStyle(colStyle);
+			row1.getCell(col).getSheet().setColumnWidth(row1.getCell(col).getColumnIndex(),
+					35 * 160);
+			col++;
+		}
 		adjustMoney = row1.createCell(col);
 		adjustMoney.setCellType(HSSFCell.CELL_TYPE_STRING);
 		adjustMoney.setCellValue("");
@@ -569,6 +615,9 @@ public class YsBudgetCollectionDeptHome extends CriterionEntityHome<Object> {
 		while(it.hasNext()){
 			Entry<Integer, List<Object[]>> entry = it.next();
 			List<Object[]> projectList = entry.getValue();
+			
+			
+			int deptId = entry.getKey();
 			count ++;
 			String dept = projectList.get(0)[1].toString();
 			sheet = workbook.createSheet();
@@ -590,6 +639,14 @@ public class YsBudgetCollectionDeptHome extends CriterionEntityHome<Object> {
 			rowIndex ++;
 			row1 = (HSSFRow) sheet.createRow(rowIndex);
 			row1.setHeightInPoints(30f);
+			HSSFCell natrueNameCol = row1.createCell(colIndex);
+			natrueNameCol.setCellType(HSSFCell.CELL_TYPE_STRING);
+			natrueNameCol.setCellValue("项目性质");
+			natrueNameCol.setCellStyle(colStyle);
+			natrueNameCol.getSheet().setColumnWidth(
+					natrueNameCol.getColumnIndex(), 35 * 100);
+			colIndex++;
+			
 			HSSFCell numCol = row1.createCell(colIndex);
 			numCol.setCellType(HSSFCell.CELL_TYPE_STRING);
 			numCol.setCellValue("序号");
@@ -606,17 +663,17 @@ public class YsBudgetCollectionDeptHome extends CriterionEntityHome<Object> {
 					projectName.getColumnIndex(), 35 * 100);
 			colIndex++;
 
-			HSSFCell projectType = row1.createCell(colIndex);
-			projectType.setCellType(HSSFCell.CELL_TYPE_STRING);
-			projectType.setCellValue("项目性质");
-			projectType.setCellStyle(colStyle);
-			projectType.getSheet().setColumnWidth(projectType.getColumnIndex(),
-					35 * 100);
-			colIndex++;
+//			HSSFCell projectType = row1.createCell(colIndex);
+//			projectType.setCellType(HSSFCell.CELL_TYPE_STRING);
+//			projectType.setCellValue("批准文号");
+//			projectType.setCellStyle(colStyle);
+//			projectType.getSheet().setColumnWidth(projectType.getColumnIndex(),
+//					35 * 100);
+//			colIndex++;
 
 			HSSFCell sourceCol = row1.createCell(colIndex);
 			sourceCol.setCellType(HSSFCell.CELL_TYPE_STRING);
-			sourceCol.setCellValue("项目来源");
+			sourceCol.setCellValue("批准文号");
 			sourceCol.setCellStyle(colStyle);
 			sourceCol.getSheet().setColumnWidth(sourceCol.getColumnIndex(),
 					35 * 100);
@@ -661,89 +718,129 @@ public class YsBudgetCollectionDeptHome extends CriterionEntityHome<Object> {
 			comment.getSheet().setColumnWidth(comment.getColumnIndex(),
 					35 * 100);
 			colIndex++;
+			rowIndex ++;
+			Map<Integer,List<Object[]>> natureMap = getNatureProjectMap(projectList);
+			Set<Entry<Integer, List<Object[]>>> natureit = natureMap.entrySet();
 			
-			for(int i = 0;i < projectList.size(); i++){
-				Object[] project = projectList.get(i);
-				rowIndex ++;
-				 col = 0;
+			Double total33 = 0d;
+			for(Entry<Integer, List<Object[]>> entry22: natureit){
+				colIndex = 0;
+				List<Object[]> natureList = entry22.getValue();
+				int goodsRow = rowIndex;
+				
+				double natureMon = 0d;
+				for(int i = 0;i < natureList.size(); i++){
+					Object[] nl = natureList.get(i);
+					colIndex = 1;
+					row1 = (HSSFRow) sheet.createRow(rowIndex);
+					natrueNameCol = row1.createCell(0);
+					natrueNameCol.setCellType(HSSFCell.CELL_TYPE_STRING);
+					natrueNameCol.setCellValue(natureNameMap.get(entry22.getKey()));
+					natrueNameCol.setCellStyle(colStyle1);
+					natrueNameCol.getSheet().setColumnWidth(
+							natrueNameCol.getColumnIndex(), 35 * 100);
+					
+					
+					numCol = row1.createCell(colIndex);
+					numCol.setCellType(HSSFCell.CELL_TYPE_STRING);
+					numCol.setCellValue(i + 1);
+					numCol.setCellStyle(colStyle1);
+					numCol.getSheet().setColumnWidth(
+							numCol.getColumnIndex(), 35 * 30);
+					colIndex++;
+					
+					projectName = row1.createCell(colIndex);
+					projectName.setCellType(HSSFCell.CELL_TYPE_STRING);
+					projectName.setCellValue(nl[0].toString());
+					projectName.setCellStyle(colStyle1);
+					projectName.getSheet().setColumnWidth(
+							projectName.getColumnIndex(), 35 * 100);
+					colIndex++;
+					
+//					projectType = row1.createCell(colIndex);
+//					projectType.setCellType(HSSFCell.CELL_TYPE_STRING);
+//					projectType.setCellValue("");
+//					projectType.setCellStyle(colStyle1);
+//					projectType.getSheet().setColumnWidth(
+//							projectType.getColumnIndex(), 35 * 100);
+//					colIndex++;
+					
+					sourceCol = row1.createCell(colIndex);
+					sourceCol.setCellType(HSSFCell.CELL_TYPE_STRING);
+					sourceCol.setCellValue(nl[2].toString());
+					sourceCol.setCellStyle(colStyle1);
+					sourceCol.getSheet().setColumnWidth(
+							sourceCol.getColumnIndex(), 35 * 100);
+					colIndex++;
+					
+					
+					projectMoney = row1.createCell(colIndex);
+					projectMoney.setCellType(HSSFCell.CELL_TYPE_STRING);
+					projectMoney.setCellValue(nl[3].toString());
+					projectMoney.setCellStyle(colStyle1);
+					projectMoney.getSheet().setColumnWidth(
+							projectMoney.getColumnIndex(), 35 * 100);
+					colIndex++;
+					
+					calculBasis = row1.createCell(colIndex);
+					calculBasis.setCellType(HSSFCell.CELL_TYPE_STRING);
+					calculBasis.setCellValue(nl[4].toString());
+					calculBasis.setCellStyle(colStyle1);
+					calculBasis.getSheet().setColumnWidth(
+							calculBasis.getColumnIndex(), 35 * 100);
+					colIndex++;
+					
+					addMoney = row1.createCell(colIndex);
+					addMoney.setCellType(HSSFCell.CELL_TYPE_STRING);
+					addMoney.setCellValue(nl[5] == null ? "" : nl[5].toString());
+					addMoney.setCellStyle(colStyle1);
+					addMoney.getSheet().setColumnWidth(
+							addMoney.getColumnIndex(), 35 * 100);
+					colIndex++;
+					
+					addPercent = row1.createCell(colIndex);
+					addPercent.setCellType(HSSFCell.CELL_TYPE_STRING);
+					addPercent.setCellValue(nl[6] == null ? "" : nl[6].toString());
+					addPercent.setCellStyle(colStyle1);
+					addPercent.getSheet().setColumnWidth(
+							addPercent.getColumnIndex(), 35 * 100);
+					colIndex++;
+					
+					comment = row1.createCell(colIndex);
+					comment.setCellType(HSSFCell.CELL_TYPE_STRING);
+					comment.setCellValue("");
+					comment.setCellStyle(colStyle1);
+					comment.getSheet().setColumnWidth(
+							comment.getColumnIndex(), 35 * 100);
+					
+					rowIndex++;
+					natureMon += new Double(nl[3].toString());
+					total33 += new Double(nl[3].toString());
+				}
 				row1 = (HSSFRow) sheet.createRow(rowIndex);
-				row1.setHeightInPoints(20f);
-				
-				numCol = row1.createCell(col);
-				numCol.setCellType(HSSFCell.CELL_TYPE_STRING);
-				numCol.setCellValue(i + 1);
-				numCol.setCellStyle(colStyle1);
-				numCol.getSheet().setColumnWidth(
-						numCol.getColumnIndex(), 35 * 30);
-				col++;
-				
-				projectName = row1.createCell(col);
-				projectName.setCellType(HSSFCell.CELL_TYPE_STRING);
-				projectName.setCellValue(project[0].toString());
-				projectName.setCellStyle(colStyle1);
-				projectName.getSheet().setColumnWidth(
-						projectName.getColumnIndex(), 35 * 100);
-				col++;
-				
-				projectType = row1.createCell(col);
-				projectType.setCellType(HSSFCell.CELL_TYPE_STRING);
-				projectType.setCellValue("");
-				projectType.setCellStyle(colStyle1);
-				projectType.getSheet().setColumnWidth(
-						projectType.getColumnIndex(), 35 * 100);
-				col++;
-				
-				sourceCol = row1.createCell(col);
-				sourceCol.setCellType(HSSFCell.CELL_TYPE_STRING);
-				sourceCol.setCellValue(project[2].toString());
-				sourceCol.setCellStyle(colStyle1);
-				sourceCol.getSheet().setColumnWidth(
-						sourceCol.getColumnIndex(), 35 * 100);
-				col++;
-				
-				
-				projectMoney = row1.createCell(col);
-				projectMoney.setCellType(HSSFCell.CELL_TYPE_STRING);
-				projectMoney.setCellValue(project[3].toString());
-				projectMoney.setCellStyle(colStyle1);
-				projectMoney.getSheet().setColumnWidth(
-						projectMoney.getColumnIndex(), 35 * 100);
-				col++;
-				
-				calculBasis = row1.createCell(col);
-				calculBasis.setCellType(HSSFCell.CELL_TYPE_STRING);
-				calculBasis.setCellValue(project[4].toString());
-				calculBasis.setCellStyle(colStyle1);
-				calculBasis.getSheet().setColumnWidth(
-						calculBasis.getColumnIndex(), 35 * 100);
-				col++;
-				
-				addMoney = row1.createCell(col);
-				addMoney.setCellType(HSSFCell.CELL_TYPE_STRING);
-				addMoney.setCellValue(project[5] == null ? "" : project[5].toString());
-				addMoney.setCellStyle(colStyle1);
-				addMoney.getSheet().setColumnWidth(
-						addMoney.getColumnIndex(), 35 * 100);
-				col++;
-				
-				addPercent = row1.createCell(col);
-				addPercent.setCellType(HSSFCell.CELL_TYPE_STRING);
-				addPercent.setCellValue(project[6] == null ? "" : project[6].toString());
-				addPercent.setCellStyle(colStyle1);
-				addPercent.getSheet().setColumnWidth(
-						addPercent.getColumnIndex(), 35 * 100);
-				col++;
-				
-				comment = row1.createCell(col);
+				comment = row1.createCell(1);
 				comment.setCellType(HSSFCell.CELL_TYPE_STRING);
-				comment.setCellValue(project[7] == null ? "" : project[7].toString());
+				comment.setCellValue("小计");
 				comment.setCellStyle(colStyle1);
 				comment.getSheet().setColumnWidth(
 						comment.getColumnIndex(), 35 * 100);
-				col++;
+				range = new CellRangeAddress(rowIndex, rowIndex, 1, 3);
+				sheet.addMergedRegion(range);
+				excelAddBorder(1, range, sheet, workbook);
+				projectName = row1.createCell(4);
+				projectName.setCellType(HSSFCell.CELL_TYPE_STRING);
+				projectName.setCellValue(natureMon+"");
+				projectName.setCellStyle(colStyle1);
+				projectName.getSheet().setColumnWidth(
+						projectName.getColumnIndex(), 35 * 100);
+				rowIndex++;
+				
+				
+//				
+//				colIndex++;
 				
 			}
-			rowIndex ++;
+			
 			col = 0;
 			row1 = (HSSFRow) sheet.createRow(rowIndex);
 			row1.setHeightInPoints(20f);
@@ -751,20 +848,20 @@ public class YsBudgetCollectionDeptHome extends CriterionEntityHome<Object> {
 			deptCol.setCellType(HSSFCell.CELL_TYPE_STRING);
 			deptCol.setCellValue("总计：");
 			deptCol.setCellStyle(colStyle1);
-			range = new CellRangeAddress(rowIndex, rowIndex, 0, 2);
+			range = new CellRangeAddress(rowIndex, rowIndex, 0, 3);
 			sheet.addMergedRegion(range);
 			excelAddBorder(1, range, sheet, workbook);
-			col += 3;
+			col += 4;
 			
 			moneyCol = row1.createCell(col);
 			moneyCol.setCellType(HSSFCell.CELL_TYPE_STRING);
-			moneyCol.setCellValue("");
+			moneyCol.setCellValue(total33.toString());
 			moneyCol.setCellStyle(colStyle1);
 			col++;
 			
 			moneyCol = row1.createCell(col);
 			moneyCol.setCellType(HSSFCell.CELL_TYPE_STRING);
-			moneyCol.setCellValue(budgetCollectionInfo.get("total_expend").toString());
+			moneyCol.setCellValue("");
 			moneyCol.setCellStyle(colStyle1);
 			col++;
 			
@@ -786,11 +883,7 @@ public class YsBudgetCollectionDeptHome extends CriterionEntityHome<Object> {
 			calculBasis.setCellStyle(colStyle1);
 			col++;
 			
-			calculBasis = row1.createCell(col);
-			calculBasis.setCellType(HSSFCell.CELL_TYPE_STRING);
-			calculBasis.setCellValue("");
-			calculBasis.setCellStyle(colStyle1);
-			col++;
+			
 		}
 		response.setContentType("application/vnd.ms-excel");
 		try {
@@ -827,7 +920,7 @@ public class YsBudgetCollectionDeptHome extends CriterionEntityHome<Object> {
 		expendSql.append("ici.generic_project_id,");
 		expendSql.append("gp.the_value as generic_name,");
 		expendSql.append("ici.routine_project_id,");
-		expendSql.append("rp.the_value as routine_name ");
+		expendSql.append("rp.the_value as routine_name,ici.project_nature ");
 		expendSql.append("FROM hospital_budget.ys_budget_collection_dept bcd ");
 		expendSql.append("INNER JOIN hospital_budget.ys_expend_collection_info ici on bcd.budget_collection_dept_id = ici.budget_collection_dept_id ");
 		expendSql.append("and ici.`year` = '").append(year).append("' and ici.delete=0 ");
@@ -854,7 +947,7 @@ public class YsBudgetCollectionDeptHome extends CriterionEntityHome<Object> {
 		lastSql.append("ici.generic_project_id,");//8
 		lastSql.append("gp.the_value as generic_name,");//9
 		lastSql.append("ici.routine_project_id,");//10
-		lastSql.append("rp.the_value as routine_name ");//11
+		lastSql.append("rp.the_value as routine_name,ici.project_nature ");//11
 		lastSql.append("FROM hospital_budget.ys_budget_collection_dept bcd ");
 		lastSql.append("INNER JOIN hospital_budget.ys_expend_collection_info ici on bcd.budget_collection_dept_id = ici.budget_collection_dept_id ");
 		lastSql.append("and ici.`year` = '").append(Integer.parseInt(year) - 1).append("' and ici.delete=0 ");
@@ -893,6 +986,7 @@ public class YsBudgetCollectionDeptHome extends CriterionEntityHome<Object> {
 					obj[14] = df.format(Float.parseFloat(obj[13].toString()) / Float.parseFloat(obj[3].toString()));
 				}
 			}
+			obj[15] =  theObj[12];
 			list.add(obj);
 		}
 		for(Object[] obj : list){
@@ -903,7 +997,7 @@ public class YsBudgetCollectionDeptHome extends CriterionEntityHome<Object> {
 			}else{
 				projectList = deptMap.get(deptId);
 			}
-			Object[] project = new Object[10];
+			Object[] project = new Object[11];
 			if(null == obj[8]){
 				project[0] = obj[11];
 				project[8] = 1;
@@ -920,14 +1014,33 @@ public class YsBudgetCollectionDeptHome extends CriterionEntityHome<Object> {
 			} catch (UnsupportedEncodingException e) {
 				
 			}
-			project[3] = obj[3];
+			project[3] = obj[3] == null ? 0d :new Double(obj[3].toString())/10000;
 			
 			project[5] = obj[13];
 			project[6] = obj[14];
+			project[7] = obj[15];
+			project[10] = obj[7];
 			projectList.add(project);
 			deptMap.put(deptId, projectList);
 		}
 		return deptMap;
+	}
+	
+	public Map<Integer,List<Object[]>> getNatureProjectMap(List<Object[]> projectList){
+		Map<Integer,List<Object[]>> map = new HashMap<Integer,List<Object[]>>();
+		for(Object[] obj:projectList){
+			int nature = Integer.valueOf(obj[7].toString());
+			List<Object[]> aaaList;
+			if(map.get(nature) != null ){
+				aaaList = map.get(nature);
+			}else{
+				aaaList = new ArrayList();
+			}
+			aaaList.add(obj);
+			map.put(nature, aaaList);
+		}
+		
+		return map;
 	}
 	
 	/** * 添加excel合并后边框属性 */
@@ -938,6 +1051,91 @@ public class YsBudgetCollectionDeptHome extends CriterionEntityHome<Object> {
 		RegionUtil.setBorderRight(1, range, sheet, workbook);
 		RegionUtil.setBorderTop(1, range, sheet, workbook);
 	}
+	/**
+	 * 获取每个性质的项目的总额
+	 * @param projectNature
+	 * @return
+	 */
+	@SuppressWarnings("unchecked")
+	private List<Object[]> getNatureData(int projectNature){
+		String[] depteIdArr = {};
+		if(null != deptIds && !deptIds.isEmpty() && !"null".equals(deptIds)){
+			depteIdArr = deptIds.split(",");
+		}
+		Map<Integer, YsDepartmentInfo> expendDeptMap = getExpendDeptMap(); 
+		StringBuilder expendSql = new StringBuilder();
+		expendSql.append("select bcd.budget_collection_dept_id, ");
+		expendSql.append("bcd.`year`, ");
+		expendSql.append("di.`the_value` as dept_name, ");
+		expendSql.append("SUM(IF(ici.bottom_level = 1,ici.project_amount,0)) as total_amount, ");
+		expendSql.append("bcd.`status`, ");
+		expendSql.append("bcd.dept_id ");
+		expendSql.append("FROM hospital_budget.ys_budget_collection_dept bcd ");
+		expendSql.append("INNER JOIN hospital_budget.ys_expend_collection_info ici on bcd.budget_collection_dept_id = ici.budget_collection_dept_id ");
+		expendSql.append("and ici.`year` = '").append(year).append("' and ici.delete=0 ");
+		expendSql.append("INNER JOIN hospital_budget.ys_department_info di ON bcd.dept_id = di.the_id ");
+		expendSql.append("where bcd.`year` = '").append(year).append("' ");
+		expendSql.append("AND bcd.budget_type = 2 ");//支出
+		expendSql.append(" and ici.project_nature=" +projectNature );
+		if(depteIdArr.length > 0){
+			expendSql.append(" AND bcd.dept_id in (").append(deptIds).append(") ");
+		}
+		expendSql.append(" GROUP BY bcd.dept_id ");
+		expendSql.insert(0, "select * from (").append(") t ");
+		System.out.println(expendSql);
+		//按科室加载编制数据
+		double totalExpend = 0;
+		List<Object[]> expendCollectionList = getEntityManager().createNativeQuery(expendSql.toString()).getResultList();
+		return expendCollectionList;
+	}
+
+	/**
+	 * 获取所有的
+	 * @param incomeArray
+	 * @return
+	 */
+	private List<Object[]> getAllExportData(JSONArray incomeArray){
+		List<YsProjectNature> pnList = queryAllProjectNature();
+		List<Object[]> resultList = new ArrayList<Object[]>();
+		Map<Integer,List<Object[]>> pnMap= new HashMap<Integer,List<Object[]>>();
+		for(YsProjectNature pn : pnList){
+			pnMap.put(pn.getTheId(), getNatureData(pn.getTheId()));
+		}
+		for(int i = 0;i < incomeArray.size(); i++){
+			JSONObject json = incomeArray.getJSONObject(i);
+			Object[] result = new Object[4+pnList.size()];
+			int departId = Integer.valueOf(json.get("budget_collection_dept_id").toString());
+			result[0] = json.get("dept_name").toString();
+			result[1] = json.get("total_amount").toString();
+			for(int j=0;j<pnList.size(); j++){
+				result[2+j] = getNatureMoneyOfDepart(pnMap,departId,pnList.get(j).getTheId());
+			}
+			result[pnList.size() + 2] = json.get("with_last_year_num").toString();
+			result[pnList.size() + 3] = json.get("with_last_year_percent").toString();
+			resultList.add(result);
+		}
+		return resultList;
+	}
+	
+	public Object getNatureMoneyOfDepart(Map<Integer,List<Object[]>> pnMap,int departId,int projectNatrue){
+		List<Object[]> natureMoneyList = pnMap.get(projectNatrue);
+		String result = "0";
+		for(Object[] obj : natureMoneyList){
+			if(obj[0].toString().equals(departId+"")){
+				result = obj[3].toString();
+				break;
+			}
+		}
+		return result;
+	}
+	@SuppressWarnings("unchecked")
+	private List<YsProjectNature> queryAllProjectNature(){
+		
+		String hql = "select ysProjectNature from YsProjectNature ysProjectNature where ysProjectNature.deleted = 0";
+		List<YsProjectNature> pnList = getEntityManager().createQuery(hql).getResultList();
+		return pnList;
+	}
+	
 
 	public String getYear() {
 		return year;
