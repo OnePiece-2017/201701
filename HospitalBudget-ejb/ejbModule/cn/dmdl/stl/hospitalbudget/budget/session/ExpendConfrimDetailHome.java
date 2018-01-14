@@ -1,5 +1,6 @@
 package cn.dmdl.stl.hospitalbudget.budget.session;
 
+import java.math.BigDecimal;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -161,10 +162,14 @@ public class ExpendConfrimDetailHome extends CriterionEntityHome<Object> {
 				Object[] projectDetail = new Object[9];
 				if(null != obj[5] && null == obj[8]){
 					projectDetail[0] = obj[0];
-					projectDetail[1] = obj[1];
-					projectDetail[2] = obj[2];
-					projectDetail[3] = obj[3];
-					projectDetail[4] = obj[4];
+					BigDecimal bd1 = new BigDecimal(Float.parseFloat(obj[1].toString()));
+					projectDetail[1] = bd1.setScale(2, BigDecimal.ROUND_HALF_UP).toPlainString();
+					BigDecimal bd2 = new BigDecimal(Float.parseFloat(obj[2].toString()));
+					projectDetail[2] = bd2.setScale(2, BigDecimal.ROUND_HALF_UP).toPlainString();
+					BigDecimal bd3 = new BigDecimal(Float.parseFloat(obj[3].toString()));
+					projectDetail[3] = bd3.setScale(2, BigDecimal.ROUND_HALF_UP).toPlainString();
+					BigDecimal bd4 = new BigDecimal(Float.parseFloat(obj[4].toString()));
+					projectDetail[4] = bd4.setScale(2, BigDecimal.ROUND_HALF_UP).toPlainString();
 					projectDetail[5] = obj[6];
 					projectDetail[6] = "";
 					projectDetail[7] = obj[5];
@@ -172,10 +177,14 @@ public class ExpendConfrimDetailHome extends CriterionEntityHome<Object> {
 					projectList.add(projectDetail);
 				}else{
 					projectDetail[0] = obj[7];
-					projectDetail[1] = obj[10];
-					projectDetail[2] = obj[2];
-					projectDetail[3] = obj[3];
-					projectDetail[4] = obj[4];
+					BigDecimal bd1 = new BigDecimal(Float.parseFloat(obj[10].toString()));
+					projectDetail[1] = bd1.setScale(2, BigDecimal.ROUND_HALF_UP).toPlainString();
+					BigDecimal bd2 = new BigDecimal(Float.parseFloat(obj[2].toString()));
+					projectDetail[2] = bd2.setScale(2, BigDecimal.ROUND_HALF_UP).toPlainString();
+					BigDecimal bd3 = new BigDecimal(Float.parseFloat(obj[3].toString()));
+					projectDetail[3] = bd3.setScale(2, BigDecimal.ROUND_HALF_UP).toPlainString();
+					BigDecimal bd4 = new BigDecimal(Float.parseFloat(obj[4].toString()));
+					projectDetail[4] = bd4.setScale(2, BigDecimal.ROUND_HALF_UP).toPlainString();
 					projectDetail[5] = obj[9];
 					projectDetail[6] = "";
 					projectDetail[7] = obj[8];

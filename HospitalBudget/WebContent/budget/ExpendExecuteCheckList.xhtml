@@ -1,0 +1,406 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:s="http://jboss.com/products/seam/taglib"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:a="http://richfaces.org/a4j"
+	template="/layout/template_list.xhtml">
+
+	<ui:define name="head">
+		<link rel="stylesheet" type="text/css" href="#{request.contextPath}/common/css/bootstrap.min.css" />
+		<link rel="stylesheet" type="text/css" href="#{request.contextPath}/common/css/bootstrap-datetimepicker.min.css" />
+		<link rel="stylesheet" type="text/css" href="#{request.contextPath}/common/css/bootstrap-select2.min.css" />
+		<link rel="stylesheet" type="text/css" href="#{request.contextPath}/icheck/skins/square/blue.css" />
+		
+		<script type="text/javascript" src="#{request.contextPath}/common/js/bootstrap-datetimepicker.min.js" />
+		<script type="text/javascript" src="#{request.contextPath}/common/js/bootstrap-datetimepicker.zh-CN.js" />
+	</ui:define>
+	<style type="text/css">
+			button[data-id='depart']{
+				    width: 200px;
+			}
+			button[data-id='fundsSource']{
+				    width:200px;
+			}
+			button[data-id='confirmStatus']{
+				    width: 200px;
+			}
+			.bootstrap-select:not([class*="span"]):not([class*="col-"]):not([class*="form-control"]):not(.input-group-btn){
+				width: 200px;
+			}
+			td{text-align: center;}
+			.form-group{margin-bottom: 0px;}
+			.field-name{display: block;margin-bottom: 10px;width: 100%;height: 34px;line-height: 34px;}
+	</style>
+	<ui:define name="body">
+	#{expendExecuteCheckList.wire()}
+		<div class="g-data-list-condition" style="height:200px">
+			<h:form id="mainForm">
+				<input type="hidden" name="page" value="1" />
+				<table width="100%" cellpadding="0" cellspacing="0" style=" margin-top: 19px;">
+						<tr>
+							<td width="50%">
+							<div class="fl mb10" style="width: 400px;">
+								<table width="100%" cellpadding="0" cellspacing="0">
+									<tr>
+										<td valign="middle" width="30%" align="right">
+											<span class="field-name" style="display: block;margin-bottom: 10px;width: 100%;height: 34px;line-height: 34px;">科室</span>
+										</td>
+										<td valign="middle" width="70%" style="padding-left:18px;">
+											<select id="depart" class="selectpicker" style="width: 200px;">
+												<a:repeat value="#{expendExecuteCheckList.departList}" var="_var">
+													<s:fragment rendered="#{expendExecuteCheckList.departmentId eq _var[0]}">
+														<option value="#{_var[0]}" selected="selected">#{_var[1]}</option>
+													</s:fragment>
+													<s:fragment rendered="#{expendExecuteCheckList.departmentId ne _var[0]}">
+														<option value="#{_var[0]}" >#{_var[1]}</option>
+													</s:fragment>
+												</a:repeat>
+											</select>
+										</td>
+									</tr>
+								</table>
+							</div>
+						</td>
+						<td width="50%">
+							<div class="fl" style="width: 487px;">
+								<table  width="100%" cellpadding="0" cellspacing="0">
+									<tr>
+										<td valign="middle" width="30%" align="right">
+											<span class="field-name mb10"  style="display: block;margin-bottom: 10px;width: 100%;height: 34px;line-height: 34px;">申请编制人</span>
+										</td>
+										<td valign="middle" width="70%" style="padding-left:18px;">
+											<select id="fundsSource" class="selectpicker" style="width: 200px;">
+												<a:repeat value="#{expendExecuteCheckList.applayUserList}" var="_department">
+													<option value="-1">请选择</option>
+													<optgroup label="#{_department[0]}" data-subtext="科室">
+														<a:repeat value="#{_department[1]}" var="_user">
+															<s:fragment rendered="#{expendExecuteCheckList.applyUser eq _user[0]}">
+																<option value="#{_user[0]}" selected="selected">#{_user[1]}</option>
+															</s:fragment>
+															<s:fragment rendered="#{expendExecuteCheckList.applyUser ne _user[0]}">
+																<option value="#{_user[0]}">#{_user[1]}</option>
+															</s:fragment>
+														</a:repeat>
+													</optgroup>
+												</a:repeat>
+											</select>
+										</td>
+									</tr>
+								</table>
+							</div>
+						</td>
+					</tr>
+					
+					<tr>
+						<td width="50%">
+							<div class="fl" style="width: 400px;">
+							<table width="100%" cellpadding="0" cellspacing="0">
+								<tr>
+									<td valign="middle" width="30%" align="right">
+										<span class="field-name mb10" style="display: block;margin-bottom: 10px;width: 100%;height: 34px;line-height: 34px;">申请开始时间</span>
+									</td>
+									<td valign="middle" width="70%" style="padding-left:18px;">
+			                            <div class="form-group">
+											<div class="input-group date form_date col-md-5">
+												<input id="applyTime" type="text" value="#{expendExecuteCheckList.applyTime}" readonly="readonly" class="form-control mb10 fix--w150" name="time" style="width: 125px;"/> 
+												<span class="input-group-addon"><span class="glyphicon glyphicon-remove"></span></span>
+												<span class="input-group-addon"><span class="glyphicon glyphicon-calendar"></span></span>
+											</div>
+										</div>
+									</td>
+								</tr>
+							</table>
+							</div>
+						</td>
+						<td width="50%">
+							<div class="fl" style="width: 487px;">
+							<table width="100%" cellpadding="0" cellspacing="0">
+								<tr>
+									<td valign="middle" width="30%" align="right">
+										<span class="field-name mb10" style="display: block;margin-bottom: 10px;width: 100%;height: 34px;line-height: 34px;">申请结束时间</span>
+									</td>
+									<td valign="middle" width="70%" style="padding-left:18px;">
+			                            <div class="form-group">
+											<div class="input-group date form_date col-md-5">
+												<input id="applyEndTime" type="text" value="#{expendExecuteCheckList.applyEndTime}" readonly="readonly" class="form-control mb10 fix--w150" name="time" style="width: 125px;"/> 
+												<span class="input-group-addon"><span class="glyphicon glyphicon-remove"></span></span>
+												<span class="input-group-addon"><span class="glyphicon glyphicon-calendar"></span></span>
+											</div>
+										</div>
+									</td>
+								</tr>
+							</table>
+							</div>
+						</td>
+					</tr>
+					<tr>
+						<td width="50%">
+							<div class="fl" style="width: 400px;">
+							<table width="100%" cellpadding="0" cellspacing="0">
+								<tr>
+									<td valign="middle" width="30%" align="right">
+											<span class="field-name mb10" style="display: block;margin-bottom: 10px;width: 100%;height: 34px;line-height: 34px;">金额范围</span>
+										</td>
+										<td valign="middle" width="70%" style="padding-left:18px;">
+											<select id="moneyType" class="selectpicker" style="width: 200px;">
+												<a:repeat value="#{expendExecuteCheckList.moneyList}" var="_money">
+													<s:fragment rendered="#{expendExecuteCheckList.moneyType eq _money[0]}">
+														<option value="#{_money[0]}" selected="selected">#{_money[1]}</option>
+													</s:fragment>
+													<s:fragment rendered="#{expendExecuteCheckList.moneyType ne _money[0]}">
+														<option value="#{_money[0]}">#{_money[1]}</option>
+													</s:fragment>
+												</a:repeat>
+											</select>
+										</td>
+								</tr>
+							</table>
+							</div>
+						</td>
+						 <td width="50%">
+							<div class="fl" style="width: 487px;">
+								<table width="100%" cellpadding="0" cellspacing="0">
+								<tr>
+									<td valign="middle" width="30%" align="right">
+										<span class="field-name mb10" style="display: block;margin-bottom: 10px;width: 100%;height: 34px;line-height: 34px;">报销人</span>
+									</td>
+									<td valign="middle" width="70%" style="padding-left:18px;">
+			                            <div class="form-group">
+												<input id="reimbursementer" type="text" value="#{expendExecuteCheckList.reimbursementer}"  class="form-control mb10 fix--w150" style="width:150px"/> 
+										</div>
+									</td>
+								</tr>
+							</table>
+							</div>
+						</td>
+					</tr>
+					<tr>
+						<td width="50%">
+							<div class="fl" style="width: 400px;">
+							
+							</div>
+						</td>
+						<td width="50%">
+							<div class="fl" style="width: 400px;">
+							<table width="100%" cellpadding="0" cellspacing="0">
+								<tr>
+									<td valign="middle" width="100%" style="padding-left:128px;" >
+										<div class="fl" style="margin-left:36px;">
+											<h:inputHidden value="#{expendExecuteCheckList.departmentId}" id="departId"/>
+											<h:inputHidden value="#{expendExecuteCheckList.applyUser}" id="applyUser"/>
+											<h:inputHidden value="#{expendExecuteCheckList.applyTime}" id="applyTime"/>
+											<h:inputHidden value="#{expendExecuteCheckList.moneyType}" id="moneyType"/>
+											<h:inputHidden value="#{expendExecuteCheckList.applyEndTime}" id="applyEndTime"/>
+											<h:inputHidden value="#{expendExecuteCheckList.reimbursementer}" id="reimbursementer"/>
+											<h:commandButton styleClass="btn btn-primary" action="/budget/ExpendExecuteCheckList.xhtml" onclick="return check();" value="搜索" style="font-size: 12px;"/>
+											<a class="btn btn-primary"  href="javascript:void(0);" onclick="batchConfrim()"  style="font-size: 12px; margin-left:10px">审核</a>
+											<a class="btn btn-primary"  href="javascript:void(0);" onclick="batchReject()"  style="font-size: 12px; margin-left:10px">驳回</a>
+										</div>
+									</td>
+								</tr>
+							</table>
+							</div>
+						</td>
+					</tr>
+				</table>
+					
+				
+			</h:form>
+		</div>
+		<div class="g-data-list-table">
+		    <table class="record table table-hover table-striped" width="100%" cellpadding="0" cellspacing="0">
+		        <tr>
+		            <th width="5%">序号</th>
+		            <th width="10%">单据编号</th>
+		            <th width="6%" style="min-width: 72px;">支出年份</th>
+		            <th width="10%">总金额</th>
+		            <th width="10%">收款单位</th>
+		            <th width="10%">发票号</th>
+		            <th width="7%">申请人</th>
+		            <th width="10%">申请时间</th>
+		            <th width="10%">发票张数</th>
+		            <th width="10%">备注</th>
+		            <th width="5%">操作</th>
+		        </tr>
+		        <a:repeat value="#{expendExecuteCheckList.resultList}" var="_result" rowKeyVar="_row">
+		        	<tr class="node-record">
+			        	<td>#{_row + 1}</td>
+			        	<td>
+			        		#{_result[1]}
+			        	</td>
+			        	<td>#{_result[2]}</td>
+			        	<td>#{_result[3]}</td>
+			        	<td>#{_result[4]}</td>
+			        	<td>#{_result[5]}</td>
+			        	<td>#{_result[6]}</td>
+			        	<td>#{commonFinder.parseDate(_result[7])}</td>
+			        	<td>#{_result[8]}</td>
+			        	<td>#{_result[9]}</td>
+			        	<td>
+			        		<input type="checkbox" class="icheck check_box" name="check_confirm" myattr="#{_result[0]}" />
+						</td>
+		        	</tr>
+		        </a:repeat>
+		    </table>
+		    #{paginationModel.init(expendExecuteCheckList)}
+		    <s:fragment rendered="#{paginationModel.query != null}">
+				<table class="pagination-model" style="width: auto; margin: 40px auto;" cellpadding="0" cellspacing="0">
+					<tr>
+						<td>
+							<s:span rendered="#{paginationModel.previousPageExist}">
+								<s:link view="#{servletContexts.request.servletPath}" value="首页">
+									<f:param name="page" value="1" />
+								</s:link>
+							</s:span>
+							<s:span rendered="#{paginationModel.previousPageExist}">
+								<s:link view="#{servletContexts.request.servletPath}" value="&lt;&lt;">
+									<f:param name="page" value="#{paginationModel.previousPage}" />
+								</s:link>
+							</s:span>
+							<a:repeat value="#{paginationModel.pageNoList}" var="_pageNo">
+								<span class="#{paginationModel.page == _pageNo ? 'page-current' : ''}">
+									<s:link view="#{servletContexts.request.servletPath}" value="#{_pageNo}">
+										<f:param name="page" value="#{_pageNo}" />
+									</s:link>
+								</span>
+							</a:repeat>
+							<s:span rendered="#{paginationModel.nextPageExist}">
+								<s:link view="#{servletContexts.request.servletPath}" value="&gt;&gt;">
+									<f:param name="page" value="#{paginationModel.nextPage}" />
+								</s:link>
+							</s:span>
+							<s:span rendered="#{paginationModel.nextPageExist}">
+								<s:link view="#{servletContexts.request.servletPath}" value="尾页">
+									<f:param name="page" value="#{paginationModel.lastPage}" />
+								</s:link>
+							</s:span>
+							<s:span rendered="#{paginationModel.lastPage > 0}">
+								<a>共#{paginationModel.lastPage}页</a>
+							</s:span>
+							<s:fragment rendered="#{paginationModel.lastPage > 1}">
+								<span>
+									<a>转至</a>
+								</span>
+								<span class="page-index">
+									<input type="text" id="pageIndex" />
+								</span>
+								<span class="page-goto">
+									<s:link value="确定" id="gotoPageLink" styleClass="page-determine" view="#{servletContexts.request.servletPath}" onclick="return gotoPage(#{paginationModel.lastPage});" />
+								</span>
+							</s:fragment>
+						</td>
+					</tr>
+				</table>
+		    </s:fragment>
+		</div>
+		<a:form>
+			<a:queue requestDelay="100" ignoreDupResponses="true" />
+			<a:jsFunction name="confirmBatch" action="#{expendApplyInfoHome.confirmBatch}" data="#{expendApplyInfoHome.saveResult}" oncomplete="batchcomplete()">
+				<a:actionparam name="checkItems" assignTo="#{expendApplyInfoHome.checkItems}" />
+			</a:jsFunction>
+			<a:jsFunction name="projectReject" action="#{expendApplyInfoHome.projectReject}" data="#{expendApplyInfoHome.saveResult}" oncomplete="batchcomplete()">
+				<a:actionparam name="checkItems" assignTo="#{expendApplyInfoHome.checkItems}" />
+			</a:jsFunction>
+		</a:form>
+		<script type="text/javascript" src="#{request.contextPath}/common/js/bootstrap.min.js" />
+		<script type="text/javascript" src="#{request.contextPath}/toolkit/utils.js" />
+		<script type="text/javascript" src="#{request.contextPath}/common/js/bootstrap-datetimepicker.min.js" charset="UTF-8" />
+		<script type="text/javascript" src="#{request.contextPath}/common/js/bootstrap-datetimepicker.zh-CN.js" charset="UTF-8" />
+		<script type="text/javascript" src="#{request.contextPath}/common/js/bootstrap-select-defaults-zh_CN.min.js" charset="UTF-8" />
+		<script type="text/javascript" src="#{request.contextPath}/common/js/bootstrap-select.min.js" charset="UTF-8" />
+		<script type="text/javascript" src="#{request.contextPath}/icheck/js/icheck.min.js" charset="UTF-8" />
+		<script type="text/javascript">
+		//<![CDATA[
+			jQuery(document).ready(function() {
+				selectInit();
+
+				jQuery('.form_date').datetimepicker({
+					language: 'zh-CN',
+					format: "yyyy-mm-dd",
+					pickerPosition: "bottom-left",
+					weekStart: 1,
+					todayBtn: 1,
+					autoclose: 1,
+					todayHighlight: 1,
+					startView: 2,
+					minView: 2,
+					forceParse: 0
+				});
+			    var message = '#{processInfoHome.message}';
+			    if (message != '') {
+					___msg('温馨提示', message);
+			    }
+			    ___textRestrictById('mainForm:keyword', 1024);
+			    jQuery('.icheck').iCheck({
+					checkboxClass: 'icheckbox_square-blue',
+					radioClass: 'iradio_square-blue',
+					increaseArea: '20%'
+				});
+			});
+
+			function selectInit(){
+				jQuery('.icheck').iCheck({
+					checkboxClass: 'icheckbox_square-blue',
+					radioClass: 'iradio_square-blue',
+					increaseArea: '20%'
+				});
+				jQuery('.selectpicker').selectpicker();
+			}
+
+			function check(){
+				var departId = jQuery("#depart").val();
+				var applyer = jQuery("#fundsSource").val();
+				var applyTime = jQuery("#applyTime").val();
+				var applyEndTime = jQuery("#applyEndTime").val();
+				var moneyType = jQuery("#moneyType").val();
+				var reimbursementer = jQuery("#reimbursementer").val().trim();
+				jQuery("#mainForm\\:departId").val(departId);
+				jQuery("#mainForm\\:applyUser").val(applyer);
+				jQuery("#mainForm\\:applyTime").val(applyTime);
+				jQuery("#mainForm\\:applyEndTime").val(applyEndTime);
+				jQuery("#mainForm\\:moneyType").val(moneyType);
+				jQuery("#mainForm\\:reimbursementer").val(reimbursementer);
+				return true;
+			}
+			function batchConfrim(){
+				var ids = "";
+				jQuery("input[name='check_confirm']").each(function(i){
+					if(jQuery(this).is(':checked')){
+						var id = jQuery(this).attr("myattr");
+						ids += (id + ","); 
+					}
+				});
+				if(ids == ""){
+					alert("请选择确认单");
+				}else{
+					ids = ids.substring(0,ids.length-1);
+					confirmBatch(ids);
+				}
+			}
+			function batchReject(){
+				var ids = "";
+				jQuery("input[name='check_confirm']").each(function(i){
+					if(jQuery(this).is(':checked')){
+						var id = jQuery(this).attr("myattr");
+						ids += (id + ","); 
+					}
+				});
+				if(ids == ""){
+					alert("请选择驳回单");
+				}else{
+					ids = ids.substring(0,ids.length-1);
+					projectReject(ids);
+				}
+			}
+
+			function batchcomplete(){
+				   window.location.href = '../budget/ExpendExecuteCheckList.seam';
+			}
+		//]]>
+		</script>
+	</ui:define>
+</ui:composition>

@@ -17,6 +17,7 @@ import javax.persistence.Query;
 import org.jboss.seam.annotations.In;
 import org.jboss.seam.annotations.Name;
 
+import cn.dmdl.stl.hospitalbudget.admin.entity.UserInfo;
 import cn.dmdl.stl.hospitalbudget.budget.entity.ExpendApplyInfo;
 import cn.dmdl.stl.hospitalbudget.budget.entity.ExpendApplyProject;
 import cn.dmdl.stl.hospitalbudget.budget.entity.ExpendConfirmInfo;
@@ -186,6 +187,11 @@ public class ExpendApplayList extends CriterionNativeQuery<Object[]> {
 		if(Integer.valueOf(roleId) != 1 && Integer.valueOf(roleId) != FINA_ROLE_ID && Integer.valueOf(roleId) != DIRECTOR_ROLE_ID){
 			privateRole = true;
 		}
+		UserInfo userInfo = getEntityManager().find(UserInfo.class, sessionToken.getUserInfoId());
+		Integer departId = null;
+		if(userInfo.getUserInfoId() != 1){
+			departId = userInfo.getYsDepartmentInfo().getTheId();
+		}
 		StringBuffer sql = new StringBuffer();
 		sql.append(" SELECT ");
 		sql.append(" eai.expend_apply_info_id, ");//0申请单id
@@ -203,6 +209,10 @@ public class ExpendApplayList extends CriterionNativeQuery<Object[]> {
 		sql.append(" LEFT JOIN user_info ui ON eai.applay_user_id = ui.user_info_id ");
 		sql.append(" LEFT JOIN user_info_extend uie on ui.user_info_extend_id=uie.user_info_extend_id ");
 		sql.append(" where eai.deleted=0 ");
+		if(null != departId){
+			sql.append(" and ui.department_info_id= ").append(departId);
+		}
+		
 		if(privateRole){
 			sql.append(" and eai.insert_user= ").append(sessionToken.getUserInfoId());
 		}

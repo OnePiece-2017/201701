@@ -188,7 +188,7 @@ public class ExpendApplyConfirmHome extends CriterionEntityHome<ExpendApplyInfo>
 		
 		//申请单确认完成
 		ExpendApplyInfo eai = getEntityManager().find(ExpendApplyInfo.class, eci.getExpend_apply_info_id());
-		eai.setExpendApplyStatus(1);
+		eai.setExpendApplyStatus(5);
 		getEntityManager().merge(eai);
 		if(eai.getExplendSource() == 1){
 			Connection conn = SqlServerJDBCUtil.GetConnection();
@@ -284,7 +284,7 @@ public class ExpendApplyConfirmHome extends CriterionEntityHome<ExpendApplyInfo>
 		
 		//申请单确认驳回
 		ExpendApplyInfo eai = getEntityManager().find(ExpendApplyInfo.class, eci.getExpend_apply_info_id());
-		eai.setExpendApplyStatus(2);
+		eai.setExpendApplyStatus(4);
 		getEntityManager().merge(eai);
 		if(eai.getExplendSource() == 1){
 			Connection conn = SqlServerJDBCUtil.GetConnection();
@@ -347,7 +347,7 @@ public class ExpendApplyConfirmHome extends CriterionEntityHome<ExpendApplyInfo>
 			
 			//申请单确认完成
 			ExpendApplyInfo eai = getEntityManager().find(ExpendApplyInfo.class, eci.getExpend_apply_info_id());
-			eai.setExpendApplyStatus(1);
+			eai.setExpendApplyStatus(5);
 			getEntityManager().merge(eai);
 			
 			if(eai.getExplendSource() == 1){

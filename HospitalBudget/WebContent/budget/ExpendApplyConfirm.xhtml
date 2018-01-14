@@ -73,6 +73,47 @@
 			    vertical-align: text-top;
 			    width: 14px;
 			}
+			.g-data-list-table-custom {
+			        width: 100%;
+				    min-height: 186px;
+				    font-family: '微软雅黑';
+				    color: #333333;
+				    position: relative;
+				    padding: 0 15px;
+				    box-sizing: border-box;
+			}
+			.g-data-list-table-custom .record th,.g-data-list-table .record tbody td {
+				height: 38px;
+				text-align: center;
+				border-bottom: 1px solid #e1e1e1;
+			}
+			
+			.g-data-list-table-custom .record th {
+				height: 42px;
+				background: f9f9f9;
+				font-size: 12px;
+				font-weight: normal;
+			}
+			
+			.g-data-list-table-custom .record th:first-child {
+				border-radius: 10px 0 0 0;
+			}
+			
+			.g-data-list-table-custom .record th:last-child {
+				border-radius: 0 10px 0 0;
+			}
+			
+			.g-data-list-table-custom .record tr.node-record.odd td {
+				background: #F7F7F7;
+			}
+			
+			.g-data-list-table-custom .record tr.node-record.even td {
+				background: #F5FFFA;
+			}
+			
+			.g-data-list-table-custom .record tr.node-record:hover td {
+				/* background: #86CEF0; */
+			}
 		</style>
 	</ui:define>
 	<ui:define name="body">
@@ -192,7 +233,7 @@
 					</table>
 				</div>
 				<rich:panel id="listPanl" style="margin:0; border:none; padding: 0;">
-				<div class="g-data-list-table freeze-candidateProject" style="border: 1px solid #e1e1e1;overflow:auto;">
+				<div class="g-data-list-table-custom freeze-candidateProject" style="border: 1px solid #e1e1e1;overflow:auto;">
 				    <table class="record" width="100%" cellpadding="0" cellspacing="0">
 				        <tr class="root">
 				        	<th width="6%">序号</th>
@@ -326,7 +367,7 @@
 						</table>
 					</div>
 				</div>
-				<div class="pt50 pb95" style="padding-top: 200px;">
+				<div class="pt50 pb95" >
 					<table class="normal-btn">
 						<tr>
 							<td>

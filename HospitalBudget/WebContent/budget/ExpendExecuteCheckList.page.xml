@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<page xmlns="http://jboss.com/products/seam/pages" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://jboss.com/products/seam/pages http://jboss.com/products/seam/pages-2.2.xsd"
+	login-required="true">
+
+	<restrict>#{s:hasRole('expend_confirm')}</restrict>
+	<param name="from" />
+	<param name="page" value="#{expendExecuteCheckList.page}" />
+	<param name="departmentId" value="#{expendExecuteCheckList.departmentId}" />
+	<param name="applyUser" value="#{expendExecuteCheckList.applyUser}" />
+	<param name="applyTime" value="#{expendExecuteCheckList.applyTime}" />
+	<param name="confirmStatus" value="#{expendExecuteCheckList.confirmStatus}" />
+	<param name="moneyType" value="#{expendExecuteCheckList.moneyType}" />
+	<param name="applyEndTime" value="#{expendExecuteCheckList.applyEndTime}" />
+	<param name="reimbursementer" value="#{expendExecuteCheckList.reimbursementer}" />
+</page>
