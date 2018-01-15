@@ -31,6 +31,16 @@ public class DeptExecuteStatisticsList extends CriterionNativeQuery<Object[]>{
 
 	@Override
 	protected Query createQuery() {
+		boolean privateRole = false;//角色不属于财务主任 和管理员
+		String roleSql = "select role_info.role_info_id,user_info.department_info_id,ydi.the_value from user_info LEFT JOIN role_info on role_info.role_info_id=user_info.role_info_id LEFT JOIN ys_department_info ydi on "
+				+ "user_info.department_info_id=ydi.the_id where user_info.user_info_id=" + sessionToken.getUserInfoId();
+		
+		List<Object[]> roleList = getEntityManager().createNativeQuery(roleSql).getResultList();
+		int roleId = Integer.parseInt(roleList.get(0)[0].toString());//角色id
+		
+		if(Integer.valueOf(roleId) != 1 && Integer.valueOf(roleId) != 2){
+			privateRole = true;
+		}
 		StringBuffer sql = new StringBuffer();
 		sql.append(" select di.the_value,");
 		sql.append(" SUM(nepi.budget_amount),");
@@ -50,6 +60,10 @@ public class DeptExecuteStatisticsList extends CriterionNativeQuery<Object[]>{
 		
 		if(null != beginYearParam && !"".equals(beginYearParam)){
 			sql.append(" and nepi.year = ").append(beginYearParam);
+		}
+		if(privateRole){
+			sql.append(" and (gp.department_info_id = ").append(sessionToken.getDepartmentInfoId());
+			sql.append(" or rp.department_info_id = ").append(sessionToken.getDepartmentInfoId()).append(") ");
 		}
 		if(null != departmentInfoId && !"".equals(departmentInfoId)){
 			sql.append(" and (gp.department_info_id = ").append(departmentInfoId);

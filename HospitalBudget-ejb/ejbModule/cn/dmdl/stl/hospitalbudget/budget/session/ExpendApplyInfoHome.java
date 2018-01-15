@@ -281,6 +281,25 @@ public class ExpendApplyInfoHome extends CriterionEntityHome<ExpendApplyInfo>{
 	}
 	
 	/**
+	 * 删除申请单
+	 */
+	public String deleteApply(){
+		if(null != expendApplyInfoId){
+			ExpendApplyInfo e = getEntityManager().find(ExpendApplyInfo.class, expendApplyInfoId);
+			if(null != e){
+				joinTransaction();
+				e.setDeleted(true);
+				getEntityManager().merge(e);
+				getEntityManager().flush();
+				raiseAfterTransactionSuccessEvent();
+			}
+		}
+		return "removed";
+	}
+	
+
+
+	/**
 	 * 获取科室
 	 */
 	@SuppressWarnings("unchecked")
@@ -1399,58 +1418,58 @@ public class ExpendApplyInfoHome extends CriterionEntityHome<ExpendApplyInfo>{
 			canUseMoney = "";//可使用金额
 		}
 	}
-	//删除
-	@SuppressWarnings("unchecked")
-	public String remove(){
-		joinTransaction();
-		if(null != expendApplyInfoId && expendApplyInfoId != 0){
-			ExpendApplyInfo eai = getEntityManager().find(ExpendApplyInfo.class, expendApplyInfoId);
-			eai.setDeleted(true);
-			getEntityManager().merge(eai);
-			
-			String projectSql = "select expendApplyProject from ExpendApplyProject expendApplyProject where expendApplyProject.deleted = 0 and expendApplyProject.expendApplyInfoId=" + expendApplyInfoId;
-			List<ExpendApplyProject> projectList = getEntityManager().createQuery(projectSql).getResultList();
-			for(ExpendApplyProject eap : projectList){
-				eap.setDeleted(true);
-				getEntityManager().merge(eap);
-			}
-			//将编辑前的支出的钱还原回去，重新减掉一遍
-			StringBuffer oldPlant = new StringBuffer();
-			oldPlant.append(" SELECT ");
-			oldPlant.append(" expi.normal_expend_plan_id, ");
-			oldPlant.append(" expi.project_id, ");
-			oldPlant.append(" eap.expend_money ");
-			oldPlant.append(" FROM normal_expend_plan_info expi ");
-			oldPlant.append(" LEFT JOIN expend_apply_project eap ON expi.project_id = eap.project_id ");
-			oldPlant.append(" LEFT JOIN expend_apply_info eai ON eai.expend_apply_info_id = eap.expend_apply_info_id ");
-			oldPlant.append(" AND eai.`year` = expi.`year` ");
-			oldPlant.append(" WHERE eap.deleted = 0 ");
-			oldPlant.append(" and eai.expend_apply_info_id= ").append(expendApplyInfoId);
-			oldPlant.append(" union all ");
-			oldPlant.append(" SELECT ");
-			oldPlant.append(" expi.normal_expend_plan_id, ");
-			oldPlant.append(" expi.generic_project_id, ");
-			oldPlant.append(" eap.expend_money ");
-			oldPlant.append(" FROM normal_expend_plan_info expi ");
-			oldPlant.append(" LEFT JOIN expend_apply_project eap ON expi.generic_project_id = eap.generic_project_id ");
-			oldPlant.append(" LEFT JOIN expend_apply_info eai ON eai.expend_apply_info_id = eap.expend_apply_info_id ");
-			oldPlant.append(" AND eai.`year` = expi.`year` ");
-			oldPlant.append(" WHERE eap.deleted = 0 ");
-			oldPlant.append(" and eai.expend_apply_info_id= ").append(expendApplyInfoId);
-			List<Object[]> oldPlantList = getEntityManager().createNativeQuery(oldPlant.toString()).getResultList();
-			for(Object[] expendPlant : oldPlantList){
-				NormalExpendPlantInfo normalExpendPlanInfo = getEntityManager().find(NormalExpendPlantInfo.class, Integer.parseInt(expendPlant[0].toString()));
-				normalExpendPlanInfo.setBudgetAmountFrozen(normalExpendPlanInfo.getBudgetAmountFrozen() - Float.parseFloat(expendPlant[2].toString()));
-				normalExpendPlanInfo.setBudgetAmountSurplus(normalExpendPlanInfo.getBudgetAmountSurplus() + Float.parseFloat(expendPlant[2].toString()));
-				getEntityManager().merge(normalExpendPlanInfo);
-			}
-		}
-		
-		getEntityManager().flush();
-		raiseAfterTransactionSuccessEvent();
-		expendApplyInfoId = 0;
-		return "ok";
-	}
+//	//删除
+//	@SuppressWarnings("unchecked")
+//	public String remove(){
+//		joinTransaction();
+//		if(null != expendApplyInfoId && expendApplyInfoId != 0){
+//			ExpendApplyInfo eai = getEntityManager().find(ExpendApplyInfo.class, expendApplyInfoId);
+//			eai.setDeleted(true);
+//			getEntityManager().merge(eai);
+//			
+//			String projectSql = "select expendApplyProject from ExpendApplyProject expendApplyProject where expendApplyProject.deleted = 0 and expendApplyProject.expendApplyInfoId=" + expendApplyInfoId;
+//			List<ExpendApplyProject> projectList = getEntityManager().createQuery(projectSql).getResultList();
+//			for(ExpendApplyProject eap : projectList){
+//				eap.setDeleted(true);
+//				getEntityManager().merge(eap);
+//			}
+//			//将编辑前的支出的钱还原回去，重新减掉一遍
+//			StringBuffer oldPlant = new StringBuffer();
+//			oldPlant.append(" SELECT ");
+//			oldPlant.append(" expi.normal_expend_plan_id, ");
+//			oldPlant.append(" expi.project_id, ");
+//			oldPlant.append(" eap.expend_money ");
+//			oldPlant.append(" FROM normal_expend_plan_info expi ");
+//			oldPlant.append(" LEFT JOIN expend_apply_project eap ON expi.project_id = eap.project_id ");
+//			oldPlant.append(" LEFT JOIN expend_apply_info eai ON eai.expend_apply_info_id = eap.expend_apply_info_id ");
+//			oldPlant.append(" AND eai.`year` = expi.`year` ");
+//			oldPlant.append(" WHERE eap.deleted = 0 ");
+//			oldPlant.append(" and eai.expend_apply_info_id= ").append(expendApplyInfoId);
+//			oldPlant.append(" union all ");
+//			oldPlant.append(" SELECT ");
+//			oldPlant.append(" expi.normal_expend_plan_id, ");
+//			oldPlant.append(" expi.generic_project_id, ");
+//			oldPlant.append(" eap.expend_money ");
+//			oldPlant.append(" FROM normal_expend_plan_info expi ");
+//			oldPlant.append(" LEFT JOIN expend_apply_project eap ON expi.generic_project_id = eap.generic_project_id ");
+//			oldPlant.append(" LEFT JOIN expend_apply_info eai ON eai.expend_apply_info_id = eap.expend_apply_info_id ");
+//			oldPlant.append(" AND eai.`year` = expi.`year` ");
+//			oldPlant.append(" WHERE eap.deleted = 0 ");
+//			oldPlant.append(" and eai.expend_apply_info_id= ").append(expendApplyInfoId);
+//			List<Object[]> oldPlantList = getEntityManager().createNativeQuery(oldPlant.toString()).getResultList();
+//			for(Object[] expendPlant : oldPlantList){
+//				NormalExpendPlantInfo normalExpendPlanInfo = getEntityManager().find(NormalExpendPlantInfo.class, Integer.parseInt(expendPlant[0].toString()));
+//				normalExpendPlanInfo.setBudgetAmountFrozen(normalExpendPlanInfo.getBudgetAmountFrozen() - Float.parseFloat(expendPlant[2].toString()));
+//				normalExpendPlanInfo.setBudgetAmountSurplus(normalExpendPlanInfo.getBudgetAmountSurplus() + Float.parseFloat(expendPlant[2].toString()));
+//				getEntityManager().merge(normalExpendPlanInfo);
+//			}
+//		}
+//		
+//		getEntityManager().flush();
+//		raiseAfterTransactionSuccessEvent();
+//		expendApplyInfoId = 0;
+//		return "ok";
+//	}
 	
 	//查询该登陆人为支出人的收入项目
 	@SuppressWarnings("unchecked")
@@ -1751,14 +1770,16 @@ public class ExpendApplyInfoHome extends CriterionEntityHome<ExpendApplyInfo>{
 		if(projectType == 1){
 			sql.append(" select sum(eap.expend_money) from expend_apply_info eai  ");
 			sql.append(" LEFT JOIN expend_apply_project eap on eai.expend_apply_info_id=eap.expend_apply_info_id ");
-			sql.append(" where eai.expend_apply_status in (0,1) ");
+			sql.append(" where eai.expend_apply_status in (0,1,2) ");
 			sql.append(" and eap.project_id= ").append(projectId);
+			sql.append(" and eai.deleted = 0 ");
 			sql.append(" GROUP BY eap.project_id ");
 		}else{
 			sql.append(" select sum(eap.expend_money) from expend_apply_info eai  ");
 			sql.append(" LEFT JOIN expend_apply_project eap on eai.expend_apply_info_id=eap.expend_apply_info_id ");
-			sql.append(" where eai.expend_apply_status in (0,1) ");
+			sql.append(" where eai.expend_apply_status in (0,1,2) ");
 			sql.append(" and eap.generic_project_id= ").append(projectId);
+			sql.append(" and eai.deleted = 0 ");
 			sql.append(" GROUP BY eap.project_id ");
 		}
 		
@@ -1809,6 +1830,7 @@ public class ExpendApplyInfoHome extends CriterionEntityHome<ExpendApplyInfo>{
 		}
 		return money;
 	}
+	
 	public List<Object[]> getDepartmentInfoList() {
 		return departmentInfoList;
 	}

@@ -216,6 +216,33 @@ public class ExpendApplayList extends CriterionNativeQuery<Object[]> {
 		setEjbql(sql.toString());
 		return super.createQuery();
 	}
+	
+	/**
+	 * 获取申请单状态
+	 * 申请单状态 0初始状态 1正在审核中 2审核完成 3审核驳回  4确认驳回 5 确认完成 
+	 * @param status
+	 * @return
+	 */
+	private String getApplyStatus(Object status){
+		if(null == status && status.toString().equals("")){
+			return "";
+		}
+		Integer st = Integer.valueOf(status.toString());
+		if(st == 0){
+			return "待处理";
+		}else if(st == 1){
+			return "正在审核";
+		}else if(st == 2){
+			return "审核完成";
+		}else if(st == 3){
+			return "审核驳回";
+		}else if(st == 4){
+			return "确认驳回";
+		}else if(st == 5){
+			return "确认完成";
+		}
+		return "";
+	}
 
 	public ExpendApplayList() {
 		/*boolean privateRole = false;//角色不属于财务 和主任（领导的）

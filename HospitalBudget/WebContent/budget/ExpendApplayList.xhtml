@@ -26,7 +26,7 @@
 					</div>
 				</div> 
 				<div class="fl">
-					<h:commandButton styleClass="btn btn-block btn-primary mt10 ml20" action="/budget/QueryExpendApplay.xhtml" value="搜索" />
+					<h:commandButton styleClass="btn btn-block btn-primary mt10 ml20" action="/budget/QueryExpendApplay.xhtml"  value="搜索" />
 				</div>
 				<div class="fr">
 						<s:link value="添加" view="/budget/ExpendApplication.xhtml" styleClass="btn btn-block btn-success fr mt10 mr10">
@@ -38,15 +38,16 @@
 			
 		    <table class="record table table-hover table-striped" width="100%" cellpadding="0" cellspacing="0">
 		        <tr>
-		            <th width="6%">序号</th>
-		            <th width="13%">单据编号</th>
+		            <th width="5%">序号</th>
+		            <th width="12%">单据编号</th>
 		            <th width="7%">支出年份</th>
-		            <th width="11%">总金额</th>
+		            <th width="10%">总金额</th>
 		            <th width="13%">收款单位</th>
 		            <th width="10%">发票号</th>
-		            <th width="8%">申请人</th>
-		            <th width="11%">申请时间</th>
-		            <th width="6%">发票张数</th>
+		            <th width="7%">申请人</th>
+		            <th width="10%">申请时间</th>
+		            <th width="5%">发票张数</th>
+		            <th width="6%">状态</th>
 		            <th width="8%">操作</th>
 		        </tr>
 		        <a:repeat value="#{expendApplayList.resultList}" var="_result" rowKeyVar="_row">
@@ -63,6 +64,15 @@
 			        	<td>#{commonFinder.parseDate(_result[7])}</td>
 			        	<td>#{_result[8]}</td>
 			        	<td>
+			        		<h:outputText value="" rendered="#{_result[10] eq null or _result[10] eq ''}"/>
+			        		<h:outputText value="待处理" rendered="#{_result[10] eq 0}"/>
+			        		<h:outputText value="正在审核" rendered="#{_result[10] eq 1}"/>
+			        		<h:outputText value="审核完成" rendered="#{_result[10] eq 2}"/>
+			        		<h:outputText value="审核驳回" rendered="#{_result[10] eq 3}"/>
+			        		<h:outputText value="确认驳回" rendered="#{_result[10] eq 4}"/>
+			        		<h:outputText value="确认完成" rendered="#{_result[10] eq 5}"/>
+			        	</td>
+			        	<td>
 			        		<s:link title="查看" view="/budget/ExpendInfoDetail.xhtml" style="text-decoration: none;">
 			        			<f:param name="expendApplyInfoId" value="#{_result[0]}" />
 			        			<i class="fa fa-search"></i>
@@ -73,6 +83,12 @@
 				        			<i class="fa fa-pencil"></i>
 				        		</s:link>
 			        		</s:fragment>
+			        		<s:fragment rendered="#{_result[10] eq 3 or _result[10] eq 4}">
+				        		<a class="icon_link" title="作废" href="#" onclick="removeApply(#{_result[0]});return false;">
+				        			<!-- <img src="../images/tableIco_print2.png" /> -->
+				        			<i class="fa fa-times"></i>
+				        		</a>
+				        	</s:fragment>
 			        		<a class="icon_link" title="打印" href="#" onclick="batchPrintMember(#{_result[0]});return false;">
 			        			<!-- <img src="../images/tableIco_print2.png" /> -->
 			        			<i class="fa fa-print"></i>
@@ -132,6 +148,12 @@
 				</table>
 		    </s:fragment>
 		</div>
+		<a:form>
+			<a:queue requestDelay="100" ignoreDupResponses="true" />
+			<a:jsFunction name="deleteApply" action="#{expendApplyInfoHome.deleteApply()}" oncomplete="removeComplete()">
+				<a:actionparam name="expendApplyInfoId" assignTo="#{expendApplyInfoHome.expendApplyInfoId}" />
+			</a:jsFunction>
+		</a:form>
 		<script type="text/javascript" src="#{request.contextPath}/common/js/bootstrap.min.js" />
 		<script type="text/javascript" src="#{request.contextPath}/toolkit/utils.js" />
 		<script type="text/javascript" src="#{request.contextPath}/common/js/bootstrap-datetimepicker.min.js" charset="UTF-8" />
@@ -173,6 +195,14 @@
 					return false;
 				}
 			}
+
+			function removeApply(id){
+				deleteApply(id);
+				}
+
+			function removeComplete(){
+					window.location.reload();
+				}
 		//]]>
 		</script>
 	</ui:define>
