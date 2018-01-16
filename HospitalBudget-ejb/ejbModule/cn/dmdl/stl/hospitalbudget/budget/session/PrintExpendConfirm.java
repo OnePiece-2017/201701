@@ -1,17 +1,14 @@
 package cn.dmdl.stl.hospitalbudget.budget.session;
 
+import java.math.BigDecimal;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.List;
-
-import net.sf.json.JSONArray;
 
 import org.jboss.seam.annotations.Name;
 
 import cn.dmdl.stl.hospitalbudget.common.session.CriterionEntityHome;
-import cn.dmdl.stl.hospitalbudget.common.session.CriterionNativeQuery;
-import cn.dmdl.stl.hospitalbudget.util.CommonFinder;
+import cn.dmdl.stl.hospitalbudget.util.NumberToCN;
 
 @Name("printExpendConfirm")
 public class PrintExpendConfirm extends CriterionEntityHome<Object>{
@@ -39,7 +36,7 @@ public class PrintExpendConfirm extends CriterionEntityHome<Object>{
 		dataSql.append(" eai.invoice_num,");//5发票号
 		dataSql.append(" rp.the_value as project_name,");//6项目名
 		dataSql.append(" gp.the_value as generic_name, ");//7常规项目名
-		dataSql.append(" eai.comment ");//7常规项目名
+		dataSql.append(" eai.comment ");//8备注
 		dataSql.append(" FROM expend_apply_info eai");
 		dataSql.append(" LEFT JOIN user_info ui ON eai.insert_user = ui.user_info_id ");
 		dataSql.append(" LEFT JOIN user_info_extend uie ON uie.user_info_extend_id = ui.user_info_extend_id ");
@@ -51,7 +48,8 @@ public class PrintExpendConfirm extends CriterionEntityHome<Object>{
 		dataSql.insert(0, "select * from (").append(") as recordset");// 解决找不到列
 		List<Object[]> dataList = getEntityManager().createNativeQuery(dataSql.toString()).getResultList();
 		if (dataList != null && dataList.size() > 0) {
-			expendApplyInfo = dataList.get(0);
+			Object[] tempArr = dataList.get(0);
+			System.arraycopy(tempArr, 0, expendApplyInfo, 0, tempArr.length);//将a数组内容复制新数组b  
 			try {
 				expendApplyInfo[3] = sdfday.format(sdfs.parse(expendApplyInfo[3].toString()));
 			} catch (ParseException e) {
@@ -68,6 +66,11 @@ public class PrintExpendConfirm extends CriterionEntityHome<Object>{
 			}
 		}
 		expendApplyInfo[6] = project.subSequence(0, project.length()-1);
+		//金额中文大写
+		double money =Double.parseDouble(expendApplyInfo[1].toString());  
+        BigDecimal numberOfMoney = new BigDecimal(money);  
+        String s = NumberToCN.number2CNMontrayUnit(numberOfMoney);
+		expendApplyInfo[9] = s;
 	}
 
 

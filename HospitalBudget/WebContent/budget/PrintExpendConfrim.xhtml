@@ -11,9 +11,9 @@
 
 	<ui:define name="head">
 		<style type="text/css">
-
-			table{ width:1000px; height:450px; margin:0 auto; border:1px solid #000; border-spacing: 0px;}
-			td{ border-bottom:1px solid #000;}
+			body{min-height: 200px;}
+			table{ width:900px; height:380px; margin:0 auto; border:1px solid #000; border-spacing: 0px;border-collapse:collapse;}
+			td{ border-bottom:1px solid #000;word-wrap:break-word;}
 			.bb{ border-bottom:none;}
 			.tall{ height:200px;}
 			.tall td{ vertical-align:top;}
@@ -22,43 +22,46 @@
 
 	<ui:define name="body">
 	#{printExpendConfirm.wire()}
-		<div  id="rightPanel" style="width: 1000px;height: 450px;margin:0 auto ;" >
+		<div id="rightPanel" style="width: 900px;height: 290px;margin:0 auto ;" >
 			<div class="ckd_d" style="font-size:25px;text-align:center;height: 60px;margin-top: 40px">
 				首都医科大学附属北京友谊医院支出申请单
 			</div>
-			<table style="width: 1000px;height: 450px;border:1px solid #000;border-collapse:collapse;" >
+			<table>
 				  <tbody >
 				    <tr >
-				      <td width="10%" style="border-bottom:1px solid #000;">主管部门：</td>
-				      <td colspan="7"  width="60%" style="border-bottom:1px solid #000;">#{printExpendConfirm.expendApplyInfo[0]}</td>
-				      <td width="10%" style="border-bottom:1px solid #000;">付款金额：</td>
-				      <td colspan="3" width="22%" style="border-bottom:1px solid #000;">#{printExpendConfirm.expendApplyInfo[1]}</td>
+				      <td width="15%" style="border-bottom:1px solid #000;">主管部门：</td>
+				      <td colspan="7"  width="55%" style="border-bottom:1px solid #000;">#{printExpendConfirm.expendApplyInfo[0]}</td>
+				      <td width="15%" style="border-bottom:1px solid #000;">付款金额：</td>
+				      <td colspan="3" width="15%" style="border-bottom:1px solid #000;">#{printExpendConfirm.expendApplyInfo[1]}</td>
 				    </tr>
 				    <tr >
-				      <td width="10%" style="border-bottom:1px solid #000;">收款单位：</td>
-				      <td colspan="7" width="60%" style="border-bottom:1px solid #000;">#{printExpendConfirm.expendApplyInfo[2]}</td>
-				      <td width="10%" style="border-bottom:1px solid #000;">付款日期：</td>
-				      <td colspan="3" width="22%" style="border-bottom:1px solid #000;">#{printExpendConfirm.expendApplyInfo[3]}</td>
+				      <td width="15%" style="border-bottom:1px solid #000;">收款单位：</td>
+				      <td colspan="7" width="55%" style="border-bottom:1px solid #000;">#{printExpendConfirm.expendApplyInfo[2]}</td>
+				      <td width="15%" style="border-bottom:1px solid #000;">付款日期：</td>
+				      <td colspan="3" width="15%" style="border-bottom:1px solid #000;">#{printExpendConfirm.expendApplyInfo[3]}</td>
 				    </tr>
 				    <tr>
-				      <td width="10%" style="border-bottom:1px solid #000;">项目名称：</td>
-				      <td colspan="7" width="60%" style="border-bottom:1px solid #000;">#{printExpendConfirm.expendApplyInfo[6]}</td>
-				      <td width="10%" style="border-bottom:1px solid #000;">发票张数：</td>
-				      <td colspan="3" width="22%" style="border-bottom:1px solid #000;">#{printExpendConfirm.expendApplyInfo[4]}</td>
+				      <td width="15%" style="border-bottom:1px solid #000;">项目名称：</td>
+				      <td colspan="7" width="55%" style="border-bottom:1px solid #000;">#{printExpendConfirm.expendApplyInfo[6]}</td>
+				      <td width="15%" style="border-bottom:1px solid #000;">发票张数：</td>
+				      <td colspan="3" width="15%" style="border-bottom:1px solid #000;">#{printExpendConfirm.expendApplyInfo[4]}</td>
 				    </tr>
 				    <tr class="tall" style="height:200px;">
-				      <td width="10%" style="border-bottom:1px solid #000;vertical-align:top;">发票号码：</td>
-				      <td colspan="11" style="border-bottom:1px solid #000;vertical-align:top;">#{printExpendConfirm.expendApplyInfo[5]}</td>
+				      <td width="15%" style="border-bottom:1px solid #000;vertical-align:top;">发票号码：</td>
+				      <td colspan="11" width="85%" style="border-bottom:1px solid #000;vertical-align:top;">#{printExpendConfirm.expendApplyInfo[5]}</td>
 				    </tr>
 				    <tr style="border:1px solid #000;">
-				      <td width="10%" style="border-bottom:1px solid #000;">备注：</td>
-				      <td colspan="11" style="border-bottom:1px solid #000;">#{printExpendConfirm.expendApplyInfo[8]}</td>
-				      
+				      <td width="15%" style="border-bottom:1px solid #000;">大写金额：</td>
+				      <td colspan="11" width="85%" style="border-bottom:1px solid #000;">#{printExpendConfirm.expendApplyInfo[9]}</td>
+				    </tr>
+				    <tr style="border:1px solid #000;">
+				      <td width="15%" style="border-bottom:1px solid #000;">备注：</td>
+				      <td colspan="11" width="85%" style="border-bottom:1px solid #000;">#{printExpendConfirm.expendApplyInfo[8]}</td>
 				    </tr>
 				    <tr >
 				      <td width="8%" class="bb" style="border-bottom:1px solid #000;">主管院长：</td>
-				      <td width="10%" class="bb" style="border-bottom:1px solid #000;">&nbsp;</td>
-				      <td width="10%" class="bb" style="border-bottom:1px solid #000;">财务负责人：</td>
+				      <td width="8%" class="bb" style="border-bottom:1px solid #000;">&nbsp;</td>
+				      <td width="12%" class="bb" style="border-bottom:1px solid #000;">财务负责人：</td>
 				      <td width="9%" class="bb" style="border-bottom:1px solid #000;">&nbsp;</td>
 				      <td width="6%" class="bb" style="border-bottom:1px solid #000;">复核：</td>
 				      <td width="10%" class="bb" style="border-bottom:1px solid #000;">&nbsp;</td>
@@ -68,6 +71,41 @@
 				      <td width="10%" class="bb" style="border-bottom:1px solid #000;">&nbsp;</td>
 				      <td width="6%" class="bb" style="border-bottom:1px solid #000;">经手：</td>
 				      <td width="10%" class="bb" style="border-bottom:1px solid #000;">&nbsp;</td>
+				    </tr>
+				  </tbody>
+				</table>
+				
+				<table id="print_table" style="display: none;">
+				  <tbody >
+				    <tr >
+				      <td width="10%"></td>
+				      <td colspan="7"  width="57%">#{printExpendConfirm.expendApplyInfo[0]}</td>
+				      <td width="10%"></td>
+				      <td colspan="3" width="23%">#{printExpendConfirm.expendApplyInfo[1]}</td>
+				    </tr>
+				    <tr >
+				      <td width="10%"></td>
+				      <td colspan="7" width="57%">#{printExpendConfirm.expendApplyInfo[2]}</td>
+				      <td width="10%"></td>
+				      <td colspan="3" width="23%">#{printExpendConfirm.expendApplyInfo[3]}</td>
+				    </tr>
+				    <tr>
+				      <td width="10%"></td>
+				      <td colspan="7" width="57%">#{printExpendConfirm.expendApplyInfo[6]}</td>
+				      <td width="10%"></td>
+				      <td colspan="3" width="23%">#{printExpendConfirm.expendApplyInfo[4]}</td>
+				    </tr>
+				    <tr class="tall" style="height:200px;">
+				      <td width="10%" style="vertical-align:top;"></td>
+				      <td colspan="11" style="vertical-align:top;">#{printExpendConfirm.expendApplyInfo[5]}</td>
+				    </tr>
+   				    <tr style="border:1px solid #000;">
+				      <td width="15%">大写金额：</td>
+				      <td colspan="11" width="85%">#{printExpendConfirm.expendApplyInfo[9]}</td>
+				    </tr>
+				    <tr style="border:1px solid #000;">
+				      <td width="10%"></td>
+				      <td colspan="11">#{printExpendConfirm.expendApplyInfo[8]}</td>
 				    </tr>
 				  </tbody>
 				</table>
@@ -87,6 +125,8 @@
 			function printButtonClick(){
 				obj = jQuery("#printButton").clone();
 				jQuery("#printButton").empty();
+				var tablePrintHtml = jQuery("#print_table").html();
+				jQuery("#rightPanel").html("<table style='width:850px;height:290px;margin-top:190px;margin-left:-25px;'>" + tablePrintHtml + "</table>");
 				jQuery("#rightPanel").printArea();
 			}
 		//]]>
