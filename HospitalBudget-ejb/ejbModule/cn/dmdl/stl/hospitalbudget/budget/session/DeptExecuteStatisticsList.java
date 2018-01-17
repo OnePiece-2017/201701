@@ -43,9 +43,9 @@ public class DeptExecuteStatisticsList extends CriterionNativeQuery<Object[]>{
 		}
 		StringBuffer sql = new StringBuffer();
 		sql.append(" select di.the_value,");
-		sql.append(" SUM(nepi.budget_amount),");
-		sql.append(" SUM(nepi.budget_amount - nepi.budget_amount_surplus),");
-		sql.append(" ROUND(SUM(nepi.budget_amount - nepi.budget_amount_surplus)/SUM(nepi.budget_amount) * 100,2)");
+		sql.append(" SUM(nepi.budget_amount) as total_mount,");
+		sql.append(" SUM(nepi.budget_amount - nepi.budget_amount_surplus) as surplus,");
+		sql.append(" ROUND(SUM(nepi.budget_amount - nepi.budget_amount_surplus)/SUM(nepi.budget_amount) * 100,2)  as percent ");
 		sql.append(" from normal_expend_plan_info nepi");
 		sql.append(" left join generic_project gp on gp.the_id = nepi.generic_project_id");
 		sql.append(" left join routine_project rp on rp.the_id = nepi.project_id");
@@ -70,7 +70,7 @@ public class DeptExecuteStatisticsList extends CriterionNativeQuery<Object[]>{
 			sql.append(" or rp.department_info_id = ").append(departmentInfoId).append(") ");
 		}
 		sql.append(" GROUP BY nepi.dept_id");
-		sql.insert(0, "select * from (").append(") as recordset");
+		sql.insert(0, "select recordset.the_value,FORMAT(recordset.total_mount,1),FORMAT(recordset.surplus,1),recordset.percent from (").append(") as recordset");
 		System.out.println(beginYearParam+"---------"+departmentInfoId+"--------------"+fundsSourceId);
 		setEjbql(sql.toString());
 		return super.createQuery();

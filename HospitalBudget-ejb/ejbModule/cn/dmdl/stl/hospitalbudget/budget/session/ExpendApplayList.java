@@ -211,7 +211,8 @@ public class ExpendApplayList extends CriterionNativeQuery<Object[]> {
 		if(null != searchKey && !searchKey.equals("")){
 			sql.append(" and (eai.expend_apply_code = '%").append(searchKey).append("%' eai.finace_account_name LIKE '%").append(searchKey).append("%')");
 		}
-		sql.insert(0, "select * from (").append(") as recordset");
+		sql.append(" order by eai.insert_time desc ");
+		sql.insert(0, "select * from (").append(") as recordset ");
 		System.out.println(sql);
 		setEjbql(sql.toString());
 		return super.createQuery();

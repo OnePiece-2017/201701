@@ -53,23 +53,23 @@ public class ExpendCompanyList extends CriterionNativeQuery<Object[]>{
 			sql.append(" and (gp.department_info_id = ").append(departmentInfoId);
 			sql.append(" or rp.department_info_id = ").append(departmentInfoId).append(") ");
 		}*/
-		boolean privateRole = false;//角色不属于财务主任 和管理员
-		String roleSql = "select role_info.role_info_id,user_info.department_info_id,ydi.the_value from user_info LEFT JOIN role_info on role_info.role_info_id=user_info.role_info_id LEFT JOIN ys_department_info ydi on "
-				+ "user_info.department_info_id=ydi.the_id where user_info.user_info_id=" + sessionToken.getUserInfoId();
-		
-		List<Object[]> roleList = getEntityManager().createNativeQuery(roleSql).getResultList();
-		int roleId = Integer.parseInt(roleList.get(0)[0].toString());//角色id
-		
-		if(Integer.valueOf(roleId) != 1 && Integer.valueOf(roleId) != 2){
-			privateRole = true;
-		}
+//		boolean privateRole = false;//角色不属于财务主任 和管理员
+//		String roleSql = "select role_info.role_info_id,user_info.department_info_id,ydi.the_value from user_info LEFT JOIN role_info on role_info.role_info_id=user_info.role_info_id LEFT JOIN ys_department_info ydi on "
+//				+ "user_info.department_info_id=ydi.the_id where user_info.user_info_id=" + sessionToken.getUserInfoId();
+//		
+//		List<Object[]> roleList = getEntityManager().createNativeQuery(roleSql).getResultList();
+//		int roleId = Integer.parseInt(roleList.get(0)[0].toString());//角色id
+//		
+//		if(Integer.valueOf(roleId) != 1 && Integer.valueOf(roleId) != 2){
+//			privateRole = true;
+//		}
 		
 		
 		sql.append("SELECT eai.recive_company,SUM(eai.total_money) from expend_apply_info eai ");
 		sql.append("where eai.deleted = 0 ");
-		if(privateRole){
-			sql.append(" and eai.insert_user= ").append(sessionToken.getUserInfoId());
-		}
+//		if(privateRole){
+//			sql.append(" and eai.insert_user= ").append(sessionToken.getUserInfoId());
+//		}
 		sql.append("GROUP BY eai.recive_company ");
 		sql.insert(0, "select * from (").append(") as recordset");
 		System.out.println(beginYearParam+"---------"+departmentInfoId+"--------------"+fundsSourceId);

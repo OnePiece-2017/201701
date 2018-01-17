@@ -161,7 +161,25 @@
 	#{expendApplyInfoHome.wire()}
 		<h:form id="mainForm" styleClass="edit" enctype="multipart/form-data">
 			<div class="pd0-10">
-				<div class="pt30 pb30 fs14">
+				<div style="padding-top: 22px;">
+					<h:inputHidden id="projectJson" value="#{expendApplyInfoHome.projectJson}" />
+					<table class="normal-btn">
+						<tr>
+							<td>
+								<s:fragment rendered="#{expendApplyInfoHome.expendApplyInfoId eq null or expendApplyInfoHome.expendApplyInfoId eq 0}">
+									<a class="btn btn-primary mr15" onclick="return checkSub();">提交</a>
+								</s:fragment>
+								<s:fragment rendered="#{expendApplyInfoHome.expendApplyInfoId ne null and expendApplyInfoHome.expendApplyInfoId ne 0}">
+									<a class="btn btn-primary mr15" onclick="return checkEdit();">提交</a>
+								</s:fragment>
+								<s:button id="cancel" value="返回" view="/budget/ExpendApplayList.xhtml" propagation="none" styleClass="btn btn-default" />
+							</td>
+						</tr>
+					</table>
+					<br />
+					<br />
+				</div>
+				<div class=" fs14">
 				<h:inputHidden value="#{expendApplyInfoHome.expendApplyInfoId}" id="expendApplyIdEdit"/>
 					<table width="100%" cellpadding="0" cellspacing="0">
 						<tr>
@@ -351,19 +369,19 @@
 				        </tr>
 				    <a:repeat value="#{expendApplyInfoHome.expendList}" var="_obj" rowKeyVar="_index">
 				        <tr class="root expendtr" style="font-size: 14px;font-weight: normal;">
-				        	<td >#{_index + 1}</td>
-				            <td class="project_name">#{_obj[0]}</td>
-				            <td >#{_obj[5]}</td>
-				            <td >#{_obj[1]}</td>
-				            <td id="projectFrozen_#{_index}">#{_obj[2]}</td>
-				            <td  name="canUseMoney" id="canUseMoney_#{_index}">#{_obj[3]}</td>
-				             <td >
+				        	<td style="text-align: center;">#{_index + 1}</td>
+				            <td class="project_name" style="text-align: center;">#{_obj[0]}</td>
+				            <td style="text-align: center;">#{_obj[5]}</td>
+				            <td style="text-align: center;">#{_obj[1]}</td>
+				            <td style="text-align: center;" id="projectFrozen_#{_index}">#{_obj[2]}</td>
+				            <td  style="text-align: center;" name="canUseMoney" id="canUseMoney_#{_index}">#{_obj[3]}</td>
+				             <td style="text-align: center;">
 				            	<input id="money_#{_index}" name="money" class="form-control row-text-simplify" value="#{_obj[4]}" type="text" onblur="totalMoney()"/>
 				            </td>
-				            <td >
+				            <td style="text-align: center;">
 				            	<span id="attachment_#{_index}" class="operation-item opr-attachment"  fu-source="#{_obj[9]}" style="cursor:pointer;#{_obj[9] ne null and _obj[9] ne '' ? 'color:blue' : ''}">附件</span>
 				            </td>
-				            <td >
+				            <td style="text-align: center;">
 				            	<a name="delete" title="删除" style="text-decoration: none; cursor: pointer;" onclick="deleteList()">
 									<img src="../images/icon_delete_16x16.png"/>
 								</a>
@@ -458,7 +476,7 @@
 						</table>
 					</div>
 				</div>
-				<div class="pb95" >
+				<!-- <div class="pb95" >
 					<h:inputHidden id="projectJson" value="#{expendApplyInfoHome.projectJson}" />
 					<table class="normal-btn">
 						<tr>
@@ -475,7 +493,7 @@
 					</table>
 					<br />
 					<br />
-				</div>
+				</div> -->
 			</div>
 		</h:form>
 		<div class="modal fade" id="addModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
