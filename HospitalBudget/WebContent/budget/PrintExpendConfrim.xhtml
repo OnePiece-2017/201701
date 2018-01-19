@@ -11,9 +11,9 @@
 
 	<ui:define name="head">
 		<style type="text/css">
-			body{min-height: 200px;}
+			body{height:auto;}
 			table{ width:900px; height:380px; margin:0 auto; border:1px solid #000; border-spacing: 0px;border-collapse:collapse;}
-			td{ border-bottom:1px solid #000;word-wrap:break-word;}
+			td{ border-bottom:1px solid #000; word-break: break-all;}
 			.bb{ border-bottom:none;}
 			.tall{ height:200px;}
 			.tall td{ vertical-align:top;}
@@ -48,11 +48,11 @@
 				    </tr>
 				    <tr class="tall" style="height:200px;">
 				      <td width="15%" style="border-bottom:1px solid #000;vertical-align:top;">发票号码：</td>
-				      <td colspan="11" width="85%" style="border-bottom:1px solid #000;vertical-align:top;">#{printExpendConfirm.expendApplyInfo[5]}</td>
+				      <td colspan="11" style="border-bottom:1px solid #000;vertical-align:top;">#{printExpendConfirm.expendApplyInfo[5]}</td>
 				    </tr>
 				    <tr style="border:1px solid #000;">
 				      <td width="15%" style="border-bottom:1px solid #000;">大写金额：</td>
-				      <td colspan="11" width="85%" style="border-bottom:1px solid #000;">#{printExpendConfirm.expendApplyInfo[9]}</td>
+				      <td colspan="11" style="border-bottom:1px solid #000;">#{printExpendConfirm.expendApplyInfo[9]}</td>
 				    </tr>
 				    <tr style="border:1px solid #000;">
 				      <td width="15%" style="border-bottom:1px solid #000;">备注：</td>
@@ -80,32 +80,33 @@
 				    <tr >
 				      <td width="10%"></td>
 				      <td colspan="7"  width="57%">#{printExpendConfirm.expendApplyInfo[0]}</td>
-				      <td width="10%"></td>
+				      <td width="11%"></td>
 				      <td colspan="3" width="23%">#{printExpendConfirm.expendApplyInfo[1]}</td>
 				    </tr>
-				    <tr >
+				    <tr height="34px;">
 				      <td width="10%"></td>
 				      <td colspan="7" width="57%">#{printExpendConfirm.expendApplyInfo[2]}</td>
-				      <td width="10%"></td>
+				      <td></td>
 				      <td colspan="3" width="23%">#{printExpendConfirm.expendApplyInfo[3]}</td>
 				    </tr>
 				    <tr>
 				      <td width="10%"></td>
 				      <td colspan="7" width="57%">#{printExpendConfirm.expendApplyInfo[6]}</td>
-				      <td width="10%"></td>
+				      <td></td>
 				      <td colspan="3" width="23%">#{printExpendConfirm.expendApplyInfo[4]}</td>
 				    </tr>
-				    <tr class="tall" style="height:200px;">
+				    <tr class="tall" style="height:180px;">
 				      <td width="10%" style="vertical-align:top;"></td>
-				      <td colspan="11" style="vertical-align:top;">#{printExpendConfirm.expendApplyInfo[5]}</td>
+				      <td colspan="10" style="vertical-align:top;">#{printExpendConfirm.expendApplyInfo[5]}</td>
+				      <td width="10%"></td>
 				    </tr>
    				    <tr style="border:1px solid #000;">
-				      <td width="15%">大写金额：</td>
-				      <td colspan="11" width="85%">#{printExpendConfirm.expendApplyInfo[9]}</td>
+				      <td width="10%"></td>
+				      <td colspan="11">大写金额：#{printExpendConfirm.expendApplyInfo[9]}</td>
 				    </tr>
 				    <tr style="border:1px solid #000;">
 				      <td width="10%"></td>
-				      <td colspan="11">#{printExpendConfirm.expendApplyInfo[8]}</td>
+				      <td colspan="11"><p style="height:24px; overflow:hidden; margin:0;">#{printExpendConfirm.expendApplyInfo[8]}</p></td>
 				    </tr>
 				  </tbody>
 				</table>
@@ -126,7 +127,7 @@
 				obj = jQuery("#printButton").clone();
 				jQuery("#printButton").empty();
 				var tablePrintHtml = jQuery("#print_table").html();
-				jQuery("#rightPanel").html("<table style='width:850px;height:290px;margin-left:-25px;'>" + tablePrintHtml + "</table>");
+				jQuery("#rightPanel").html("<table style='width:850px;height:290px;margin-left:150px;margin-top:198px;'>" + tablePrintHtml + "</table>");
 				jQuery("#rightPanel").printArea();
 			}
 		//]]>
