@@ -23,6 +23,7 @@ import cn.dmdl.stl.hospitalbudget.budget.entity.ExpendApplyProject;
 import cn.dmdl.stl.hospitalbudget.budget.entity.ExpendConfirmInfo;
 import cn.dmdl.stl.hospitalbudget.budget.entity.ExpendConfirmProject;
 import cn.dmdl.stl.hospitalbudget.common.session.CriterionNativeQuery;
+import cn.dmdl.stl.hospitalbudget.util.OldBudgetJDBCUtil;
 import cn.dmdl.stl.hospitalbudget.util.SessionToken;
 import cn.dmdl.stl.hospitalbudget.util.SqlServerJDBCUtil;
 
@@ -52,6 +53,135 @@ public class ExpendApplayList extends CriterionNativeQuery<Object[]> {
 //			privateRole = true;
 //		}
 //		expendApplyInfoList = this.createQuery().getResultList();
+		
+		//从新耗材系统获取支出数据
+		this.syncNewConsumables();
+		
+		//在老耗材系统获取支出数据
+		this.syncOldConsumables();
+		
+	}
+	
+	/**
+	 * 在旧耗材系统读取数据
+	 */
+	private void syncOldConsumables(){
+
+		Connection conn = OldBudgetJDBCUtil.getConnection();
+		PreparedStatement ps = null;
+		ResultSet rs = null;
+		String sql = "SELECT * "
+				+ "FROM bfh_budget.goods_execute t "
+				+ "where t.register_time >= '2018-01-01' AND t.is_sync=0";
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+		String updateSql = "update bfh_budget.goods_execute set is_sync=1 where id=? ";
+		//TODO 小强从这里开始改这个方法应该就可以了
+		List<String> codeList = new ArrayList<String>();
+		try {
+			ps = conn.prepareStatement(sql);
+			rs = ps.executeQuery();
+			while(rs.next()){
+//				String expendApplyCode = rs.getString("bill_code");//单号
+//				Date venDate = rs.getDate("iow_date");//申请时间
+//				String oper = rs.getString("oper");//操作人
+//				String reciveCompany = rs.getString("ven_code");
+//				String invoiceNum = rs.getString("main_INVOICE_NO");
+//				Float totalMoney = rs.getFloat("this_payment_money");//支出
+//				Float budg_year_money = rs.getFloat("budg_year_money");//年预算
+//				Float budg_year_out_money = rs.getFloat("budg_year_out_money");//已支出
+//				Float disbursable_money = rs.getFloat("disbursable_money");//可支出
+//				String year = rs.getString("budg_year");//预算nian
+				String userSql = "select user_info_id from user_info where username='"+oper+"'";
+//				String budgCode = rs.getString("budg_code");
+				
+				List<Object> userList = getEntityManager().createNativeQuery(userSql).getResultList();
+				int userId = 0;
+				if(null != userList && userList.size() > 0){
+					userId = Integer.valueOf(userList.get(0).toString());
+				}
+				codeList.add(expendApplyCode);
+				//申请单
+				ExpendApplyInfo expendApplyInfo = new ExpendApplyInfo();
+				expendApplyInfo.setExpendApplyCode(expendApplyCode);
+				expendApplyInfo.setYear(year);
+				expendApplyInfo.setApplyUserId(userId);
+				expendApplyInfo.setReciveCompany(reciveCompany);
+				expendApplyInfo.setInvoiceNum(invoiceNum);
+				expendApplyInfo.setInsertUser(userId);
+				expendApplyInfo.setInsertTime(venDate);
+				expendApplyInfo.setDeleted(false);
+				expendApplyInfo.setSummary("1");
+				expendApplyInfo.setReimbursementer(oper);
+				expendApplyInfo.setExpendApplyStatus(0);
+				expendApplyInfo.setTaskOrderId(0);
+				expendApplyInfo.setOrderSn("");
+				expendApplyInfo.setDeleted(false);
+				expendApplyInfo.setTotalMoney(totalMoney);
+				expendApplyInfo.setApplyTime(venDate);
+				expendApplyInfo.setExplendSource(1);
+				getEntityManager().persist(expendApplyInfo);
+				
+				ExpendConfirmInfo eci = new ExpendConfirmInfo();
+				eci.setExpend_apply_info_id(expendApplyInfo.getExpendApplyInfoId());
+				eci.setInsertUser(userId);
+				eci.setInsertTime(expendApplyInfo.getInsertTime());
+				eci.setTotalMoney(0f);
+				eci.setConfirm_status(0);
+				eci.setYear(expendApplyInfo.getYear());
+				eci.setDeleted(false);
+				getEntityManager().persist(eci);
+				
+				String nepiSql = "select normal_expend_plan_id,project_id,generic_project_id from normal_expend_plan_info where normal_expend_plan_id=" + budgCode;
+				List<Object[]> nepiList= getEntityManager().createNativeQuery(nepiSql).getResultList();
+				if(null != nepiList &&nepiList.size() > 0){
+					ExpendApplyProject eap = new ExpendApplyProject();//申请项目
+					ExpendConfirmProject efp = new ExpendConfirmProject();//确认项目
+					eap.setExpendApplyInfoId(expendApplyInfo.getExpendApplyInfoId());
+					if(null != nepiList.get(0)[1]){
+						eap.setProjectId(Integer.valueOf(nepiList.get(0)[1].toString()));
+					}else{
+						eap.setGenericProjectId(Integer.valueOf(nepiList.get(0)[2].toString()));
+					}
+					eap.setExpendBeforFrozen(budg_year_out_money);
+					eap.setExpendBeforSurplus(disbursable_money);
+					eap.setExpendMoney(totalMoney);
+					eap.setInsertUser(userId);
+					eap.setInsertTime(expendApplyInfo.getInsertTime());
+					eap.setDeleted(false);
+					getEntityManager().persist(eap);
+					
+					
+					efp.setExpend_confirm_info_id(eci.getExpend_confirm_info_id());
+					efp.setExpend_apply_project_id(eap.getExpendApplyProjectId());
+					efp.setExpendBeforFrozen(eap.getExpendBeforFrozen());
+					efp.setExpendBeforSurplus(eap.getExpendBeforSurplus());
+					efp.setProjectId(eap.getProjectId());
+					efp.setGenericProjectId(eap.getGenericProjectId());
+					efp.setDeleted(false);
+					efp.setConfirm_money(eap.getExpendMoney());
+					getEntityManager().persist(efp);
+				}
+				
+			}
+			
+			for(String code : codeList){
+				ps = conn.prepareStatement(updateSql);
+				ps.setString(1, code);
+				ps.executeUpdate();
+			}
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}finally{
+			SqlServerJDBCUtil.CloseAll(conn, ps, rs);
+		}
+		
+	}
+	
+	/**
+	 * 在新耗材系统内读取耗材数据
+	 */
+	private void syncNewConsumables(){
 		Connection conn = SqlServerJDBCUtil.GetConnection();
 		PreparedStatement ps = null;
 		ResultSet rs = null;
