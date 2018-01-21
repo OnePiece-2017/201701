@@ -14,10 +14,9 @@ public class NumberToCN {
     /** 
      * 汉语中数字大写 
      */  
-    //private static final String[] CN_UPPER_NUMBER = { "零", "壹", "贰", "叁", "肆","伍", "陆", "柒", "捌", "玖" };  
+    private static final String[] CN_UPPER_NUMBER = { "零", "壹", "贰", "叁", "肆","伍", "陆", "柒", "捌", "玖" };  
       
-    private static final String[] CN_UPPER_NUMBER = { "零", "一", "二", "三", "四",  
-            "五", "六", "七", "八", "九" };  
+//    private static final String[] CN_UPPER_NUMBER = { "零", "一", "二", "三", "四", "五", "六", "七", "八", "九" };  
     /** 
      * 汉语中货币单位大写，这样的设计类似于占位符 
      */  

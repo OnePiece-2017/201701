@@ -70,7 +70,7 @@ public class DeptExecuteStatisticsList extends CriterionNativeQuery<Object[]>{
 			sql.append(" or rp.department_info_id = ").append(departmentInfoId).append(") ");
 		}
 		sql.append(" GROUP BY nepi.dept_id");
-		sql.insert(0, "select recordset.the_value,FORMAT(recordset.total_mount,1),FORMAT(recordset.surplus,1),recordset.percent from (").append(") as recordset");
+		sql.insert(0, "select recordset.the_value,FORMAT(recordset.total_mount,2),FORMAT(recordset.surplus,2),recordset.percent from (").append(") as recordset");
 		System.out.println(beginYearParam+"---------"+departmentInfoId+"--------------"+fundsSourceId);
 		setEjbql(sql.toString());
 		return super.createQuery();

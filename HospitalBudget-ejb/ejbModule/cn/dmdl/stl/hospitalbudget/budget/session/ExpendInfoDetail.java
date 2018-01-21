@@ -11,6 +11,7 @@ import org.jboss.seam.annotations.Name;
 
 import cn.dmdl.stl.hospitalbudget.budget.entity.ExpendApplyInfo;
 import cn.dmdl.stl.hospitalbudget.common.session.CriterionEntityHome;
+import cn.dmdl.stl.hospitalbudget.util.Assit;
 import cn.dmdl.stl.hospitalbudget.util.CommonFinder;
 
 @Name("expendInfoDetail")
@@ -106,10 +107,10 @@ public class ExpendInfoDetail extends CriterionEntityHome<ExpendApplyInfo>{
 				Object[] projectDetail = new Object[9];
 				if(null == obj[12] && null != obj[5]){
 					projectDetail[0] = obj[0];
-					projectDetail[1] = obj[1];
-					projectDetail[2] = obj[2];
-					projectDetail[3] = obj[3];
-					projectDetail[4] = obj[4];
+					projectDetail[1] = Assit.formatDouble2(obj[1].toString());
+					projectDetail[2] = Assit.formatDouble2(obj[2].toString());
+					projectDetail[3] = Assit.formatDouble2(obj[3].toString());
+					projectDetail[4] = Assit.formatDouble2(obj[4].toString());
 					allMoney += Float.parseFloat(projectDetail[4].toString());
 					projectDetail[5] = obj[6];
 					projectDetail[6] = "";
@@ -117,10 +118,10 @@ public class ExpendInfoDetail extends CriterionEntityHome<ExpendApplyInfo>{
 					projectDetail[8] = obj[14];
 				}else{
 					projectDetail[0] = obj[7];
-					projectDetail[1] = obj[8];
-					projectDetail[2] = obj[2];
-					projectDetail[3] = obj[3];
-					projectDetail[4] = obj[11];
+					projectDetail[1] = Assit.formatDouble2(obj[8].toString());
+					projectDetail[2] = Assit.formatDouble2(obj[2].toString());
+					projectDetail[3] = Assit.formatDouble2(obj[3].toString());
+					projectDetail[4] = Assit.formatDouble2(obj[11].toString());
 					allMoney += Float.parseFloat(projectDetail[4].toString());
 					projectDetail[5] = obj[13];
 					projectDetail[6] = "";

@@ -46,7 +46,10 @@ public class DisburseStatisticalList extends CriterionNativeQuery<Object[]> {
 		StringBuffer sql = new StringBuffer();
 		sql.append(" select nepi.normal_expend_plan_id,if(nepi.project_id is null,gp.the_value,rp.the_value) as the_value,");
 		sql.append(" if(nepi.project_id is null,nepi.generic_project_id,nepi.project_id)as the_id,if(nepi.project_id is null,2,1) as type,");
-		sql.append(" nepi.budget_amount,nepi.budget_amount_frozen,nepi.budget_amount_surplus,round(nepi.budget_amount_frozen / nepi.budget_amount * 100,2)");
+		sql.append(" FORMAT(nepi.budget_amount,2) as budget_amount,");
+		sql.append(" FORMAT(nepi.budget_amount_frozen,2) as budget_amount_frozen,");
+		sql.append(" FORMAT(nepi.budget_amount_surplus,2) as budget_amount_surplus,");
+		sql.append(" round(nepi.budget_amount_frozen / nepi.budget_amount * 100,2) ");
 		sql.append(" from normal_expend_plan_info nepi");
 		sql.append(" left join generic_project gp on gp.the_id = nepi.generic_project_id");
 		sql.append(" left join routine_project rp on rp.the_id = nepi.project_id");

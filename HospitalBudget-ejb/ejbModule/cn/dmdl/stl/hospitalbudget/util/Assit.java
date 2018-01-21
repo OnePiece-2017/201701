@@ -229,6 +229,17 @@ public class Assit {
 	
 	
 	/**
+	 * 保留两位小数
+	 * @param str
+	 * @return
+	 */
+	public static String formatDouble2(String str){
+		double d = Double.parseDouble(str);
+		DecimalFormat df = new DecimalFormat("#.00");
+        return df.format(d);
+	}
+	
+	/**
 	 * 处理id集合返回id字符串
 	 * @param draftIdList
 	 * @return
