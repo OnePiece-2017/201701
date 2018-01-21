@@ -80,7 +80,7 @@ public class ExpendApplayList extends CriterionNativeQuery<Object[]> {
 		System.out.println(sql);
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 		String updateSql = "update bfh_budget.goods_execute set is_sync=1 where id=? ";
-		//TODO 小强从这里开始改这个方法应该就可以了
+		
 		List<Integer> codeList = new ArrayList<Integer>();
 		try {
 			ps = conn.prepareStatement(sql);
@@ -93,15 +93,18 @@ public class ExpendApplayList extends CriterionNativeQuery<Object[]> {
 				String invoiceNum = rs.getString("budget_invoice");
 				Double totalMoney = Double.parseDouble(rs.getString("sum").replaceAll(",",""));//支出
 				String year = rs.getString("budget_year");//预算nian
-				String userSql = "select user_info_id from user_info where username='"+oper+"'";
 				Integer oldId = rs.getInt("id");
+				codeList.add(oldId);
 				
-				List<Object> userList = getEntityManager().createNativeQuery(userSql).getResultList();
+				String userSql = "select a.user_info_id,b.fullname from hospital_budget.user_info a LEFT JOIN hospital_budget.user_info_extend b "
+						+ " on b.user_info_extend_id=a.user_info_extend_id "
+						+ " where b.fullname ='"+oper+"'";
+				List<Object[]> userList = getEntityManager().createNativeQuery(userSql).getResultList();
 				int userId = 0;
 				if(null != userList && userList.size() > 0){
-					userId = Integer.valueOf(userList.get(0).toString());
+					userId = Integer.valueOf(userList.get(0)[0].toString());
 				}
-				codeList.add(oldId);
+				
 				//申请单
 				ExpendApplyInfo expendApplyInfo = new ExpendApplyInfo();
 				expendApplyInfo.setExpendApplyCode(expendApplyCode);
@@ -112,7 +115,7 @@ public class ExpendApplayList extends CriterionNativeQuery<Object[]> {
 				expendApplyInfo.setInsertUser(userId);
 				expendApplyInfo.setInsertTime(venDate);
 				expendApplyInfo.setDeleted(false);
-				expendApplyInfo.setSummary("1");
+				expendApplyInfo.setSummary(invoiceNum.split(",").length + "");
 				expendApplyInfo.setReimbursementer(oper);
 				expendApplyInfo.setExpendApplyStatus(0);
 				expendApplyInfo.setTaskOrderId(0);
@@ -172,7 +175,6 @@ public class ExpendApplayList extends CriterionNativeQuery<Object[]> {
 				}
 				
 			}
-			
 			for(Integer id : codeList){
 				ps = conn.prepareStatement(updateSql);
 				ps.setInt(1, id);
@@ -227,7 +229,9 @@ public class ExpendApplayList extends CriterionNativeQuery<Object[]> {
 				Float budg_year_out_money = rs.getFloat("budg_year_out_money");//已支出
 				Float disbursable_money = rs.getFloat("disbursable_money");//可支出
 				String year = rs.getString("budg_year");//预算nian
-				String userSql = "select user_info_id from user_info where username='"+oper+"'";
+				String userSql = "select a.user_info_id from user_info a LEFT JOIN user_info_extend b "
+						+ " on b.user_info_extend_id=a.user_info_extend_id "
+						+ " where b.fullname ='"+oper+"'";
 				String budgCode = rs.getString("budg_code");
 				
 				List<Object> userList = getEntityManager().createNativeQuery(userSql).getResultList();
