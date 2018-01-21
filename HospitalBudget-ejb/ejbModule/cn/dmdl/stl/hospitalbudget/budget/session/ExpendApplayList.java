@@ -5,26 +5,21 @@ import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import javax.persistence.Query;
 
 import org.jboss.seam.annotations.In;
 import org.jboss.seam.annotations.Name;
 
-import cn.dmdl.stl.hospitalbudget.admin.entity.UserInfo;
 import cn.dmdl.stl.hospitalbudget.budget.entity.ExpendApplyInfo;
 import cn.dmdl.stl.hospitalbudget.budget.entity.ExpendApplyProject;
 import cn.dmdl.stl.hospitalbudget.budget.entity.ExpendConfirmInfo;
 import cn.dmdl.stl.hospitalbudget.budget.entity.ExpendConfirmProject;
 import cn.dmdl.stl.hospitalbudget.common.session.CriterionNativeQuery;
 import cn.dmdl.stl.hospitalbudget.util.MysqlJDBCUtil;
-import cn.dmdl.stl.hospitalbudget.util.OldBudgetJDBCUtil;
 import cn.dmdl.stl.hospitalbudget.util.SessionToken;
 import cn.dmdl.stl.hospitalbudget.util.SqlServerJDBCUtil;
 
@@ -77,10 +72,12 @@ public class ExpendApplayList extends CriterionNativeQuery<Object[]> {
 				+ "t.payee,"//收款单位
 				+ "t.sum,"//本次付款金额
 				+ "t.register,"//操作人
-				+ "'无' as budget_invoice,"//汇总发票号
+				+ "GROUP_CONCAT(gei.invoice_id) as budget_invoice,"//汇总发票号
 				+ "'2018' as budget_year "//年度
 				+ "FROM bfh_budget.goods_execute t "
-				+ "where t.register_time >= '2018-01-01' AND t.is_sync=0";
+				+ "LEFT JOIN bfh_budget.goods_execute_invoice gei ON t.file_id = gei.file_id "
+				+ "where t.execute_time >= '2018-01-01' AND t.is_sync=0 GROUP BY t.id ";
+		System.out.println(sql);
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 		String updateSql = "update bfh_budget.goods_execute set is_sync=1 where id=? ";
 		//TODO 小强从这里开始改这个方法应该就可以了

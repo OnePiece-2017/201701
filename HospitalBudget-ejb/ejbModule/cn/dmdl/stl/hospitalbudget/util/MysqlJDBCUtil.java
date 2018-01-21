@@ -9,9 +9,13 @@ import java.sql.SQLException;
 public class MysqlJDBCUtil {
 	private final static String DRIVER = "com.mysql.jdbc.Driver";        // 驱动
     private final static String URL = "jdbc:mysql://127.0.0.1:3306/bfh_budget";        // 连接地址
+    private final static String USERNAME = "nseer";        // 账号
+    private final static String PASSWORD = "BTSnseer#.wl";        // 密码     
+    
+/*    private final static String URL = "jdbc:mysql://127.0.0.1:3306/bfh_budget";        // 连接地址
     private final static String USERNAME = "root";        // 账号
-    private final static String PASSWORD = "120823";        // 密码        
-   
+    private final static String PASSWORD = "tiaozhan14";        // 密码
+*/   
    
     public static Connection GetConnection(){
     	Connection conn = null;
