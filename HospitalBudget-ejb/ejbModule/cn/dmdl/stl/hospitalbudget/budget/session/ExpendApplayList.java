@@ -18,6 +18,8 @@ import cn.dmdl.stl.hospitalbudget.budget.entity.ExpendApplyInfo;
 import cn.dmdl.stl.hospitalbudget.budget.entity.ExpendApplyProject;
 import cn.dmdl.stl.hospitalbudget.budget.entity.ExpendConfirmInfo;
 import cn.dmdl.stl.hospitalbudget.budget.entity.ExpendConfirmProject;
+import cn.dmdl.stl.hospitalbudget.budget.entity.RoutineProject;
+import cn.dmdl.stl.hospitalbudget.budget.entity.YsExpandApplyProcessLog;
 import cn.dmdl.stl.hospitalbudget.common.session.CriterionNativeQuery;
 import cn.dmdl.stl.hospitalbudget.util.MysqlJDBCUtil;
 import cn.dmdl.stl.hospitalbudget.util.SessionToken;
@@ -126,54 +128,92 @@ public class ExpendApplayList extends CriterionNativeQuery<Object[]> {
 				expendApplyInfo.setExplendSource(1);
 				getEntityManager().persist(expendApplyInfo);
 				
-				ExpendConfirmInfo eci = new ExpendConfirmInfo();
-				eci.setExpend_apply_info_id(expendApplyInfo.getExpendApplyInfoId());
-				eci.setInsertUser(userId);
-				eci.setInsertTime(expendApplyInfo.getInsertTime());
-				eci.setTotalMoney(0f);
-				eci.setConfirm_status(0);
-				eci.setYear(expendApplyInfo.getYear());
-				eci.setDeleted(false);
-				getEntityManager().persist(eci);
 				//to-do   注意：这里年份写死的，项目id  project_id=10也是写死的
 				String nepiSql = "select normal_expend_plan_id,project_id,budget_amount,"
 						+ "budget_amount_frozen,budget_amount_surplus "
 						+ "from normal_expend_plan_info where `year`='2018' and project_id=10 ";
 				List<Object[]> nepiList= getEntityManager().createNativeQuery(nepiSql).getResultList();
 				
-				if(null != nepiList &&nepiList.size() > 0){
-					Float budg_year_money = Float.parseFloat(nepiList.get(0)[2].toString());//年预算
-					Float budg_year_out_money = Float.parseFloat(nepiList.get(0)[3].toString());//已支出
-					Float disbursable_money = Float.parseFloat(nepiList.get(0)[4].toString());//可支出
-					
-					ExpendApplyProject eap = new ExpendApplyProject();//申请项目
-					ExpendConfirmProject efp = new ExpendConfirmProject();//确认项目
-					eap.setExpendApplyInfoId(expendApplyInfo.getExpendApplyInfoId());
-					if(null != nepiList.get(0)[1]){
-						eap.setProjectId(Integer.valueOf(nepiList.get(0)[1].toString()));
-					}else{
-						eap.setGenericProjectId(Integer.valueOf(nepiList.get(0)[2].toString()));
+				//查询流程
+				RoutineProject routineProject =  getEntityManager().find(RoutineProject.class,10);//获取耗材项目
+				List<Object> processInfoList = getEntityManager().createNativeQuery("select process_info_id from process_info where deleted = 0 and process_type = 1 and project_process_type = 4 and dept_id = " + routineProject.getYsDepartmentInfo().getTheId()).getResultList();// 获取当前登录人所属部门的常规项目流程的常规支出执行流程
+				if (processInfoList != null && processInfoList.size() > 0) {// 有流程信息
+					List<Object> processStepInfoList = getEntityManager().createNativeQuery("select process_step_info_id from process_step_info where step_index = 1 and process_info_id = " + processInfoList.get(0).toString()).getResultList();// 获取流程配置中的第一步
+					if (processStepInfoList != null && processStepInfoList.size() > 0) {// 有步骤配置
+						int processStepInfoId = Integer.parseInt(processStepInfoList.get(0).toString());
+						//保存流程
+						YsExpandApplyProcessLog process = new YsExpandApplyProcessLog();
+						process.setYsExpandApplyId(expendApplyInfo.getExpendApplyInfoId());
+						process.setProcessStepInfoId(processStepInfoId);
+						getEntityManager().persist(process);
+					} 
+					if(null != nepiList &&nepiList.size() > 0){
+						Float budg_year_money = Float.parseFloat(nepiList.get(0)[2].toString());//年预算
+						Float budg_year_out_money = Float.parseFloat(nepiList.get(0)[3].toString());//已支出
+						Float disbursable_money = Float.parseFloat(nepiList.get(0)[4].toString());//可支出
+						
+						ExpendApplyProject eap = new ExpendApplyProject();//申请项目
+						eap.setExpendApplyInfoId(expendApplyInfo.getExpendApplyInfoId());
+						if(null != nepiList.get(0)[1]){
+							eap.setProjectId(Integer.valueOf(nepiList.get(0)[1].toString()));
+						}else{
+							eap.setGenericProjectId(Integer.valueOf(nepiList.get(0)[2].toString()));
+						}
+						eap.setExpendBeforFrozen(budg_year_out_money);
+						eap.setExpendBeforSurplus(disbursable_money);
+						eap.setExpendMoney(totalMoney.floatValue());
+						eap.setInsertUser(userId);
+						eap.setInsertTime(expendApplyInfo.getInsertTime());
+						eap.setDeleted(false);
+						getEntityManager().persist(eap);
+						
+						
 					}
-					eap.setExpendBeforFrozen(budg_year_out_money);
-					eap.setExpendBeforSurplus(disbursable_money);
-					eap.setExpendMoney(totalMoney.floatValue());
-					eap.setInsertUser(userId);
-					eap.setInsertTime(expendApplyInfo.getInsertTime());
-					eap.setDeleted(false);
-					getEntityManager().persist(eap);
+				}else{
+					ExpendConfirmInfo eci = new ExpendConfirmInfo();
+					eci.setExpend_apply_info_id(expendApplyInfo.getExpendApplyInfoId());
+					eci.setInsertUser(userId);
+					eci.setInsertTime(expendApplyInfo.getInsertTime());
+					eci.setTotalMoney(0f);
+					eci.setConfirm_status(0);
+					eci.setYear(expendApplyInfo.getYear());
+					eci.setDeleted(false);
+					getEntityManager().persist(eci);
 					
 					
-					efp.setExpend_confirm_info_id(eci.getExpend_confirm_info_id());
-					efp.setExpend_apply_project_id(eap.getExpendApplyProjectId());
-					efp.setExpendBeforFrozen(eap.getExpendBeforFrozen());
-					efp.setExpendBeforSurplus(eap.getExpendBeforSurplus());
-					efp.setProjectId(eap.getProjectId());
-					efp.setGenericProjectId(eap.getGenericProjectId());
-					efp.setDeleted(false);
-					efp.setConfirm_money(eap.getExpendMoney());
-					getEntityManager().persist(efp);
+					if(null != nepiList &&nepiList.size() > 0){
+						Float budg_year_money = Float.parseFloat(nepiList.get(0)[2].toString());//年预算
+						Float budg_year_out_money = Float.parseFloat(nepiList.get(0)[3].toString());//已支出
+						Float disbursable_money = Float.parseFloat(nepiList.get(0)[4].toString());//可支出
+						
+						ExpendApplyProject eap = new ExpendApplyProject();//申请项目
+						ExpendConfirmProject efp = new ExpendConfirmProject();//确认项目
+						eap.setExpendApplyInfoId(expendApplyInfo.getExpendApplyInfoId());
+						if(null != nepiList.get(0)[1]){
+							eap.setProjectId(Integer.valueOf(nepiList.get(0)[1].toString()));
+						}else{
+							eap.setGenericProjectId(Integer.valueOf(nepiList.get(0)[2].toString()));
+						}
+						eap.setExpendBeforFrozen(budg_year_out_money);
+						eap.setExpendBeforSurplus(disbursable_money);
+						eap.setExpendMoney(totalMoney.floatValue());
+						eap.setInsertUser(userId);
+						eap.setInsertTime(expendApplyInfo.getInsertTime());
+						eap.setDeleted(false);
+						getEntityManager().persist(eap);
+						
+						
+						efp.setExpend_confirm_info_id(eci.getExpend_confirm_info_id());
+						efp.setExpend_apply_project_id(eap.getExpendApplyProjectId());
+						efp.setExpendBeforFrozen(eap.getExpendBeforFrozen());
+						efp.setExpendBeforSurplus(eap.getExpendBeforSurplus());
+						efp.setProjectId(eap.getProjectId());
+						efp.setGenericProjectId(eap.getGenericProjectId());
+						efp.setDeleted(false);
+						efp.setConfirm_money(eap.getExpendMoney());
+						getEntityManager().persist(efp);
+					}
 				}
-				
 			}
 			for(Integer id : codeList){
 				ps = conn.prepareStatement(updateSql);
@@ -261,47 +301,80 @@ public class ExpendApplayList extends CriterionNativeQuery<Object[]> {
 				expendApplyInfo.setExplendSource(1);
 				getEntityManager().persist(expendApplyInfo);
 				
-				ExpendConfirmInfo eci = new ExpendConfirmInfo();
-				eci.setExpend_apply_info_id(expendApplyInfo.getExpendApplyInfoId());
-				eci.setInsertUser(userId);
-				eci.setInsertTime(expendApplyInfo.getInsertTime());
-				eci.setTotalMoney(0f);
-				eci.setConfirm_status(0);
-				eci.setYear(expendApplyInfo.getYear());
-				eci.setDeleted(false);
-				getEntityManager().persist(eci);
-				
 				String nepiSql = "select normal_expend_plan_id,project_id,generic_project_id from normal_expend_plan_info where normal_expend_plan_id=" + budgCode;
 				List<Object[]> nepiList= getEntityManager().createNativeQuery(nepiSql).getResultList();
-				if(null != nepiList &&nepiList.size() > 0){
-					ExpendApplyProject eap = new ExpendApplyProject();//申请项目
-					ExpendConfirmProject efp = new ExpendConfirmProject();//确认项目
-					eap.setExpendApplyInfoId(expendApplyInfo.getExpendApplyInfoId());
-					if(null != nepiList.get(0)[1]){
-						eap.setProjectId(Integer.valueOf(nepiList.get(0)[1].toString()));
-					}else{
-						eap.setGenericProjectId(Integer.valueOf(nepiList.get(0)[2].toString()));
-					}
-					eap.setExpendBeforFrozen(budg_year_out_money);
-					eap.setExpendBeforSurplus(disbursable_money);
-					eap.setExpendMoney(totalMoney);
-					eap.setInsertUser(userId);
-					eap.setInsertTime(expendApplyInfo.getInsertTime());
-					eap.setDeleted(false);
-					getEntityManager().persist(eap);
-					
-					
-					efp.setExpend_confirm_info_id(eci.getExpend_confirm_info_id());
-					efp.setExpend_apply_project_id(eap.getExpendApplyProjectId());
-					efp.setExpendBeforFrozen(eap.getExpendBeforFrozen());
-					efp.setExpendBeforSurplus(eap.getExpendBeforSurplus());
-					efp.setProjectId(eap.getProjectId());
-					efp.setGenericProjectId(eap.getGenericProjectId());
-					efp.setDeleted(false);
-					efp.setConfirm_money(eap.getExpendMoney());
-					getEntityManager().persist(efp);
-				}
 				
+				//查询流程
+				RoutineProject routineProject =  getEntityManager().find(RoutineProject.class,10);//获取耗材项目
+				List<Object> processInfoList = getEntityManager().createNativeQuery("select process_info_id from process_info where deleted = 0 and process_type = 1 and project_process_type = 4 and dept_id = " + routineProject.getYsDepartmentInfo().getTheId()).getResultList();// 获取当前登录人所属部门的常规项目流程的常规支出执行流程
+				if (processInfoList != null && processInfoList.size() > 0) {// 有流程信息
+					List<Object> processStepInfoList = getEntityManager().createNativeQuery("select process_step_info_id from process_step_info where step_index = 1 and process_info_id = " + processInfoList.get(0).toString()).getResultList();// 获取流程配置中的第一步
+					if (processStepInfoList != null && processStepInfoList.size() > 0) {// 有步骤配置
+						int processStepInfoId = Integer.parseInt(processStepInfoList.get(0).toString());
+						//保存流程
+						YsExpandApplyProcessLog process = new YsExpandApplyProcessLog();
+						process.setYsExpandApplyId(expendApplyInfo.getExpendApplyInfoId());
+						process.setProcessStepInfoId(processStepInfoId);
+						getEntityManager().persist(process);
+					}
+					if(null != nepiList &&nepiList.size() > 0){
+						ExpendApplyProject eap = new ExpendApplyProject();//申请项目
+						eap.setExpendApplyInfoId(expendApplyInfo.getExpendApplyInfoId());
+						if(null != nepiList.get(0)[1]){
+							eap.setProjectId(Integer.valueOf(nepiList.get(0)[1].toString()));
+						}else{
+							eap.setGenericProjectId(Integer.valueOf(nepiList.get(0)[2].toString()));
+						}
+						eap.setExpendBeforFrozen(budg_year_out_money);
+						eap.setExpendBeforSurplus(disbursable_money);
+						eap.setExpendMoney(totalMoney);
+						eap.setInsertUser(userId);
+						eap.setInsertTime(expendApplyInfo.getInsertTime());
+						eap.setDeleted(false);
+						getEntityManager().persist(eap);
+					}
+					
+				}else{
+					ExpendConfirmInfo eci = new ExpendConfirmInfo();
+					eci.setExpend_apply_info_id(expendApplyInfo.getExpendApplyInfoId());
+					eci.setInsertUser(userId);
+					eci.setInsertTime(expendApplyInfo.getInsertTime());
+					eci.setTotalMoney(0f);
+					eci.setConfirm_status(0);
+					eci.setYear(expendApplyInfo.getYear());
+					eci.setDeleted(false);
+					getEntityManager().persist(eci);
+					
+					
+					if(null != nepiList &&nepiList.size() > 0){
+						ExpendApplyProject eap = new ExpendApplyProject();//申请项目
+						ExpendConfirmProject efp = new ExpendConfirmProject();//确认项目
+						eap.setExpendApplyInfoId(expendApplyInfo.getExpendApplyInfoId());
+						if(null != nepiList.get(0)[1]){
+							eap.setProjectId(Integer.valueOf(nepiList.get(0)[1].toString()));
+						}else{
+							eap.setGenericProjectId(Integer.valueOf(nepiList.get(0)[2].toString()));
+						}
+						eap.setExpendBeforFrozen(budg_year_out_money);
+						eap.setExpendBeforSurplus(disbursable_money);
+						eap.setExpendMoney(totalMoney);
+						eap.setInsertUser(userId);
+						eap.setInsertTime(expendApplyInfo.getInsertTime());
+						eap.setDeleted(false);
+						getEntityManager().persist(eap);
+						
+						
+						efp.setExpend_confirm_info_id(eci.getExpend_confirm_info_id());
+						efp.setExpend_apply_project_id(eap.getExpendApplyProjectId());
+						efp.setExpendBeforFrozen(eap.getExpendBeforFrozen());
+						efp.setExpendBeforSurplus(eap.getExpendBeforSurplus());
+						efp.setProjectId(eap.getProjectId());
+						efp.setGenericProjectId(eap.getGenericProjectId());
+						efp.setDeleted(false);
+						efp.setConfirm_money(eap.getExpendMoney());
+						getEntityManager().persist(efp);
+					}
+				}
 			}
 			
 			for(String code : codeList){
