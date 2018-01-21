@@ -115,7 +115,7 @@ public class ExpendExecuteCheckList extends CriterionNativeQuery<Object[]>{
 		sql.append(" where eapl.operate_type is NULL ");
 		sql.append(" and psu.user_id= ").append(sessionToken.getUserInfoId());
 		if(null != departmentId && departmentId != -1){
-			sql.append(" ui.department_info_id= ").append(departmentId);
+			sql.append(" and ui.department_info_id= ").append(departmentId);
 		}
 		if(null != applyUser && applyUser != -1){
 			sql.append(" and eai.applay_user_id= ").append(applyUser);
