@@ -1012,6 +1012,12 @@
 					flag = false;
 					return ;
 				}
+
+				if(register == null || register == "" || register == "-1"){
+					___msg('温馨提示', "请选择登记人");
+					flag = false;
+					return ;
+				}
 				/* if(invoicenum == ""){
 					___msg('温馨提示', "请输入发票号");
 					flag = false;
@@ -1071,6 +1077,7 @@
 				if(flag){
 					update(expendInfoId,year,user,applySn,reciveCompany,invoicenum,summary,reimbursementer,json,applyTime,registeTime,register,comment);
 				}
+				
 				
 			}
 			//获取列表json
