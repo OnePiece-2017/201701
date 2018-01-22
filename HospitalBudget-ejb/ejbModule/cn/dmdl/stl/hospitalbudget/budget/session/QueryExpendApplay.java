@@ -83,14 +83,14 @@ public class QueryExpendApplay extends CriterionNativeQuery<Object[]> {
 	@Override
 	@SuppressWarnings("unchecked")
 	protected Query createQuery(){
-		boolean privateRole = false;//角色不属于财务 和主任（领导的）
+		boolean privateRole = false;//角色不属于财务主任（领导的）
 		String roleSql = "select role_info.role_info_id,user_info.department_info_id,ydi.the_value from user_info LEFT JOIN role_info on role_info.role_info_id=user_info.role_info_id LEFT JOIN ys_department_info ydi on "
 				+ "user_info.department_info_id=ydi.the_id where user_info.user_info_id=" + sessionToken.getUserInfoId();
 		
 		List<Object[]> roleList = getEntityManager().createNativeQuery(roleSql).getResultList();
 		int roleId = Integer.parseInt(roleList.get(0)[0].toString());//角色id
 		
-		if(Integer.valueOf(roleId) != 1 && Integer.valueOf(roleId) != FINA_ROLE_ID && Integer.valueOf(roleId) != DIRECTOR_ROLE_ID){
+		if(Integer.valueOf(roleId) != 1 && Integer.valueOf(roleId) != 2){
 			privateRole = true;
 		}
 		StringBuffer sql = new StringBuffer();
@@ -123,7 +123,7 @@ public class QueryExpendApplay extends CriterionNativeQuery<Object[]> {
 		sql.append(" LEFT JOIN ys_department_info ydi2 on ydi2.the_id=gp.department_info_id ");
 		sql.append(" where eap.deleted=0 and ecp.deleted=0 ");
 		if(privateRole){
-			sql.append(" and eap.insert_user= ").append(sessionToken.getUserInfoId());
+			sql.append(" and eai.insert_user= ").append(sessionToken.getUserInfoId());
 		}
 		if(null != projectName && !projectName.trim().equals("")){
 			sql.append(" and (up.the_value like '%").append(projectName).append("%' or gp.the_value like '%").append(projectName).append("%')");
@@ -137,6 +137,7 @@ public class QueryExpendApplay extends CriterionNativeQuery<Object[]> {
 		if(null != expendTime && !expendTime.equals("")){
 			sql.append(" and date_format(eai.apply_time,'%Y-%m-%d')='").append(expendTime).append("'");
 		}
+		sql.append(" order by eai.insert_time desc");
 		sql.insert(0, "select * from (").append(") as recordset");
 		setEjbql(sql.toString());
 		return super.createQuery();
