@@ -325,7 +325,7 @@
 							</td>
 						</tr>
 						<tr>
-							<td width="50%">
+							<td width="100%">
 								<div class="pb6">
 									<table>
 										<tr>
@@ -333,7 +333,8 @@
 												<span class="field-name mb10">发票号&nbsp;&nbsp;:</span>
 											</td>
 											<td valign="middle">
-												<h:inputText id="invoicenum" value="#{expendApplyInfoHome.invoiceSn}" styleClass=" mb10 border" style="height:34px;width:395px" maxlength="100"/>
+												<!-- <h:inputText id="invoicenum" value="#{expendApplyInfoHome.invoiceSn}" styleClass=" mb10 border" style="height:34px;width:395px" maxlength="300"/> -->
+												<h:inputTextarea value="#{expendApplyInfoHome.invoiceSn}" id="invoicenum"  styleClass=" mb10 border" style="width:395px"/>
 											</td>
 											<td valign="middle">
 											</td>
@@ -832,6 +833,8 @@
 				jQuery("#mainForm\\:formnum").attr("readonly",true);
 				 jQuery('.selectpicker').selectpicker();
 				 keyInit();
+
+				 
 			});
 			
 			//选择项目
@@ -902,12 +905,12 @@
 					flag = false;
 					return ;
 				}
-				/* if(invoicenum == ""){
-					___msg('温馨提示', "请输入发票号");
+				 if(invoicenum.length > 10){
+					___msg('温馨提示', "发票号最多500字");
 					flag = false;
 					return ;
 				}
-				if(summary == "" ){
+				 /*if(summary == "" ){
 					___msg('温馨提示', "请输入发票张数");
 					flag = false;
 					return ;
@@ -1015,6 +1018,11 @@
 
 				if(register == null || register == "" || register == "-1"){
 					___msg('温馨提示', "请选择登记人");
+					flag = false;
+					return ;
+				}
+				if(invoicenum.length > 10){
+					___msg('温馨提示', "发票号最多500字");
 					flag = false;
 					return ;
 				}
@@ -1344,6 +1352,9 @@
 					 jQuery(".mater_name_list").find(".addbg").click();
 			    }
 			}
+
+
+			
 		//]]>
 		</script>
 	</ui:define>
