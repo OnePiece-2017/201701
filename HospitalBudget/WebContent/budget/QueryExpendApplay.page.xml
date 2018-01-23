@@ -10,4 +10,5 @@
 	<param name="projectName" value="#{queryExpendApplay.projectName}" />
 	<param name="fundsSourceId" value="#{queryExpendApplay.fundsSourceId}" />
 	<param name="expendTime" value="#{queryExpendApplay.expendTime}" />
+	<param name="applyEndTime" value="#{queryExpendApplay.applyEndTime}" />
 </page>

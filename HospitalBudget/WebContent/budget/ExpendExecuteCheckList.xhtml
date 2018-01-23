@@ -197,8 +197,8 @@
 											<h:inputHidden value="#{expendExecuteCheckList.applyEndTime}" id="applyEndTime"/>
 											<h:inputHidden value="#{expendExecuteCheckList.reimbursementer}" id="reimbursementer"/>
 											<h:commandButton styleClass="btn btn-primary" action="/budget/ExpendExecuteCheckList.xhtml" onclick="return check();" value="搜索" style="font-size: 12px;"/>
-											<a class="btn btn-primary"  href="javascript:void(0);" onclick="batchConfrim()"  style="font-size: 12px; margin-left:10px">审核</a>
-											<a class="btn btn-primary"  href="javascript:void(0);" onclick="batchReject()"  style="font-size: 12px; margin-left:10px">驳回</a>
+											<a class="btn btn-primary"  href="javascript:void(0);" onclick="batchConfrim()"  style="font-size: 12px; margin-left:10px;" id="checkA">审核</a>
+											<a class="btn btn-primary"  href="javascript:void(0);" onclick="batchReject()"  style="font-size: 12px; margin-left:10px;" id="returnA">驳回</a>
 										</div>
 									</td>
 								</tr>
@@ -233,9 +233,13 @@
 			        		#{_result[1]}
 			        	</td>
 			        	<td>#{_result[2]}</td>
-			        	<td>#{_result[3]}</td>
-			        	<td><p style="width:100%;height:20px;line-height:20px;margin-bottom: 0;overflow: hidden;text-overflow:ellipsis; white-space:nowrap;" title="#{_result[4]}">#{_result[4]}</p></td>
-			        	<td style="max-width: 130px"><p style="width:100%;height:20px;line-height:20px;margin-bottom: 0;overflow: hidden;text-overflow:ellipsis; white-space:nowrap;" title="#{_result[5]}">#{_result[5]}</p></td>
+			        	<td style="text-align: right;">
+			        		<h:outputText value="#{_result[3]}">
+			        			<f:convertNumber pattern="#.00"/>
+			        		</h:outputText>
+			        	</td>
+			        	<td style="text-align: left;"><p style="width:100%;height:20px;line-height:20px;margin-bottom: 0;overflow: hidden;text-overflow:ellipsis; white-space:nowrap;" title="#{_result[4]}">#{_result[4]}</p></td>
+			        	<td style="max-width: 130px;text-align: left;"><p style="width:100%;height:20px;line-height:20px;margin-bottom: 0;overflow: hidden;text-overflow:ellipsis; white-space:nowrap;" title="#{_result[5]}">#{_result[5]}</p></td>
 			        	<td>#{_result[6]}</td>
 			        	<td>#{commonFinder.parseDate(_result[7])}</td>
 			        	<td>#{_result[8]}</td>
@@ -315,6 +319,11 @@
 		<script type="text/javascript" src="#{request.contextPath}/icheck/js/icheck.min.js" charset="UTF-8" />
 		<script type="text/javascript">
 		//<![CDATA[
+			var topRole = ${expendExecuteCheckList.topRole};
+			if(topRole == "1"){
+				jQuery("#checkA").hide();
+				jQuery("#returnA").hide();
+			}
 			jQuery(document).ready(function() {
 				selectInit();
 

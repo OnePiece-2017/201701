@@ -146,7 +146,7 @@ public class ExpendConfrimList extends CriterionNativeQuery<Object[]> {
 		if(null != reimbursementer && !reimbursementer.equals("")){
 			sql.append(" and eai.reimbursementer = '").append(reimbursementer).append("'");
 		}
-		sql.append(" order by eai.insert_time desc");
+		sql.append(" order by eai.insert_time desc,eai.expend_apply_code desc");
 		sql.insert(0, "select * from (").append(") as recordset");
 		setEjbql(sql.toString());
 		return super.createQuery();

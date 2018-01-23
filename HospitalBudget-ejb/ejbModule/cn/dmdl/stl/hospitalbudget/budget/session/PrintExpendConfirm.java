@@ -9,6 +9,7 @@ import org.jboss.seam.annotations.Name;
 
 import cn.dmdl.stl.hospitalbudget.common.session.CriterionEntityHome;
 import cn.dmdl.stl.hospitalbudget.util.NumberToCN;
+import cn.dmdl.stl.hospitalbudget.util.NumberUtil;
 
 @Name("printExpendConfirm")
 public class PrintExpendConfirm extends CriterionEntityHome<Object>{
@@ -70,6 +71,7 @@ public class PrintExpendConfirm extends CriterionEntityHome<Object>{
 		double money =Double.parseDouble(expendApplyInfo[1].toString());  
         BigDecimal numberOfMoney = new BigDecimal(money);  
         String s = NumberToCN.number2CNMontrayUnit(numberOfMoney);
+        expendApplyInfo[1] = NumberUtil.double2Str(expendApplyInfo[1]);
 		expendApplyInfo[9] = s;
 	}
 

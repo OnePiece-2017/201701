@@ -23,14 +23,14 @@ public class ExpendApplyProject implements java.io.Serializable{
 	private Integer expendApplyInfoId;
 	private Integer projectId;//常规项目
 	private Integer genericProjectId;//项目
-	private Float expendMoney;//本次预算内支出
-	private Float expendBeforFrozen;//支出之前冻结
-	private Float expendBeforSurplus;//支出之前剩余
-	private Float budgetAppendExpend;//预算追加支出
-	private Float budgetAdjustmentAppend;//预算调整追加
-	private Float budgetAdjestmentCut;//预算调整减少
-	private Float appendBudgetPaid;//追加预算已支出
-	private Float appendBudgetCanCut;//追加预算可支出
+	private Double expendMoney;//本次预算内支出
+	private Double expendBeforFrozen;//支出之前冻结
+	private Double expendBeforSurplus;//支出之前剩余
+	private Double budgetAppendExpend;//预算追加支出
+	private Double budgetAdjustmentAppend;//预算调整追加
+	private Double budgetAdjestmentCut;//预算调整减少
+	private Double appendBudgetPaid;//追加预算已支出
+	private Double appendBudgetCanCut;//追加预算可支出
 	private String attachment;//附件
 	
 	private Date insertTime;
@@ -67,11 +67,11 @@ public class ExpendApplyProject implements java.io.Serializable{
 	}
 	@Column(name = "expend_money")
 	@NotNull
-	public Float getExpendMoney() {
+	public Double getExpendMoney() {
 		return expendMoney;
 	}
 	
-	public void setExpendMoney(Float expendMoney) {
+	public void setExpendMoney(Double expendMoney) {
 		this.expendMoney = expendMoney;
 	}
 	
@@ -130,56 +130,56 @@ public class ExpendApplyProject implements java.io.Serializable{
 	}
 	
 	@Column(name = "budget_append_expend")
-	public Float getBudgetAppendExpend() {
+	public Double getBudgetAppendExpend() {
 		return budgetAppendExpend;
 	}
-	public void setBudgetAppendExpend(Float budgetAppendExpend) {
+	public void setBudgetAppendExpend(Double budgetAppendExpend) {
 		this.budgetAppendExpend = budgetAppendExpend;
 	}
 	
 	@Column(name = "budget_adjustment_append")
-	public Float getBudgetAdjustmentAppend() {
+	public Double getBudgetAdjustmentAppend() {
 		return budgetAdjustmentAppend;
 	}
-	public void setBudgetAdjustmentAppend(Float budgetAdjustmentAppend) {
+	public void setBudgetAdjustmentAppend(Double budgetAdjustmentAppend) {
 		this.budgetAdjustmentAppend = budgetAdjustmentAppend;
 	}
 	
 	@Column(name = "budget_adjestment_cut")
-	public Float getBudgetAdjestmentCut() {
+	public Double getBudgetAdjestmentCut() {
 		return budgetAdjestmentCut;
 	}
-	public void setBudgetAdjestmentCut(Float budgetAdjestmentCut) {
+	public void setBudgetAdjestmentCut(Double budgetAdjestmentCut) {
 		this.budgetAdjestmentCut = budgetAdjestmentCut;
 	}
 	@Column(name = "append_budget_paid")
-	public Float getAppendBudgetPaid() {
+	public Double getAppendBudgetPaid() {
 		return appendBudgetPaid;
 	}
-	public void setAppendBudgetPaid(Float appendBudgetPaid) {
+	public void setAppendBudgetPaid(Double appendBudgetPaid) {
 		this.appendBudgetPaid = appendBudgetPaid;
 	}
 	@Column(name = "append_budget_money")
-	public Float getAppendBudgetCanCut() {
+	public Double getAppendBudgetCanCut() {
 		return appendBudgetCanCut;
 	}
-	public void setAppendBudgetCanCut(Float appendBudgetCanCut) {
+	public void setAppendBudgetCanCut(Double appendBudgetCanCut) {
 		this.appendBudgetCanCut = appendBudgetCanCut;
 	}
 	@Column(name = "expend_befor_frozen")
 	@NotNull
-	public Float getExpendBeforFrozen() {
+	public Double getExpendBeforFrozen() {
 		return expendBeforFrozen;
 	}
-	public void setExpendBeforFrozen(Float expendBeforFrozen) {
+	public void setExpendBeforFrozen(Double expendBeforFrozen) {
 		this.expendBeforFrozen = expendBeforFrozen;
 	}
 	@Column(name = "expend_befor_surplus")
 	@NotNull
-	public Float getExpendBeforSurplus() {
+	public Double getExpendBeforSurplus() {
 		return expendBeforSurplus;
 	}
-	public void setExpendBeforSurplus(Float expendBeforSurplus) {
+	public void setExpendBeforSurplus(Double expendBeforSurplus) {
 		this.expendBeforSurplus = expendBeforSurplus;
 	}
 	@Column(name = "attachment")

@@ -41,6 +41,7 @@ import net.sf.json.JSONObject;
 
 
 
+
 import org.jboss.seam.annotations.Name;
 
 import cn.dmdl.stl.hospitalbudget.admin.entity.UserInfo;
@@ -54,13 +55,14 @@ import cn.dmdl.stl.hospitalbudget.budget.entity.TaskOrder;
 import cn.dmdl.stl.hospitalbudget.budget.entity.TaskUser;
 import cn.dmdl.stl.hospitalbudget.common.session.CriterionEntityHome;
 import cn.dmdl.stl.hospitalbudget.util.Assit;
+import cn.dmdl.stl.hospitalbudget.util.NumberUtil;
 import cn.dmdl.stl.hospitalbudget.util.SqlServerJDBCUtil;
 
 @Name("expendApplyConfirmHome")
 public class ExpendApplyConfirmHome extends CriterionEntityHome<ExpendApplyInfo>{
 	private static final long serialVersionUID = 1L;
 	private Integer expendConfirmId;
-	private Float totalMoney;
+	private Double totalMoney;
 	private List<Object[]> projectList;//主项目列表
 	private String projectJson;//json
 	private String confirmTime;
@@ -129,10 +131,10 @@ public class ExpendApplyConfirmHome extends CriterionEntityHome<ExpendApplyInfo>
 					Object[] projectDetail = new Object[14];
 					if(null != obj[12] && null == obj[13]){
 						projectDetail[0] = obj[0];
-						projectDetail[1] = obj[1];
-						projectDetail[2] = obj[2];
-						projectDetail[3] = obj[3];
-						projectDetail[4] = obj[4];
+						projectDetail[1] = NumberUtil.formatDouble2(obj[1]);
+						projectDetail[2] = NumberUtil.formatDouble2(obj[2]);
+						projectDetail[3] = NumberUtil.formatDouble2(obj[3]);
+						projectDetail[4] = NumberUtil.formatDouble2(obj[4]);
 						projectDetail[5] = obj[6];
 						projectDetail[6] = "";
 						projectDetail[7] = obj[5];
@@ -141,10 +143,10 @@ public class ExpendApplyConfirmHome extends CriterionEntityHome<ExpendApplyInfo>
 						projectList.add(projectDetail);
 					}else{
 						projectDetail[0] = obj[7];
-						projectDetail[1] = obj[8];
-						projectDetail[2] = obj[9];
-						projectDetail[3] = obj[10];
-						projectDetail[4] = obj[4];
+						projectDetail[1] = NumberUtil.formatDouble2(obj[8]);
+						projectDetail[2] = NumberUtil.formatDouble2(obj[9]);
+						projectDetail[3] = NumberUtil.formatDouble2(obj[10]);
+						projectDetail[4] = NumberUtil.formatDouble2(obj[4]);
 						projectDetail[5] = obj[11];
 						projectDetail[6] = "";
 						projectDetail[7] = obj[5];
@@ -221,7 +223,7 @@ public class ExpendApplyConfirmHome extends CriterionEntityHome<ExpendApplyInfo>
 			String expendMoney = project.getString("expend_money");
 			//保存支出申请单详细列表
 			ExpendConfirmProject ecp = getEntityManager().find(ExpendConfirmProject.class, Integer.parseInt(projectInfoId));
-			ecp.setConfirm_money(Float.parseFloat(expendMoney));
+			ecp.setConfirm_money(Double.parseDouble(expendMoney));
 			getEntityManager().merge(ecp);
 			
 			
@@ -316,7 +318,7 @@ public class ExpendApplyConfirmHome extends CriterionEntityHome<ExpendApplyInfo>
 			String expendMoney = project.getString("expend_money");
 			//保存支出申请单详细列表
 			ExpendConfirmProject ecp = getEntityManager().find(ExpendConfirmProject.class, Integer.parseInt(projectInfoId));
-			ecp.setConfirm_money(Float.parseFloat(expendMoney));
+			ecp.setConfirm_money(Double.parseDouble(expendMoney));
 			ecp.setDeleted(true);
 			getEntityManager().merge(expendApplyInfo);
 		}
@@ -415,8 +417,8 @@ public class ExpendApplyConfirmHome extends CriterionEntityHome<ExpendApplyInfo>
 				}
 				List<Object[]> plist = getEntityManager().createNativeQuery(moneySql.toString()).getResultList();
 				NormalExpendPlantInfo nxpi = getEntityManager().find(NormalExpendPlantInfo.class, Integer.parseInt(plist.get(0)[0].toString()));
-				nxpi.setBudgetAmountFrozen(nxpi.getBudgetAmountFrozen()  + ecp.getConfirm_money());
-				nxpi.setBudgetAmountSurplus(nxpi.getBudgetAmountSurplus() - ecp.getConfirm_money());
+				nxpi.setBudgetAmountFrozen(new Float(nxpi.getBudgetAmountFrozen()  + ecp.getConfirm_money()));
+				nxpi.setBudgetAmountSurplus(new Float(nxpi.getBudgetAmountSurplus() - ecp.getConfirm_money()));
 				getEntityManager().merge(nxpi);
 			}
 			
@@ -511,14 +513,14 @@ public class ExpendApplyConfirmHome extends CriterionEntityHome<ExpendApplyInfo>
 
 
 
-	public Float getTotalMoney() {
+	public Double getTotalMoney() {
 		return totalMoney;
 	}
 
 
 
 
-	public void setTotalMoney(Float totalMoney) {
+	public void setTotalMoney(Double totalMoney) {
 		this.totalMoney = totalMoney;
 	}
 

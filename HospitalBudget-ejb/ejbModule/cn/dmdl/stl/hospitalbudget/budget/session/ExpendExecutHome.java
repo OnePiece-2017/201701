@@ -232,16 +232,16 @@ public class ExpendExecutHome extends CriterionEntityHome<Object> {
 		projectSql.append(" where eap.deleted=0 ");
 		projectSql.append(" and eai.task_order_id=").append(taskOrderId);
 		List<Object[]> list = getEntityManager().createNativeQuery("select * from (" + projectSql.toString() + ") as test").getResultList();
-		float allMoney = 0f;
+		double allMoney = 0d;
 		if(list.size() > 0){
 			for(Object[] obj : list){
 				Object[] projectDetail = new Object[8];
 				projectDetail[0] = obj[0];
 				projectDetail[1] = obj[1];
-				projectDetail[2] = Float.parseFloat(obj[2].toString()) - Float.parseFloat(obj[4].toString());
-				projectDetail[3] = Float.parseFloat(obj[3].toString()) + Float.parseFloat(obj[4].toString());;
+				projectDetail[2] = Double.parseDouble(obj[2].toString()) - Double.parseDouble(obj[4].toString());
+				projectDetail[3] = Double.parseDouble(obj[3].toString()) + Double.parseDouble(obj[4].toString());;
 				projectDetail[4] = obj[4];
-				allMoney += Float.parseFloat(projectDetail[4].toString());
+				allMoney += Double.parseDouble(projectDetail[4].toString());
 				projectDetail[5] = obj[6];
 				projectDetail[6] = "";
 				projectDetail[7] = obj[5];

@@ -46,6 +46,7 @@ public class QueryExpendApplay extends CriterionNativeQuery<Object[]> {
 	private List<Object[]> fundsSourceList;//资金来源列表
 	private List<Object[]> projectList;//项目列表
 	private String expendTime;//支出时间
+	private String applyEndTime;//申请结束时间
 	private String projectName;
 	private Integer fundsSourceId;
 	private Integer departId;
@@ -121,7 +122,8 @@ public class QueryExpendApplay extends CriterionNativeQuery<Object[]> {
 		sql.append(" LEFT JOIN generic_project gp on eap.generic_project_id=gp.the_id ");
 		sql.append(" LEFT JOIN ys_funds_source fs2 on fs2.the_id=gp.funds_source_id ");
 		sql.append(" LEFT JOIN ys_department_info ydi2 on ydi2.the_id=gp.department_info_id ");
-		sql.append(" where eap.deleted=0 and ecp.deleted=0 ");
+		sql.append(" LEFT JOIN expend_confirm_info eci on eai.expend_apply_info_id=eci.expend_apply_info_id ");
+		sql.append(" where eap.deleted=0  and eai.deleted=0 and ecp.deleted=0 and eci.confirm_status=1 ");
 		if(privateRole){
 			sql.append(" and eai.insert_user= ").append(sessionToken.getUserInfoId());
 		}
@@ -135,9 +137,12 @@ public class QueryExpendApplay extends CriterionNativeQuery<Object[]> {
 			sql.append(" and (up.department_info_id=").append(departId).append(" or gp.department_info_id=").append(departId).append(")");
 		}
 		if(null != expendTime && !expendTime.equals("")){
-			sql.append(" and date_format(eai.apply_time,'%Y-%m-%d')='").append(expendTime).append("'");
+			sql.append(" and eai.apply_time>='").append(expendTime + " 00:00:00").append("'");
 		}
-		sql.append(" order by eai.insert_time desc");
+		if(null != applyEndTime && !applyEndTime.equals("")){
+			sql.append(" and eai.apply_time<'").append(applyEndTime + " 23:59:59").append("'");
+		}
+		sql.append(" order by eai.insert_time desc,eai.expend_apply_code desc");
 		sql.insert(0, "select * from (").append(") as recordset");
 		setEjbql(sql.toString());
 		return super.createQuery();
@@ -357,7 +362,7 @@ public class QueryExpendApplay extends CriterionNativeQuery<Object[]> {
 				35 * 90);
 		colIndex++;
 		
-		List<Object[]> list = queryExportData(projectName,fundsSourceId,departId,expendTime);
+		List<Object[]> list = queryExportData(projectName,fundsSourceId,departId,expendTime,applyEndTime);
 		for(int i = 0;i < list.size(); i++){
 			Object[] obj = list.get(i);
 			rowIndex ++;
@@ -451,7 +456,17 @@ public class QueryExpendApplay extends CriterionNativeQuery<Object[]> {
 	 * @param time
 	 */
 	@SuppressWarnings("unchecked")
-	public List<Object[]> queryExportData(String projectName,Integer sourceId,Integer departId,String time){
+	public List<Object[]> queryExportData(String projectName,Integer sourceId,Integer departId,String time,String applyEndTime){
+		boolean privateRole = false;//角色不属于财务主任（领导的）
+		String roleSql = "select role_info.role_info_id,user_info.department_info_id,ydi.the_value from user_info LEFT JOIN role_info on role_info.role_info_id=user_info.role_info_id LEFT JOIN ys_department_info ydi on "
+				+ "user_info.department_info_id=ydi.the_id where user_info.user_info_id=" + sessionToken.getUserInfoId();
+		
+		List<Object[]> roleList = getEntityManager().createNativeQuery(roleSql).getResultList();
+		int roleId = Integer.parseInt(roleList.get(0)[0].toString());//角色id
+		
+		if(Integer.valueOf(roleId) != 1 && Integer.valueOf(roleId) != 2){
+			privateRole = true;
+		}
 		//查询导出数据
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 		StringBuffer routinSql = new StringBuffer();
@@ -472,7 +487,7 @@ public class QueryExpendApplay extends CriterionNativeQuery<Object[]> {
 		routinSql.append(" rp.department_info_id as di_id, ");
 		routinSql.append(" gp.department_info_id as di1_id, ");
 		routinSql.append(" rp.funds_source_id as fs_id, ");
-		routinSql.append(" gp.funds_source_id as fs1_id ");
+		routinSql.append(" gp.funds_source_id as fs1_id,eai.insert_user ");
 		routinSql.append(" FROM expend_confirm_project ecp ");
 		routinSql.append(" LEFT JOIN expend_confirm_info eci ON ecp.expend_confirm_info_id = eci.expend_confirm_info_id ");
 		routinSql.append(" LEFT JOIN expend_apply_project eap on eap.expend_apply_project_id=ecp.expend_apply_project_id ");
@@ -483,12 +498,15 @@ public class QueryExpendApplay extends CriterionNativeQuery<Object[]> {
 		routinSql.append(" LEFT JOIN ys_department_info di1 on di1.the_id=gp.department_info_id ");
 		routinSql.append(" LEFT JOIN ys_funds_source fs on fs.the_id=rp.funds_source_id ");
 		routinSql.append(" LEFT JOIN ys_funds_source fs1 on fs1.the_id=gp.funds_source_id ");
-		routinSql.append(" where ecp.deleted=0 ");
-		
+		routinSql.append(" where eai.deleted=0 and eap.deleted=0 and ecp.deleted=0 and eci.confirm_status=1 ");
+		routinSql.append(" order by eai.insert_time desc,eai.expend_apply_code desc ");
 		StringBuffer sql = new StringBuffer();
 		sql.append("select * from (");
 		sql.append(routinSql);
 		sql.append(") as test where 1=1 ");
+		if(privateRole){
+			sql.append(" and test.insert_user= ").append(sessionToken.getUserInfoId());
+		}
 		if(null != projectName && !"".equals(projectName)){
 			sql.append(" and (test.rp_name like '%").append(projectName).append("%' or test.rp_name like '%").append(projectName).append("%')");
 		}
@@ -499,7 +517,10 @@ public class QueryExpendApplay extends CriterionNativeQuery<Object[]> {
 			sql.append(" and (test.fs_id=").append(departId).append(" or test.fs1_id=").append(departId).append(")");
 		}
 		if(null != time && !"".equals(time)){
-			sql.append(" and  test.apply_time='").append(time).append("' ");
+			sql.append(" and test.apply_time>='").append(time + " 00:00:00").append("'");
+		}
+		if(null != applyEndTime && !applyEndTime.equals("")){
+			sql.append(" and test.apply_time<='").append(applyEndTime + " 23:59:59").append("'");
 		}
 		List<Object[]> list = getEntityManager().createNativeQuery(sql.toString()).getResultList();
 		List<Object[]> returnList = new ArrayList<Object[]>();
@@ -520,7 +541,9 @@ public class QueryExpendApplay extends CriterionNativeQuery<Object[]> {
 				project[4] = obj[8];
 				project[5] = "";
 				try {
-					project[5] = sdf.format(sdf.parse(obj[9].toString()));
+					if(null != obj[9]){
+						project[5] = sdf.format(sdf.parse(obj[9].toString()));
+					}
 				} catch (ParseException e) {
 					
 				}
@@ -607,6 +630,14 @@ public class QueryExpendApplay extends CriterionNativeQuery<Object[]> {
 
 	public void setDepartId(Integer departId) {
 		this.departId = departId;
+	}
+
+	public String getApplyEndTime() {
+		return applyEndTime;
+	}
+
+	public void setApplyEndTime(String applyEndTime) {
+		this.applyEndTime = applyEndTime;
 	}
 	
 	

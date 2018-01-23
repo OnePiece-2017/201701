@@ -26,7 +26,7 @@
 	</style>
 	<ui:define name="body">
 	#{queryExpendApplay.wire()}
-		<div class="g-data-list-condition" style="height: 120px">
+		<div class="g-data-list-condition" style="height: 180px">
 			<h:form id="mainForm">
 				<input type="hidden" name="page" value="1" />
 				<div>
@@ -81,6 +81,24 @@
 						</tr>
 					</table>
 					</div>
+					<div class="fl" style="width: 400px;margin-top: 8px;margin-left: 60px;">
+					<table>
+						<tr>
+							<td  width="30%">
+								<span class="field-name mb10" style="margin-top: -2px;display: block;">申请时间</span>
+							</td>
+							<td  width="70%">
+	                            <div class="form-group" style="width: 178px;">
+									<div class="input-group date form_date col-md-5">
+										<input  type="text" id="applyEndTime" value="#{queryExpendApplay.applyEndTime}" readonly="readonly" class="form-control mb10 fix--w150" name="time" style="width: 125px;"/> 
+										<span class="input-group-addon"><span class="glyphicon glyphicon-remove"></span></span>
+										<span class="input-group-addon"><span class="glyphicon glyphicon-calendar"></span></span>
+									</div>
+								</div>
+							</td>
+						</tr>
+					</table>
+					</div>
 					<div class="fl" style="width: 300px;margin-top: 8px;margin-left: 60px;">
 					<table>
 						<tr>
@@ -88,6 +106,7 @@
 								<span class="field-name mb10" style="margin-top: -2px;display: block;">资金来源</span>
 							</td>
 							<td valign="middle" width="70%">
+							<div class="form-group" style="width: 178px;">
 								<select id="fundsSource" class="selectpicker">
 									<a:repeat value="#{queryExpendApplay.fundsSourceList}" var="_var">
 										<s:fragment rendered="#{queryExpendApplay.fundsSourceId eq _var[0]}">
@@ -98,27 +117,33 @@
 										</s:fragment>
 									</a:repeat>
 								</select>
+								</div>
 							</td>
 						</tr>
 					</table>
 					</div>
 				</div>
-				<div class="fl" >
-					<h:inputHidden value="#{queryExpendApplay.projectName}" id="projectNameHidden"/>
-					<h:inputHidden value="#{queryExpendApplay.fundsSourceId}" id="fundsSourceIdHidden"/>
-					<h:inputHidden value="#{queryExpendApplay.departId}" id="departIdHidden"/>
-					<h:inputHidden value="#{queryExpendApplay.expendTime}" id="expendTimeHidden"/>
-					<h:commandButton styleClass="btn btn-primary mt10 ml20" action="/budget/QueryExpendApplay.xhtml" value="搜索" onclick="searchBefore()" style="margin-left: 10px;margin-top: 8px;"/>
-				</div>
-				<div class="fl" >
-					<rich:panel id="exportPanel" style="margin-top:-2px; border:none; padding: 0;">
-						<s:link  styleClass="btn btn-primary mr15" view="/budget/QueryExpendApplay.xhtml" action="#{queryExpendApplay.expExcel()}" >导出
-                 			<f:param name="departId" value="#{queryExpendApplay.departId}"/>
-                 			<f:param name="expendTime" value="#{queryExpendApplay.expendTime}"/>
-                 			<f:param name="fundsSourceId" value="#{queryExpendApplay.fundsSourceId}"/>
-                 			<f:param name="projectName" value="#{queryExpendApplay.projectName}"/>
-                 		</s:link>
-                	</rich:panel>
+				<div class="fl" style="width: 300px;margin-top: 8px;margin-left: 234px;">
+				
+					<div class="fl" >
+						<h:inputHidden value="#{queryExpendApplay.projectName}" id="projectNameHidden"/>
+						<h:inputHidden value="#{queryExpendApplay.fundsSourceId}" id="fundsSourceIdHidden"/>
+						<h:inputHidden value="#{queryExpendApplay.departId}" id="departIdHidden"/>
+						<h:inputHidden value="#{queryExpendApplay.expendTime}" id="expendTimeHidden"/>
+						<h:inputHidden value="#{queryExpendApplay.applyEndTime}" id="applyEndTimeHidden"/>
+						<h:commandButton styleClass="btn btn-primary mt10 ml20" action="/budget/QueryExpendApplay.xhtml" value="搜索" onclick="searchBefore()" style="margin-left: 10px;margin-top: 8px;"/>
+					</div>
+					<div class="fl" >
+						<rich:panel id="exportPanel" style="margin-top:-2px; border:none; padding: 0;">
+							<s:link  styleClass="btn btn-primary mr15" view="/budget/QueryExpendApplay.xhtml" action="#{queryExpendApplay.expExcel()}" >导出
+		                			<f:param name="departId" value="#{queryExpendApplay.departId}"/>
+		                			<f:param name="expendTime" value="#{queryExpendApplay.expendTime}"/>
+		                			<f:param name="applyEndTime" value="#{queryExpendApplay.applyEndTime}"/>
+		                			<f:param name="fundsSourceId" value="#{queryExpendApplay.fundsSourceId}"/>
+		                			<f:param name="projectName" value="#{queryExpendApplay.projectName}"/>
+		                		</s:link>
+		               	</rich:panel>
+		               </div>
                 </div>
 			</h:form>
 		</div>
@@ -169,7 +194,11 @@
 			        			#{_result[10]}
 			        		</s:fragment>
 			        	</td>
-			        	<td>#{_result[6]}</td>
+			        	<td>
+			        		<h:outputText value="#{_result[6]}">
+			        			<f:convertNumber pattern="#.00"/>
+			        		</h:outputText>	
+		        		</td>
 			        	<td>#{_result[7]}</td>
 			        	<td>#{commonFinder.parseDate(_result[8])}</td>
 		        	</tr>
@@ -266,6 +295,8 @@
 				jQuery("#mainForm\\:fundsSourceIdHidden").val(jQuery("#fundsSource").val());
 				jQuery("#mainForm\\:departIdHidden").val(jQuery("#depart").val());
 				jQuery("#mainForm\\:expendTimeHidden").val(jQuery("#applyTime").val());
+				jQuery("#mainForm\\:applyEndTimeHidden").val(jQuery("#applyEndTime").val());
+				
 			}
 		//]]>
 		</script>

@@ -37,7 +37,7 @@ public class ExpendApplyInfo implements java.io.Serializable{
 	private String summary;
 	private String reimbursementer;
 	private String comment ;//备注
-	private Float totalMoney;//总金额
+	private Double totalMoney;//总金额
 	private Date applyTime;//申请时间
 	private Date registTime;//登记时间
 	private Integer register;//登记人
@@ -195,10 +195,10 @@ public class ExpendApplyInfo implements java.io.Serializable{
 		this.comment = comment;
 	}
 	@Column(name = "total_money")
-	public Float getTotalMoney() {
+	public Double getTotalMoney() {
 		return totalMoney;
 	}
-	public void setTotalMoney(Float totalMoney) {
+	public void setTotalMoney(Double totalMoney) {
 		this.totalMoney = totalMoney;
 	}
 	

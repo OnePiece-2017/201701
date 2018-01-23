@@ -373,11 +373,23 @@
 				        	<td style="text-align: center;">#{_index + 1}</td>
 				            <td class="project_name" style="text-align: center;">#{_obj[0]}</td>
 				            <td style="text-align: center;">#{_obj[5]}</td>
-				            <td style="text-align: center;">#{_obj[1]}</td>
-				            <td style="text-align: center;" id="projectFrozen_#{_index}">#{_obj[2]}</td>
-				            <td  style="text-align: center;" name="canUseMoney" id="canUseMoney_#{_index}">#{_obj[3]}</td>
+				            <td style="text-align: center;">
+				            	<h:outputText value="#{_obj[1]}">
+				            	<f:convertNumber pattern="#.00"/>
+				            	</h:outputText>
+			            	</td>
+				            <td style="text-align: center;" id="projectFrozen_#{_index}">
+				            	<h:outputText value="#{_obj[2]}">
+				            		<f:convertNumber pattern="#.00"/>
+				            	</h:outputText>
+				            </td>
+				            <td  style="text-align: center;" name="canUseMoney" id="canUseMoney_#{_index}">
+				            	<h:outputText value="#{_obj[3]}">
+				            		<f:convertNumber pattern="#.00"/>
+				            	</h:outputText>
+			            	</td>
 				             <td style="text-align: center;">
-				            	<input id="money_#{_index}" name="money" class="form-control row-text-simplify" value="#{_obj[4]}" type="text" onblur="totalMoney()"/>
+				            	<input id="money_#{_index}" name="money" class="form-control row-text-simplify" value="#{numberUtil.double2Str(_obj[4])}" type="text" onblur="totalMoney()"/>
 				            </td>
 				            <td style="text-align: center;">
 				            	<span id="attachment_#{_index}" class="operation-item opr-attachment"  fu-source="#{_obj[9]}" style="cursor:pointer;#{_obj[9] ne null and _obj[9] ne '' ? 'color:blue' : ''}">附件</span>
@@ -651,7 +663,7 @@
 										</td>
 										<td valign="middle" class="modaltd">
 										<rich:panel id="totalMoneyPanl" style="margin:0; border:none; padding: 0;">
-											<input id="totalMoney" value="#{expendApplyInfoHome.totalMoney}" class=" mb10 border" style="height:34px;width:159px;"  readonly="readonly"/>
+											<input id="totalMoney" value="#{numberUtil.double2Str(expendApplyInfoHome.totalMoney)}" class=" mb10 border" style="height:34px;width:159px;"  readonly="readonly"/>
 										</rich:panel>
 										</td>
 									</tr>
@@ -667,7 +679,7 @@
 										</td>
 										<td valign="top" class="modaltd">
 										<rich:panel id="usedMoneyPanl" style="margin:0; border:none; padding: 0;">
-											<input id="usedMoney" value="#{expendApplyInfoHome.usedMoney}" class=" mb10 border" style="height:34px;width:159px;"  readonly="readonly"/>
+											<input id="usedMoney" value="#{numberUtil.double2Str(expendApplyInfoHome.usedMoney)}" class=" mb10 border" style="height:34px;width:159px;"  readonly="readonly"/>
 										</rich:panel>
 										</td>
 									</tr>
@@ -685,7 +697,7 @@
 										</td>
 										<td valign="middle" class="modaltd">
 										<rich:panel id="canUseMoneyPanl" style="margin:0; border:none; padding: 0;">
-											<input id="canUseMoney" value="#{expendApplyInfoHome.canUseMoney}" class=" mb10 border" style="height:34px;width:159px;"  readonly="readonly"/>
+											<input id="canUseMoney" value="#{numberUtil.double2Str(expendApplyInfoHome.canUseMoney)}" class=" mb10 border" style="height:34px;width:159px;"  readonly="readonly"/>
 										</rich:panel>
 										</td>
 									</tr>
@@ -905,7 +917,7 @@
 					flag = false;
 					return ;
 				}
-				 if(invoicenum.length > 10){
+				 if(invoicenum.length > 500){
 					___msg('温馨提示', "发票号最多500字");
 					flag = false;
 					return ;
@@ -1021,7 +1033,7 @@
 					flag = false;
 					return ;
 				}
-				if(invoicenum.length > 10){
+				if(invoicenum.length > 500){
 					___msg('温馨提示', "发票号最多500字");
 					flag = false;
 					return ;

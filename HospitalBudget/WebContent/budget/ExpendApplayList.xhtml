@@ -150,6 +150,17 @@
 											</s:link>
 										</div>
 									</td>
+									<td valign="middle" width="100%" style="padding-left:42px;" >
+										<div class="fl" style="margin-left:0px;    margin-top: 13px;">
+											<s:link  styleClass="btn btn-primary mr15" view="/budget/ExpendApplyList.xhtml" action="#{expendApplayList.expExcel()}" style="width: 62px;">导出
+					                			<f:param name="departmentId" value="#{expendApplayList.departmentId}"/>
+					                			<f:param name="applyUser" value="#{expendApplayList.applyUser}"/>
+					                			<f:param name="applyTime" value="#{expendApplayList.applyTime}"/>
+					                			<f:param name="applyEndTime" value="#{expendApplayList.applyEndTime}"/>
+					                			<f:param name="searchKey" value="#{expendApplayList.searchKey}"/>
+					                		</s:link>
+										</div>
+									</td>
 								</tr>
 							</table>
 							</div>
@@ -181,8 +192,12 @@
 			        		#{_result[1]}
 			        	</td>
 			        	<td>#{_result[2]}</td>
-			        	<td>#{_result[3]}</td>
-			        	<td style="max-width:130px"><p style="width:100%;height:20px;line-height:20px;margin-bottom: 0;overflow: hidden;text-overflow:ellipsis; white-space:nowrap;" title="#{_result[4]}">#{_result[4]}</p></td>
+			        	<td>
+			        	<h:outputText value="#{_result[3]}">
+			        		<f:convertNumber pattern="#.00"/>
+			        	</h:outputText>	
+			        	</td>
+			        	<td style="max-width:130px;text-align: left;" ><p style="width:100%;height:20px;line-height:20px;margin-bottom: 0;overflow: hidden;text-overflow:ellipsis; white-space:nowrap;" title="#{_result[4]}">#{_result[4]}</p></td>
 <!-- 			        	<td>#{_result[5]}</td> -->
 			        	<td>#{_result[6]}</td>
 			        	<td>#{commonFinder.parseDate(_result[7])}</td>

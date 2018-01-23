@@ -24,11 +24,11 @@ public class ExpendConfirmProject implements java.io.Serializable{
 	private Integer expend_confirm_project_id;
 	private Integer expend_confirm_info_id;
 	private Integer expend_apply_project_id;//申请单项目表
-	private Float expendBeforFrozen;//支出之前冻结
-	private Float expendBeforSurplus;//支出之前剩余
+	private Double expendBeforFrozen;//支出之前冻结
+	private Double expendBeforSurplus;//支出之前剩余
 	private Integer projectId;//项目
 	private Integer genericProjectId;//常规项目
-	private Float confirm_money;//确认金额
+	private Double confirm_money;//确认金额
 	private boolean deleted;//删除
 	
 	
@@ -52,10 +52,10 @@ public class ExpendConfirmProject implements java.io.Serializable{
 	}
 	
 	@Column(name = "confirm_money")
-	public Float getConfirm_money() {
+	public Double getConfirm_money() {
 		return confirm_money;
 	}
-	public void setConfirm_money(Float confirm_money) {
+	public void setConfirm_money(Double confirm_money) {
 		this.confirm_money = confirm_money;
 	}
 	
@@ -92,17 +92,17 @@ public class ExpendConfirmProject implements java.io.Serializable{
 		this.deleted = deleted;
 	}
 	@Column(name = "expend_befor_frozen")
-	public Float getExpendBeforFrozen() {
+	public Double getExpendBeforFrozen() {
 		return expendBeforFrozen;
 	}
-	public void setExpendBeforFrozen(Float expendBeforFrozen) {
+	public void setExpendBeforFrozen(Double expendBeforFrozen) {
 		this.expendBeforFrozen = expendBeforFrozen;
 	}
 	@Column(name = "expend_befor_surplus")
-	public Float getExpendBeforSurplus() {
+	public Double getExpendBeforSurplus() {
 		return expendBeforSurplus;
 	}
-	public void setExpendBeforSurplus(Float expendBeforSurplus) {
+	public void setExpendBeforSurplus(Double expendBeforSurplus) {
 		this.expendBeforSurplus = expendBeforSurplus;
 	}
 

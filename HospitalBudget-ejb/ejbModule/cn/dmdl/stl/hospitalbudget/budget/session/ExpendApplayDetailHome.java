@@ -149,8 +149,8 @@ public class ExpendApplayDetailHome extends CriterionEntityHome<Object> {
 				Object[] projectDetail = new Object[8];
 				projectDetail[0] = obj[0];
 				projectDetail[1] = obj[1];
-				projectDetail[2] = Float.parseFloat(obj[2].toString()) - Float.parseFloat(obj[4].toString());
-				projectDetail[3] = Float.parseFloat(obj[3].toString()) + Float.parseFloat(obj[4].toString());;
+				projectDetail[2] = Double.parseDouble(obj[2].toString()) - Double.parseDouble(obj[4].toString());
+				projectDetail[3] = Double.parseDouble(obj[3].toString()) + Double.parseDouble(obj[4].toString());;
 				projectDetail[4] = obj[4];
 				projectDetail[5] = obj[6];
 				projectDetail[6] = "";

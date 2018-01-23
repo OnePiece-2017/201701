@@ -48,6 +48,7 @@ public class ExpendExecuteCheckList extends CriterionNativeQuery<Object[]>{
 	private Integer moneyType;//金额范围 -1：全部 0：0-1万  1：1-5万  2：5-10万  3：10-50万 4：50万以上
 	private List<Object[]> moneyList;//金钱范围
 	private String reimbursementer;//报销人
+	private Integer topRole=0;
 	
 	private JSONObject saveResult;
 	
@@ -93,6 +94,18 @@ public class ExpendExecuteCheckList extends CriterionNativeQuery<Object[]>{
 	
 	@Override
 	protected Query createQuery(){
+		boolean privateRole = false;//角色不属于财务 主任 和 管理员（领导的）
+		String roleSql = "select role_info.role_info_id,user_info.department_info_id,ydi.the_value from user_info LEFT JOIN role_info on role_info.role_info_id=user_info.role_info_id LEFT JOIN ys_department_info ydi on "
+				+ "user_info.department_info_id=ydi.the_id where user_info.user_info_id=" + sessionToken.getUserInfoId();
+		
+		List<Object[]> roleList = getEntityManager().createNativeQuery(roleSql).getResultList();
+		int roleId = Integer.parseInt(roleList.get(0)[0].toString());//角色id
+		
+		if(Integer.valueOf(roleId) != 1 && Integer.valueOf(roleId) != 2){
+			privateRole = true;
+		}else{
+			topRole = 1;
+		}
 		StringBuffer sql = new StringBuffer();
 		sql.append(" SELECT ");
 		sql.append(" eapl.process_log_id, ");//0确认单id
@@ -113,7 +126,10 @@ public class ExpendExecuteCheckList extends CriterionNativeQuery<Object[]>{
 		sql.append(" LEFT JOIN user_info ui ON eai.applay_user_id = ui.user_info_id ");
 		sql.append(" LEFT JOIN user_info_extend uie on ui.user_info_extend_id=uie.user_info_extend_id ");
 		sql.append(" where eapl.operate_type is NULL ");
-		sql.append(" and psu.user_id= ").append(sessionToken.getUserInfoId());
+		if(privateRole){
+			
+			sql.append(" and psu.user_id= ").append(sessionToken.getUserInfoId());
+		}
 		if(null != departmentId && departmentId != -1){
 			sql.append(" and ui.department_info_id= ").append(departmentId);
 		}
@@ -145,7 +161,7 @@ public class ExpendExecuteCheckList extends CriterionNativeQuery<Object[]>{
 		if(null != reimbursementer && !reimbursementer.equals("")){
 			sql.append(" and eai.reimbursementer = '").append(reimbursementer).append("'");
 		}
-		sql.append(" order by eai.insert_time desc");
+		sql.append(" order by eai.insert_time desc,eai.expend_apply_code desc");
 		sql.insert(0, "select * from (").append(") as recordset");
 		setEjbql(sql.toString());
 		return super.createQuery();
@@ -389,6 +405,16 @@ public class ExpendExecuteCheckList extends CriterionNativeQuery<Object[]>{
 	public void setReimbursementer(String reimbursementer) {
 		this.reimbursementer = reimbursementer;
 	}
+
+	public Integer getTopRole() {
+		return topRole;
+	}
+
+	public void setTopRole(Integer topRole) {
+		this.topRole = topRole;
+	}
+
+	
 
 	
 	

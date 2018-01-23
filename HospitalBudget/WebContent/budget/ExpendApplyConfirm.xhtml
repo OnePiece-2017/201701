@@ -248,16 +248,22 @@
 				        </tr>
 				    <a:repeat value="#{expendApplyConfirmHome.projectList}" var="_obj" rowKeyVar="_index">
 				        <tr class="root expendtr" style="font-size: 14px;font-weight: normal;">
-				        	<td >#{_index + 1}</td>
-				            <td >#{_obj[0]}</td>
-				            <td >#{_obj[5]}</td>
-				            <td >#{_obj[1]}</td>
-				            <td >#{_obj[2]}</td>
-				            <td  name="canUseMoney">#{_obj[3]}</td>
-				            <td >
-				            	<input id="money_#{_index}" name="money" class="form-control row-text-simplify" value="#{_obj[4]}" type="text" onblur="totalMoney()"/>
+				        	<td style="text-align: center;">#{_index + 1}</td>
+				            <td style="text-align: center;">#{_obj[0]}</td>
+				            <td style="text-align: center;">#{_obj[5]}</td>
+				            <td style="text-align: center;">
+				            	#{_obj[1]}
+			            	</td>
+				            <td style="text-align: center;">
+			            		#{_obj[2]}
+			            	</td>
+				            <td  style="text-align: center;" name="canUseMoney">
+				            	#{_obj[3]}
+			            	</td>
+				            <td style="text-align: center;">
+				            	<input id="money_#{_index}" name="money" class="form-control row-text-simplify" value="#{numberUtil.double2Str(_obj[4])}" type="text" onblur="totalMoney()"/>
 				            </td>
-				            <td >
+				            <td style="text-align: center;">
 				            	<span id="attachment_#{_index}" class="operation-item opr-attachment"  fu-source="#{_obj[8]}" style="cursor:pointer;#{_obj[8] ne null and _obj[8] ne '' ? 'color:blue' : ''}">附件</span>
 				            </td>
 				            <td style="display:none" id="project_id_#{_index}">#{_obj[7]}</td>

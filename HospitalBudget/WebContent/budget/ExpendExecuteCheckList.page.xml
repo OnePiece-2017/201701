@@ -13,4 +13,5 @@
 	<param name="moneyType" value="#{expendExecuteCheckList.moneyType}" />
 	<param name="applyEndTime" value="#{expendExecuteCheckList.applyEndTime}" />
 	<param name="reimbursementer" value="#{expendExecuteCheckList.reimbursementer}" />
+	<param name="topRole" value="#{expendExecuteCheckList.topRole}" />
 </page>
