@@ -844,7 +844,7 @@ public class ExpendApplayList extends CriterionNativeQuery<Object[]> {
 			applyTimeCol = row1.createCell(col);
 			applyTimeCol.setCellType(HSSFCell.CELL_TYPE_STRING);
 			try{
-				applyTimeCol.setCellValue(obj[5].toString());
+				applyTimeCol.setCellValue(obj[7].toString());
 			}catch(Exception e){
 				applyTimeCol.setCellValue("");
 			}
