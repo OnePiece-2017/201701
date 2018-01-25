@@ -366,7 +366,7 @@
 								</td>
 								<td valign="middle">
 									<div>
-										<h:inputTextarea value="#{expendApplyConfirmHome.expendApplyInfo.comment}"  rows="5" cols="60" readonly="readonly"/>
+										<h:inputTextarea value="#{expendApplyConfirmHome.expendApplyInfo.comment}"  rows="5" cols="60" readonly="readonly" id="remark"/>
 									</div>
 								</td>
 							</tr>
@@ -394,12 +394,14 @@
 				<a:actionparam name="totalMoney" assignTo="#{expendApplyConfirmHome.totalMoney}" />
 				<a:actionparam name="confirmTime" assignTo="#{expendApplyConfirmHome.confirmTime}" />
 				<a:actionparam name="projectJson" assignTo="#{expendApplyConfirmHome.projectJson}" />
+				<a:actionparam name="comment" assignTo="#{expendApplyConfirmHome.comment}" />
 			</a:jsFunction>
 			<a:jsFunction name="confirmReturn" action="#{expendApplyConfirmHome.confirmReturn}" data="#{expendApplyConfirmHome.saveResult}" oncomplete="saveComplete(data)">
 				<a:actionparam name="expendConfirmId" assignTo="#{expendApplyConfirmHome.expendConfirmId}" />
 				<a:actionparam name="totalMoney" assignTo="#{expendApplyConfirmHome.totalMoney}" />
 				<a:actionparam name="confirmTime" assignTo="#{expendApplyConfirmHome.confirmTime}" />
 				<a:actionparam name="projectJson" assignTo="#{expendApplyConfirmHome.projectJson}" />
+				<a:actionparam name="comment" assignTo="#{expendApplyConfirmHome.comment}" />
 			</a:jsFunction>
 		</a:form>
 		<script type="text/javascript" src="#{request.contextPath}/common/js/bootstrap.min.js" />
@@ -456,6 +458,7 @@
 				var expendConfirmId = jQuery("#mainForm\\:expendApplyIdEdit").val();
 				var confirmTime = jQuery("#confirmTime").val();
 				var totalMoney = jQuery("#allMoney").val();
+				var comment = jQuery("#mainForm\\:remark").val();
 				if(confirmTime == ""){
 					___msg('温馨提示', "请选择确认时间");
 					flag = false;
@@ -482,7 +485,7 @@
 				});
 				var json = getJson();
 				if(flag){
-					save(expendConfirmId,totalMoney,confirmTime,json);
+					save(expendConfirmId,totalMoney,confirmTime,json,comment);
 				}
 				
 			}
@@ -492,6 +495,7 @@
 				var expendConfirmId = jQuery("#mainForm\\:expendApplyIdEdit").val();
 				var confirmTime = jQuery("#confirmTime").val();
 				var totalMoney = jQuery("#allMoney").val();
+				var comment = jQuery("#mainForm\\:remark").val();
 				if(confirmTime == ""){
 					___msg('温馨提示', "请选择确认时间");
 					flag = false;
@@ -518,7 +522,7 @@
 				});
 				var json = getJson();
 				if(flag){
-					confirmReturn(expendConfirmId,totalMoney,confirmTime,json);
+					confirmReturn(expendConfirmId,totalMoney,confirmTime,json,comment);
 				}
 				
 			}

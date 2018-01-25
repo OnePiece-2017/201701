@@ -6,5 +6,8 @@
 	<begin-conversation join="true" flush-mode="MANUAL" />
 
 	<param name="expendConfirmId" value="#{expendApplyConfirmHome.expendConfirmId}" />
-
+	<param name="totalMoney" value="#{expendApplyConfirmHome.totalMoney}" />
+	<param name="confirmTime" value="#{expendApplyConfirmHome.confirmTime}" />
+	<param name="projectJson" value="#{expendApplyConfirmHome.projectJson}" />
+	<param name="comment" value="#{expendApplyConfirmHome.comment}" />
 </page>

@@ -108,7 +108,7 @@ public class ExpendConfrimList extends CriterionNativeQuery<Object[]> {
 		sql.append(" uie.fullname, ");//6申请人名字
 		sql.append(" eai.apply_time, ");//7申请时间
 		sql.append(" eai.summary, ");//8摘要
-		sql.append(" eai.`comment`, ");//9备注
+		sql.append(" eci.`comment`, ");//9备注
 		sql.append(" eci.confirm_status ");//10状态
 		sql.append(" FROM expend_confirm_info eci ");
 		sql.append(" LEFT JOIN expend_apply_info eai on eci.expend_apply_info_id=eai.expend_apply_info_id ");

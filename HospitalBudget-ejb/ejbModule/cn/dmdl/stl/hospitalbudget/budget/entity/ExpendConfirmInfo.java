@@ -32,6 +32,7 @@ public class ExpendConfirmInfo implements java.io.Serializable{
 	private Date confirm_time;//确认时间
 	private Integer confirm_status;//确认单状态 0初始状态 1确认完成 2 确认驳回
 	private boolean deleted;//删除
+	private String comment;
 	
 	@Id
 	@GeneratedValue(strategy = IDENTITY)
@@ -129,6 +130,13 @@ public class ExpendConfirmInfo implements java.io.Serializable{
 	}
 	public void setDeleted(boolean deleted) {
 		this.deleted = deleted;
+	}
+	@Column(name = "comment")
+	public String getComment() {
+		return comment;
+	}
+	public void setComment(String comment) {
+		this.comment = comment;
 	}
 	
 	

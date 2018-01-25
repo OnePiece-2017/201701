@@ -175,7 +175,7 @@ public class ExpendApplayList extends CriterionNativeQuery<Object[]> {
 					} 
 					if(null != nepiList &&nepiList.size() > 0){
 						Double budg_year_money = Double.parseDouble(nepiList.get(0)[2].toString());//年预算
-						Double budg_year_out_money = Double.parseDouble(nepiList.get(0)[3].toString());//已支出
+						Double budg_year_out_money = getExpendInfoMoney(1,10);//已冻结
 						Double disbursable_money = Double.parseDouble(nepiList.get(0)[4].toString());//可支出
 						
 						ExpendApplyProject eap = new ExpendApplyProject();//申请项目
@@ -292,13 +292,15 @@ public class ExpendApplayList extends CriterionNativeQuery<Object[]> {
 				String invoiceNum = rs.getString("main_INVOICE_NO");
 				Double totalMoney = rs.getDouble("this_payment_money");//支出
 				Double budg_year_money = rs.getDouble("budg_year_money");//年预算
-				Double budg_year_out_money = rs.getDouble("budg_year_out_money");//已支出
-				Double disbursable_money = rs.getDouble("disbursable_money");//可支出
+//				Double budg_year_out_money = rs.getDouble("budg_year_out_money");//已支出
+//				Double disbursable_money = rs.getDouble("disbursable_money");//可支出
 				String year = rs.getString("budg_year");//预算nian
 				String userSql = "select a.user_info_id from user_info a LEFT JOIN user_info_extend b "
 						+ " on b.user_info_extend_id=a.user_info_extend_id "
 						+ " where b.fullname ='"+oper+"'";
 				String budgCode = rs.getString("budg_code");
+				int projectType = 0;
+				int updateProjuectId = 0;
 				
 				String checkSql = "select * from expend_apply_info e where e.expend_apply_code='"+expendApplyCode+"' and e.explend_source=1;";
 				List<Object[]> checkList = getEntityManager().createNativeQuery(checkSql).getResultList();
@@ -331,10 +333,11 @@ public class ExpendApplayList extends CriterionNativeQuery<Object[]> {
 				expendApplyInfo.setDeleted(false);
 				expendApplyInfo.setTotalMoney(totalMoney);
 				expendApplyInfo.setApplyTime(venDate);
-				expendApplyInfo.setExplendSource(1);
+				expendApplyInfo.setExplendSource(2);
 				getEntityManager().persist(expendApplyInfo);
 				
-				String nepiSql = "select normal_expend_plan_id,project_id,generic_project_id from normal_expend_plan_info where normal_expend_plan_id=" + budgCode;
+				String nepiSql = "select normal_expend_plan_id,project_id,generic_project_id,budget_amount_surplus "
+						+ " from normal_expend_plan_info where normal_expend_plan_id=" + budgCode;
 				List<Object[]> nepiList= getEntityManager().createNativeQuery(nepiSql).getResultList();
 				
 				//查询流程
@@ -351,12 +354,20 @@ public class ExpendApplayList extends CriterionNativeQuery<Object[]> {
 						getEntityManager().persist(process);
 					}
 					if(null != nepiList &&nepiList.size() > 0){
+						Double budg_year_out_money = 0d;//已冻结;
+						Double disbursable_money = Double.parseDouble(nepiList.get(0)[3].toString());//可支出
 						ExpendApplyProject eap = new ExpendApplyProject();//申请项目
 						eap.setExpendApplyInfoId(expendApplyInfo.getExpendApplyInfoId());
 						if(null != nepiList.get(0)[1]){
 							eap.setProjectId(Integer.valueOf(nepiList.get(0)[1].toString()));
+							budg_year_out_money = getExpendInfoMoney(1,Integer.valueOf(nepiList.get(0)[1].toString()));
+							projectType = 1;
+							updateProjuectId = Integer.valueOf(nepiList.get(0)[1].toString());
 						}else{
 							eap.setGenericProjectId(Integer.valueOf(nepiList.get(0)[2].toString()));
+							budg_year_out_money = getExpendInfoMoney(2,Integer.valueOf(nepiList.get(0)[2].toString()));
+							projectType = 2;
+							updateProjuectId = Integer.valueOf(nepiList.get(0)[2].toString());
 						}
 						eap.setExpendBeforFrozen(budg_year_out_money);
 						eap.setExpendBeforSurplus(disbursable_money);
@@ -380,13 +391,21 @@ public class ExpendApplayList extends CriterionNativeQuery<Object[]> {
 					
 					
 					if(null != nepiList &&nepiList.size() > 0){
+						Double budg_year_out_money = 0d;//已冻结;
+						Double disbursable_money = Double.parseDouble(nepiList.get(0)[3].toString());//可支出
 						ExpendApplyProject eap = new ExpendApplyProject();//申请项目
 						ExpendConfirmProject efp = new ExpendConfirmProject();//确认项目
 						eap.setExpendApplyInfoId(expendApplyInfo.getExpendApplyInfoId());
 						if(null != nepiList.get(0)[1]){
 							eap.setProjectId(Integer.valueOf(nepiList.get(0)[1].toString()));
+							budg_year_out_money = getExpendInfoMoney(1,Integer.valueOf(nepiList.get(0)[1].toString()));
+							projectType = 1;
+							updateProjuectId = Integer.valueOf(nepiList.get(0)[1].toString());
 						}else{
 							eap.setGenericProjectId(Integer.valueOf(nepiList.get(0)[2].toString()));
+							budg_year_out_money = getExpendInfoMoney(2,Integer.valueOf(nepiList.get(0)[2].toString()));
+							projectType = 2;
+							updateProjuectId = Integer.valueOf(nepiList.get(0)[2].toString());
 						}
 						eap.setExpendBeforFrozen(budg_year_out_money);
 						eap.setExpendBeforSurplus(disbursable_money);
@@ -408,6 +427,10 @@ public class ExpendApplayList extends CriterionNativeQuery<Object[]> {
 						getEntityManager().persist(efp);
 					}
 				}
+				 String froensql = "update HMMIS_BUDG.dbo.budg_type_dict set budg_year_frozen = "+getExpendInfoMoney(projectType,updateProjuectId)
+						   +" where budg_code='" + budgCode + "'";
+				 ps = conn.prepareStatement(froensql);
+				 ps.executeUpdate();
 			}
 			
 			for(String code : codeList){
@@ -415,6 +438,7 @@ public class ExpendApplayList extends CriterionNativeQuery<Object[]> {
 				ps.setString(1, code);
 				ps.executeUpdate();
 			}
+			
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -946,6 +970,42 @@ public class ExpendApplayList extends CriterionNativeQuery<Object[]> {
 		RegionUtil.setBorderLeft(1, range, sheet, workbook);
 		RegionUtil.setBorderRight(1, range, sheet, workbook);
 		RegionUtil.setBorderTop(1, range, sheet, workbook);
+	}
+	
+	
+	/**
+	 * 获取某个项目未完成的申请单中的钱
+	 * @param projectType
+	 * @param projectId
+	 * @return
+	 */
+	public Double getExpendInfoMoney(int projectType,int projectId){
+		double money = 0d;
+		StringBuffer sql = new StringBuffer();
+		if(projectType == 1){
+			sql.append(" select sum(eap.expend_money) from expend_apply_info eai  ");
+			sql.append(" LEFT JOIN expend_apply_project eap on eai.expend_apply_info_id=eap.expend_apply_info_id ");
+			sql.append(" where eai.expend_apply_status in (0,1,2) ");
+			sql.append(" and eap.project_id= ").append(projectId);
+			sql.append(" and eai.deleted = 0 ");
+			sql.append(" GROUP BY eap.project_id ");
+		}else{
+			sql.append(" select sum(eap.expend_money) from expend_apply_info eai  ");
+			sql.append(" LEFT JOIN expend_apply_project eap on eai.expend_apply_info_id=eap.expend_apply_info_id ");
+			sql.append(" where eai.expend_apply_status in (0,1,2) ");
+			sql.append(" and eap.generic_project_id= ").append(projectId);
+			sql.append(" and eai.deleted = 0 ");
+			sql.append(" GROUP BY eap.project_id ");
+		}
+		
+		List<Object> moneyList = getEntityManager().createNativeQuery(sql.toString()).getResultList();
+		if(null != moneyList && moneyList.size() > 0){
+			Object obj = moneyList.get(0);
+			if(null != obj){
+				money = Double.parseDouble(obj.toString());
+			}
+		}
+		return money;
 	}
 	
 	public List<Object[]> getExpendApplyInfoList() {
