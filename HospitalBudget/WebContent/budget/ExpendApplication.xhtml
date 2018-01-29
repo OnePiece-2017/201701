@@ -1105,12 +1105,12 @@
 				var json = '{"expend_list":[';
 				jQuery(".expendtr").each(function(i){
 					var projectId= jQuery("#project_id_" + i).text();
-					var projectType = jQuery("#project_type_" + i).text();
-					var projectFrozen = jQuery("#projectFrozen_" + i).text();
-					var projectSurplus = jQuery("#canUseMoney_" + i).text();
+					var projectType = jQuery("#project_type_" + i).text().trim();
+					var projectFrozen = jQuery("#projectFrozen_" + i).text().trim();
+					var projectSurplus = jQuery("#canUseMoney_" + i).text().trim();
 					var attachment = sgFileupload['getSource'](jQuery(this).find('.opr-attachment').attr('id'));
-					var nepiId= jQuery("#nepi_id_" + i).text();
-					var money = jQuery("#money_" + i).val();
+					var nepiId= jQuery("#nepi_id_" + i).text().trim();
+					var money = jQuery("#money_" + i).val().trim();
 					json += '{"project_id":"' + projectId + '",';
 					json += '"project_type":"' + projectType + '",';
 					json += '"frozen_money":"' + projectFrozen + '",';

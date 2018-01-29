@@ -35,6 +35,7 @@ import cn.dmdl.stl.hospitalbudget.hospital.entity.YsDepartmentInfo;
 import cn.dmdl.stl.hospitalbudget.hospital.entity.YsProjectNature;
 import cn.dmdl.stl.hospitalbudget.util.Assit;
 import cn.dmdl.stl.hospitalbudget.util.NumberUtil;
+import cn.dmdl.stl.hospitalbudget.util.SqlServerJDBCUtil;
 
 @Name("expendApplyInfoHome")
 public class ExpendApplyInfoHome extends CriterionEntityHome<ExpendApplyInfo>{
@@ -638,6 +639,7 @@ public class ExpendApplyInfoHome extends CriterionEntityHome<ExpendApplyInfo>{
 	 */
 	@SuppressWarnings("unchecked")
 	public String save(){
+		String haocaiId = "";
 		if (saveResult != null) {
 			saveResult.clear();
 		} else {
@@ -742,6 +744,8 @@ public class ExpendApplyInfoHome extends CriterionEntityHome<ExpendApplyInfo>{
 				String attachment = project.getString("attachment");
 				String nepiId = project.getString("nepiId");
 				allMoney += Double.parseDouble(expendMoney);
+				//如果有耗材的，得去计算剩余多少钱
+				haocaiId += nepiId + ",";
 				//保存支出申请单详细列表
 				ExpendApplyProject eap = new ExpendApplyProject();
 				eap.setExpendApplyInfoId(expendApplyInfo.getExpendApplyInfoId());
@@ -772,6 +776,7 @@ public class ExpendApplyInfoHome extends CriterionEntityHome<ExpendApplyInfo>{
 			//保存申请单和确认单的总金额
 			expendApplyInfo.setTotalMoney(allMoney);
 			getEntityManager().merge(expendApplyInfo);
+			
 		} else {//如果没有流程，直接进入确认
 			expendApplyInfo.setTaskOrderId(0);
 			expendApplyInfo.setOrderSn("");
@@ -801,6 +806,10 @@ public class ExpendApplyInfoHome extends CriterionEntityHome<ExpendApplyInfo>{
 				String attachment = project.getString("attachment");
 				allMoney += Double.parseDouble(expendMoney);
 				String nepiId = project.getString("nepiId");
+				
+				//如果有耗材的，得去计算剩余多少钱
+				haocaiId += nepiId + ",";
+				
 				//保存支出申请单详细列表
 				ExpendApplyProject eap = new ExpendApplyProject();
 				eap.setExpendApplyInfoId(expendApplyInfo.getExpendApplyInfoId());
@@ -850,7 +859,13 @@ public class ExpendApplyInfoHome extends CriterionEntityHome<ExpendApplyInfo>{
 			getEntityManager().merge(eci);
 		}
 		
-		
+		//如果有耗材的，给新系统那边的钱重新计算
+		String[] haocaiIds = haocaiId.substring(0, haocaiId.length()-1).split(",");
+		for(String haocai : haocaiIds){
+			NormalExpendPlantInfo nepi = getEntityManager().find(NormalExpendPlantInfo.class, Integer.valueOf(haocai));
+			SqlServerJDBCUtil.calculateOldBudg(haocai,
+					getExpendInfoMoney(nepi.getProjectId() == null ? 2:1,nepi.getProjectId() == null ? nepi.getGenericProjectId():nepi.getProjectId()));
+		}
 		if (saveResult != null) {
 			saveResult.clear();
 		} else {
@@ -858,7 +873,6 @@ public class ExpendApplyInfoHome extends CriterionEntityHome<ExpendApplyInfo>{
 		}
 		saveResult.accumulate("invoke_result", "INVOKE_SUCCESS");
 		saveResult.accumulate("message", "提交成功！");
-	
 		getEntityManager().flush();
 		raiseAfterTransactionSuccessEvent();
 		return "ok";
@@ -872,6 +886,7 @@ public class ExpendApplyInfoHome extends CriterionEntityHome<ExpendApplyInfo>{
 	 */
 	@SuppressWarnings("unchecked")
 	public String update(){
+		String haocaiId = "";
 		if (saveResult != null) {
 			saveResult.clear();
 		} else {
@@ -991,6 +1006,8 @@ public class ExpendApplyInfoHome extends CriterionEntityHome<ExpendApplyInfo>{
 			String expendMoney = project.getString("expend_money");
 			String attachment = project.getString("attachment");
 			allMoney += Double.parseDouble(expendMoney);
+			
+			
 			//编辑支出申请单详细列表
 			ExpendApplyProject eap = null;
 			if(null != oldList && oldList.size() > 0 && oldList.size() >= (i+1)){
@@ -1001,11 +1018,27 @@ public class ExpendApplyInfoHome extends CriterionEntityHome<ExpendApplyInfo>{
 				eap = new ExpendApplyProject();
 				editFlag = false;
 			}
+			String nepiId = null;
 			if("1".equals(projectType)){
 				eap.setProjectId(Integer.parseInt(projectInfoId));
+				String sql = "select nepi.normal_expend_plan_id from normal_expend_plan_info nepi where nepi.project_id=" + projectInfoId;
+				List<Object> nepiObj = getEntityManager().createNativeQuery(sql).getResultList();
+				if(null != nepiObj && nepiObj.size() > 0){
+					nepiId = nepiObj.get(0).toString();
+				}
 			}else{
 				eap.setGenericProjectId(Integer.parseInt(projectInfoId));
+				String sql = "select nepi.normal_expend_plan_id from normal_expend_plan_info nepi where nepi.generic_project_id=" + projectInfoId;
+				List<Object> nepiObj = getEntityManager().createNativeQuery(sql).getResultList();
+				if(null != nepiObj && nepiObj.size() > 0){
+					nepiId = nepiObj.get(0).toString();
+				}
 			}
+			//如果有耗材的，得去计算剩余多少钱
+			if(null != nepiId){
+				haocaiId += nepiId + ",";
+			}
+			
 			eap.setExpendApplyInfoId(expendApplyInfo.getExpendApplyInfoId());
 			eap.setExpendBeforFrozen(Double.parseDouble(frozenMoney));
 			eap.setExpendBeforSurplus(Double.parseDouble(surplusMoney));
@@ -1111,6 +1144,13 @@ public class ExpendApplyInfoHome extends CriterionEntityHome<ExpendApplyInfo>{
 				oldEap.setDeleted(true);
 				getEntityManager().merge(oldEap);
 			}
+		}
+		//如果有耗材的，给新系统那边的钱重新计算
+		String[] haocaiIds = haocaiId.substring(0, haocaiId.length()-1).split(",");
+		for(String haocai : haocaiIds){
+			NormalExpendPlantInfo nepi = getEntityManager().find(NormalExpendPlantInfo.class, Integer.valueOf(haocai));
+			SqlServerJDBCUtil.calculateOldBudg(haocai,
+					getExpendInfoMoney(nepi.getProjectId() == null ? 2:1,nepi.getProjectId() == null ? nepi.getGenericProjectId():nepi.getProjectId()));
 		}
 		getEntityManager().flush();
 		raiseAfterTransactionSuccessEvent();
@@ -1501,9 +1541,26 @@ public class ExpendApplyInfoHome extends CriterionEntityHome<ExpendApplyInfo>{
 //		            nxpi.setBudgetAmountSurplus(nxpi.getBudgetAmountSurplus() + project.getExpendMoney());
 //		            getEntityManager().merge(nxpi);
 //				}
+				getEntityManager().flush();
+				raiseAfterTransactionSuccessEvent();
+				/**
+				 * 驳回的时候看有没有耗材的项目，如果有去重新计算，并且把审核意见给回去
+				 */
+				
+				if(expendApplyInfo.getExplendSource() == 2){
+					double frozenMoney = 0d;
+					String sql = "select eap.project_id,eap.generic_project_id from expend_apply_project eap where eap.expend_apply_info_id=" + expendApplyInfo.getExpendApplyInfoId();
+					List<Object[]> proList = getEntityManager().createNativeQuery(sql).getResultList();
+					if(null != proList && proList.size() > 0){
+						if(null != proList.get(0)[0]){
+							frozenMoney = getExpendInfoMoney(1,Integer.valueOf(proList.get(0)[0].toString()));
+						}else{
+							frozenMoney = getExpendInfoMoney(2,Integer.valueOf(proList.get(0)[1].toString()));
+						}
+					}
+					SqlServerJDBCUtil.checkReturn(expendApplyInfo.getExpendApplyCode(), frozenMoney);
+				}
 			}
-			getEntityManager().flush();
-			raiseAfterTransactionSuccessEvent();
 			return true;
 		}catch(Exception e){
 			return false;

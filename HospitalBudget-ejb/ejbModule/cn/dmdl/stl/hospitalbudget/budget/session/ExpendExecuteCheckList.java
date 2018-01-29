@@ -101,7 +101,7 @@ public class ExpendExecuteCheckList extends CriterionNativeQuery<Object[]>{
 		List<Object[]> roleList = getEntityManager().createNativeQuery(roleSql).getResultList();
 		int roleId = Integer.parseInt(roleList.get(0)[0].toString());//角色id
 		
-		if(Integer.valueOf(roleId) != 1 && Integer.valueOf(roleId) != 2){
+		if(Integer.valueOf(roleId) != 1 && Integer.valueOf(roleId) != 2 && sessionToken.getDepartmentInfoId() != 187){
 			privateRole = true;
 		}else{
 			topRole = 1;
@@ -121,14 +121,15 @@ public class ExpendExecuteCheckList extends CriterionNativeQuery<Object[]>{
 		sql.append(" eapl.process_step_info_id ");//10流程步骤
 		sql.append(" FROM ys_expand_apply_process_log eapl ");
 		sql.append(" LEFT JOIN process_step_info psi on eapl.process_step_info_id=psi.process_step_info_id ");
-		sql.append(" LEFT JOIN process_step_user psu on psi.process_step_info_id=psu.process_step_info_id ");
 		sql.append(" LEFT JOIN expend_apply_info eai on eapl.ys_expand_apply_id=eai.expend_apply_info_id ");
 		sql.append(" LEFT JOIN user_info ui ON eai.applay_user_id = ui.user_info_id ");
 		sql.append(" LEFT JOIN user_info_extend uie on ui.user_info_extend_id=uie.user_info_extend_id ");
-		sql.append(" where eapl.operate_type is NULL ");
 		if(privateRole){
-			
+			sql.append(" LEFT JOIN process_step_user psu on psi.process_step_info_id=psu.process_step_info_id ");
+			sql.append(" where eapl.operate_type is NULL ");
 			sql.append(" and psu.user_id= ").append(sessionToken.getUserInfoId());
+		}else{
+			sql.append(" where eapl.operate_type is NULL ");
 		}
 		if(null != departmentId && departmentId != -1){
 			sql.append(" and ui.department_info_id= ").append(departmentId);
