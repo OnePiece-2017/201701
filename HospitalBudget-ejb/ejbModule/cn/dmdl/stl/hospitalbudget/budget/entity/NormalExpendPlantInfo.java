@@ -33,6 +33,7 @@ public class NormalExpendPlantInfo implements java.io.Serializable{
 	private Date insertTime;//发票号
 	private Integer updateUser;
 	private Date updateTime;
+	private Integer projectNature;
 	
 	@Id
 	@GeneratedValue(strategy = IDENTITY)
@@ -139,7 +140,13 @@ public class NormalExpendPlantInfo implements java.io.Serializable{
 		this.updateTime = updateTime;
 	}
 	
-	
-	
+	@Column(name = "project_nature")
+	@NotNull
+	public Integer getProjectNature() {
+		return projectNature;
+	}
+	public void setProjectNature(Integer projectNature) {
+		this.projectNature = projectNature;
+	}
 	
 }

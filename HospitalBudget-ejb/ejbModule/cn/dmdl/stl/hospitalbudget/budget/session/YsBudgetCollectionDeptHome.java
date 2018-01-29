@@ -46,6 +46,7 @@ import cn.dmdl.stl.hospitalbudget.util.HospitalConstant;
 public class YsBudgetCollectionDeptHome extends CriterionEntityHome<Object> {
 	private String year;
 	private String deptIds;
+	private String draftTypeStr;
 	private JSONObject budgetCollectionInfo;
 	private String budgetCollectionDeptIds;
 
@@ -75,6 +76,7 @@ public class YsBudgetCollectionDeptHome extends CriterionEntityHome<Object> {
 		if(null != deptIds && !deptIds.isEmpty() && !"null".equals(deptIds)){
 			depteIdArr = deptIds.split(",");
 		}
+		int draftType = Integer.parseInt(draftTypeStr);
 		//收入预算
 		//获取收入预算部门
 		Map<Integer, YsDepartmentInfo> incomeDeptMap = getIncomDeptMap(); 
@@ -91,10 +93,12 @@ public class YsBudgetCollectionDeptHome extends CriterionEntityHome<Object> {
 		incomeSql.append("INNER JOIN hospital_budget.ys_department_info di ON bcd.dept_id = di.the_id ");
 		incomeSql.append("where bcd.`year` = '").append(year).append("' ");
 		incomeSql.append("AND bcd.budget_type = 1 ");//收入
+		incomeSql.append("AND bcd.draft_type = ").append(draftType).append(" ");//预算类型
 		if(depteIdArr.length > 0){
 			incomeSql.append("AND bcd.dept_id in (").append(deptIds).append(") ");
 		}
-		incomeSql.append("GROUP BY bcd.dept_id ");
+//		incomeSql.append("GROUP BY bcd.dept_id ");
+		incomeSql.append("GROUP BY bcd.budget_collection_dept_id ");
 		System.out.println(incomeSql);
 		incomeSql.insert(0, "select * from (").append(") t ");
 		//获得上一年下达的预算数据
@@ -165,10 +169,12 @@ public class YsBudgetCollectionDeptHome extends CriterionEntityHome<Object> {
 		expendSql.append("INNER JOIN hospital_budget.ys_department_info di ON bcd.dept_id = di.the_id ");
 		expendSql.append("where bcd.`year` = '").append(year).append("' ");
 		expendSql.append("AND bcd.budget_type = 2 ");//支出
+		expendSql.append("AND bcd.draft_type = ").append(draftType).append(" ");//预算类型
 		if(depteIdArr.length > 0){
 			expendSql.append("AND bcd.dept_id in (").append(deptIds).append(") ");
 		}
-		expendSql.append("GROUP BY bcd.dept_id ");
+//		expendSql.append("GROUP BY bcd.dept_id ");
+		expendSql.append("GROUP BY bcd.budget_collection_dept_id ");
 		expendSql.insert(0, "select * from (").append(") t ");
 		System.out.println(expendSql);
 		//TODO 获得上一年下达的预算数据
@@ -206,20 +212,22 @@ public class YsBudgetCollectionDeptHome extends CriterionEntityHome<Object> {
 		budgetCollectionInfo.element("total_expend", totalExpend/10000);
 		//加载未提交编制的科室
 		JSONArray expendUnfinishedJsonArr = new JSONArray();
-		for(Integer unFinishedDeptId : expendDeptMap.keySet()){
-			JSONObject expendJson = new JSONObject();
-			expendJson.element("dept_id", expendDeptMap.get(unFinishedDeptId).getTheId());
-			expendJson.element("dept_name", expendDeptMap.get(unFinishedDeptId).getTheValue());
-			expendJson.element("year", year);
-			expendJson.element("status_name", "未提交");
-			if(depteIdArr.length > 0){//有筛选部门
-				if(Arrays.binarySearch(depteIdArr, expendDeptMap.get(unFinishedDeptId).getTheId().toString()) > -1){//只添加筛选的部门
+		if(draftType == HospitalConstant.DRAFT_TYPE_DRAFT){//预算编制
+			for(Integer unFinishedDeptId : expendDeptMap.keySet()){
+				JSONObject expendJson = new JSONObject();
+				expendJson.element("dept_id", expendDeptMap.get(unFinishedDeptId).getTheId());
+				expendJson.element("dept_name", expendDeptMap.get(unFinishedDeptId).getTheValue());
+				expendJson.element("year", year);
+				expendJson.element("status_name", "未提交");
+				if(depteIdArr.length > 0){//有筛选部门
+					if(Arrays.binarySearch(depteIdArr, expendDeptMap.get(unFinishedDeptId).getTheId().toString()) > -1){//只添加筛选的部门
+						expendUnfinishedJsonArr.add(expendJson);
+					}
+				}else{//未筛选部门
 					expendUnfinishedJsonArr.add(expendJson);
 				}
-			}else{//未筛选部门
-				expendUnfinishedJsonArr.add(expendJson);
+				
 			}
-			
 		}
 		budgetCollectionInfo.element("expend_unfinished", expendUnfinishedJsonArr);
 		System.out.println(budgetCollectionInfo);
@@ -267,7 +275,9 @@ public class YsBudgetCollectionDeptHome extends CriterionEntityHome<Object> {
 		JSONObject result = new JSONObject();
 		Connection connection = DataSourceManager.open(DataSourceManager.BY_JDBC_DEFAULT);
 		PreparedStatement preparedStatement = null;
+		PreparedStatement preparedStatement2 = null;
 		ResultSet resultSet = null;
+		ResultSet resultSet2 = null;
 		try {
 			connection.setAutoCommit(false);
 			//收入预算下达
@@ -277,7 +287,8 @@ public class YsBudgetCollectionDeptHome extends CriterionEntityHome<Object> {
 			sql.append("ici.generic_project_id, ");
 			sql.append("ici.routine_project_id, ");
 			sql.append("ici.project_amount, ");
-			sql.append("ici.bottom_level ");
+			sql.append("ici.bottom_level, ");
+			sql.append("ici.project_nature ");
 			sql.append("FROM ys_budget_collection_dept bcd ");
 			sql.append("INNER JOIN ys_income_collection_info ici ON bcd.budget_collection_dept_id = ici.budget_collection_dept_id AND ici.delete = 0 ");
 			sql.append("WHERE bcd.status = 0 AND bcd.budget_type = 1 AND ici.bottom_level = 1 ");
@@ -285,14 +296,15 @@ public class YsBudgetCollectionDeptHome extends CriterionEntityHome<Object> {
 			preparedStatement = connection.prepareStatement(sql.toString());
 			resultSet = preparedStatement.executeQuery();
 			while(resultSet.next()){
-				preparedStatement = connection.prepareStatement("INSERT INTO `ys_income_plan_info` (`dept_id`, `year`, `routine_project_id`, `generic_project_id`, `budget_amount`, `insert_user`, `insert_time`) VALUES "
-						+ "(?, ?, ?, ?, ?, ?, NOW())");
+				preparedStatement = connection.prepareStatement("INSERT INTO `ys_income_plan_info` (`dept_id`, `year`, `routine_project_id`, `generic_project_id`, `budget_amount`, `insert_user`, `insert_time`, `project_nature`) VALUES "
+						+ "(?, ?, ?, ?, ?, ?, NOW(), ?)");
 				preparedStatement.setInt(1, resultSet.getInt("dept_id"));
 				preparedStatement.setString(2, resultSet.getString("year"));
 				preparedStatement.setString(3, resultSet.getString("routine_project_id"));
 				preparedStatement.setString(4, resultSet.getString("generic_project_id"));
 				preparedStatement.setDouble(5, resultSet.getDouble("project_amount"));
 				preparedStatement.setInt(6, sessionToken.getUserInfoId());
+				preparedStatement.setInt(7, resultSet.getInt("project_nature"));
 				preparedStatement.executeUpdate();
 			}
 			
@@ -303,7 +315,8 @@ public class YsBudgetCollectionDeptHome extends CriterionEntityHome<Object> {
 			sql2.append("ici.generic_project_id, ");
 			sql2.append("ici.routine_project_id, ");
 			sql2.append("ici.project_amount, ");
-			sql2.append("ici.bottom_level ");
+			sql2.append("ici.bottom_level, ");
+			sql2.append("ici.project_nature ");
 			sql2.append("FROM ys_budget_collection_dept bcd ");
 			sql2.append("INNER JOIN ys_expend_collection_info ici ON bcd.budget_collection_dept_id = ici.budget_collection_dept_id AND ici.delete = 0 ");
 			sql2.append("WHERE bcd.status = 0 AND bcd.budget_type = 2 AND ici.bottom_level = 1 ");
@@ -311,16 +324,51 @@ public class YsBudgetCollectionDeptHome extends CriterionEntityHome<Object> {
 			preparedStatement = connection.prepareStatement(sql2.toString());
 			resultSet = preparedStatement.executeQuery();
 			while(resultSet.next()){
-				preparedStatement = connection.prepareStatement("INSERT INTO `normal_expend_plan_info` (`dept_id`, `year`, `project_id`, `generic_project_id`, `budget_amount`, `budget_amount_surplus`,  `insert_user`, `insert_time`) VALUES "
-						+ "(?, ?, ?, ?, ?, ?, ?, NOW())");
-				preparedStatement.setInt(1, resultSet.getInt("dept_id"));
-				preparedStatement.setString(2, resultSet.getString("year"));
-				preparedStatement.setString(3, resultSet.getString("routine_project_id"));
-				preparedStatement.setString(4, resultSet.getString("generic_project_id"));
-				preparedStatement.setDouble(5, resultSet.getDouble("project_amount"));
-				preparedStatement.setDouble(6, resultSet.getDouble("project_amount"));
-				preparedStatement.setInt(7, sessionToken.getUserInfoId());
-				preparedStatement.executeUpdate();
+				boolean existFlag = false;
+				int budgetId = 0;
+				double budgetAmountOld = 0;
+				if(null == resultSet.getString("generic_project_id") || resultSet.getString("generic_project_id").isEmpty()){//是否已经有预算下达
+					preparedStatement2 = connection.prepareStatement("SELECT t.normal_expend_plan_id,t.budget_amount from hospital_budget.normal_expend_plan_info t where t.`year` = ? AND t.project_id = ? ");
+					preparedStatement2.setString(1, resultSet.getString("year"));
+					preparedStatement2.setString(2, resultSet.getString("routine_project_id"));
+					resultSet2 = preparedStatement2.executeQuery();
+					if(resultSet2.next()){
+						existFlag = true;
+						budgetId = resultSet2.getInt("normal_expend_plan_id");
+						budgetAmountOld = resultSet2.getDouble("budget_amount");
+					}
+				}else{
+					preparedStatement2 = connection.prepareStatement("SELECT t.normal_expend_plan_id,t.budget_amount from hospital_budget.normal_expend_plan_info t where t.`year` = ? AND t.generic_project_id = ? ");
+					preparedStatement2.setString(1, resultSet.getString("year"));
+					preparedStatement2.setString(2, resultSet.getString("generic_project_id"));
+					resultSet2 = preparedStatement2.executeQuery();
+					if(resultSet2.next()){
+						existFlag = true;
+						budgetId = resultSet2.getInt("normal_expend_plan_id");
+						budgetAmountOld = resultSet2.getDouble("budget_amount");
+					}
+				}
+				if(existFlag){//已经存在
+					preparedStatement = connection.prepareStatement("update hospital_budget.normal_expend_plan_info t SET t.budget_amount = ?,t.budget_amount_surplus=t.budget_amount_surplus + ?,t.update_user=?,t.update_time=NOW() where t.normal_expend_plan_id = ?");
+					preparedStatement.setDouble(1, resultSet.getDouble("project_amount"));
+					double amountChange = resultSet.getDouble("project_amount") - budgetAmountOld;
+					preparedStatement.setDouble(2, amountChange);
+					preparedStatement.setInt(3, sessionToken.getUserInfoId());
+					preparedStatement.setInt(4, budgetId);
+					preparedStatement.executeUpdate();
+				}else{
+					preparedStatement = connection.prepareStatement("INSERT INTO `normal_expend_plan_info` (`dept_id`, `year`, `project_id`, `generic_project_id`, `budget_amount`, `budget_amount_surplus`,  `insert_user`, `insert_time`,`project_nature`) VALUES "
+							+ "(?, ?, ?, ?, ?, ?, ?, NOW(), ?)");
+					preparedStatement.setInt(1, resultSet.getInt("dept_id"));
+					preparedStatement.setString(2, resultSet.getString("year"));
+					preparedStatement.setString(3, resultSet.getString("routine_project_id"));
+					preparedStatement.setString(4, resultSet.getString("generic_project_id"));
+					preparedStatement.setDouble(5, resultSet.getDouble("project_amount"));
+					preparedStatement.setDouble(6, resultSet.getDouble("project_amount"));
+					preparedStatement.setInt(7, sessionToken.getUserInfoId());
+					preparedStatement.setInt(8, resultSet.getInt("project_nature"));
+					preparedStatement.executeUpdate();
+				}
 			}
 			preparedStatement = connection.prepareStatement("update ys_budget_collection_dept set status = 1 where budget_collection_dept_id in (" + budgetCollectionDeptIds + ")");
 			preparedStatement.executeUpdate();
@@ -336,6 +384,7 @@ public class YsBudgetCollectionDeptHome extends CriterionEntityHome<Object> {
 				e1.printStackTrace();
 			}
 		} finally {
+			DataSourceManager.close(null, preparedStatement2, resultSet2);
 			DataSourceManager.close(connection, preparedStatement, resultSet);
 		}
 		return result;
@@ -1175,5 +1224,16 @@ public class YsBudgetCollectionDeptHome extends CriterionEntityHome<Object> {
 	public void setBudgetCollectionDeptIds(String budgetCollectionDeptIds) {
 		this.budgetCollectionDeptIds = budgetCollectionDeptIds;
 	}
+
+
+	public String getDraftTypeStr() {
+		return draftTypeStr;
+	}
+
+
+	public void setDraftTypeStr(String draftTypeStr) {
+		this.draftTypeStr = draftTypeStr;
+	}
+
 
 }

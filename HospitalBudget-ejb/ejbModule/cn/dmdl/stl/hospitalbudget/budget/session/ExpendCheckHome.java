@@ -72,6 +72,7 @@ public class ExpendCheckHome extends CriterionEntityHome<Object>{
 		sql.append("ed.with_last_year_percent, ");
 		sql.append("ed.formula_remark, ");
 		sql.append("ed.attachment, ");
+		sql.append("ed.draft_type, ");
 		sql.append("ed.status, ");
 		sql.append("rp.the_id as project_id, ");
 		sql.append("rp.the_pid, ");
@@ -97,6 +98,7 @@ public class ExpendCheckHome extends CriterionEntityHome<Object>{
 		sql.append("ed.with_last_year_percent, ");
 		sql.append("ed.formula_remark, ");
 		sql.append("ed.attachment, ");
+		sql.append("ed.draft_type, ");
 		sql.append("ed.status, ");
 		sql.append("rp.the_id as project_id, ");
 		sql.append("rp.the_pid, ");
@@ -132,6 +134,14 @@ public class ExpendCheckHome extends CriterionEntityHome<Object>{
 				json.element("with_last_year_percent", resultSet.getDouble("with_last_year_percent"));
 				json.element("formula_remark", URLDecoder.decode(resultSet.getString("formula_remark"), "utf-8"));
 				json.element("attachment", resultSet.getString("attachment"));
+				String draftTypeName = "";
+				if(resultSet.getInt("draft_type") == HospitalConstant.DRAFT_TYPE_DRAFT){
+					draftTypeName = "预算编制";
+				}else if(resultSet.getInt("draft_type") == HospitalConstant.DRAFT_TYPE_ADJUSTMENT){
+					draftTypeName = "预算调整";
+				}
+				json.element("draft_type", resultSet.getInt("draft_type"));
+				json.element("draft_type_name", draftTypeName);
 				json.element("status", resultSet.getInt("status"));
 				if(resultSet.getInt("is_usual") == 1){
 					json.element("project_id", "10" + resultSet.getInt("project_id"));//为了多级表格展示处理
@@ -237,6 +247,7 @@ public class ExpendCheckHome extends CriterionEntityHome<Object>{
 					sql.append("ed.project_amount, ");
 					sql.append("ed.formula_remark, ");
 					sql.append("ed.attachment, ");
+					sql.append("ed.draft_type, ");
 					sql.append("rp.bottom_level, ");
 					sql.append("rp.department_info_id ");
 					sql.append("from ys_expand_draft ed ");
@@ -252,6 +263,7 @@ public class ExpendCheckHome extends CriterionEntityHome<Object>{
 					sql.append("ed.project_amount, ");
 					sql.append("ed.formula_remark, ");
 					sql.append("ed.attachment, ");
+					sql.append("ed.draft_type, ");
 					sql.append("rp.bottom_level, ");
 					sql.append("rp.department_info_id ");
 					sql.append("from ys_expand_draft ed ");
@@ -263,7 +275,12 @@ public class ExpendCheckHome extends CriterionEntityHome<Object>{
 					List<Map<String, Object>> genericProjectList = new ArrayList<Map<String,Object>>();
 					String year = "";
 					Set<Integer> deptIdSet = new HashSet<Integer>();
+					Set<Integer> draftTypeSet = new HashSet<Integer>();
+					//获取预算类型
+					int draftType = HospitalConstant.DRAFT_TYPE_DRAFT;
 					while(resultSet.next()){
+						draftType = resultSet.getInt("draft_type");
+						draftTypeSet.add(draftType);
 						year = resultSet.getString("year");
 						deptIdSet.add(resultSet.getInt("department_info_id"));
 						Map<String, Object> map = new HashMap<String, Object>();
@@ -284,6 +301,12 @@ public class ExpendCheckHome extends CriterionEntityHome<Object>{
 							genericProjectList.add(map);
 						}
 					}
+					//不能同时提交不同预算类型的订单
+					if(draftTypeSet.size() > 1){
+						result.element("isok", "err");
+						result.element("message", "预算类型不同不能同时提交！");
+						return result;
+					}
 					//更新审核状态
 					preparedStatement = connection.prepareStatement("update ys_expand_draft set `status` = ? where ys_expand_draft_id in (" + draftIds + ")");
 					preparedStatement.setInt(1, HospitalConstant.DRAFTSTATUS_FINISH);
@@ -296,104 +319,169 @@ public class ExpendCheckHome extends CriterionEntityHome<Object>{
 					preparedStatement.setInt(2, HospitalConstant.COLLECTIONTYPE_EXPEND);
 					preparedStatement.setInt(3, HospitalConstant.COLLECTIONSTATUS_FINISH);
 					resultSet = preparedStatement.executeQuery();
+					boolean hasCollectionData = false;
 					if(resultSet.next()){
-						result.element("isok", "err");
-						result.element("message", "您所提交的科室预算已下达！如需修改请走调整流程！");
-						return result;
+						hasCollectionData = true;
+						if(draftType == HospitalConstant.DRAFT_TYPE_DRAFT){
+							result.element("isok", "err");
+							result.element("message", "您所提交的科室预算已下达！如需修改请走调整流程！");
+							return result;
+						}
 					}
 					
-					//没有下达的数据
-					//查询历史版本
-					sql.delete(0, sql.length());
-					sql.append("select t1.dept_id,MAX(t.version) as max_version from ys_expend_collection_info_log t  ");
-					sql.append("INNER JOIN ys_budget_collection_dept t1 ON t.budget_collection_dept_id = t1.budget_collection_dept_id ");
-					sql.append("where t1.`year` = ? AND t1.dept_id in (").append(deptIds).append(") GROUP BY t1.dept_id ");
-					preparedStatement = connection.prepareStatement(sql.toString());
-					preparedStatement.setString(1, year);
-					resultSet = preparedStatement.executeQuery();
-					Map<Integer,Integer> versionMap = new HashMap<Integer, Integer>();
-					while(resultSet.next()){
-						versionMap.put(resultSet.getInt("dept_id"), resultSet.getInt("max_version"));
-					}
-					preparedStatement = connection.prepareStatement("select bcd.budget_collection_dept_id,bcd.`status`,bcd.dept_id from ys_budget_collection_dept bcd where bcd.`year` = ? "
-							+ "AND bcd.dept_id in (" + deptIds + ") AND budget_type = ? AND (bcd.`status` = ? or bcd.`status` = ?) group by bcd.dept_id");
-					preparedStatement.setString(1, year);
-					preparedStatement.setInt(2, HospitalConstant.COLLECTIONTYPE_EXPEND);
-					preparedStatement.setInt(3, HospitalConstant.COLLECTIONSTATUS_WAIT);
-					preparedStatement.setInt(4, HospitalConstant.COLLECTIONSTATUS_TAKEBACK);
-					resultSet = preparedStatement.executeQuery();
-					Map<Integer, Integer> collectionDeptIdMap = new HashMap<Integer, Integer>();//记录部门id的汇总id
-					while(resultSet.next()){
-						collectionDeptIdMap.put(resultSet.getInt("dept_id"), resultSet.getInt("budget_collection_dept_id"));
-						deptIdSet.remove(resultSet.getInt("dept_id"));//去掉需要插入的数据
-						preparedStatement = connection.prepareStatement("UPDATE ys_budget_collection_dept t set t.`status` = 0 where t.budget_collection_dept_id = ?");
-						preparedStatement.setInt(1, resultSet.getInt("budget_collection_dept_id"));
-						preparedStatement.executeUpdate();
-					}
-					//之前没有数据的需要插入到汇总表
-					for(Integer deptId : deptIdSet){
-						preparedStatement = connection.prepareStatement("INSERT INTO ys_budget_collection_dept(dept_id, budget_type, year, status) VALUES (?,?,?,?)", PreparedStatement.RETURN_GENERATED_KEYS);
-						preparedStatement.setInt(1, deptId);
+					if(draftType == HospitalConstant.DRAFT_TYPE_DRAFT){//预算编制分支
+						//查询历史版本
+						sql.delete(0, sql.length());
+						sql.append("select t1.dept_id,MAX(t.version) as max_version from ys_expend_collection_info_log t  ");
+						sql.append("INNER JOIN ys_budget_collection_dept t1 ON t.budget_collection_dept_id = t1.budget_collection_dept_id ");
+						sql.append("where t1.`year` = ? AND t1.dept_id in (").append(deptIds).append(") GROUP BY t1.dept_id ");
+						preparedStatement = connection.prepareStatement(sql.toString());
+						preparedStatement.setString(1, year);
+						resultSet = preparedStatement.executeQuery();
+						Map<Integer,Integer> versionMap = new HashMap<Integer, Integer>();
+						while(resultSet.next()){
+							versionMap.put(resultSet.getInt("dept_id"), resultSet.getInt("max_version"));
+						}
+						preparedStatement = connection.prepareStatement("select bcd.budget_collection_dept_id,bcd.`status`,bcd.dept_id from ys_budget_collection_dept bcd where bcd.`year` = ? "
+								+ "AND bcd.dept_id in (" + deptIds + ") AND budget_type = ? AND (bcd.`status` = ? or bcd.`status` = ?) group by bcd.dept_id");
+						preparedStatement.setString(1, year);
 						preparedStatement.setInt(2, HospitalConstant.COLLECTIONTYPE_EXPEND);
-						preparedStatement.setString(3, year);
-						preparedStatement.setInt(4, HospitalConstant.COLLECTIONSTATUS_WAIT);
-						preparedStatement.executeUpdate();
-						resultSet = preparedStatement.getGeneratedKeys();
-						Integer collectionDeptId = null;
-						if (resultSet.next()) {
-							collectionDeptId = resultSet.getInt(1);
+						preparedStatement.setInt(3, HospitalConstant.COLLECTIONSTATUS_WAIT);
+						preparedStatement.setInt(4, HospitalConstant.COLLECTIONSTATUS_TAKEBACK);
+						resultSet = preparedStatement.executeQuery();
+						Map<Integer, Integer> collectionDeptIdMap = new HashMap<Integer, Integer>();//记录部门id的汇总id
+						while(resultSet.next()){
+							collectionDeptIdMap.put(resultSet.getInt("dept_id"), resultSet.getInt("budget_collection_dept_id"));
+							deptIdSet.remove(resultSet.getInt("dept_id"));//去掉需要插入的数据
+							preparedStatement = connection.prepareStatement("UPDATE ys_budget_collection_dept t set t.`status` = 0 where t.budget_collection_dept_id = ?");
+							preparedStatement.setInt(1, resultSet.getInt("budget_collection_dept_id"));
+							preparedStatement.executeUpdate();
 						}
-						collectionDeptIdMap.put(deptId, collectionDeptId);
+						//之前没有数据的需要插入到汇总表
+						for(Integer deptId : deptIdSet){
+							preparedStatement = connection.prepareStatement("INSERT INTO ys_budget_collection_dept(dept_id, budget_type, year, status) VALUES (?,?,?,?)", PreparedStatement.RETURN_GENERATED_KEYS);
+							preparedStatement.setInt(1, deptId);
+							preparedStatement.setInt(2, HospitalConstant.COLLECTIONTYPE_EXPEND);
+							preparedStatement.setString(3, year);
+							preparedStatement.setInt(4, HospitalConstant.COLLECTIONSTATUS_WAIT);
+							preparedStatement.executeUpdate();
+							resultSet = preparedStatement.getGeneratedKeys();
+							Integer collectionDeptId = null;
+							if (resultSet.next()) {
+								collectionDeptId = resultSet.getInt(1);
+							}
+							collectionDeptIdMap.put(deptId, collectionDeptId);
+						}
+						
+						//存储详情表数据
+						for(Map<String, Object> routineInfo : routineProjectList){
+							preparedStatement = connection.prepareStatement("INSERT INTO ys_expend_collection_info(budget_collection_dept_id, "
+									+ "year, project_source, project_nature, routine_project_id, bottom_level, project_amount, formula_remark, attachment, insert_time, insert_user, version) "
+									+ "VALUES (?,?,?,?,?,?,?,?,?,now(),?,?)");
+							List<Object> parmList = new ArrayList<Object>();
+							parmList.add(collectionDeptIdMap.get(routineInfo.get("department_info_id")));
+							parmList.add(year);
+							parmList.add(routineInfo.get("project_source"));
+							parmList.add(routineInfo.get("project_nature"));
+							parmList.add(routineInfo.get("routine_project_id"));
+							parmList.add(routineInfo.get("bottom_level"));
+							parmList.add(routineInfo.get("project_amount"));
+							parmList.add(routineInfo.get("formula_remark"));
+							parmList.add(routineInfo.get("attachment"));
+							parmList.add(sessionToken.getUserInfoId());
+							if(versionMap.containsKey(routineInfo.get("department_info_id"))){
+								parmList.add(versionMap.get(routineInfo.get("department_info_id")) + 1);
+							}else{
+								parmList.add(1);
+							}
+							DataSourceManager.setParams(preparedStatement, parmList);
+							preparedStatement.executeUpdate();
+						}
+						
+						for(Map<String, Object> gemerocInfo : genericProjectList){
+							preparedStatement = connection.prepareStatement("INSERT INTO ys_expend_collection_info(budget_collection_dept_id, "
+									+ "year, project_source, project_nature, generic_project_id, bottom_level, project_amount, formula_remark, attachment, insert_time, insert_user, version) "
+									+ "VALUES (?,?,?,?,?,?,?,?,?,now(),?,?)");
+							List<Object> parmList = new ArrayList<Object>();
+							parmList.add(collectionDeptIdMap.get(gemerocInfo.get("department_info_id")));
+							parmList.add(year);
+							parmList.add(gemerocInfo.get("project_source"));
+							parmList.add(gemerocInfo.get("project_nature"));
+							parmList.add(gemerocInfo.get("generic_project_id"));
+							parmList.add(gemerocInfo.get("bottom_level"));
+							parmList.add(gemerocInfo.get("project_amount"));
+							parmList.add(gemerocInfo.get("formula_remark"));
+							parmList.add(gemerocInfo.get("attachment"));
+							parmList.add(sessionToken.getUserInfoId());
+							if(versionMap.containsKey(gemerocInfo.get("department_info_id"))){
+								parmList.add(versionMap.get(gemerocInfo.get("department_info_id")) + 1);
+							}else{
+								parmList.add(1);
+							}
+							DataSourceManager.setParams(preparedStatement, parmList);
+							preparedStatement.executeUpdate();
+						}
+					}else if(draftType == HospitalConstant.DRAFT_TYPE_ADJUSTMENT){//预算调整分支
+						//插入预算汇总表
+						Map<Integer, Integer> collectionDeptIdMap = new HashMap<Integer, Integer>();//记录部门id的汇总id
+						for(Integer deptId : deptIdSet){
+							preparedStatement = connection.prepareStatement("INSERT INTO ys_budget_collection_dept(dept_id, budget_type, year, status, draft_type) VALUES (?,?,?,?,?)", PreparedStatement.RETURN_GENERATED_KEYS);
+							preparedStatement.setInt(1, deptId);
+							preparedStatement.setInt(2, HospitalConstant.COLLECTIONTYPE_EXPEND);
+							preparedStatement.setString(3, year);
+							preparedStatement.setInt(4, HospitalConstant.COLLECTIONSTATUS_WAIT);
+							preparedStatement.setInt(5, HospitalConstant.DRAFT_TYPE_ADJUSTMENT);
+							preparedStatement.executeUpdate();
+							resultSet = preparedStatement.getGeneratedKeys();
+							Integer collectionDeptId = null;
+							if (resultSet.next()) {
+								collectionDeptId = resultSet.getInt(1);
+							}
+							collectionDeptIdMap.put(deptId, collectionDeptId);
+						}
+						
+						//存储详情表数据
+						for(Map<String, Object> routineInfo : routineProjectList){
+							preparedStatement = connection.prepareStatement("INSERT INTO ys_expend_collection_info(budget_collection_dept_id, "
+									+ "year, project_source, project_nature, routine_project_id, bottom_level, project_amount, formula_remark, attachment, insert_time, insert_user, version) "
+									+ "VALUES (?,?,?,?,?,?,?,?,?,now(),?,?)");
+							List<Object> parmList = new ArrayList<Object>();
+							parmList.add(collectionDeptIdMap.get(routineInfo.get("department_info_id")));
+							parmList.add(year);
+							parmList.add(routineInfo.get("project_source"));
+							parmList.add(routineInfo.get("project_nature"));
+							parmList.add(routineInfo.get("routine_project_id"));
+							parmList.add(routineInfo.get("bottom_level"));
+							parmList.add(routineInfo.get("project_amount"));
+							parmList.add(routineInfo.get("formula_remark"));
+							parmList.add(routineInfo.get("attachment"));
+							parmList.add(sessionToken.getUserInfoId());
+							parmList.add(1);
+							DataSourceManager.setParams(preparedStatement, parmList);
+							preparedStatement.executeUpdate();
+						}
+						
+						for(Map<String, Object> gemerocInfo : genericProjectList){
+							preparedStatement = connection.prepareStatement("INSERT INTO ys_expend_collection_info(budget_collection_dept_id, "
+									+ "year, project_source, project_nature, generic_project_id, bottom_level, project_amount, formula_remark, attachment, insert_time, insert_user, version) "
+									+ "VALUES (?,?,?,?,?,?,?,?,?,now(),?,?)");
+							List<Object> parmList = new ArrayList<Object>();
+							parmList.add(collectionDeptIdMap.get(gemerocInfo.get("department_info_id")));
+							parmList.add(year);
+							parmList.add(gemerocInfo.get("project_source"));
+							parmList.add(gemerocInfo.get("project_nature"));
+							parmList.add(gemerocInfo.get("generic_project_id"));
+							parmList.add(gemerocInfo.get("bottom_level"));
+							parmList.add(gemerocInfo.get("project_amount"));
+							parmList.add(gemerocInfo.get("formula_remark"));
+							parmList.add(gemerocInfo.get("attachment"));
+							parmList.add(sessionToken.getUserInfoId());
+							parmList.add(1);
+							DataSourceManager.setParams(preparedStatement, parmList);
+							preparedStatement.executeUpdate();
+						}
 					}
 					
-					//存储详情表数据
-					for(Map<String, Object> routineInfo : routineProjectList){
-						preparedStatement = connection.prepareStatement("INSERT INTO ys_expend_collection_info(budget_collection_dept_id, "
-								+ "year, project_source, project_nature, routine_project_id, bottom_level, project_amount, formula_remark, attachment, insert_time, insert_user, version) "
-								+ "VALUES (?,?,?,?,?,?,?,?,?,now(),?,?)");
-						List<Object> parmList = new ArrayList<Object>();
-						parmList.add(collectionDeptIdMap.get(routineInfo.get("department_info_id")));
-						parmList.add(year);
-						parmList.add(routineInfo.get("project_source"));
-						parmList.add(routineInfo.get("project_nature"));
-						parmList.add(routineInfo.get("routine_project_id"));
-						parmList.add(routineInfo.get("bottom_level"));
-						parmList.add(routineInfo.get("project_amount"));
-						parmList.add(routineInfo.get("formula_remark"));
-						parmList.add(routineInfo.get("attachment"));
-						parmList.add(sessionToken.getUserInfoId());
-						if(versionMap.containsKey(routineInfo.get("department_info_id"))){
-							parmList.add(versionMap.get(routineInfo.get("department_info_id")) + 1);
-						}else{
-							parmList.add(1);
-						}
-						DataSourceManager.setParams(preparedStatement, parmList);
-						preparedStatement.executeUpdate();
-					}
-					
-					for(Map<String, Object> gemerocInfo : genericProjectList){
-						preparedStatement = connection.prepareStatement("INSERT INTO ys_expend_collection_info(budget_collection_dept_id, "
-								+ "year, project_source, project_nature, generic_project_id, bottom_level, project_amount, formula_remark, attachment, insert_time, insert_user, version) "
-								+ "VALUES (?,?,?,?,?,?,?,?,?,now(),?,?)");
-						List<Object> parmList = new ArrayList<Object>();
-						parmList.add(collectionDeptIdMap.get(gemerocInfo.get("department_info_id")));
-						parmList.add(year);
-						parmList.add(gemerocInfo.get("project_source"));
-						parmList.add(gemerocInfo.get("project_nature"));
-						parmList.add(gemerocInfo.get("generic_project_id"));
-						parmList.add(gemerocInfo.get("bottom_level"));
-						parmList.add(gemerocInfo.get("project_amount"));
-						parmList.add(gemerocInfo.get("formula_remark"));
-						parmList.add(gemerocInfo.get("attachment"));
-						parmList.add(sessionToken.getUserInfoId());
-						if(versionMap.containsKey(gemerocInfo.get("department_info_id"))){
-							parmList.add(versionMap.get(gemerocInfo.get("department_info_id")) + 1);
-						}else{
-							parmList.add(1);
-						}
-						DataSourceManager.setParams(preparedStatement, parmList);
-						preparedStatement.executeUpdate();
-					}
 					
 					goAheadDraftProcess(connection, preparedStatement, draftIdList, draftIds, stepId);
 					

@@ -19,6 +19,7 @@ import org.jboss.seam.annotations.Name;
 import cn.dmdl.stl.hospitalbudget.budget.entity.GenericProject;
 import cn.dmdl.stl.hospitalbudget.budget.entity.RoutineProject;
 import cn.dmdl.stl.hospitalbudget.common.session.CriterionEntityHome;
+import cn.dmdl.stl.hospitalbudget.util.CommonDaoUtil;
 import cn.dmdl.stl.hospitalbudget.util.CommonToolLocal;
 import cn.dmdl.stl.hospitalbudget.util.DateTimeHelper;
 import cn.dmdl.stl.hospitalbudget.util.Helper;
@@ -115,20 +116,8 @@ public class ExpendDraftHome extends CriterionEntityHome<Object> {
 		}
 	}
 	
-	@SuppressWarnings("unchecked")
 	public void wireProjectNature(){
-		JSONArray projectNatureArr = new JSONArray();
-		String dataSql = "select t.the_id,t.the_value from hospital_budget.ys_project_nature t where t.deleted = 0";
-		List<Object[]> dataList = getEntityManager().createNativeQuery(dataSql).getResultList();
-		if (dataList != null && dataList.size() > 0) {
-			for (Object[] data : dataList) {
-				JSONObject json = new JSONObject();
-				json.element("id", data[0]);
-				json.element("name", data[1]);
-				projectNatureArr.add(json);
-			}
-		}
-		projectNatureArrStr = projectNatureArr.toString();
+		projectNatureArrStr = CommonDaoUtil.getProjectNatureList().toString();
 	}
 
 	@SuppressWarnings("unchecked")

@@ -9,6 +9,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import net.sf.json.JSONArray;
@@ -18,6 +19,7 @@ import org.jboss.seam.annotations.Name;
 
 import cn.dmdl.stl.hospitalbudget.common.session.CriterionEntityHome;
 import cn.dmdl.stl.hospitalbudget.util.Assit;
+import cn.dmdl.stl.hospitalbudget.util.CommonDaoUtil;
 import cn.dmdl.stl.hospitalbudget.util.DataSourceManager;
 import cn.dmdl.stl.hospitalbudget.util.HospitalConstant;
 
@@ -40,6 +42,7 @@ public class ExpendAdjustmentHome  extends CriterionEntityHome<Object>{
 	 */
 	public JSONObject getAllAdjustInfo(){
 		JSONObject result = new JSONObject();
+		Map<String, String> projectNatureMap = CommonDaoUtil.getProjectNatureMap();
 		//获取用户可编制的项目
 		Set<Integer> genericProjectIdSet = getGenericProjectIdsByUserId(sessionToken.getUserInfoId());
 		Set<Integer> routineProjectIdSet = getRoutineProjectIdsByUserId(sessionToken.getUserInfoId());
@@ -61,7 +64,8 @@ public class ExpendAdjustmentHome  extends CriterionEntityHome<Object>{
 				sql.append("c.the_value as dept_name, ");
 				sql.append("a.budget_amount, ");
 				sql.append("a.budget_amount_frozen, ");
-				sql.append("a.budget_amount_surplus ");
+				sql.append("a.budget_amount_surplus, ");
+				sql.append("a.project_nature ");
 				sql.append("from normal_expend_plan_info a ");
 				sql.append("INNER JOIN routine_project b ON a.project_id = b.the_id AND b.funds_source_id = ? ");
 				sql.append("INNER JOIN ys_department_info c ON a.dept_id = c.the_id ");
@@ -88,6 +92,8 @@ public class ExpendAdjustmentHome  extends CriterionEntityHome<Object>{
 					json.element("bottom_level", resultSet.getInt("bottom_level"));
 					json.element("data_the_id", resultSet.getString("project_id"));
 					json.element("data_top_level_project_id", resultSet.getInt("top_level_project_id"));
+					json.element("project_nature", resultSet.getInt("project_nature"));
+					json.element("project_nature_name", projectNatureMap.get(resultSet.getString("project_nature")));
 					oldArr.add(json);
 //					oldRoutineProjectArr.add(json);
 				}
@@ -107,7 +113,8 @@ public class ExpendAdjustmentHome  extends CriterionEntityHome<Object>{
 				sql.append("c.the_value as dept_name, ");
 				sql.append("a.budget_amount, ");
 				sql.append("a.budget_amount_frozen, ");
-				sql.append("a.budget_amount_surplus ");
+				sql.append("a.budget_amount_surplus, ");
+				sql.append("a.project_nature ");
 				sql.append("from normal_expend_plan_info a ");
 				sql.append("INNER JOIN generic_project b ON a.generic_project_id = b.the_id AND b.funds_source_id = ? ");
 				sql.append("INNER JOIN ys_department_info c ON a.dept_id = c.the_id ");
@@ -134,6 +141,8 @@ public class ExpendAdjustmentHome  extends CriterionEntityHome<Object>{
 					json.element("bottom_level", resultSet.getInt("bottom_level"));
 					json.element("data_the_id", resultSet.getString("project_id"));
 					json.element("data_top_level_project_id", resultSet.getInt("top_level_project_id"));
+					json.element("project_nature", resultSet.getInt("project_nature"));
+					json.element("project_nature_name", projectNatureMap.get(resultSet.getString("project_nature")));
 					oldArr.add(json);
 //					oldGenericProjectArr.add(json);
 				}
@@ -144,6 +153,7 @@ public class ExpendAdjustmentHome  extends CriterionEntityHome<Object>{
 			}
 			result.element("old_info", oldArr);
 			result.element("new_info", newArr);
+			result.element("project_nature_select", CommonDaoUtil.getProjectNatureList());
 		} catch (SQLException e) {
 			e.printStackTrace();
 		} finally{
@@ -355,8 +365,8 @@ public class ExpendAdjustmentHome  extends CriterionEntityHome<Object>{
 			StringBuilder sql2 = new StringBuilder();
 			sql2.append("INSERT INTO `ys_expand_draft` (`year`, `project_source`, `top_level_project_id`, `routine_project_id`, `generic_project_id`, ");
 			sql2.append("`project_amount`, `formula_remark`, ");
-			sql2.append("`insert_time`, `insert_user`, `status`, `draft_type`)  ");
-			sql2.append("VALUES (?, ?, ?, ?, ?, ?, ?, NOW(), ?, ?, ?) ");
+			sql2.append("`insert_time`, `insert_user`, `status`, `draft_type`, `project_nature`)  ");
+			sql2.append("VALUES (?, ?, ?, ?, ?, ?, ?, NOW(), ?, ?, ?, ?) ");
 			for(Object obj : adjustInfoArr){
 				JSONObject json = JSONObject.fromObject(obj);
 				List<Object> paramList = new ArrayList<Object>();
@@ -376,7 +386,7 @@ public class ExpendAdjustmentHome  extends CriterionEntityHome<Object>{
 				paramList.add(sessionToken.getUserInfoId());
 				paramList.add(HospitalConstant.DRAFTSTATUS_AUDIT);
 				paramList.add(HospitalConstant.DRAFT_TYPE_ADJUSTMENT);
-				System.out.println(paramList);
+				paramList.add(json.getInt("project_nature"));
 				DataSourceManager.setParams(preparedStatement, paramList);
 				preparedStatement.executeUpdate();
 				resultSet = preparedStatement.getGeneratedKeys();

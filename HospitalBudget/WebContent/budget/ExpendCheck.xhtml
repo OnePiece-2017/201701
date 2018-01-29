@@ -126,9 +126,10 @@
 			            <th width="5%" style="min-width: 64px;">部门</th>
 			            <th width="10%">批准文号</th>
 			            <th width="10%">项目金额(万元)</th>
-			            <th width="10%">与上一年预算<br />同比增减(万元)</th>
-			            <th width="10%">与上一年预算<br />同比增减率</th>
+			            <th width="7%">与上一年预算<br />同比增减(万元)</th>
+			            <th width="7%">与上一年预算<br />同比增减率</th>
 			            <th width="20%">金额计算依据及备注</th>
+			            <th width="6%">预算类型</th>
 			            <th width="5%" style="min-width: 64px;">附件</th>
 			            <th width="5%" style="min-width: 64px;">操作</th>
 			        </tr>
@@ -242,6 +243,7 @@
 			  	html += "<td>" + val.with_last_year_num + "</td>";
 			  	html += "<td>" + val.with_last_year_percent + "</td>";
 			  	html += "<td class='field-popup'>" + ___genStdHtml___a_abbr(val.formula_remark, 13) + "</td>";
+			  	html += "<td>" + val.draft_type_name + "</td>";
 			  	if (val.attachment != null && val.attachment !== '') {
 			  		html += '<td class="field-attachment" id="temp_attachment_' + index + '" fu-source="' + val.attachment + '">附件</td>';
 			  	} else {

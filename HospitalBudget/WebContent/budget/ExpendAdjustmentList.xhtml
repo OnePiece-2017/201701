@@ -262,9 +262,9 @@
 			  	html += "<td style='text-align:left;' id='" + val.project_id + "' class='data_id'>" + val.project_name + "</td>";
 			  	html += "<td id='" + val.data_the_id + "'>" + val.dept_name + "</td>";
 			  	if(val.is_usual == 1){
-				  	html += "<td class='routine'>常规</td>";
+				  	html += "<td class='routine'>" + val.project_nature_name + "</td>";
 				}else{
-					html += "<td class='generic'>新增</td>";
+					html += "<td class='generic'>" + val.project_nature_name + "</td>";
 				}
 			  	html += "<td class='budget_amount'>" + val.budget_amount + "</td>";
 			  	html += "<td>" + val.budget_amount_surplus + "</td>";
@@ -276,6 +276,13 @@
 			  	html += "<td><a href='javascript:;' style='text-decoration:none;'><img src='../images/icon_delete_16x16.png'></a></td>";
 			  	html += "</tr>";
 			});
+
+			var selectHtml = '<select style="width:100%; height:100%;">';
+			var projectNatureArr = eval(data.project_nature_select);
+			for(var j=0; j<projectNatureArr.length; j++){
+				selectHtml += '<option value="' + projectNatureArr[j].id + '">' + projectNatureArr[j].name + '</option>';
+			}
+			selectHtml += '</select>';
 		    
 		    var jsonArrNew= data.new_info;
 		    jQuery(jsonArrNew).each(function(index, val){
@@ -289,9 +296,9 @@
 			  	html += "<td style='text-align:left;' id='" + val.project_id + "' class='data_id'>" + val.project_name + "</td>";
 			  	html += "<td>" + val.dept_name + "</td>";
 			  	if(val.is_usual == 1){
-				  	html += "<td class='routine'>常规</td>";
+				  	html += "<td class='project_nature routine'>" + selectHtml + "</td>";
 				}else{
-					html += "<td class='generic'>新增</td>";
+					html += "<td class='project_nature generic'>" + selectHtml + "</td>";
 				}
 			  	html += "<td class='budget_amount'>--</td>";
 			  	html += "<td>--</td>";
@@ -308,7 +315,7 @@
 			
 		}
 
-		//通过
+		//提交
 		function adjust(){
 			var adjustArr = [];
 			var adjustTrArr = jQuery(".adjust_data");
@@ -336,6 +343,9 @@
 					}
 					data.project_source = jQuery(this).children(".project_source").children("input").val();
 					data.project_remark = jQuery(this).children(".project_remark").children("input").val();
+					if(data.is_new){
+						data.project_nature = jQuery(this).children(".project_nature").children("select").val();
+					}
 					adjustArr.push(data);
 					console.log(data);
 				}

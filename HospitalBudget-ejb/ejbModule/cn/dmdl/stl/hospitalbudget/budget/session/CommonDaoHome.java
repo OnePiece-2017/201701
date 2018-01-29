@@ -9,6 +9,7 @@ import java.util.Map;
 import org.jboss.seam.annotations.Name;
 
 import cn.dmdl.stl.hospitalbudget.common.session.CriterionEntityHome;
+import cn.dmdl.stl.hospitalbudget.util.HospitalConstant;
 
 /**
  * 公共数据查询类
@@ -31,6 +32,17 @@ public class CommonDaoHome extends CriterionEntityHome<Object>{
 			list.add(new Object[] { calendar.get(Calendar.YEAR), calendar.get(Calendar.YEAR) + "年" });
 			calendar.add(Calendar.YEAR, +1);
 		}
+		return list;
+	}
+	
+	/**
+	 * 预算类型
+	 * @return
+	 */
+	public List<Object[]> getDraftTypeList() {
+		List<Object[]> list = new ArrayList<Object[]>();
+		list.add(new Object[]{HospitalConstant.DRAFT_TYPE_DRAFT, "预算编制"});
+		list.add(new Object[]{HospitalConstant.DRAFT_TYPE_ADJUSTMENT, "预算调整"});
 		return list;
 	}
 	

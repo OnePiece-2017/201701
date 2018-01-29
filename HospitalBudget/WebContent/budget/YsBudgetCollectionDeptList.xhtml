@@ -50,6 +50,16 @@
 							</a:repeat>
 						</select>
 					</div>
+					<div style="float: left; text-align: center; line-height: 36px; width: 70px;">
+						<span>预算类型</span>
+					</div>
+					<div class="fl">
+						<select id="draftType" class="selectpicker">
+							<a:repeat value="#{commonDaoHome.draftTypeList}" var="_var">
+								<option value="#{_var[0]}">#{_var[1]}</option>
+							</a:repeat>
+						</select>
+					</div>
 				</div>
 				<div style="float: right;">
 					<table class="normal-btn">
@@ -128,6 +138,7 @@
 			<a:jsFunction name="filterCollectionAction" action="#{ysBudgetCollectionDeptHome.filterBudgetCollectionInfo()}" reRender="exportPanel" data="#{ysBudgetCollectionDeptHome.budgetCollectionInfo}" oncomplete="wirePage(data);">
 				<a:actionparam name="year" assignTo="#{ysBudgetCollectionDeptHome.year}" />
 				<a:actionparam name="deptId" assignTo="#{ysBudgetCollectionDeptHome.deptIds}" />
+				<a:actionparam name="draftType" assignTo="#{ysBudgetCollectionDeptHome.draftTypeStr}" />
 			</a:jsFunction>
 			<a:jsFunction name="submitCollectionAction"  data="#{ysBudgetCollectionDeptHome.submitCollection()}" oncomplete="submitComplete(data);">
 				<a:actionparam name="collectionDeptIds" assignTo="#{ysBudgetCollectionDeptHome.budgetCollectionDeptIds}" />
@@ -149,7 +160,7 @@
 			    	yearStr = yearStr + 1;
 				}
 			    jQuery("#budgetYear").val(yearStr)
-			    
+			    jQuery("#draftType").val(0);
 			    jQuery('.selectpicker').selectpicker();
 			    jQuery('.normal-attendProject').niceScroll({
 					cursorcolor : '#5cb85c',
@@ -160,7 +171,7 @@
 			    });
 
 			    filterCollection();
-			    jQuery('#budgetYear, #departmentIds').change(filterCollection);
+			    jQuery('#budgetYear, #departmentIds, #draftType').change(filterCollection);
 			});
 
 			//筛选编制信息
@@ -170,7 +181,8 @@
 			    if(deptIds){
 			    	deptIds = deptIds.toString(); 
 				}
-			    filterCollectionAction(year, deptIds);
+				var draftType = jQuery("#draftType").val();
+			    filterCollectionAction(year, deptIds, draftType);
 			}
 			//导出
 			function exportExcel(){
