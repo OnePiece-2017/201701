@@ -17,7 +17,7 @@
 	</ui:define>
 	<ui:define name="body">
 	#{expendApplayList.wire()}
-		<div class="g-data-list-condition" style="height: 170px;">
+		<div class="g-data-list-condition" style="height: 201px;">
 			<h:form id="mainForm">
 				<input type="hidden" name="page" value="1" />
 				<table width="100%" cellpadding="0" cellspacing="0" style=" margin-top: 19px;">
@@ -142,6 +142,7 @@
 											<h:inputHidden value="#{expendApplayList.applyUser}" id="applyUser"/>
 											<h:inputHidden value="#{expendApplayList.applyTime}" id="applyTime"/>
 											<h:inputHidden value="#{expendApplayList.applyEndTime}" id="applyEndTime"/>
+											<h:inputHidden value="#{expendApplayList.status}" id="status"/>
 										<h:commandButton styleClass="btn btn-block btn-primary mt10 ml20" action="/budget/ExpendApplayList.xhtml"  onclick="return check();" value="搜索" />
 									</td>
 									<td valign="middle" width="100%" style="padding-left:42px;" >
@@ -158,11 +159,42 @@
 					                			<f:param name="applyTime" value="#{expendApplayList.applyTime}"/>
 					                			<f:param name="applyEndTime" value="#{expendApplayList.applyEndTime}"/>
 					                			<f:param name="searchKey" value="#{expendApplayList.searchKey}"/>
+					                			<f:param name="status" value="#{expendApplayList.status}"/>
 					                		</s:link>
 										</div>
 									</td>
 								</tr>
 							</table>
+							</div>
+						</td>
+					</tr>
+					<tr>
+							<td width="50%">
+							<div class="fl mb10" style="width: 400px;">
+								<table width="100%" cellpadding="0" cellspacing="0">
+									<tr>
+										<td valign="middle" width="30%" align="right">
+											<span class="field-name" style="display: block;margin-bottom: 10px;width: 100%;height: 34px;line-height: 34px;">状态</span>
+										</td>
+										<td valign="middle" width="70%" style="padding-left:18px;">
+											<select id="statusSel" name="statusSel" class="selectpicker" style="width: 200px;">
+												<a:repeat value="#{expendApplayList.statusList}" var="_var">
+													<s:fragment rendered="#{expendApplayList.status eq _var[0]}">
+														<option value="#{_var[0]}" selected="selected">#{_var[1]}</option>
+													</s:fragment>
+													<s:fragment rendered="#{expendApplayList.status ne _var[0]}">
+														<option value="#{_var[0]}" >#{_var[1]}</option>
+													</s:fragment>
+												</a:repeat>
+											</select>
+										</td>
+									</tr>
+								</table>
+							</div>
+						</td>
+						<td width="50%">
+							<div class="fl" style="width: 487px;">
+								
 							</div>
 						</td>
 					</tr>
@@ -349,10 +381,12 @@
 				var applyer = jQuery("#applyUser").val();
 				var applyTime = jQuery("#applyTime").val();
 				var applyEndTime = jQuery("#applyEndTime").val();
+				var status = jQuery("#statusSel").val();
 				jQuery("#mainForm\\:departId").val(departId);
 				jQuery("#mainForm\\:applyUser").val(applyer);
 				jQuery("#mainForm\\:applyTime").val(applyTime);
 				jQuery("#mainForm\\:applyEndTime").val(applyEndTime);
+				jQuery("#mainForm\\:status").val(status);
 				return true;
 			}
 		//]]>

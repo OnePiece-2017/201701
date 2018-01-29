@@ -11,4 +11,5 @@
 	<param name="applyUser" value="#{expendApplayList.applyUser}" />
 	<param name="applyTime" value="#{expendApplayList.applyTime}" />
 	<param name="applyEndTime" value="#{expendApplayList.applyEndTime}" />
+	<param name="status" value="#{expendApplayList.status}" />
 </page>

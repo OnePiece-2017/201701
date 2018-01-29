@@ -59,6 +59,8 @@ public class ExpendApplayList extends CriterionNativeQuery<Object[]> {
 	private Integer applyUser;//申请编制人
 	private String applyTime;//申请时间
 	private String applyEndTime;//申请结束时间
+	private List<Object[]> statusList;
+	private Integer status;
 	
 	private static final int FINA_ROLE_ID = 3;//财务人员角色id
 	private static final int DIRECTOR_ROLE_ID = 4;//主任角色id
@@ -72,6 +74,9 @@ public class ExpendApplayList extends CriterionNativeQuery<Object[]> {
 		//初始化申请人列表
 		wireBudgetPerson();
 		
+		//初始化statusList
+		statusList = initStatusList();
+		
 		//从新耗材系统获取支出数据
 		this.syncNewConsumables();
 		
@@ -79,6 +84,8 @@ public class ExpendApplayList extends CriterionNativeQuery<Object[]> {
 		this.syncOldConsumables();
 		
 	}
+	
+	
 	
 	/**
 	 * 在旧耗材系统读取数据
@@ -497,6 +504,9 @@ public class ExpendApplayList extends CriterionNativeQuery<Object[]> {
 		if(null != searchKey && !searchKey.equals("") ){
 			sql.append(" and (eai.expend_apply_code = '%").append(searchKey).append("%' or eai.recive_company like '%").append(searchKey).append("%')");
 		}
+		if(null != status && status != -1 ){
+			sql.append(" and eai.expend_apply_status=").append(status);
+		}
 		sql.append(" order by eai.insert_time desc,eai.expend_apply_code desc");
 		sql.insert(0, "select * from (").append(") as recordset ");
 		System.out.println(sql);
@@ -818,7 +828,7 @@ public class ExpendApplayList extends CriterionNativeQuery<Object[]> {
 				35 * 260);
 		colIndex++;
 		
-		List<Object[]> list = queryExportData(departmentId,applyUser,applyTime,applyEndTime,searchKey);
+		List<Object[]> list = queryExportData(departmentId,applyUser,applyTime,applyEndTime,searchKey,status);
 		for(int i = 0;i < list.size(); i++){
 			Object[] obj = list.get(i);
 			rowIndex ++;
@@ -909,7 +919,7 @@ public class ExpendApplayList extends CriterionNativeQuery<Object[]> {
 	 * @param time
 	 */
 	@SuppressWarnings("unchecked")
-	public List<Object[]> queryExportData(Integer departmentId,Integer applyUser,String applyTime,String applyEndTime,String searchKey){
+	public List<Object[]> queryExportData(Integer departmentId,Integer applyUser,String applyTime,String applyEndTime,String searchKey,Integer status){
 		boolean privateRole = false;//角色不属于财务 和主任（领导的）
 		String roleSql = "select role_info.role_info_id,user_info.department_info_id,ydi.the_value from user_info LEFT JOIN role_info on role_info.role_info_id=user_info.role_info_id LEFT JOIN ys_department_info ydi on "
 				+ "user_info.department_info_id=ydi.the_id where user_info.user_info_id=" + sessionToken.getUserInfoId();
@@ -956,6 +966,9 @@ public class ExpendApplayList extends CriterionNativeQuery<Object[]> {
 		}
 		if(null != searchKey && !searchKey.equals("") ){
 			sql.append(" and (eai.expend_apply_code = '%").append(searchKey).append("%' or eai.recive_company like '%").append(searchKey).append("%')");
+		}
+		if(null != status && status != -1 ){
+			sql.append(" and eai.expend_apply_status=").append(status);
 		}
 		sql.append(" order by eai.insert_time desc,eai.expend_apply_code desc");
 		sql.insert(0, "select * from (").append(") as recordset ");
@@ -1006,6 +1019,18 @@ public class ExpendApplayList extends CriterionNativeQuery<Object[]> {
 			}
 		}
 		return money;
+	}
+	
+	private List<Object[]> initStatusList(){
+		List<Object[]> list = new ArrayList<Object[]>();
+		list.add(new Object[]{-1,"全部"});
+		list.add(new Object[]{0,"待处理"});
+		list.add(new Object[]{1,"正在审核"});
+		list.add(new Object[]{2,"审核完成"});
+		list.add(new Object[]{3,"审核驳回"});
+		list.add(new Object[]{4,"确认驳回"});
+		list.add(new Object[]{5,"确认完成"});
+		return list;
 	}
 	
 	public List<Object[]> getExpendApplyInfoList() {
@@ -1073,6 +1098,26 @@ public class ExpendApplayList extends CriterionNativeQuery<Object[]> {
 
 	public void setApplyEndTime(String applyEndTime) {
 		this.applyEndTime = applyEndTime;
+	}
+
+	public List<Object[]> getStatusList() {
+		return statusList;
+	}
+
+	public void setStatusList(List<Object[]> statusList) {
+		this.statusList = statusList;
+	}
+
+
+
+	public Integer getStatus() {
+		return status;
+	}
+
+
+
+	public void setStatus(Integer status) {
+		this.status = status;
 	}
 	
 	
