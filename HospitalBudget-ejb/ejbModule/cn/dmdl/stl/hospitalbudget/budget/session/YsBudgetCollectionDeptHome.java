@@ -230,7 +230,6 @@ public class YsBudgetCollectionDeptHome extends CriterionEntityHome<Object> {
 			}
 		}
 		budgetCollectionInfo.element("expend_unfinished", expendUnfinishedJsonArr);
-		System.out.println(budgetCollectionInfo);
 	}
 
 
