@@ -120,8 +120,8 @@ public class ExpendExecuteCheckList extends CriterionNativeQuery<Object[]>{
 		sql.append(" eai.`comment`, ");//9备注
 		sql.append(" eapl.process_step_info_id ");//10流程步骤
 		sql.append(" FROM ys_expand_apply_process_log eapl ");
-		sql.append(" LEFT JOIN process_step_info psi on eapl.process_step_info_id=psi.process_step_info_id ");
-		sql.append(" LEFT JOIN expend_apply_info eai on eapl.ys_expand_apply_id=eai.expend_apply_info_id ");
+		sql.append(" inner JOIN process_step_info psi on eapl.process_step_info_id=psi.process_step_info_id ");
+		sql.append(" inner JOIN expend_apply_info eai on eapl.ys_expand_apply_id=eai.expend_apply_info_id ");
 		sql.append(" LEFT JOIN user_info ui ON eai.applay_user_id = ui.user_info_id ");
 		sql.append(" LEFT JOIN user_info_extend uie on ui.user_info_extend_id=uie.user_info_extend_id ");
 		if(privateRole){
