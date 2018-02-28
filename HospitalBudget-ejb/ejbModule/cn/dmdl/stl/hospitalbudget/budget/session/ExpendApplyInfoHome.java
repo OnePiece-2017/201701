@@ -489,7 +489,7 @@ public class ExpendApplyInfoHome extends CriterionEntityHome<ExpendApplyInfo>{
 				sql.append(" nepi.budget_amount, ");
 				sql.append(" nepi.budget_amount_frozen, ");
 				sql.append(" nepi.budget_amount_surplus, ");
-				sql.append(" rp.is_audit, ");
+				sql.append(" rp.is_audit ");
 				sql.append(" FROM normal_expend_plan_info nepi ");
 				sql.append(" LEFT JOIN generic_project rp ON nepi.generic_project_id = rp.the_id ");
 				sql.append(" LEFT JOIN ys_funds_source fs on rp.funds_source_id=fs.the_id ");
