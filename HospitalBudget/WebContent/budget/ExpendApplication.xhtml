@@ -264,7 +264,7 @@
 									<table>
 										<tr>
 											<td valign="middle">
-												<span class="field-name mb10">报销人:</span>
+												<span class="field-name mb10">报销人姓名:</span>
 											</td>
 											<td valign="middle">
 												<h:inputText id="reimbur" value="#{expendApplyInfoHome.reimbur}" styleClass=" mb10 border" style="height:34px;width:220px" maxlength="20"/>
@@ -286,7 +286,8 @@
 												<span class="field-name mb10">收款单位:</span>
 											</td>
 											<td valign="middle">
-												<h:inputText id="reciveCompany" value="#{expendApplyInfoHome.reciveCompany}" styleClass=" mb10 border" style="height:34px;width:395px" maxlength="100" onkeyup='searchLi(this,event,1)' onblur="searchDis(this)"/>
+												<!-- <h:inputText id="reciveCompany" value="#{expendApplyInfoHome.reciveCompany}" styleClass=" mb10 border" style="height:34px;width:395px" maxlength="100" onkeyup='searchLi(this,event,1)' onblur="searchDis(this)"/> -->
+												<h:inputText id="reciveCompany" value="#{expendApplyInfoHome.reciveCompany}" styleClass=" mb10 border" style="height:34px;width:395px" maxlength="100"  onblur="companyBlur()" onfocus="companyFous()"/>
 												<div class="mater_name_bd"  style="min-width: 10%;z-index:9999;" >
 			                                    	<ul class="mater_name_list"  style="padding-left: 0; width: 395px;">
 			                                       		<a:repeat value="#{expendApplyInfoHome.companyList}" var="_com" rowKeyVar="_row">
@@ -588,8 +589,8 @@
 										<td valign="top" class="modaltd">
 											<rich:panel id="projectTypeSel" style="margin:0; border:none; padding: 0;">
 												<select id="projectType" class="selectpicker" onchange="fundsSource()">
-													<option value="1" class="0">常规项目</option>
 													<option value="2" class="0">项目</option>
+													<option value="1" class="0">常规项目</option>
 												</select>
 											</rich:panel>
 										</td>
@@ -716,7 +717,7 @@
 		</div>
 		<a:form>
 			<a:queue requestDelay="100" ignoreDupResponses="true" />
-			<a:jsFunction name="selectProject" action="#{expendApplyInfoHome.selectProject}" reRender="departPanl,fundsSourcePanl,projectPanl,totalMoneyPanl,usedMoneyPanl,canUseMoneyPanl,contractPanl"  data="#{expendApplyInfoHome.contractJson}" oncomplete="changeProjectComplete(data)">
+			<a:jsFunction name="selectProject" action="#{expendApplyInfoHome.selectProject}" reRender="totalMoneyPanl,usedMoneyPanl,canUseMoneyPanl,contractPanl"  data="#{expendApplyInfoHome.contractJson}" oncomplete="changeProjectComplete(data)">
 				<a:actionparam name="projectId" assignTo="#{expendApplyInfoHome.projectId}" />
 				<a:actionparam name="projectType" assignTo="#{expendApplyInfoHome.projectType}" />
 				<a:actionparam name="departmentId" assignTo="#{expendApplyInfoHome.departmentId}" />
@@ -912,7 +913,7 @@
 					return ;
 					
 				}
-				if(reciveCompany == ""){
+				if(reciveCompany == "" || reciveCompany == "报销论文版面费请添加科室+杂志名称"){
 					___msg('温馨提示', "请输入收款公司");
 					flag = false;
 					return ;
@@ -1366,7 +1367,18 @@
 			}
 
 
-			
+			function companyBlur(){
+				var company = jQuery("#mainForm\\:reciveCompany").val().trim();
+				if(company == ""){
+					jQuery("#mainForm\\:reciveCompany").val("报销论文版面费请添加科室+杂志名称");
+				}
+			}
+			function companyFous(){
+				var company = jQuery("#mainForm\\:reciveCompany").val().trim();
+				if(company == "报销论文版面费请添加科室+杂志名称"){
+					jQuery("#mainForm\\:reciveCompany").val("");
+				}
+			}
 		//]]>
 		</script>
 	</ui:define>

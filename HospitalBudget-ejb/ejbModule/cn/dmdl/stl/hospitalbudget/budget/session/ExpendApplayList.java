@@ -67,7 +67,10 @@ public class ExpendApplayList extends CriterionNativeQuery<Object[]> {
 	
 	@SuppressWarnings("unchecked")
 	public void wire(){
-		
+		Integer depId = sessionToken.getDepartmentInfoId();
+		if(null != depId && depId != 187){
+			departmentId = depId;
+		}
 		//初始化科室列表
 		wireDepartmentInfo();
 		System.out.println(departList);
@@ -78,10 +81,10 @@ public class ExpendApplayList extends CriterionNativeQuery<Object[]> {
 		statusList = initStatusList();
 		
 		//从新耗材系统获取支出数据
-		this.syncNewConsumables();
+		/*this.syncNewConsumables();
 		
 		//在老耗材系统获取支出数据
-		this.syncOldConsumables();
+		this.syncOldConsumables();*/
 		
 	}
 	

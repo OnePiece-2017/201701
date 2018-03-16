@@ -87,7 +87,7 @@ public class ExpendApplyInfoHome extends CriterionEntityHome<ExpendApplyInfo>{
 		fundsSourceId = -1;
 		departmentId = -1;
 		applyUser = -1;
-		reciveCompany = "";
+		reciveCompany = "报销论文版面费请添加科室+杂志名称";
 		invoiceSn = "";
 		projectJson = "";
 		expendAllMoney = "";
@@ -259,7 +259,7 @@ public class ExpendApplyInfoHome extends CriterionEntityHome<ExpendApplyInfo>{
 			fundsSourceList = list;
 		}
 		//查询当前登陆人为项目支出人的项目
-		projectList = queryProjectByUser(year,-1,-1,1);
+		projectList = queryProjectByUser(year,-1,-1,2);
 		fundsSourceId = 1;
 		totalMoney = "";//已到账金额
 		usedMoney = "";//已使用金额

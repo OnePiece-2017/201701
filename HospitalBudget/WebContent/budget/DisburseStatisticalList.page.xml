@@ -10,5 +10,7 @@
 	<param name="beginYearParam" value="#{disburseStatisticalList.beginYearParam}" />
 	<param name="departmentInfoId" value="#{disburseStatisticalList.departmentInfoId}" />
 	<param name="fundsSourceId" value="#{disburseStatisticalList.fundsSourceId}" />
+	<param name="departmentIds" value="#{disburseStatisticalList.departmentIds}" />
+	<param name="projectName" value="#{disburseStatisticalList.projectName}" />
 
 </page>

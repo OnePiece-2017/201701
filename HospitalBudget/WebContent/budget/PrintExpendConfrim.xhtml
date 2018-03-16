@@ -30,7 +30,11 @@
 				  <tbody >
 				    <tr >
 				      <td width="15%" style="border-bottom:1px solid #000;">主管部门：</td>
-				      <td colspan="7"  width="55%" style="border-bottom:1px solid #000;">#{printExpendConfirm.expendApplyInfo[0]}</td>
+				      <td colspan="7"  width="55%" style="border-bottom:1px solid #000;">
+				      	<h:outputText value="#{printExpendConfirm.expendApplyInfo[0]}">
+			        		<f:convertNumber pattern="###,###,###.00"/>
+			        	</h:outputText>	
+				      </td>
 				      <td width="15%" style="border-bottom:1px solid #000;">付款金额：</td>
 				      <td colspan="3" width="15%" style="border-bottom:1px solid #000;">#{printExpendConfirm.expendApplyInfo[1]}</td>
 				    </tr>

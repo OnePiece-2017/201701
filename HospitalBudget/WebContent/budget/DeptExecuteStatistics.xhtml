@@ -65,7 +65,7 @@
 									<div style="float: left; text-align: right; line-height: 36px; width: 85px; padding-right:20px; box-sizing:border-box;">
 										<span>科室</span>
 									</div>
-									<select id="departmentIds" class="selectpicker" multiple="multiple" data-live-search="true" title="请选择">
+									<select id="departmentInfoId" class="selectpicker" multiple="multiple" data-live-search="true" title="请选择">
 										<a:repeat value="#{commonDaoHome.departmentInfoListByUserId}" var="_var">
 											<option value="#{_var[0]}">#{_var[1]}</option>
 										</a:repeat>
@@ -93,7 +93,7 @@
 									</div>
 				                    <div class="form-group">
 										<div class="input-group date form_date col-md-5">
-											<input id="applyTime" type="text" value="#{expendConfrimList.applyTime}" readonly="readonly" class="form-control mb10 fix--w150" name="time" style="width: 125px;"/> 
+											<input id="beginMonth" type="text" value="#{deptExecuteStatisticsList.beginMonth}" readonly="readonly" class="form-control mb10 fix--w150" name="beginMonth" style="width: 125px;"/> 
 											<span class="input-group-addon"><span class="glyphicon glyphicon-remove"></span></span>
 											<span class="input-group-addon"><span class="glyphicon glyphicon-calendar"></span></span>
 										</div>
@@ -107,7 +107,7 @@
 									</div>
 					                 <div class="form-group">
 										<div class="input-group date form_date col-md-5">
-											<input id="applyTime" type="text" value="#{expendConfrimList.applyTime}" readonly="readonly" class="form-control mb10 fix--w150" name="time" style="width: 125px;"/> 
+											<input id="endMonth" type="text" value="#{deptExecuteStatisticsList.endMonth}" readonly="readonly" class="form-control mb10 fix--w150" name="endMonth" style="width: 125px;"/> 
 											<span class="input-group-addon"><span class="glyphicon glyphicon-remove"></span></span>
 											<span class="input-group-addon"><span class="glyphicon glyphicon-calendar"></span></span>
 										</div>
@@ -117,15 +117,21 @@
 							<td>
 								<div class="fl" style="margin-top:-15px; margin-left:22px;">
 									<h:commandButton styleClass="btn btn-primary mr15" onclick="return beforeSubmit();" value="搜索" />
-									<h:commandButton styleClass="btn btn-primary mr15"  value="导出" />
-									
+									<!-- <h:commandButton styleClass="btn btn-primary mr15"  value="导出" /> -->
+									<s:link  styleClass="btn btn-primary mr15" view="/budget/DeptExecuteStatistics.xhtml" action="#{deptExecuteStatisticsList.expExcel()}" style="width: 62px;">导出
+			                			<f:param name="beginYearParam" value="#{deptExecuteStatisticsList.beginYearParam}"/>
+			                			<f:param name="fundsSourceId" value="#{deptExecuteStatisticsList.fundsSourceId}"/>
+			                			<f:param name="departIds" value="#{deptExecuteStatisticsList.departIds}"/>
+			                			<f:param name="beginMonth" value="#{deptExecuteStatisticsList.beginMonth}"/>
+			                			<f:param name="endMonth" value="#{deptExecuteStatisticsList.endMonth}"/>
+			                		</s:link>
 								</div>
 							</td>
 						</tr>
 					</table>
 					<h:inputHidden id="beginYearParam" value="#{deptExecuteStatisticsList.beginYearParam}" />
-					<h:inputHidden id="departmentInfoId" value="#{deptExecuteStatisticsList.departmentInfoId}" />
 					<h:inputHidden id="fundsSourceId" value="#{deptExecuteStatisticsList.fundsSourceId}" />
+					<h:inputHidden id="departIds" value="#{deptExecuteStatisticsList.departIds}" />
 			</div>
 		</h:form>
 		</div>
@@ -217,9 +223,9 @@
 			jQuery(document).ready(function() {
 				jQuery("#fundsSourceId").val(1);
 				//获取当前年
-			    var date=new Date;
-			    var yearStr=date.getFullYear();
-			    jQuery("#budgetYear").val(yearStr)
+			   
+			    jQuery("#budgetYear").val(jQuery("#mainForm\\:beginYearParam").val())
+			    
 				jQuery(".selectpicker").selectpicker("render");
 				jQuery(".selectpicker").selectpicker();
 
@@ -235,15 +241,32 @@
 					minView: 3,
 					forceParse: 0
 				});
-				
+
+				var hideDepartIds = jQuery("#mainForm\\:departIds").val();
+				if(hideDepartIds != null && hideDepartIds != "" ){
+					var departIdsArr = hideDepartIds.split(",");
+					jQuery("#departmentInfoId").selectpicker("val",departIdsArr);
+				}
+				var fundsSourceId = jQuery("#mainForm\\:fundsSourceId").val();
+				if(fundsSourceId != null && fundsSourceId != ""){
+					jQuery("#fundsSourceId").selectpicker("val",fundsSourceId);
+				}
 			}); 
 
 			function beforeSubmit(){
-				var departmentInfoId = jQuery('#departmentInfoId').val();
-				jQuery('#mainForm\\:beginYearParam').val(jQuery('#beginYearParam').val());
-				jQuery('#mainForm\\:departmentInfoId').val(jQuery('#departmentInfoId').val());
+				jQuery('#mainForm\\:beginYearParam').val(jQuery('#budgetYear').val());
+				var departmentIds = jQuery('#departmentInfoId').val();
+				var ids = "";
+				if(departmentIds != null ){
+					for(var i=0;i<departmentIds.length;i++){
+						ids += departmentIds[i] + ",";
+					}
+				}
+				if(ids != ""){
+					ids = ids.substring(0,ids.length-1);
+				}
+				jQuery('#mainForm\\:departIds').val(ids);
 				jQuery('#mainForm\\:fundsSourceId').val(jQuery('#fundsSourceId').val());
-				console.log(jQuery('#beginYearParam').val()+'-----------'+jQuery('#departmentInfoId').val()+'-----------------'+jQuery('#fundsSourceId').val());
 			}
 		//]]>
 		</script>

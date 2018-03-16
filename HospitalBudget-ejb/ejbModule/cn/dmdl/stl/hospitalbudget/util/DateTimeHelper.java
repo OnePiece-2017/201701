@@ -35,5 +35,10 @@ public class DateTimeHelper {
 		}
 		return null;
 	}
+	
+	public static String getNowYear(){
+		SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy");
+		return simpleDateFormat.format(new Date());
+	}
 
 }

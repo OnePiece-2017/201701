@@ -13,6 +13,7 @@
 		<link rel="stylesheet" type="text/css" href="#{request.contextPath}/common/css/bootstrap.min.css" />
 		<link rel="stylesheet" type="text/css" href="#{request.contextPath}/common/css/bootstrap-datetimepicker.min.css" />
 		<link rel="stylesheet" type="text/css" href="#{request.contextPath}/common/css/bootstrap-select2.min.css" />
+		<link rel="stylesheet" type="text/css" href="#{request.contextPath}/lte/css/font-awesome.min.css" />
 		<link rel="stylesheet" type="text/css" href="#{request.contextPath}/icheck/skins/square/blue.css" />
 		
 		<script type="text/javascript" src="#{request.contextPath}/common/js/bootstrap-datetimepicker.min.js" />
@@ -222,9 +223,9 @@
 		            <th width="10%" style="min-width: 130px;">发票号</th>
 		            <th width="7%">申请人</th>
 		            <th width="10%">申请时间</th>
-		            <th width="10%">发票张数</th>
+		            <th width="5%">发票张数</th>
 <!-- 		            <th width="10%">备注</th> -->
-		            <th width="5%">操作</th>
+		            <th width="10%">操作</th>
 		        </tr>
 		        <a:repeat value="#{expendExecuteCheckList.resultList}" var="_result" rowKeyVar="_row">
 		        	<tr class="node-record">
@@ -245,7 +246,12 @@
 			        	<td>#{_result[8]}</td>
 <!-- 			        	<td>#{_result[9]}</td> -->
 			        	<td>
+			        			<s:link title="查看" view="/budget/ExpendInfoDetail.xhtml" style="text-decoration: none;">
+			        				<f:param name="expendApplyInfoId" value="#{_result[11]}" />
+			        			<i class="fa fa-search"></i>
+			        		</s:link>
 			        		<input type="checkbox" class="icheck check_box" name="check_confirm" myattr="#{_result[0]}" />
+							
 						</td>
 		        	</tr>
 		        </a:repeat>
