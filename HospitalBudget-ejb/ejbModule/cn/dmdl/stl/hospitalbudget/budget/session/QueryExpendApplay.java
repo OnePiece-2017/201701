@@ -127,6 +127,9 @@ public class QueryExpendApplay extends CriterionNativeQuery<Object[]> {
 		if(privateRole){
 			sql.append(" and eai.insert_user= ").append(sessionToken.getUserInfoId());
 		}
+		if(Integer.valueOf(roleId) == 4){
+			sql.append(" and eai.insert_user= ").append(sessionToken.getDepartmentInfoId());
+		}
 		if(null != projectName && !projectName.trim().equals("")){
 			sql.append(" and (up.the_value like '%").append(projectName).append("%' or gp.the_value like '%").append(projectName).append("%')");
 		}

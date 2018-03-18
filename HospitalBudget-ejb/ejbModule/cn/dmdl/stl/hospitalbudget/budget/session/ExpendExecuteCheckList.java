@@ -132,6 +132,9 @@ public class ExpendExecuteCheckList extends CriterionNativeQuery<Object[]>{
 		}else{
 			sql.append(" where eapl.operate_type is NULL ");
 		}
+		/*if(Integer.valueOf(roleId) == 4){
+			sql.append(" and ui.department_info_id= ").append(sessionToken.getDepartmentInfoId());
+		}*/
 		if(null != departmentId && departmentId != -1){
 			sql.append(" and ui.department_info_id= ").append(departmentId);
 		}

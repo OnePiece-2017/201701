@@ -492,6 +492,9 @@ public class ExpendApplayList extends CriterionNativeQuery<Object[]> {
 		if(privateRole){
 			sql.append(" and eai.insert_user= ").append(sessionToken.getUserInfoId());
 		}
+		if(Integer.valueOf(roleId) == 4){
+			sql.append(" and ui.department_info_id= ").append(sessionToken.getDepartmentInfoId());
+		}
 		if(null != departmentId && departmentId != -1){
 			sql.append(" and ui.department_info_id= ").append(departmentId);
 		}

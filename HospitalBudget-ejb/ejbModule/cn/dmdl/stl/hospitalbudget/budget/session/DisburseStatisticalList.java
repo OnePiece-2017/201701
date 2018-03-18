@@ -65,7 +65,7 @@ public class DisburseStatisticalList extends CriterionNativeQuery<Object[]> {
 		List<Object[]> roleList = getEntityManager().createNativeQuery(roleSql).getResultList();
 		int roleId = Integer.parseInt(roleList.get(0)[0].toString());//角色id
 		
-		if(Integer.valueOf(roleId) != 1 && Integer.valueOf(roleId) != 2){
+		if(Integer.valueOf(roleId) != 1 && Integer.valueOf(roleId) != 2 ){
 			privateRole = true;
 		}
 		
