@@ -42,5 +42,14 @@
 			<item>characterEncoding=utf-8</item>
 		</parameter>
 	</connection>
-
+		<connection key="hospital_budget" for="5" enabled="true">
+		<url>jdbc:mysql://127.0.0.1:3307/hospital_budget</url>
+		<username>root</username>
+		<password>!QAZ2wsx</password>
+		<parameter>
+			<item>autoReconnect=true</item>
+			<item>useUnicode=true</item>
+			<item>characterEncoding=utf-8</item>
+		</parameter>
+	</connection>
 </data_source>
