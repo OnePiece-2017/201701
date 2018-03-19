@@ -287,7 +287,8 @@
 											</td>
 											<td valign="middle">
 												<!-- <h:inputText id="reciveCompany" value="#{expendApplyInfoHome.reciveCompany}" styleClass=" mb10 border" style="height:34px;width:395px" maxlength="100" onkeyup='searchLi(this,event,1)' onblur="searchDis(this)"/> -->
-												<h:inputText id="reciveCompany" value="#{expendApplyInfoHome.reciveCompany}" styleClass=" mb10 border" style="height:34px;width:395px" maxlength="100"  onblur="companyBlur()" onfocus="companyFous()"/>
+												<!-- <h:inputText id="reciveCompany" value="#{expendApplyInfoHome.reciveCompany}" styleClass=" mb10 border" style="height:34px;width:395px" maxlength="100"  onblur="companyBlur()" onfocus="companyFous()"/> -->
+												<input id="reciveCompany" value="#{expendApplyInfoHome.reciveCompany}" class=" mb10 border" style="height:34px;width:395px" maxlength="100"  placeholder="报销论文版面费请添加科室+杂志名称"/>
 												<div class="mater_name_bd"  style="min-width: 10%;z-index:9999;" >
 			                                    	<ul class="mater_name_list"  style="padding-left: 0; width: 395px;">
 			                                       		<a:repeat value="#{expendApplyInfoHome.companyList}" var="_com" rowKeyVar="_row">
@@ -589,8 +590,18 @@
 										<td valign="top" class="modaltd">
 											<rich:panel id="projectTypeSel" style="margin:0; border:none; padding: 0;">
 												<select id="projectType" class="selectpicker" onchange="fundsSource()">
-													<option value="2" class="0">项目</option>
-													<option value="1" class="0">常规项目</option>
+													<!-- <option value="2" class="0">项目</option>
+													<option value="1" class="0">常规项目</option> -->
+													
+													<s:fragment rendered="#{expendApplyInfoHome.projectTypeList ne null and expendApplyInfoHome.projectTypeList.size() gt 0}">
+														<a:repeat value="#{expendApplyInfoHome.projectTypeList}" var="_pt">
+															<option value="#{_pt[0]}">#{_pt[1]}</option>
+														</a:repeat>
+													</s:fragment>
+													<s:fragment rendered="#{expendApplyInfoHome.projectTypeList eq null or expendApplyInfoHome.projectTypeList.size() eq 0}">
+														<option value="-1">请选择</option>
+													</s:fragment>
+												
 												</select>
 											</rich:panel>
 										</td>
@@ -766,7 +777,7 @@
 				<a:actionparam name="projectId" assignTo="#{expendApplyInfoHome.projectId}" />
 				<a:actionparam name="projectType" assignTo="#{expendApplyInfoHome.projectType}" />
 			</a:jsFunction>
-			<a:jsFunction name="modalInit" action="#{expendApplyInfoHome.modalInit}" reRender="departPanl,fundsSourcePanl,projectPanl,totalMoneyPanl,usedMoneyPanl,canUseMoneyPanl" oncomplete="toAddModelComplete()">
+			<a:jsFunction name="modalInit" action="#{expendApplyInfoHome.modalInit}" reRender="departPanl,fundsSourcePanl,projectPanl,totalMoneyPanl,usedMoneyPanl,canUseMoneyPanl,projectTypeSel" oncomplete="toAddModelComplete()">
 				<a:actionparam name="year" assignTo="#{expendApplyInfoHome.year}" />
 			</a:jsFunction>
 			<a:jsFunction name="addProject" action="#{expendApplyInfoHome.addProject}" reRender="listPanl" oncomplete="addProjectComplete()">
@@ -885,7 +896,7 @@
 				var year = jQuery("#budgetYear").val();
 				var user = jQuery("#user").val();
 				var applySn = jQuery("#mainForm\\:formnum").val();
-				var reciveCompany = jQuery("#mainForm\\:reciveCompany").val();
+				var reciveCompany = jQuery("#reciveCompany").val();
 				var invoicenum = jQuery("#mainForm\\:invoicenum").val();
 				var summary = jQuery("#mainForm\\:summary").val();
 				var reimbursementer = jQuery("#mainForm\\:reimbur").val();
@@ -998,7 +1009,7 @@
 				var year = jQuery("#budgetYear").val();
 				var user = jQuery("#user").val();
 				var applySn = jQuery("#mainForm\\:formnum").val();
-				var reciveCompany = jQuery("#mainForm\\:reciveCompany").val();
+				var reciveCompany = jQuery("#reciveCompany").val();
 				var invoicenum = jQuery("#mainForm\\:invoicenum").val();
 				var summary = jQuery("#mainForm\\:summary").val();
 				var reimbursementer = jQuery("#mainForm\\:reimbur").val();
@@ -1311,13 +1322,13 @@
 			}
 
 			function selectCompany(obj){
-				jQuery("#mainForm\\:reciveCompany").val(jQuery(obj).html());
+				jQuery("#reciveCompany").val(jQuery(obj).html());
 				jQuery('div.mater_name_bd').hide();
 			}
 
 			//页面初始化键盘上下键操作
 			function keyInit(){
-				 jQuery("#mainForm\\:reciveCompany").keydown(function(e){
+				 jQuery("#reciveCompany").keydown(function(e){
 				        e = e || window.event;
 				        var keycode = e.which ? e.which : e.keyCode;
 				        if(keycode == 38){
@@ -1368,13 +1379,13 @@
 
 
 			function companyBlur(){
-				var company = jQuery("#mainForm\\:reciveCompany").val().trim();
+				var company = jQuery("#reciveCompany").val().trim();
 				if(company == ""){
 					jQuery("#mainForm\\:reciveCompany").val("报销论文版面费请添加科室+杂志名称");
 				}
 			}
 			function companyFous(){
-				var company = jQuery("#mainForm\\:reciveCompany").val().trim();
+				var company = jQuery("#reciveCompany").val().trim();
 				if(company == "报销论文版面费请添加科室+杂志名称"){
 					jQuery("#mainForm\\:reciveCompany").val("");
 				}
