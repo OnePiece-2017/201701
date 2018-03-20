@@ -79,7 +79,7 @@
 				position:absolute;
 				min-width:200px;
 				display:none;
-				top:191px;
+				top:212px;
 				width:220px;
 				border:1px solid #ddd;
 				box-sizing:border-box;
@@ -288,14 +288,14 @@
 											<td valign="middle">
 												<!-- <h:inputText id="reciveCompany" value="#{expendApplyInfoHome.reciveCompany}" styleClass=" mb10 border" style="height:34px;width:395px" maxlength="100" onkeyup='searchLi(this,event,1)' onblur="searchDis(this)"/> -->
 												<!-- <h:inputText id="reciveCompany" value="#{expendApplyInfoHome.reciveCompany}" styleClass=" mb10 border" style="height:34px;width:395px" maxlength="100"  onblur="companyBlur()" onfocus="companyFous()"/> -->
-												<input id="reciveCompany" value="#{expendApplyInfoHome.reciveCompany}" class=" mb10 border" style="height:34px;width:395px" maxlength="100"  placeholder="报销论文版面费请添加科室+杂志名称"/>
-												<div class="mater_name_bd"  style="min-width: 10%;z-index:9999;" >
+												<input id="reciveCompany" value="#{expendApplyInfoHome.reciveCompany}" class=" mb10 border" style="height:34px;width:395px" maxlength="100"  placeholder="报销论文版面费请添加科室+杂志名称" onkeyup='searchLi(this,event,1)' onblur="searchDis(this)"/>
+												<div class="mater_name_bd"  style="min-width: 10%;z-index:9999;width: 395px;" >
 			                                    	<ul class="mater_name_list"  style="padding-left: 0; width: 395px;">
 			                                       		<a:repeat value="#{expendApplyInfoHome.companyList}" var="_com" rowKeyVar="_row">
 			                                       			<li name="companyLi" onclick="clickSearch(this)" class="material_li material_li_#{_row + 1}" >#{_com}</li>
 			                                       		</a:repeat>
 			                                        </ul>
-			                                        <ul class='mater_name_list3'  style='display:none'>
+			                                        <ul class='mater_name_list3'  style='display:none;width: 395px;'>
 			                                        	<a:repeat value="#{expendApplyInfoHome.companyList}" var="_company" rowKeyVar="_r">
 			                                       			<li name="companyLi" onclick="clickSearch(this)" class="material_li_#{_r + 1}">#{_company}</li>
 			                                       		</a:repeat>
