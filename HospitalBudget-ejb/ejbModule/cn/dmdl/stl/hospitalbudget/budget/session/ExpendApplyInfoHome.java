@@ -74,6 +74,7 @@ public class ExpendApplyInfoHome extends CriterionEntityHome<ExpendApplyInfo>{
 	private String expendAllMoney;//总支出金额
 	private List<Object> companyList;//收款单位列表
 	private Integer contractId;//合同id
+	private List<Object[]> projectTypeList;//项目类型
 	
 	//审核
 	private String checkItems;  //审核的选项
@@ -87,7 +88,7 @@ public class ExpendApplyInfoHome extends CriterionEntityHome<ExpendApplyInfo>{
 		fundsSourceId = -1;
 		departmentId = -1;
 		applyUser = -1;
-		reciveCompany = "报销论文版面费请添加科室+杂志名称";
+		reciveCompany = "";
 		invoiceSn = "";
 		projectJson = "";
 		expendAllMoney = "";
@@ -258,14 +259,29 @@ public class ExpendApplyInfoHome extends CriterionEntityHome<ExpendApplyInfo>{
 		if(list.size() > 0){
 			fundsSourceList = list;
 		}
-		//查询当前登陆人为项目支出人的项目
-		projectList = queryProjectByUser(year,-1,-1,2);
+		
 		fundsSourceId = 1;
 		totalMoney = "";//已到账金额
 		usedMoney = "";//已使用金额
 		canUseMoney = "";//可使用金额
 		departmentId = -1;
 		projectId = -1;
+		if(null == projectTypeList){
+			projectTypeList = new ArrayList<Object[]>();
+		}
+		List<Object[]> pProjectList = queryProjectByUser(year,-1,-1,2);
+		if(null != pProjectList && pProjectList.size() > 0){
+			projectTypeList.add(new Object[]{"2","项目"});
+		}
+		List<Object[]> gProjectList = queryProjectByUser(year,-1,-1,1);
+		if(null != gProjectList && gProjectList.size() > 0){
+			projectTypeList.add(new Object[]{"1","常规项目"});
+		}
+		//查询当前登陆人为项目支出人的项目
+		if(projectTypeList.size() > 0){
+			projectList = queryProjectByUser(year,-1,-1,Integer.valueOf(projectTypeList.get(0)[0].toString()));
+		}
+		
 	}
 	/**
 	 * 预算年份
@@ -1919,6 +1935,16 @@ public class ExpendApplyInfoHome extends CriterionEntityHome<ExpendApplyInfo>{
 
 	public void setCheckItems(String checkItems) {
 		this.checkItems = checkItems;
+	}
+
+
+	public List<Object[]> getProjectTypeList() {
+		return projectTypeList;
+	}
+
+
+	public void setProjectTypeList(List<Object[]> projectTypeList) {
+		this.projectTypeList = projectTypeList;
 	}
 
 
