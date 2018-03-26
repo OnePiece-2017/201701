@@ -277,6 +277,15 @@ public class DisburseStatisticalList extends CriterionNativeQuery<Object[]> {
 				nameCol.getColumnIndex(), 35 * 120);
 		colIndex++;
 
+		HSSFCell departCol = row1.createCell(colIndex);
+		departCol.setCellType(HSSFCell.CELL_TYPE_STRING);
+		departCol.setCellValue("科室");
+		departCol.setCellStyle(colStyle);
+		departCol.getSheet().setColumnWidth(departCol.getColumnIndex(),
+				35 * 200);
+		colIndex++;
+		
+		
 		HSSFCell natureCol = row1.createCell(colIndex);
 		natureCol.setCellType(HSSFCell.CELL_TYPE_STRING);
 		natureCol.setCellValue("项目类型");
@@ -318,6 +327,8 @@ public class DisburseStatisticalList extends CriterionNativeQuery<Object[]> {
 		colIndex++;
 		
 		
+		
+		
 		boolean privateRole = false;//角色不属于财务 和主任（领导的）
 		String roleSql = "select role_info.role_info_id,user_info.department_info_id,ydi.the_value from user_info LEFT JOIN role_info on role_info.role_info_id=user_info.role_info_id LEFT JOIN ys_department_info ydi on "
 				+ "user_info.department_info_id=ydi.the_id where user_info.user_info_id=" + sessionToken.getUserInfoId();
@@ -335,10 +346,13 @@ public class DisburseStatisticalList extends CriterionNativeQuery<Object[]> {
 		sql.append(" FORMAT(nepi.budget_amount,2) as budget_amount,");
 		sql.append(" FORMAT(nepi.budget_amount_frozen,2) as budget_amount_frozen,");
 		sql.append(" FORMAT(nepi.budget_amount_surplus,2) as budget_amount_surplus,");
-		sql.append(" round(nepi.budget_amount_frozen / nepi.budget_amount * 100,2) ");
+		sql.append(" round(nepi.budget_amount_frozen / nepi.budget_amount * 100,2), ");
+		sql.append(" if (nepi.project_id IS NULL, y1.the_value, y2.the_value) as depart_name ");
 		sql.append(" from normal_expend_plan_info nepi");
 		sql.append(" left join generic_project gp on gp.the_id = nepi.generic_project_id");
 		sql.append(" left join routine_project rp on rp.the_id = nepi.project_id");
+		sql.append(" LEFT JOIN ys_department_info y1 on gp.department_info_id=y1.the_id ");
+		sql.append(" LEFT JOIN ys_department_info y2 on rp.department_info_id=y2.the_id ");
 //		sql.append(" left join ys_department_info ydi on ydi.the_id = gp.department_info_id");
 //		sql.append(" left join ys_department_info ydi1 on ydi1.the_id = rp.department_info_id");
 		sql.append(" where 1 = 1");
@@ -390,6 +404,14 @@ public class DisburseStatisticalList extends CriterionNativeQuery<Object[]> {
 			nameCol.setCellStyle(colStyle);
 			nameCol.getSheet().setColumnWidth(
 					nameCol.getColumnIndex(), 35 * 120);
+			col++;
+			
+			departCol = row1.createCell(col);
+			departCol.setCellType(HSSFCell.CELL_TYPE_STRING);
+			departCol.setCellValue(obj[8].toString());
+			departCol.setCellStyle(colStyle);
+			departCol.getSheet().setColumnWidth(
+					departCol.getColumnIndex(), 35 * 120);
 			col++;
 			
 			natureCol = row1.createCell(col);

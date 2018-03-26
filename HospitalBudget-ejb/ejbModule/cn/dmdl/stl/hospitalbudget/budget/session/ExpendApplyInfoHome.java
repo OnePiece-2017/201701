@@ -269,14 +269,15 @@ public class ExpendApplyInfoHome extends CriterionEntityHome<ExpendApplyInfo>{
 		if(null == projectTypeList){
 			projectTypeList = new ArrayList<Object[]>();
 		}
-		List<Object[]> pProjectList = queryProjectByUser(year,-1,-1,2);
-		if(null != pProjectList && pProjectList.size() > 0){
-			projectTypeList.add(new Object[]{"2","项目"});
-		}
 		List<Object[]> gProjectList = queryProjectByUser(year,-1,-1,1);
 		if(null != gProjectList && gProjectList.size() > 0){
 			projectTypeList.add(new Object[]{"1","常规项目"});
 		}
+		List<Object[]> pProjectList = queryProjectByUser(year,-1,-1,2);
+		if(null != pProjectList && pProjectList.size() > 0){
+			projectTypeList.add(new Object[]{"2","项目"});
+		}
+		
 		//查询当前登陆人为项目支出人的项目
 		if(projectTypeList.size() > 0){
 			projectList = queryProjectByUser(year,-1,-1,Integer.valueOf(projectTypeList.get(0)[0].toString()));

@@ -73,6 +73,7 @@ public class PrintExpendConfirm extends CriterionEntityHome<Object>{
         String s = NumberToCN.number2CNMontrayUnit(numberOfMoney);
         expendApplyInfo[1] = NumberUtil.double2Str(expendApplyInfo[1]);
 		expendApplyInfo[9] = s;
+		expendApplyInfo[1] = NumberUtil.transferNum(expendApplyInfo[1]);
 	}
 
 

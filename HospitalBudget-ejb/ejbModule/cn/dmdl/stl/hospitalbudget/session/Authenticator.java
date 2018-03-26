@@ -66,7 +66,7 @@ public class Authenticator implements AuthenticatorLocal {
 		log.info("whoami-->" + (1 == whoami ? "development environment" : (2 == whoami ? "test environment" : (3 == whoami ? "regular environment" : "?"))));
 		log.info("authenticating [username:{0}][password:{1}].", credentials.getUsername(), credentials.getPassword());
 
-		List<Object> userInfoIdList = entityManager.createNativeQuery("select user_info_id from user_info where deleted = 0 and enabled = 1 and binary username = '" + credentials.getUsername() + "'").getResultList();
+		List<Object> userInfoIdList = entityManager.createNativeQuery("select user_info_id from user_info where deleted = 0 and enabled = 1 and username = '" + credentials.getUsername() + "'").getResultList();
 		if (userInfoIdList != null && userInfoIdList.size() > 0) {
 			UserInfo userInfo = entityManager.find(UserInfo.class, Integer.valueOf(userInfoIdList.get(0).toString()));
 			if (credentials.getPassword() != null && userInfo.getPassword().equals(MD5.getMD5Alpha(credentials.getPassword()))) {

@@ -40,4 +40,17 @@ public class NumberUtil {
 	public static void main(String[] args){
 		System.out.println(formatDouble2(0));
 	}
+	
+	
+	public static String transferNum(Object str){
+		if(null == str || "".equals(str)){
+			return "0.00";
+		}
+		if(Double.parseDouble(str.toString()) == 0){
+			return "0.00";
+		}
+		Double d1 = Double.parseDouble(str.toString());
+		DecimalFormat df = new DecimalFormat("###,###,###.00"); 
+		return df.format(d1);
+	}
 }
