@@ -893,6 +893,7 @@
 
 			//提交校验
 			function checkSub(){
+				showLayer();
 				var year = jQuery("#budgetYear").val();
 				var user = jQuery("#user").val();
 				var applySn = jQuery("#mainForm\\:formnum").val();
@@ -909,27 +910,32 @@
 				}
 				var flag = true;
 				if(year == null){
+					hideLayer();
 					___msg('温馨提示', "请选择预算年份");
 					flag = false;
 					return ;
 				}
 				if(user == null || user == "" || projectId == "-1"){
+					hideLayer();
 					___msg('温馨提示', "请选择申请人");
 					flag = false;
 					return ;
 				}
 				if(applySn == ""){
+					hideLayer();
 					___msg('温馨提示', "请输入单据编号");
 					flag = false;
 					return ;
 					
 				}
 				if(reciveCompany == "" || reciveCompany == "报销论文版面费请添加科室+杂志名称"){
+					hideLayer();
 					___msg('温馨提示', "请输入收款公司");
 					flag = false;
 					return ;
 				}
 				 if(invoicenum.length > 500){
+					 hideLayer();
 					___msg('温馨提示', "发票号最多500字");
 					flag = false;
 					return ;
@@ -946,11 +952,13 @@
 					}
 				} */
 				if(applyTime == ""){
+					hideLayer();
 					___msg('温馨提示', "请选择申请时间");
 					flag = false;
 					return ;
 				}
 				if(null == reimbursementer || reimbursementer == ""){
+					hideLayer();
 					___msg('温馨提示', "请输入报销人");
 					flag = false;
 					return ;
@@ -958,16 +966,19 @@
 				jQuery("input[name='money']").each(function(){
 					var price = jQuery(this).val();
 					if(price =="" ||  isNaN(price)){
+						hideLayer();
 						___msg('温馨提示', "请输入支出金额");
 						flag = false;
 						return;
 						if(parseFloat(price) < 0 || parseFloat(price) == 0){
+							hideLayer();
 							___msg('温馨提示', "请输入正确的数字");
 							flag = false;
 							return ;
 						}
 					}else{
 						if(parseFloat(price) > parseFloat(jQuery(this).parent().parent().find("td[name='canUseMoney']").text())){
+							hideLayer();
 							___msg('温馨提示', "支出金额不能大于可支出金额");
 							flag = false;
 							return;
@@ -976,11 +987,13 @@
 				});
 				var json = getJson();
 				if(json == '{"expend_list":[]}'){
+					hideLayer();
 					___msg('温馨提示', "请选择申请内容");
 					flag = false;
 					return;
 				}
 				if(comment != "" && comment.length >200){
+					hideLayer();
 					___msg('温馨提示', "备注不能大于200字");
 					flag = false;
 					return;
@@ -999,12 +1012,14 @@
 					};
 					___msg('温馨提示', data.message, {closed: ___dynamic_function});
 				} else {
+					hideLayer();
 					___msg('温馨提示', data.message);
 				}
 			}
 
 			//提交校验
 			function checkEdit(){
+				showLayer();
 				var expendInfoId = jQuery("#mainForm\\:expendApplyIdEdit").val();
 				var year = jQuery("#budgetYear").val();
 				var user = jQuery("#user").val();
@@ -1019,33 +1034,39 @@
 				var comment = jQuery("#mainForm\\:comment").val();
 				var flag = true;
 				if(year == null){
+					hideLayer();
 					___msg('温馨提示', "请选择预算年份");
 					flag = false;
 					return ;
 				}
 				if(user == null || user == "" || projectId == "-1"){
+					hideLayer();
 					___msg('温馨提示', "请选择报销人");
 					flag = false;
 					return ;
 				}
 				if(applySn == ""){
+					hideLayer();
 					___msg('温馨提示', "请输入单据编号");
 					flag = false;
 					return ;
 					
 				}
 				if(reciveCompany == ""){
+					hideLayer();
 					___msg('温馨提示', "请输入收款公司");
 					flag = false;
 					return ;
 				}
 
 				if(register == null || register == "" || register == "-1"){
+					hideLayer();
 					___msg('温馨提示', "请选择登记人");
 					flag = false;
 					return ;
 				}
 				if(invoicenum.length > 500){
+					hideLayer();
 					___msg('温馨提示', "发票号最多500字");
 					flag = false;
 					return ;
@@ -1067,11 +1088,13 @@
 					}
 				} */
 				if(applyTime == ""){
+					hideLayer();
 					___msg('温馨提示', "请选择申请时间");
 					flag = false;
 					return ;
 				}
 				if(null == reimbursementer || reimbursementer == ""){
+					hideLayer();
 					___msg('温馨提示', "请输入报销人");
 					flag = false;
 					return ;
@@ -1079,16 +1102,19 @@
 				jQuery("input[name='money']").each(function(){
 					var price = jQuery(this).val();
 					if(price =="" ||  isNaN(price)){
+						hideLayer();
 						___msg('温馨提示', "请输入支出金额");
 						flag = false;
 						return;
 						if(parseFloat(price) < 0 || parseFloat(price) == 0){
+							hideLayer();
 							___msg('温馨提示', "请输入正确的数字");
 							flag = false;
 							return ;
 						}
 					}else{
 						if(parseFloat(price) > parseFloat(jQuery(this).parent().parent().find("td[name='canUseMoney']").text())){
+							hideLayer();
 							___msg('温馨提示', "支出金额不能大于可支出金额");
 							flag = false;
 							return;
@@ -1097,11 +1123,13 @@
 				});
 				var json = getJson();
 				if(json == '{"expend_list":[]}'){
+					hideLayer();
 					___msg('温馨提示', "请选择申请内容");
 					flag = false;
 					return;
 				}
 				if(comment != "" && comment.length >200){
+					hideLayer();
 					___msg('温馨提示', "备注不能大于200字");
 					flag = false;
 					return;

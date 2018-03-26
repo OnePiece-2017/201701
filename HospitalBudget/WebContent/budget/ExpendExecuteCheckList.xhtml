@@ -382,6 +382,7 @@
 				return true;
 			}
 			function batchConfrim(){
+				showLayer();
 				var ids = "";
 				jQuery("input[name='check_confirm']").each(function(i){
 					if(jQuery(this).is(':checked')){
@@ -390,6 +391,7 @@
 					}
 				});
 				if(ids == ""){
+					hideLayer();
 					alert("请选择确认单");
 				}else{
 					ids = ids.substring(0,ids.length-1);
@@ -397,6 +399,7 @@
 				}
 			}
 			function batchReject(){
+				showLayer();
 				var ids = "";
 				jQuery("input[name='check_confirm']").each(function(i){
 					if(jQuery(this).is(':checked')){
@@ -405,6 +408,7 @@
 					}
 				});
 				if(ids == ""){
+					hideLayer();
 					alert("请选择驳回单");
 				}else{
 					ids = ids.substring(0,ids.length-1);
