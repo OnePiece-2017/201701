@@ -269,11 +269,12 @@
 
 				var hideDepartIds = jQuery("#mainForm\\:departmentIds").val();
 				if(hideDepartIds != null && hideDepartIds != "" ){
-					jQuery("#departmentIds").selectpicker();
+					jQuery("#departmentIds").selectpicker("render");
 					console.log(hideDepartIds);
 					var departIdsArr = hideDepartIds.split(",");
 					console.log(departIdsArr);
 					jQuery("#departmentIds").selectpicker("val",departIdsArr);
+					jQuery("#departmentIds").selectpicker("render");
 				}
 				jQuery('.form_date').datetimepicker({
 					language: 'zh-CN',
