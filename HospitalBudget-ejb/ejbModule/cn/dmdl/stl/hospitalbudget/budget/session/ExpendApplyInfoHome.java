@@ -101,7 +101,7 @@ public class ExpendApplyInfoHome extends CriterionEntityHome<ExpendApplyInfo>{
 			expendApplyInfoId = 0;
 		}
 		//查询当前登陆人的科室
-		String companySql = "select eai.recive_company from expend_apply_info eai LEFT JOIN user_info ui on ui.user_info_id=eai.insert_user where ui.department_info_id=" + sessionToken.getDepartmentInfoId();
+		String companySql = "select DISTINCT eai.recive_company from expend_apply_info eai LEFT JOIN user_info ui on ui.user_info_id=eai.insert_user where ui.department_info_id=" + sessionToken.getDepartmentInfoId();
 		companyList = new ArrayList<Object>();
 		List<Object> oldCompany = getEntityManager().createNativeQuery(companySql).getResultList();
 		if(oldCompany.size() > 0){

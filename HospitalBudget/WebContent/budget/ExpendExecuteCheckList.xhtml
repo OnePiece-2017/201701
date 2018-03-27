@@ -264,28 +264,58 @@
 							<s:span rendered="#{paginationModel.previousPageExist}">
 								<s:link view="#{servletContexts.request.servletPath}" value="首页">
 									<f:param name="page" value="1" />
+									<f:param value="#{expendExecuteCheckList.departmentId}" name="departmentId"/>
+									<f:param value="#{expendExecuteCheckList.applyUser}" name="applyUser"/>
+									<f:param value="#{expendExecuteCheckList.applyTime}" name="applyTime"/>
+									<f:param value="#{expendExecuteCheckList.moneyType}" name="moneyType"/>
+									<f:param value="#{expendExecuteCheckList.applyEndTime}" name="applyEndTime"/>
+									<f:param value="#{expendExecuteCheckList.reimbursementer}" name="reimbursementer"/>
 								</s:link>
 							</s:span>
 							<s:span rendered="#{paginationModel.previousPageExist}">
 								<s:link view="#{servletContexts.request.servletPath}" value="&lt;&lt;">
 									<f:param name="page" value="#{paginationModel.previousPage}" />
+									<f:param value="#{expendExecuteCheckList.departmentId}" name="departmentId"/>
+									<f:param value="#{expendExecuteCheckList.applyUser}" name="applyUser"/>
+									<f:param value="#{expendExecuteCheckList.applyTime}" name="applyTime"/>
+									<f:param value="#{expendExecuteCheckList.moneyType}" name="moneyType"/>
+									<f:param value="#{expendExecuteCheckList.applyEndTime}" name="applyEndTime"/>
+									<f:param value="#{expendExecuteCheckList.reimbursementer}" name="reimbursementer"/>
 								</s:link>
 							</s:span>
 							<a:repeat value="#{paginationModel.pageNoList}" var="_pageNo">
 								<span class="#{paginationModel.page == _pageNo ? 'page-current' : ''}">
 									<s:link view="#{servletContexts.request.servletPath}" value="#{_pageNo}">
 										<f:param name="page" value="#{_pageNo}" />
+										<f:param value="#{expendExecuteCheckList.departmentId}" name="departmentId"/>
+										<f:param value="#{expendExecuteCheckList.applyUser}" name="applyUser"/>
+										<f:param value="#{expendExecuteCheckList.applyTime}" name="applyTime"/>
+										<f:param value="#{expendExecuteCheckList.moneyType}" name="moneyType"/>
+										<f:param value="#{expendExecuteCheckList.applyEndTime}" name="applyEndTime"/>
+										<f:param value="#{expendExecuteCheckList.reimbursementer}" name="reimbursementer"/>
 									</s:link>
 								</span>
 							</a:repeat>
 							<s:span rendered="#{paginationModel.nextPageExist}">
 								<s:link view="#{servletContexts.request.servletPath}" value="&gt;&gt;">
 									<f:param name="page" value="#{paginationModel.nextPage}" />
+									<f:param value="#{expendExecuteCheckList.departmentId}" name="departmentId"/>
+									<f:param value="#{expendExecuteCheckList.applyUser}" name="applyUser"/>
+									<f:param value="#{expendExecuteCheckList.applyTime}" name="applyTime"/>
+									<f:param value="#{expendExecuteCheckList.moneyType}" name="moneyType"/>
+									<f:param value="#{expendExecuteCheckList.applyEndTime}" name="applyEndTime"/>
+									<f:param value="#{expendExecuteCheckList.reimbursementer}" name="reimbursementer"/>
 								</s:link>
 							</s:span>
 							<s:span rendered="#{paginationModel.nextPageExist}">
 								<s:link view="#{servletContexts.request.servletPath}" value="尾页">
 									<f:param name="page" value="#{paginationModel.lastPage}" />
+									<f:param value="#{expendExecuteCheckList.departmentId}" name="departmentId"/>
+									<f:param value="#{expendExecuteCheckList.applyUser}" name="applyUser"/>
+									<f:param value="#{expendExecuteCheckList.applyTime}" name="applyTime"/>
+									<f:param value="#{expendExecuteCheckList.moneyType}" name="moneyType"/>
+									<f:param value="#{expendExecuteCheckList.applyEndTime}" name="applyEndTime"/>
+									<f:param value="#{expendExecuteCheckList.reimbursementer}" name="reimbursementer"/>
 								</s:link>
 							</s:span>
 							<s:span rendered="#{paginationModel.lastPage > 0}">
@@ -299,7 +329,14 @@
 									<input type="text" id="pageIndex" />
 								</span>
 								<span class="page-goto">
-									<s:link value="确定" id="gotoPageLink" styleClass="page-determine" view="#{servletContexts.request.servletPath}" onclick="return gotoPage(#{paginationModel.lastPage});" />
+									<s:link value="确定" id="gotoPageLink" styleClass="page-determine" view="#{servletContexts.request.servletPath}" onclick="return gotoPage(#{paginationModel.lastPage});" >
+										<f:param value="#{expendExecuteCheckList.departmentId}" name="departId"/>
+										<f:param value="#{expendExecuteCheckList.applyUser}" name="applyUser"/>
+										<f:param value="#{expendExecuteCheckList.applyTime}" name="applyTime"/>
+										<f:param value="#{expendExecuteCheckList.moneyType}" name="moneyType"/>
+										<f:param value="#{expendExecuteCheckList.applyEndTime}" name="applyEndTime"/>
+										<f:param value="#{expendExecuteCheckList.reimbursementer}" name="reimbursementer"/>
+									</s:link>
 								</span>
 							</s:fragment>
 						</td>

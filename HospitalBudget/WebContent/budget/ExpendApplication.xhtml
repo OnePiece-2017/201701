@@ -1006,13 +1006,13 @@
 
 			//保存回调
 			function saveComplete(data){
+				hideLayer();
 				if (data != null && 'INVOKE_SUCCESS' == data.invoke_result) {
 				    ___dynamic_function = function() {
 				    	window.location.href = '../budget/ExpendApplayList.seam';
 					};
 					___msg('温馨提示', data.message, {closed: ___dynamic_function});
 				} else {
-					hideLayer();
 					___msg('温馨提示', data.message);
 				}
 			}
