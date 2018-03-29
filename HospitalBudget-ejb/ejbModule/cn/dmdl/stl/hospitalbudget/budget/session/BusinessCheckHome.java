@@ -43,7 +43,7 @@ public class BusinessCheckHome extends CriterionEntityHome<Object>{
 		double totalContractAmount = 0;
 		String dataSql = "select SUM(t.audit_amount) from ys_audit_contract_info t where t.generic_project_id = " + genericProjectId + " and t.deleted = 0";
 		List<Object> dataList = getEntityManager().createNativeQuery(dataSql).getResultList();
-		if (dataList != null && dataList.size() > 0) {
+		if (dataList != null && dataList.size() > 0 && null != dataList.get(0)) {
 			totalContractAmount = Double.parseDouble(dataList.get(0).toString());
 		}
 		return totalContractAmount;
