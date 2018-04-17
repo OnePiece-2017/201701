@@ -71,17 +71,17 @@ public class DisburseStatisticalList extends CriterionNativeQuery<Object[]> {
 		
 		StringBuffer sql = new StringBuffer();
 		sql.append(" select nepi.normal_expend_plan_id,if(nepi.project_id is null,gp.the_value,rp.the_value) as the_value,");
-		sql.append(" if(nepi.project_id is null,nepi.generic_project_id,nepi.project_id)as the_id,if(nepi.project_id is null,2,1) as type,");
+		sql.append(" if(nepi.project_id is null,nepi.generic_project_id,nepi.project_id)as the_id,if(nepi.project_id is null,2,1) as typet,");
 		sql.append(" FORMAT(nepi.budget_amount,2) as budget_amount,");
-		sql.append(" FORMAT(nepi.budget_amount_frozen,2) as budget_amount_frozen,");
-		sql.append(" FORMAT(nepi.budget_amount_surplus,2) as budget_amount_surplus,");
-		sql.append(" round(nepi.budget_amount_frozen / nepi.budget_amount * 100,2) ");
+		sql.append(" FORMAT(if(nepi.project_id IS NULL,sum(eap1.expend_money),sum(eap.expend_money)),2) AS budget_amount_frozen,");
+		sql.append(" FORMAT(nepi.budget_amount - if(nepi.project_id IS NULL,sum(eap1.expend_money),sum(eap.expend_money)),2) as budget_amount_surplus,");
+		sql.append(" round(if(nepi.project_id IS NULL,sum(eap1.expend_money),sum(eap.expend_money)) / nepi.budget_amount * 100,2) as roundnum ");
 		sql.append(" from normal_expend_plan_info nepi");
 		sql.append(" left join generic_project gp on gp.the_id = nepi.generic_project_id");
 		sql.append(" left join routine_project rp on rp.the_id = nepi.project_id");
-//		sql.append(" left join ys_department_info ydi on ydi.the_id = gp.department_info_id");
-//		sql.append(" left join ys_department_info ydi1 on ydi1.the_id = rp.department_info_id");
-		sql.append(" where 1 = 1");
+		sql.append(" LEFT JOIN expend_apply_project eap on eap.project_id=nepi.project_id ");
+		sql.append(" LEFT JOIN expend_apply_project eap1 on eap1.generic_project_id=nepi.generic_project_id ");
+		sql.append(" where 1 = 1 and (eap.deleted=0 or eap1.deleted=0)	");
 //		String wc = commonDaoHome.getDepartmentInfoListByUserIdWhereCondition();
 //		if (wc != null && !"".equals(wc)) {
 //			sql.append(" and routine_project.department_info_id in (" + wc + ")");
@@ -106,7 +106,8 @@ public class DisburseStatisticalList extends CriterionNativeQuery<Object[]> {
 			sql.append(" and (gp.the_value like '%").append(projectName).append("%' ");
 			sql.append(" or rp.the_value like '%").append(projectName).append("%') ");
 		}
-		sql.insert(0, "select * from (").append(") as recordset");
+		sql.append(" group by nepi.normal_expend_plan_id ");
+		//sql.insert(0, "select * from (").append(") as recordset");
 		System.out.println(beginYearParam+"---------"+departmentInfoId+"--------------"+fundsSourceId);
 		setEjbql(sql.toString());
 		return super.createQuery();
@@ -341,7 +342,7 @@ public class DisburseStatisticalList extends CriterionNativeQuery<Object[]> {
 		}
 		
 		StringBuffer sql = new StringBuffer();
-		sql.append(" select nepi.normal_expend_plan_id,if(nepi.project_id is null,gp.the_value,rp.the_value) as the_value,");
+		/*sql.append(" select nepi.normal_expend_plan_id,if(nepi.project_id is null,gp.the_value,rp.the_value) as the_value,");
 		sql.append(" if(nepi.project_id is null,nepi.generic_project_id,nepi.project_id)as the_id,if(nepi.project_id is null,2,1) as type,");
 		sql.append(" FORMAT(nepi.budget_amount,2) as budget_amount,");
 		sql.append(" FORMAT(nepi.budget_amount_frozen,2) as budget_amount_frozen,");
@@ -355,7 +356,24 @@ public class DisburseStatisticalList extends CriterionNativeQuery<Object[]> {
 		sql.append(" LEFT JOIN ys_department_info y2 on rp.department_info_id=y2.the_id ");
 //		sql.append(" left join ys_department_info ydi on ydi.the_id = gp.department_info_id");
 //		sql.append(" left join ys_department_info ydi1 on ydi1.the_id = rp.department_info_id");
-		sql.append(" where 1 = 1");
+		sql.append(" where 1 = 1");*/
+		
+		
+		sql.append(" select nepi.normal_expend_plan_id,if(nepi.project_id is null,gp.the_value,rp.the_value) as the_value,");
+		sql.append(" if(nepi.project_id is null,nepi.generic_project_id,nepi.project_id)as the_id,if(nepi.project_id is null,2,1) as typet,");
+		sql.append(" FORMAT(nepi.budget_amount,2) as budget_amount,");
+		sql.append(" FORMAT(if(nepi.project_id IS NULL,sum(eap1.expend_money),sum(eap.expend_money)),2) AS budget_amount_frozen,");
+		sql.append(" FORMAT(nepi.budget_amount - if(nepi.project_id IS NULL,sum(eap1.expend_money),sum(eap.expend_money)),2) as budget_amount_surplus,");
+		sql.append(" round(if(nepi.project_id IS NULL,sum(eap1.expend_money),sum(eap.expend_money)) / nepi.budget_amount * 100,2) as roundnum, ");
+		sql.append(" if (nepi.project_id IS NULL, y1.the_value, y2.the_value) as depart_name ");
+		sql.append(" from normal_expend_plan_info nepi");
+		sql.append(" left join generic_project gp on gp.the_id = nepi.generic_project_id");
+		sql.append(" left join routine_project rp on rp.the_id = nepi.project_id");
+		sql.append(" LEFT JOIN expend_apply_project eap on eap.project_id=nepi.project_id ");
+		sql.append(" LEFT JOIN expend_apply_project eap1 on eap1.generic_project_id=nepi.generic_project_id ");
+		sql.append(" LEFT JOIN ys_department_info y1 on gp.department_info_id=y1.the_id ");
+		sql.append(" LEFT JOIN ys_department_info y2 on rp.department_info_id=y2.the_id ");
+		sql.append(" where 1 = 1 and (eap.deleted=0 or eap1.deleted=0)	");
 //		String wc = commonDaoHome.getDepartmentInfoListByUserIdWhereCondition();
 //		if (wc != null && !"".equals(wc)) {
 //			sql.append(" and routine_project.department_info_id in (" + wc + ")");
@@ -380,7 +398,8 @@ public class DisburseStatisticalList extends CriterionNativeQuery<Object[]> {
 			sql.append(" and (gp.the_value like '%").append(projectName).append("%' ");
 			sql.append(" or rp.the_value like '%").append(projectName).append("%') ");
 		}
-		sql.insert(0, "select * from (").append(") as recordset");
+		sql.append(" group by nepi.normal_expend_plan_id ");
+		//sql.insert(0, "select * from (").append(") as recordset");
 		List<Object[]> list = getEntityManager().createNativeQuery(sql.toString()).getResultList();
 		
 		

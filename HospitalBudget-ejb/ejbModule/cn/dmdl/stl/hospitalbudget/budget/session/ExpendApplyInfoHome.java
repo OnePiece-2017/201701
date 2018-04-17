@@ -461,7 +461,7 @@ public class ExpendApplyInfoHome extends CriterionEntityHome<ExpendApplyInfo>{
 		}
 		contractJson.element("is_audit", false);
 		contractList = new ArrayList<Object[]>();
-		double money = getExpendInfoMoney(projectType,projectId);
+		double money = getExpendAllMoney(projectType,projectId);
 		if(null != projectId && -1 != projectId){
 			if(projectType == 1){
 				StringBuffer sql = new StringBuffer();
@@ -490,11 +490,12 @@ public class ExpendApplyInfoHome extends CriterionEntityHome<ExpendApplyInfo>{
 						totalMoney = bd1.setScale(1, BigDecimal.ROUND_HALF_UP).toPlainString();
 					}
 					if(null != obj[3]){
-						BigDecimal bd1 = new BigDecimal(Double.parseDouble(obj[3].toString()) + money);
+						//BigDecimal bd1 = new BigDecimal(Double.parseDouble(obj[3].toString()) + money);
+						BigDecimal bd1 = new BigDecimal(money);
 						usedMoney = bd1.setScale(1, BigDecimal.ROUND_HALF_UP).toPlainString();
 					}
 					if(null != obj[4]){
-						BigDecimal bd1 = new BigDecimal(Double.parseDouble(obj[4].toString()) - money);
+						BigDecimal bd1 = new BigDecimal(Double.parseDouble(totalMoney) - money);
 						canUseMoney = bd1.setScale(1, BigDecimal.ROUND_HALF_UP).toPlainString();
 					}
 				}
@@ -525,11 +526,13 @@ public class ExpendApplyInfoHome extends CriterionEntityHome<ExpendApplyInfo>{
 						totalMoney = bd1.setScale(1, BigDecimal.ROUND_HALF_UP).toPlainString();
 					}
 					if(null != obj[3]){
-						BigDecimal bd1 = new BigDecimal(Double.parseDouble(obj[3].toString())+ money);
+						//BigDecimal bd1 = new BigDecimal(Double.parseDouble(obj[3].toString())+ money);
+						BigDecimal bd1 = new BigDecimal(money);
 						usedMoney = bd1.setScale(1, BigDecimal.ROUND_HALF_UP).toPlainString();
 					}
 					if(null != obj[4]){
-						BigDecimal bd1 = new BigDecimal(Double.parseDouble(obj[4].toString())- money);
+						//BigDecimal bd1 = new BigDecimal(Double.parseDouble(obj[4].toString())- money);
+						BigDecimal bd1 = new BigDecimal(Double.parseDouble(totalMoney)- money);
 						canUseMoney = bd1.setScale(1, BigDecimal.ROUND_HALF_UP).toPlainString();
 						
 					}
@@ -1656,6 +1659,42 @@ public class ExpendApplyInfoHome extends CriterionEntityHome<ExpendApplyInfo>{
 		return money;
 	}
 	
+	
+	
+	/**
+	 * 获取某个项目未完成的申请单中的钱
+	 * @param projectType
+	 * @param projectId
+	 * @return
+	 */
+	public Double getExpendAllMoney(int projectType,int projectId){
+		double money = 0d;
+		StringBuffer sql = new StringBuffer();
+		if(projectType == 1){
+			sql.append(" select sum(eap.expend_money) from expend_apply_info eai  ");
+			sql.append(" LEFT JOIN expend_apply_project eap on eai.expend_apply_info_id=eap.expend_apply_info_id ");
+			sql.append(" where  ");
+			sql.append(" eap.project_id= ").append(projectId);
+			sql.append(" and eai.deleted = 0 ");
+			sql.append(" GROUP BY eap.project_id ");
+		}else{
+			sql.append(" select sum(eap.expend_money) from expend_apply_info eai  ");
+			sql.append(" LEFT JOIN expend_apply_project eap on eai.expend_apply_info_id=eap.expend_apply_info_id ");
+			sql.append(" where ");
+			sql.append(" eap.generic_project_id= ").append(projectId);
+			sql.append(" and eai.deleted = 0 ");
+			sql.append(" GROUP BY eap.project_id ");
+		}
+		
+		List<Object> moneyList = getEntityManager().createNativeQuery(sql.toString()).getResultList();
+		if(null != moneyList && moneyList.size() > 0){
+			Object obj = moneyList.get(0);
+			if(null != obj){
+				money = Double.parseDouble(obj.toString());
+			}
+		}
+		return money;
+	}
 	public List<Object[]> getDepartmentInfoList() {
 		return departmentInfoList;
 	}
