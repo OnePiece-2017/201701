@@ -16,6 +16,7 @@ import java.util.Map;
 
 import javax.faces.context.FacesContext;
 import javax.persistence.Query;
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.poi.hssf.usermodel.HSSFCell;
@@ -721,8 +722,28 @@ public class ExpendApplayList extends CriterionNativeQuery<Object[]> {
 	 * 导出
 	 */
 	public void expExcel(){
-		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 		FacesContext ctx = FacesContext.getCurrentInstance();
+		HttpServletRequest request = (HttpServletRequest) ctx.getExternalContext().getRequest();
+		//获取参数，不知道为什么s:link不能默认的传过来。。。。
+		if(null != request.getParameter("departmentId") && !request.getParameter("departmentId").equals("")){
+			departmentId = Integer.valueOf(request.getParameter("departmentId").toString());
+		}
+		if(null != request.getParameter("applyUser") && !request.getParameter("applyUser").equals("")){
+			applyUser = Integer.valueOf(request.getParameter("applyUser").toString());
+		}
+		if(null != request.getParameter("applyTime") && !request.getParameter("applyTime").equals("")){
+			applyTime = request.getParameter("applyTime").toString();
+		}
+		if(null != request.getParameter("applyEndTime") && !request.getParameter("applyEndTime").equals("")){
+			applyEndTime = request.getParameter("applyEndTime").toString();
+		}
+		if(null != request.getParameter("searchKey") && !request.getParameter("searchKey").equals("")){
+			searchKey = request.getParameter("searchKey").toString();
+		}
+		if(null != request.getParameter("status") && !request.getParameter("status").equals("")){
+			status = Integer.valueOf(request.getParameter("status").toString());
+		}
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 		ctx.responseComplete();
 		HttpServletResponse response = (HttpServletResponse) ctx
 				.getExternalContext().getResponse();
