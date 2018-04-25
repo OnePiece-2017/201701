@@ -81,7 +81,10 @@ public class DisburseStatisticalList extends CriterionNativeQuery<Object[]> {
 		sql.append(" left join routine_project rp on rp.the_id = nepi.project_id");
 		sql.append(" LEFT JOIN expend_apply_project eap on eap.project_id=nepi.project_id ");
 		sql.append(" LEFT JOIN expend_apply_project eap1 on eap1.generic_project_id=nepi.generic_project_id ");
+		sql.append(" left join expend_apply_info eai on eap.expend_apply_info_id=eai.expend_apply_info_id ");
+		sql.append(" LEFT JOIN expend_apply_info eai1 on eap1.expend_apply_info_id=eai1.expend_apply_info_id ");
 		sql.append(" where 1 = 1 and (eap.deleted=0 or eap1.deleted=0)	");
+		sql.append(" and (eai.deleted=0 or eai1.deleted=0) ");
 //		String wc = commonDaoHome.getDepartmentInfoListByUserIdWhereCondition();
 //		if (wc != null && !"".equals(wc)) {
 //			sql.append(" and routine_project.department_info_id in (" + wc + ")");
@@ -373,7 +376,10 @@ public class DisburseStatisticalList extends CriterionNativeQuery<Object[]> {
 		sql.append(" LEFT JOIN expend_apply_project eap1 on eap1.generic_project_id=nepi.generic_project_id ");
 		sql.append(" LEFT JOIN ys_department_info y1 on gp.department_info_id=y1.the_id ");
 		sql.append(" LEFT JOIN ys_department_info y2 on rp.department_info_id=y2.the_id ");
+		sql.append(" left join expend_apply_info eai on eap.expend_apply_info_id=eai.expend_apply_info_id ");
+		sql.append(" LEFT JOIN expend_apply_info eai1 on eap1.expend_apply_info_id=eai1.expend_apply_info_id ");
 		sql.append(" where 1 = 1 and (eap.deleted=0 or eap1.deleted=0)	");
+		sql.append(" and (eai.deleted=0 or eai1.deleted=0) ");
 //		String wc = commonDaoHome.getDepartmentInfoListByUserIdWhereCondition();
 //		if (wc != null && !"".equals(wc)) {
 //			sql.append(" and routine_project.department_info_id in (" + wc + ")");
