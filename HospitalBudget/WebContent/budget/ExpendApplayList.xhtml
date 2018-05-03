@@ -134,33 +134,15 @@
 							</div>
 						</td>
 						<td width="50%">
-							<div class="fl" style="width: 297px;">
+							 <div class="fl" style="width: 400px;">
 							<table width="100%" cellpadding="0" cellspacing="0">
 								<tr>
-									<td valign="middle" width="100%" style="padding-left:143px;" >
-											<h:inputHidden value="#{expendApplayList.departmentId}" id="departId"/>
-											<h:inputHidden value="#{expendApplayList.applyUser}" id="applyUser"/>
-											<h:inputHidden value="#{expendApplayList.applyTime}" id="applyTime"/>
-											<h:inputHidden value="#{expendApplayList.applyEndTime}" id="applyEndTime"/>
-											<h:inputHidden value="#{expendApplayList.status}" id="status"/>
-										<h:commandButton styleClass="btn btn-block btn-primary mt10 ml20" action="/budget/ExpendApplayList.xhtml"  onclick="return check();" value="搜索" />
+									<td valign="middle" width="36%" align="right">
+										<span class="field-name mb10" style="display: block;margin-bottom: 10px;width: 100%;height: 34px;line-height: 34px;">项目名称</span>
 									</td>
-									<td valign="middle" width="100%" style="padding-left:42px;" >
-										<div class="fl" style="margin-left:36px;">
-											<s:link value="添加" view="/budget/ExpendApplication.xhtml" styleClass="btn btn-block btn-success fr mt10 mr10" style="font-size: 12px; margin-left:10px">
-											</s:link>
-										</div>
-									</td>
-									<td valign="middle" width="100%" style="padding-left:42px;" >
-										<div class="fl" style="margin-left:0px;    margin-top: 13px;">
-											<s:link  styleClass="btn btn-primary mr15" view="/budget/ExpendApplyList.xhtml" action="#{expendApplayList.expExcel()}" style="width: 62px;">导出
-					                			<f:param name="departmentId" value="#{expendApplayList.departmentId}"/>
-					                			<f:param name="applyUser" value="#{expendApplayList.applyUser}"/>
-					                			<f:param name="applyTime" value="#{expendApplayList.applyTime}"/>
-					                			<f:param name="applyEndTime" value="#{expendApplayList.applyEndTime}"/>
-					                			<f:param name="searchKey" value="#{expendApplayList.searchKey}"/>
-					                			<f:param name="status" value="#{expendApplayList.status}"/>
-					                		</s:link>
+									<td valign="middle" width="64%" style="padding-left:18px;">
+			                            <div class="form-group">
+											<h:inputText id="projectName" value="#{expendApplayList.projectName}" styleClass="form-control keyword" />
 										</div>
 									</td>
 								</tr>
@@ -193,8 +175,41 @@
 							</div>
 						</td>
 						<td width="50%">
-							<div class="fl" style="width: 487px;">
+							<!-- <div class="fl" style="width: 487px;">
 								
+							</div> -->
+							<div class="fl" style="width: 297px;">
+							<table width="100%" cellpadding="0" cellspacing="0">
+								<tr>
+									<td valign="middle" width="100%" style="padding-left:143px;" >
+											<h:inputHidden value="#{expendApplayList.departmentId}" id="departId"/>
+											<h:inputHidden value="#{expendApplayList.applyUser}" id="applyUser"/>
+											<h:inputHidden value="#{expendApplayList.applyTime}" id="applyTime"/>
+											<h:inputHidden value="#{expendApplayList.applyEndTime}" id="applyEndTime"/>
+											<h:inputHidden value="#{expendApplayList.status}" id="status"/>
+										<h:commandButton styleClass="btn btn-block btn-primary  ml20" action="/budget/ExpendApplayList.xhtml"  onclick="return check();" value="搜索" />
+									</td>
+									<td valign="middle" width="100%" style="padding-left:42px;" >
+										<div class="fl" style="margin-left:36px;">
+											<s:link value="添加" view="/budget/ExpendApplication.xhtml" styleClass="btn btn-block btn-success fr mr10" style="font-size: 12px; margin-left:10px">
+											</s:link>
+										</div>
+									</td>
+									<td valign="middle" width="100%" style="padding-left:42px;" >
+										<div class="fl" style="margin-left:0px;    ">
+											<s:link  styleClass="btn btn-primary mr15" view="/budget/ExpendApplyList.xhtml" action="#{expendApplayList.expExcel()}" style="width: 62px;">导出
+					                			<f:param name="departmentId" id="departmentId" value="#{expendApplayList.departmentId}"/>
+					                			<f:param name="applyUser" value="#{expendApplayList.applyUser}"/>
+					                			<f:param name="applyTime" value="#{expendApplayList.applyTime}"/>
+					                			<f:param name="applyEndTime" value="#{expendApplayList.applyEndTime}"/>
+					                			<f:param name="searchKey" value="#{expendApplayList.searchKey}"/>
+					                			<f:param name="status" value="#{expendApplayList.status}"/>
+					                			<f:param name="projectName" value="#{expendApplayList.projectName}"/>
+					                		</s:link>
+										</div>
+									</td>
+								</tr>
+							</table>
 							</div>
 						</td>
 					</tr>
@@ -205,15 +220,16 @@
 		<div class="g-data-list-table">
 		    <table class="record table table-hover table-striped" width="100%" cellpadding="0" cellspacing="0">
 		        <tr>
-		            <th width="5%">序号</th>
-		            <th width="12%">单据编号</th>
-		            <th width="7%">支出年份</th>
-		            <th width="10%">总金额</th>
+		            <th width="3%">序号</th>
+		            <th width="10%">单据编号</th>
+		            <th width="10%">项目名称</th>
+		            <th width="6%">支出年份</th>
+		            <th width="8%">总金额</th>
 		            <th width="13%" style="min-width: 130px;">收款单位</th>
 <!-- 		            <th width="10%">发票号</th> -->
-		            <th width="7%">申请人</th>
-		            <th width="10%">申请时间</th>
-		            <th width="5%">发票张数</th>
+		            <th width="6%">申请人</th>
+		            <th width="8%">申请时间</th>
+		            <th width="4%">发票张数</th>
 		            <th width="6%">状态</th>
 		            <th width="8%">操作</th>
 		        </tr>
@@ -222,6 +238,9 @@
 			        	<td>#{_row + 1}</td>
 			        	<td>
 			        		#{_result[1]}
+			        	</td>
+			        	<td style="max-width:130px;">
+			        	<p style="width:100%;height:20px;line-height:20px;margin-bottom: 0;overflow: hidden;text-overflow:ellipsis; white-space:nowrap;" title="#{_result[13]}">#{_result[13]}</p>
 			        	</td>
 			        	<td>#{_result[2]}</td>
 			        	<td>
@@ -247,6 +266,14 @@
 			        	<td>
 			        		<s:link title="查看" view="/budget/ExpendInfoDetail.xhtml" style="text-decoration: none;">
 			        			<f:param name="expendApplyInfoId" value="#{_result[0]}" />
+			        			<f:param name="page" value="1" />
+								<f:param name="departmentId" value="#{expendApplayList.departmentId}"/>
+	                			<f:param name="applyUser" value="#{expendApplayList.applyUser}"/>
+	                			<f:param name="applyTime" value="#{expendApplayList.applyTime}"/>
+	                			<f:param name="applyEndTime" value="#{expendApplayList.applyEndTime}"/>
+	                			<f:param name="searchKey" value="#{expendApplayList.searchKey}"/>
+	                			<f:param name="status" value="#{expendApplayList.status}"/>
+	                			<f:param name="projectName" value="#{expendApplayList.projectName}"/>
 			        			<i class="fa fa-search"></i>
 			        		</s:link>
 			        		<s:fragment rendered="#{_result[10] ne 1 and _result[10] ne 2 and _result[10] ne 5 and _result[11] ne 2}">
@@ -283,6 +310,7 @@
 		                			<f:param name="applyEndTime" value="#{expendApplayList.applyEndTime}"/>
 		                			<f:param name="searchKey" value="#{expendApplayList.searchKey}"/>
 		                			<f:param name="status" value="#{expendApplayList.status}"/>
+		                			<f:param name="projectName" value="#{expendApplayList.projectName}"/>
 								</s:link>
 							</s:span>
 							<s:span rendered="#{paginationModel.previousPageExist}">
@@ -294,6 +322,7 @@
 		                			<f:param name="applyEndTime" value="#{expendApplayList.applyEndTime}"/>
 		                			<f:param name="searchKey" value="#{expendApplayList.searchKey}"/>
 		                			<f:param name="status" value="#{expendApplayList.status}"/>
+		                			<f:param name="projectName" value="#{expendApplayList.projectName}"/>
 								</s:link>
 							</s:span>
 							<a:repeat value="#{paginationModel.pageNoList}" var="_pageNo">
@@ -306,6 +335,7 @@
 			                			<f:param name="applyEndTime" value="#{expendApplayList.applyEndTime}"/>
 			                			<f:param name="searchKey" value="#{expendApplayList.searchKey}"/>
 			                			<f:param name="status" value="#{expendApplayList.status}"/>
+			                			<f:param name="projectName" value="#{expendApplayList.projectName}"/>
 									</s:link>
 								</span>
 							</a:repeat>
@@ -318,6 +348,7 @@
 		                			<f:param name="applyEndTime" value="#{expendApplayList.applyEndTime}"/>
 		                			<f:param name="searchKey" value="#{expendApplayList.searchKey}"/>
 		                			<f:param name="status" value="#{expendApplayList.status}"/>
+		                			<f:param name="projectName" value="#{expendApplayList.projectName}"/>
 								</s:link>
 							</s:span>
 							<s:span rendered="#{paginationModel.nextPageExist}">
@@ -329,6 +360,7 @@
 		                			<f:param name="applyEndTime" value="#{expendApplayList.applyEndTime}"/>
 		                			<f:param name="searchKey" value="#{expendApplayList.searchKey}"/>
 		                			<f:param name="status" value="#{expendApplayList.status}"/>
+		                			<f:param name="projectName" value="#{expendApplayList.projectName}"/>
 								</s:link>
 							</s:span>
 							<s:span rendered="#{paginationModel.lastPage > 0}">
@@ -349,6 +381,7 @@
 			                			<f:param name="applyEndTime" value="#{expendApplayList.applyEndTime}"/>
 			                			<f:param name="searchKey" value="#{expendApplayList.searchKey}"/>
 			                			<f:param name="status" value="#{expendApplayList.status}"/>
+										<f:param name="projectName" value="#{expendApplayList.projectName}"/>
 									</s:link>
 								</span>
 							</s:fragment>

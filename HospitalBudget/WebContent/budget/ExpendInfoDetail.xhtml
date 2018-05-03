@@ -87,7 +87,7 @@
 			<br />
 		</div>
 			<div class="pd0-10 pt30">
-				<div class="g-data-list-table freeze-attendProject" style="height: 44px;">
+				<div class="g-data-list-table freeze-attendProject" style="height: 44px;min-height: 100px;">
 				    <table class="record" width="100%" cellpadding="0" cellspacing="0">
 				        <tr>
 				            <th width="5%">序号</th>
@@ -121,7 +121,18 @@
 					<table class="normal-btn">
 						<tr>
 							<td>
-								<s:button id="cancel" value="返回" view="/budget/ExpendApplayList.xhtml" propagation="none" styleClass="btn btn-default" />
+								<!-- <s:button id="cancel" value="返回" view="/budget/ExpendApplayList.xhtml" propagation="none" styleClass="btn btn-default" /> -->
+								<s:link title="返回" view="/budget/ExpendApplayList.xhtml" styleClass="btn btn-default">返回
+				        			<f:param name="expendApplyInfoId" value="#{_result[0]}" />
+				        			<f:param name="page" value="#{expendInfoDetail.page}" />
+									<f:param name="departmentId" value="#{expendInfoDetail.departmentId}"/>
+		                			<f:param name="applyUser" value="#{expendInfoDetail.applyUser}"/>
+		                			<f:param name="applyTime" value="#{expendInfoDetail.applyTime}"/>
+		                			<f:param name="applyEndTime" value="#{expendInfoDetail.applyEndTime}"/>
+		                			<f:param name="searchKey" value="#{expendInfoDetail.searchKey}"/>
+		                			<f:param name="status" value="#{expendInfoDetail.status}"/>
+		                			<f:param name="projectName" value="#{expendInfoDetail.projectName}"/>
+				        		</s:link>
 							</td>
 						</tr>
 					</table>

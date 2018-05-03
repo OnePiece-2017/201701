@@ -22,6 +22,16 @@ public class ExpendInfoDetail extends CriterionEntityHome<ExpendApplyInfo>{
 	private Object[] expendApplyInfo = new Object[14];//公共头部
 	
 	
+	private Integer departmentId;//科室id
+	private Integer applyUser;//申请编制人
+	private String applyTime;//申请时间
+	private String applyEndTime;//申请结束时间
+	private String searchKey = "";//搜索条件
+	private String projectName="";//项目名称
+	private Integer status;
+	private Integer page;
+	
+	
 	/**
 	 * 初始化
 	 * @param oldTaskOrderId
@@ -150,6 +160,54 @@ public class ExpendInfoDetail extends CriterionEntityHome<ExpendApplyInfo>{
 	}
 	public void setExpendApplyInfo(Object[] expendApplyInfo) {
 		this.expendApplyInfo = expendApplyInfo;
+	}
+	public Integer getDepartmentId() {
+		return departmentId;
+	}
+	public void setDepartmentId(Integer departmentId) {
+		this.departmentId = departmentId;
+	}
+	public Integer getApplyUser() {
+		return applyUser;
+	}
+	public void setApplyUser(Integer applyUser) {
+		this.applyUser = applyUser;
+	}
+	public String getApplyTime() {
+		return applyTime;
+	}
+	public void setApplyTime(String applyTime) {
+		this.applyTime = applyTime;
+	}
+	public String getApplyEndTime() {
+		return applyEndTime;
+	}
+	public void setApplyEndTime(String applyEndTime) {
+		this.applyEndTime = applyEndTime;
+	}
+	public String getSearchKey() {
+		return searchKey;
+	}
+	public void setSearchKey(String searchKey) {
+		this.searchKey = searchKey;
+	}
+	public String getProjectName() {
+		return projectName;
+	}
+	public void setProjectName(String projectName) {
+		this.projectName = projectName;
+	}
+	public Integer getStatus() {
+		return status;
+	}
+	public void setStatus(Integer status) {
+		this.status = status;
+	}
+	public Integer getPage() {
+		return page;
+	}
+	public void setPage(Integer page) {
+		this.page = page;
 	}
 	
 	

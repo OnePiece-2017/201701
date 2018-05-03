@@ -53,6 +53,7 @@ public class ExpendApplayList extends CriterionNativeQuery<Object[]> {
 	protected SessionToken sessionToken;
 	private List<Object[]> expendApplyInfoList;
 	private String searchKey = "";//搜索条件
+	private String projectName="";//项目名称
 	//搜索
 	private List<Object[]> departList;//科室列表
 	private Integer departmentId;//科室id
@@ -336,7 +337,7 @@ public class ExpendApplayList extends CriterionNativeQuery<Object[]> {
 				expendApplyInfo.setInsertUser(userId);
 				expendApplyInfo.setInsertTime(venDate);
 				expendApplyInfo.setDeleted(false);
-				expendApplyInfo.setSummary("1");
+				expendApplyInfo.setSummary((invoiceNum != null ? invoiceNum.split(",").length + "" : "1"));
 				expendApplyInfo.setReimbursementer(oper);
 				expendApplyInfo.setExpendApplyStatus(0);
 				expendApplyInfo.setTaskOrderId(0);
@@ -484,10 +485,14 @@ public class ExpendApplayList extends CriterionNativeQuery<Object[]> {
 		sql.append(" eai.apply_time, ");//7申请时间
 		sql.append(" eai.summary, ");//8摘要
 		sql.append(" eai.`comment`, ");//9备注
-		sql.append(" eai.expend_apply_status,eai.explend_source ");//10状态
+		sql.append(" eai.expend_apply_status,eai.explend_source, ");//10状态
+		sql.append(" IFNULL(rp.the_value,gp.the_value) project_name ");
 		sql.append(" FROM expend_apply_info eai ");
 		sql.append(" LEFT JOIN user_info ui ON eai.applay_user_id = ui.user_info_id ");
 		sql.append(" LEFT JOIN user_info_extend uie on ui.user_info_extend_id=uie.user_info_extend_id ");
+		sql.append(" LEFT JOIN expend_apply_project eap on eai.expend_apply_info_id=eap.expend_apply_info_id ");
+		sql.append(" LEFT JOIN generic_project gp on gp.the_id=eap.generic_project_id ");
+		sql.append(" LEFT JOIN routine_project rp on rp.the_id=eap.project_id ");
 		sql.append(" where eai.deleted=0 ");
 		
 		if(privateRole){
@@ -514,8 +519,12 @@ public class ExpendApplayList extends CriterionNativeQuery<Object[]> {
 		if(null != status && status != -1 ){
 			sql.append(" and eai.expend_apply_status=").append(status);
 		}
-		sql.append(" order by eai.insert_time desc,eai.expend_apply_code desc");
-		sql.insert(0, "select * from (").append(") as recordset ");
+		//sql.append(" order by eai.insert_time desc,eai.expend_apply_code desc");
+		sql.insert(0, "select *,GROUP_CONCAT(recordset.project_name) as pname from (").append(") as recordset GROUP BY recordset.expend_apply_info_id ");
+		if(null != projectName && !"".equals(projectName)){
+			sql.append(" HAVING pname like '%").append(projectName).append("%' ");
+		}
+		//sql.insert(0, "select * from (").append(") as test");
 		System.out.println(sql);
 		setEjbql(sql.toString());
 		return super.createQuery();
@@ -743,6 +752,9 @@ public class ExpendApplayList extends CriterionNativeQuery<Object[]> {
 		if(null != request.getParameter("status") && !request.getParameter("status").equals("")){
 			status = Integer.valueOf(request.getParameter("status").toString());
 		}
+		if(null != request.getParameter("projectName") && !request.getParameter("projectName").equals("")){
+			projectName = request.getParameter("projectName").toString();
+		}
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 		ctx.responseComplete();
 		HttpServletResponse response = (HttpServletResponse) ctx
@@ -806,6 +818,14 @@ public class ExpendApplayList extends CriterionNativeQuery<Object[]> {
 		codeCol.getSheet().setColumnWidth(
 				codeCol.getColumnIndex(), 35 * 160);
 		colIndex++;
+		
+		HSSFCell nameCol = row1.createCell(colIndex);
+		nameCol.setCellType(HSSFCell.CELL_TYPE_STRING);
+		nameCol.setCellValue("项目名称");
+		nameCol.setCellStyle(colStyle);
+		nameCol.getSheet().setColumnWidth(
+				nameCol.getColumnIndex(), 35 * 160);
+		colIndex++;
 
 		HSSFCell yearCol = row1.createCell(colIndex);
 		yearCol.setCellType(HSSFCell.CELL_TYPE_STRING);
@@ -855,7 +875,7 @@ public class ExpendApplayList extends CriterionNativeQuery<Object[]> {
 				35 * 260);
 		colIndex++;
 		
-		List<Object[]> list = queryExportData(departmentId,applyUser,applyTime,applyEndTime,searchKey,status);
+		List<Object[]> list = queryExportData(departmentId,applyUser,applyTime,applyEndTime,searchKey,status,projectName);
 		for(int i = 0;i < list.size(); i++){
 			Object[] obj = list.get(i);
 			rowIndex ++;
@@ -868,6 +888,14 @@ public class ExpendApplayList extends CriterionNativeQuery<Object[]> {
 			codeCol.setCellStyle(colStyle);
 			codeCol.getSheet().setColumnWidth(
 					codeCol.getColumnIndex(), 35 * 160);
+			col++;
+			
+			nameCol = row1.createCell(col);
+			nameCol.setCellType(HSSFCell.CELL_TYPE_STRING);
+			nameCol.setCellValue(obj[13]==null ? "":obj[13].toString());
+			nameCol.setCellStyle(colStyle);
+			nameCol.getSheet().setColumnWidth(
+					nameCol.getColumnIndex(), 35 * 160);
 			col++;
 			
 			yearCol = row1.createCell(col);
@@ -946,7 +974,7 @@ public class ExpendApplayList extends CriterionNativeQuery<Object[]> {
 	 * @param time
 	 */
 	@SuppressWarnings("unchecked")
-	public List<Object[]> queryExportData(Integer departmentId,Integer applyUser,String applyTime,String applyEndTime,String searchKey,Integer status){
+	public List<Object[]> queryExportData(Integer departmentId,Integer applyUser,String applyTime,String applyEndTime,String searchKey,Integer status,String projectName){
 		boolean privateRole = false;//角色不属于财务 和主任（领导的）
 		String roleSql = "select role_info.role_info_id,user_info.department_info_id,ydi.the_value from user_info LEFT JOIN role_info on role_info.role_info_id=user_info.role_info_id LEFT JOIN ys_department_info ydi on "
 				+ "user_info.department_info_id=ydi.the_id where user_info.user_info_id=" + sessionToken.getUserInfoId();
@@ -967,17 +995,24 @@ public class ExpendApplayList extends CriterionNativeQuery<Object[]> {
 		sql.append(" eai.recive_company, ");//4收款单位
 		sql.append(" eai.invoice_num, ");//5发票号
 		sql.append(" uie.fullname, ");//6申请人名字
-		sql.append(" DATE_FORMAT( eai.apply_time, '%Y-%m-%d'), ");//7申请时间
+		sql.append(" eai.apply_time, ");//7申请时间
 		sql.append(" eai.summary, ");//8摘要
 		sql.append(" eai.`comment`, ");//9备注
-		sql.append(" eai.expend_apply_status,eai.explend_source ");//10状态
+		sql.append(" eai.expend_apply_status,eai.explend_source, ");//10状态
+		sql.append(" IFNULL(rp.the_value,gp.the_value) project_name ");
 		sql.append(" FROM expend_apply_info eai ");
 		sql.append(" LEFT JOIN user_info ui ON eai.applay_user_id = ui.user_info_id ");
 		sql.append(" LEFT JOIN user_info_extend uie on ui.user_info_extend_id=uie.user_info_extend_id ");
+		sql.append(" LEFT JOIN expend_apply_project eap on eai.expend_apply_info_id=eap.expend_apply_info_id ");
+		sql.append(" LEFT JOIN generic_project gp on gp.the_id=eap.generic_project_id ");
+		sql.append(" LEFT JOIN routine_project rp on rp.the_id=eap.project_id ");
 		sql.append(" where eai.deleted=0 ");
 		
 		if(privateRole){
 			sql.append(" and eai.insert_user= ").append(sessionToken.getUserInfoId());
+		}
+		if(Integer.valueOf(roleId) == 4){
+			sql.append(" and ui.department_info_id= ").append(sessionToken.getDepartmentInfoId());
 		}
 		if(null != departmentId && departmentId != -1){
 			sql.append(" and ui.department_info_id= ").append(departmentId);
@@ -998,7 +1033,10 @@ public class ExpendApplayList extends CriterionNativeQuery<Object[]> {
 			sql.append(" and eai.expend_apply_status=").append(status);
 		}
 		sql.append(" order by eai.insert_time desc,eai.expend_apply_code desc");
-		sql.insert(0, "select * from (").append(") as recordset ");
+		sql.insert(0, "select recordset.*,GROUP_CONCAT(recordset.project_name) as pname from (").append(") as recordset GROUP BY recordset.expend_apply_info_id ");
+		if(null != projectName && !"".equals(projectName)){
+			sql.append(" HAVING pname like '%").append(projectName).append("%' ");
+		}
 		List<Object[]> list = getEntityManager().createNativeQuery(sql.toString()).getResultList();
 		return list;
 	}
@@ -1145,6 +1183,18 @@ public class ExpendApplayList extends CriterionNativeQuery<Object[]> {
 
 	public void setStatus(Integer status) {
 		this.status = status;
+	}
+
+
+
+	public String getProjectName() {
+		return projectName;
+	}
+
+
+
+	public void setProjectName(String projectName) {
+		this.projectName = projectName;
 	}
 	
 	

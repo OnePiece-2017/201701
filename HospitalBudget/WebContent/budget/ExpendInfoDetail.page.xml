@@ -6,4 +6,12 @@
 	<param name="transactExpendFrom" />
 	<param name="expendApplyInfoId" value="#{expendInfoDetail.expendApplyInfoId}" />
 
+	<param name="page" value="#{expendInfoDetail.page}" />
+	<param name="searchKey" value="#{expendInfoDetail.searchKey}" />
+	<param name="departmentId" value="#{expendInfoDetail.departmentId}" />
+	<param name="applyUser" value="#{expendInfoDetail.applyUser}" />
+	<param name="applyTime" value="#{expendInfoDetail.applyTime}" />
+	<param name="applyEndTime" value="#{expendInfoDetail.applyEndTime}" />
+	<param name="status" value="#{expendInfoDetail.status}" />
+	<param name="projectName" value="#{expendInfoDetail.projectName}" />
 </page>

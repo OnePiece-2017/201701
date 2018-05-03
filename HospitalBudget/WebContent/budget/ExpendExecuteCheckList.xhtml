@@ -454,7 +454,15 @@
 			}
 
 			function batchcomplete(){
-				   window.location.href = '../budget/ExpendExecuteCheckList.seam';
+				var departId = jQuery("#depart").val();
+				var applyer = jQuery("#fundsSource").val();
+				var applyTime = jQuery("#applyTime").val();
+				var applyEndTime = jQuery("#applyEndTime").val();
+				var moneyType = jQuery("#moneyType").val();
+				var reimbursementer = jQuery("#reimbursementer").val().trim();
+			    window.location.href = '../budget/ExpendExecuteCheckList.seam?departmentId='+departId
+			    +'&applyUser='+applyer+'&applyTime='+applyTime+'&applyEndTime='+applyEndTime+'&moneyType='+moneyType
+			    +'&reimbursementer='+reimbursementer;
 			}
 		//]]>
 		</script>

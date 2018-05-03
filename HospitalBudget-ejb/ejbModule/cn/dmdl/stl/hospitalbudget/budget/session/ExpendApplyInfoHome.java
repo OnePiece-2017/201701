@@ -486,17 +486,20 @@ public class ExpendApplyInfoHome extends CriterionEntityHome<ExpendApplyInfo>{
 					}
 					 
 					if(null != obj[2]){
-						BigDecimal bd1 = new BigDecimal(Double.parseDouble(obj[2].toString()));
-						totalMoney = bd1.setScale(1, BigDecimal.ROUND_HALF_UP).toPlainString();
+						/*BigDecimal bd1 = new BigDecimal(Double.parseDouble(obj[2].toString()));
+						totalMoney = bd1.setScale(1, BigDecimal.ROUND_HALF_UP).toPlainString();*/
+						totalMoney = NumberUtil.transferNum(obj[2].toString());
 					}
 					if(null != obj[3]){
 						//BigDecimal bd1 = new BigDecimal(Double.parseDouble(obj[3].toString()) + money);
-						BigDecimal bd1 = new BigDecimal(money);
-						usedMoney = bd1.setScale(1, BigDecimal.ROUND_HALF_UP).toPlainString();
+						/*BigDecimal bd1 = new BigDecimal(money);
+						usedMoney = bd1.setScale(1, BigDecimal.ROUND_HALF_UP).toPlainString();*/
+						usedMoney = NumberUtil.transferNum(money);
 					}
 					if(null != obj[4]){
-						BigDecimal bd1 = new BigDecimal(Double.parseDouble(totalMoney) - money);
-						canUseMoney = bd1.setScale(1, BigDecimal.ROUND_HALF_UP).toPlainString();
+						/*BigDecimal bd1 = new BigDecimal(Double.parseDouble(totalMoney) - money);
+						canUseMoney = bd1.setScale(1, BigDecimal.ROUND_HALF_UP).toPlainString();*/
+						canUseMoney = NumberUtil.transferNum(Double.parseDouble(obj[2].toString())-money);
 					}
 				}
 			}else if(projectType == 2){
@@ -522,18 +525,21 @@ public class ExpendApplyInfoHome extends CriterionEntityHome<ExpendApplyInfo>{
 						fundsSourceId = Integer.parseInt(obj[1].toString());
 					}
 					if(null != obj[2]){
-						BigDecimal bd1 = new BigDecimal(Double.parseDouble(obj[2].toString()));
-						totalMoney = bd1.setScale(1, BigDecimal.ROUND_HALF_UP).toPlainString();
+						/*BigDecimal bd1 = new BigDecimal(Double.parseDouble(obj[2].toString()));
+						totalMoney = bd1.setScale(1, BigDecimal.ROUND_HALF_UP).toPlainString();*/
+						totalMoney = NumberUtil.transferNum(obj[2].toString());
 					}
 					if(null != obj[3]){
 						//BigDecimal bd1 = new BigDecimal(Double.parseDouble(obj[3].toString())+ money);
-						BigDecimal bd1 = new BigDecimal(money);
-						usedMoney = bd1.setScale(1, BigDecimal.ROUND_HALF_UP).toPlainString();
+						/*BigDecimal bd1 = new BigDecimal(money);
+						usedMoney = bd1.setScale(1, BigDecimal.ROUND_HALF_UP).toPlainString();*/
+						usedMoney = NumberUtil.transferNum(money);
 					}
 					if(null != obj[4]){
 						//BigDecimal bd1 = new BigDecimal(Double.parseDouble(obj[4].toString())- money);
-						BigDecimal bd1 = new BigDecimal(Double.parseDouble(totalMoney)- money);
-						canUseMoney = bd1.setScale(1, BigDecimal.ROUND_HALF_UP).toPlainString();
+						/*BigDecimal bd1 = new BigDecimal(Double.parseDouble(totalMoney)- money);
+						canUseMoney = bd1.setScale(1, BigDecimal.ROUND_HALF_UP).toPlainString();*/
+						canUseMoney = NumberUtil.transferNum(Double.parseDouble(obj[2].toString())-money);
 						
 					}
 					if(null != obj[5] && Boolean.parseBoolean(obj[5].toString())){
@@ -601,9 +607,9 @@ public class ExpendApplyInfoHome extends CriterionEntityHome<ExpendApplyInfo>{
 			/*obj[1] =  Double.parseDouble(project[1].toString()) == 0 ? "0.00" : df.format(Double.parseDouble(project[1].toString()));
 			obj[2] = Double.parseDouble(project[2].toString())+money1 == 0 ? "0.00" : df.format(Double.parseDouble(project[2].toString()) +money1);
 			obj[3] = Double.parseDouble(project[3].toString())-money1 == 0 ? "0.00" : df.format(Double.parseDouble(project[3].toString()) - money1);*/
-			obj[1] = NumberUtil.formatDouble2(project[1]);
-			obj[2] = NumberUtil.formatDouble2(Double.parseDouble(project[2].toString())+money1);
-			obj[3] = NumberUtil.formatDouble2(Double.parseDouble(project[3].toString())-money1);
+			obj[1] = NumberUtil.transferNum(project[1]);
+			obj[2] = NumberUtil.transferNum(Double.parseDouble(project[2].toString())+money1);
+			obj[3] = NumberUtil.transferNum(Double.parseDouble(project[3].toString())-money1);
 			obj[4] = "";
 			obj[5] = project[5];
 			obj[6] = "";
