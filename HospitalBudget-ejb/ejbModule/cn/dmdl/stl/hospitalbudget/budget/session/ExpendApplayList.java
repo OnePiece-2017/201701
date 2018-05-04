@@ -92,6 +92,7 @@ public class ExpendApplayList extends CriterionNativeQuery<Object[]> {
 	
 	
 	
+	
 	/**
 	 * 在旧耗材系统读取数据
 	 */
@@ -486,7 +487,8 @@ public class ExpendApplayList extends CriterionNativeQuery<Object[]> {
 		sql.append(" eai.summary, ");//8摘要
 		sql.append(" eai.`comment`, ");//9备注
 		sql.append(" eai.expend_apply_status,eai.explend_source, ");//10状态
-		sql.append(" IFNULL(rp.the_value,gp.the_value) project_name ");
+		sql.append(" IFNULL(rp.the_value,gp.the_value) project_name, ");
+		sql.append(" eai.insert_time ");
 		sql.append(" FROM expend_apply_info eai ");
 		sql.append(" LEFT JOIN user_info ui ON eai.applay_user_id = ui.user_info_id ");
 		sql.append(" LEFT JOIN user_info_extend uie on ui.user_info_extend_id=uie.user_info_extend_id ");
@@ -520,7 +522,7 @@ public class ExpendApplayList extends CriterionNativeQuery<Object[]> {
 			sql.append(" and eai.expend_apply_status=").append(status);
 		}
 		//sql.append(" order by eai.insert_time desc,eai.expend_apply_code desc");
-		sql.insert(0, "select *,GROUP_CONCAT(recordset.project_name) as pname from (").append(") as recordset GROUP BY recordset.expend_apply_info_id ");
+		sql.insert(0, "select *,GROUP_CONCAT(recordset.project_name) as pname from (").append(") as recordset GROUP BY recordset.expend_apply_info_id order by recordset.insert_time desc,recordset.expend_apply_code desc");
 		if(null != projectName && !"".equals(projectName)){
 			sql.append(" HAVING pname like '%").append(projectName).append("%' ");
 		}

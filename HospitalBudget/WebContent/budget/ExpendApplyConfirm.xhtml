@@ -476,7 +476,7 @@
 							return ;
 						}
 					}else{
-						if(parseFloat(price) > parseFloat(jQuery(this).parent().parent().find("td[name='canUseMoney']").text())){
+						if(parseFloat(price) > parseFloat(jQuery(this).parent().parent().find("td[name='canUseMoney']").text().replace(/,/g, ''))){
 							___msg('温馨提示', "支出金额不能大于可支出金额");
 							flag = false;
 							return;
@@ -513,7 +513,7 @@
 							return ;
 						}
 					}else{
-						if(parseFloat(price) > parseFloat(jQuery(this).parent().parent().find("td[name='canUseMoney']").text())){
+						if(parseFloat(price) > parseFloat(jQuery(this).parent().parent().find("td[name='canUseMoney']").text().replace(/,/g, ''))){
 							___msg('温馨提示', "支出金额不能大于可支出金额");
 							flag = false;
 							return;
@@ -572,7 +572,7 @@
 							return ;
 						}
 					}else{
-						if(parseFloat(price) > parseFloat(jQuery(this).parent().parent().find("td[name='canUseMoney']").text())){
+						if(parseFloat(price) > parseFloat(jQuery(this).parent().parent().find("td[name='canUseMoney']").text().replace(/,/g, ''))){
 							___msg('温馨提示', "支出金额不能大于可支出金额");
 							flag = false;
 							return;
