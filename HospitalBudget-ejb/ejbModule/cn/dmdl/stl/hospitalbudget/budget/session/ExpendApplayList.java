@@ -486,9 +486,10 @@ public class ExpendApplayList extends CriterionNativeQuery<Object[]> {
 		sql.append(" eai.apply_time, ");//7申请时间
 		sql.append(" eai.summary, ");//8摘要
 		sql.append(" eai.`comment`, ");//9备注
-		sql.append(" eai.expend_apply_status,eai.explend_source, ");//10状态
-		sql.append(" IFNULL(rp.the_value,gp.the_value) project_name, ");
-		sql.append(" eai.insert_time ");
+		sql.append(" eai.expend_apply_status, ");//10状态
+		sql.append(" eai.explend_source, ");//11来源状态
+		sql.append(" IFNULL(rp.the_value,gp.the_value) project_name, ");//12单个项目名注意与下面区分开
+		sql.append(" eai.insert_time ");//13时间
 		sql.append(" FROM expend_apply_info eai ");
 		sql.append(" LEFT JOIN user_info ui ON eai.applay_user_id = ui.user_info_id ");
 		sql.append(" LEFT JOIN user_info_extend uie on ui.user_info_extend_id=uie.user_info_extend_id ");
@@ -522,10 +523,12 @@ public class ExpendApplayList extends CriterionNativeQuery<Object[]> {
 			sql.append(" and eai.expend_apply_status=").append(status);
 		}
 		//sql.append(" order by eai.insert_time desc,eai.expend_apply_code desc");
-		sql.insert(0, "select *,GROUP_CONCAT(recordset.project_name) as pname from (").append(") as recordset GROUP BY recordset.expend_apply_info_id order by recordset.insert_time desc,recordset.expend_apply_code desc");
+		//模糊查询外层嵌套一层
+		sql.insert(0, "select *,GROUP_CONCAT(recordset.project_name) as pname from (").append(") as recordset where 1=1 ");//pname 序号是14
 		if(null != projectName && !"".equals(projectName)){
-			sql.append(" HAVING pname like '%").append(projectName).append("%' ");
+			sql.append(" and recordset.project_name like '%").append(projectName).append("%' ");
 		}
+		sql.append(" GROUP BY recordset.expend_apply_info_id order by recordset.insert_time desc,recordset.expend_apply_code desc");
 		//sql.insert(0, "select * from (").append(") as test");
 		System.out.println(sql);
 		setEjbql(sql.toString());
@@ -877,6 +880,14 @@ public class ExpendApplayList extends CriterionNativeQuery<Object[]> {
 				35 * 260);
 		colIndex++;
 		
+		HSSFCell commentCol = row1.createCell(colIndex);
+		commentCol.setCellType(HSSFCell.CELL_TYPE_STRING);
+		commentCol.setCellValue("备注");
+		commentCol.setCellStyle(colStyle);
+		commentCol.getSheet().setColumnWidth(commentCol.getColumnIndex(),
+				35 * 260);
+		colIndex++;
+		
 		List<Object[]> list = queryExportData(departmentId,applyUser,applyTime,applyEndTime,searchKey,status,projectName);
 		for(int i = 0;i < list.size(); i++){
 			Object[] obj = list.get(i);
@@ -894,7 +905,7 @@ public class ExpendApplayList extends CriterionNativeQuery<Object[]> {
 			
 			nameCol = row1.createCell(col);
 			nameCol.setCellType(HSSFCell.CELL_TYPE_STRING);
-			nameCol.setCellValue(obj[13]==null ? "":obj[13].toString());
+			nameCol.setCellValue(obj[13]==null ? "":obj[14].toString());
 			nameCol.setCellStyle(colStyle);
 			nameCol.getSheet().setColumnWidth(
 					nameCol.getColumnIndex(), 35 * 160);
@@ -952,6 +963,14 @@ public class ExpendApplayList extends CriterionNativeQuery<Object[]> {
 			invoceCol.getSheet().setColumnWidth(
 					invoceCol.getColumnIndex(), 35 * 260);
 			col++;
+			
+			commentCol = row1.createCell(col);
+			commentCol.setCellType(HSSFCell.CELL_TYPE_STRING);
+			commentCol.setCellValue(obj[9]==null?"":obj[9].toString());
+			commentCol.setCellStyle(colStyle);
+			commentCol.getSheet().setColumnWidth(
+					commentCol.getColumnIndex(), 35 * 260);
+			col++;
 		}
 		
 		
@@ -1000,8 +1019,10 @@ public class ExpendApplayList extends CriterionNativeQuery<Object[]> {
 		sql.append(" eai.apply_time, ");//7申请时间
 		sql.append(" eai.summary, ");//8摘要
 		sql.append(" eai.`comment`, ");//9备注
-		sql.append(" eai.expend_apply_status,eai.explend_source, ");//10状态
-		sql.append(" IFNULL(rp.the_value,gp.the_value) project_name ");
+		sql.append(" eai.expend_apply_status,");//10状态
+		sql.append(" eai.explend_source, ");//11来源
+		sql.append(" IFNULL(rp.the_value,gp.the_value) project_name, ");
+		sql.append(" eai.insert_time ");
 		sql.append(" FROM expend_apply_info eai ");
 		sql.append(" LEFT JOIN user_info ui ON eai.applay_user_id = ui.user_info_id ");
 		sql.append(" LEFT JOIN user_info_extend uie on ui.user_info_extend_id=uie.user_info_extend_id ");
@@ -1034,11 +1055,14 @@ public class ExpendApplayList extends CriterionNativeQuery<Object[]> {
 		if(null != status && status != -1 ){
 			sql.append(" and eai.expend_apply_status=").append(status);
 		}
-		sql.append(" order by eai.insert_time desc,eai.expend_apply_code desc");
-		sql.insert(0, "select recordset.*,GROUP_CONCAT(recordset.project_name) as pname from (").append(") as recordset GROUP BY recordset.expend_apply_info_id ");
+//		sql.append(" order by eai.insert_time desc,eai.expend_apply_code desc");
+		//模糊查询外层嵌套一层
+		sql.insert(0, "select *,GROUP_CONCAT(recordset.project_name) as pname from (").append(") as recordset where 1=1 ");
 		if(null != projectName && !"".equals(projectName)){
-			sql.append(" HAVING pname like '%").append(projectName).append("%' ");
+			sql.append(" and recordset.project_name like '%").append(projectName).append("%' ");
 		}
+		sql.append(" GROUP BY recordset.expend_apply_info_id order by recordset.insert_time desc,recordset.expend_apply_code desc");
+		
 		List<Object[]> list = getEntityManager().createNativeQuery(sql.toString()).getResultList();
 		return list;
 	}

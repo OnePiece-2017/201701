@@ -101,7 +101,9 @@
 							<td>
 								<h:commandButton id="persist" value="提交" onclick="return beforeSubmit();" action="#{ysAuditContractInfoHome.persist}" disabled="#{!ysFundsSourceHome.wired}" rendered="#{!ysFundsSourceHome.managed}" styleClass="btn btn-primary mr15" />
 								<h:commandButton id="update" value="保存" onclick="return beforeSubmit();" action="#{ysFundsSourceHome.update}" rendered="#{ysFundsSourceHome.managed}" styleClass="btn btn-primary mr15" />
-								<s:button id="cancel" value="返回" view="/hospital/YsFundsSourceList.xhtml" propagation="none" styleClass="btn btn-default" />
+								<s:link value="返回" view="/budget/AuditContractList.xhtml" styleClass="btn btn-default">
+									<f:param name="projectId" value="#{ysAuditContractInfoHome.genericProjectId}"></f:param>
+								</s:link>
 							</td>
 						</tr>
 					</table>
