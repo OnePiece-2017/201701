@@ -57,7 +57,6 @@
 		</style>
 	</ui:define>
 	<ui:define name="body">
-	#{disburseStatisticalList.wire()}
 	<div class="pd0-10">
 		<h:form id="mainForm">
 			<div class="g-data-list-condition">
@@ -78,13 +77,13 @@
 								<div class="fl">
 									<span class="field-name mb10">科室</span>
 									<select id="departmentIds" class="selectpicker" multiple="multiple" data-live-search="true" title="请选择">
-										<a:repeat value="#{commonDaoHome.departmentInfoList}" var="_var">
+										<a:repeat value="#{commonDaoHome.departmentInfoListByUserId}" var="_var">
 											<option value="#{_var[0]}">#{_var[1]}</option>
 										</a:repeat>
 									</select>
 							</div>
 							</td>
-							<td width="40%">
+<!-- 							<td width="40%">
 								<div class="fl bs-funds-source">
 									<div style="float: left; text-align: center; line-height: 36px; width: 85px; padding-right:15px; box-sizing:border-box;">
 										<span>资金来源</span>
@@ -95,49 +94,34 @@
 										</a:repeat>
 									</select>
 								</div>
-							</td>
+							</td> -->
 						</tr>
 						<tr>
 							<td>
 								<div class="fl" style="width: 100%;">
-									<div style="float: left; text-align: center; line-height: 36px; width: 85px;">
-										<span>开始时间</span>
-									</div>
-				                    <div class="form-group">
-										<div class="input-group date form_date col-md-5">
-											<input id="applyTime" type="text" value="#{expendConfrimList.applyTime}" readonly="readonly" class="form-control mb10 fix--w150" name="time" style="width: 125px;"/> 
-											<span class="input-group-addon"><span class="glyphicon glyphicon-remove"></span></span>
-											<span class="input-group-addon"><span class="glyphicon glyphicon-calendar"></span></span>
-										</div>
-									</div>  
-					            </div>
-							</td>
-							<td>
-								<div class="fl" style="width: 100%;">
 					                <div style="float: left; text-align: center; line-height: 36px; width: 85px;">
-										<span>结束时间</span>
+										<span>截止时间</span>
 									</div>
 					                 <div class="form-group">
 										<div class="input-group date form_date col-md-5">
-											<input id="applyTime" type="text" value="#{expendConfrimList.applyTime}" readonly="readonly" class="form-control mb10 fix--w150" name="time" style="width: 125px;"/> 
+											<input id="endTime" type="text" value="#{disburseStatisticalList.endTime}" readonly="readonly" class="form-control mb10 fix--w150" name="time" style="width: 125px;"/> 
 											<span class="input-group-addon"><span class="glyphicon glyphicon-remove"></span></span>
 											<span class="input-group-addon"><span class="glyphicon glyphicon-calendar"></span></span>
 										</div>
 									</div> 
 								</div>
 							</td>
-							<tr>
-								<td>
-									<div class="fl" style="width: 100%;">
-						                <div style="float: left; text-align: center; line-height: 36px; width: 85px;">
-											<span>项目名称</span>
-										</div>
-						                 <div class="form-group">
-											<h:inputText id="projectName" type="text" value="#{disburseStatisticalList.projectName}" placeholder="项目名称" name="projectName" styleClass=" keyword search-key" style="width: 200x;"/> 
-										</div> 
+							<td>
+								<div class="fl" style="width: 100%;">
+					                <div style="float: left; text-align: center; line-height: 36px; width: 85px;">
+										<span>项目名称</span>
 									</div>
-								</td>
-								<td>
+					                 <div class="form-group">
+										<h:inputText id="projectName" type="text" value="#{disburseStatisticalList.projectName}" placeholder="项目名称" name="projectName" styleClass=" keyword search-key" style="width: 200x;"/> 
+									</div> 
+								</div>
+							</td>
+							<td>
 								<div class="fl" style="margin-top: -16px; margin-left:10px;">
 									<h:commandButton styleClass="btn btn-primary mr15" action="/budget/DisburseStatisticalList.xhtml" onclick="return beforeSubmit();" value="搜索" >
 									</h:commandButton>
@@ -149,14 +133,12 @@
 			                		</s:link>
 								</div>
 							</td>
-							</tr>
-							
 						</tr>
 					</table>
 					<h:inputHidden id="beginYearParam" value="#{disburseStatisticalList.beginYearParam}" />
-					<h:inputHidden id="departmentInfoId" value="#{disburseStatisticalList.departmentInfoId}" />
 					<h:inputHidden id="fundsSourceId" value="#{disburseStatisticalList.fundsSourceId}" />
 					<h:inputHidden id="departmentIds" value="#{disburseStatisticalList.departmentIds}" />
+					<h:inputHidden id="endTimeParam" value="#{disburseStatisticalList.endTime}" />
 			</div>
 		</h:form>
 		</div>
@@ -166,10 +148,10 @@
 		        <tr>
 		            <th width="10%">ID</th>
 		            <th width="30%">项目名称</th>
+		            <th width="10%">科室</th>
 		            <th width="10%">项目类型</th>
 		            <th width="10%">预算金额</th>
 		            <th width="10%">已支出金额</th>
-		            <th width="10%">可支出金额</th>
 		            <th width="10%">执行率</th>
 		        </tr>
 		        <a:repeat value="#{disburseStatisticalList.resultList}" var="_result" rowKeyVar="_row">
@@ -181,7 +163,10 @@
 			        		<h:outputText value="#{_result[1]}" />
 			        	</td>
 			        	<td>
-			        		<h:outputText value="#{_result[2] == 1 ? '一般项目' : '常规项目' }" />
+			        		<h:outputText value="#{_result[2]}" />
+			        	</td>
+			        	<td>
+			        		<h:outputText value="#{_result[3]}" />
 			        	</td>
 			        	<td>
 			        		<h:outputText value="#{_result[4]}" />
@@ -190,10 +175,7 @@
 			        		<h:outputText value="#{_result[5]}" />
 			        	</td>
 			        	<td>
-			        		<h:outputText value="#{_result[6]}" />
-			        	</td>
-			        	<td>
-			        		<h:outputText value="#{_result[7]}" />%
+			        		<h:outputText value="#{_result[6]}" />%
 			        	</td>
 		        	</tr>
 		        </a:repeat>
@@ -258,11 +240,15 @@
 		<script type="text/javascript">
 		//<![CDATA[
 			jQuery(document).ready(function() {
+				//初始化资金来源
 				jQuery("#fundsSourceId").val(1);
-				//获取当前年
-			    var date=new Date;
-			    var yearStr=date.getFullYear();
-			    jQuery("#budgetYear").val(yearStr)
+				//初始化年份
+				var yearStr = jQuery('#mainForm\\:beginYearParam').val();
+				if(null == yearStr || yearStr == ""){
+				    var date=new Date;
+				    yearStr=date.getFullYear();
+				}
+			    jQuery("#budgetYear").val(yearStr);
 				
 				jQuery(".selectpicker").selectpicker("render");
 				jQuery(".selectpicker").selectpicker();
@@ -278,24 +264,22 @@
 				}
 				jQuery('.form_date').datetimepicker({
 					language: 'zh-CN',
-					format: "yyyy-mm",
+					format: "yyyy-mm-dd",
 					pickerPosition: "bottom-left",
 					weekStart: 1,
 					todayBtn: 1,
 					autoclose: 1,
 					todayHighlight: 1,
-					startView: 3,
-					minView: 3,
+					startView: 2,
+					minView: 2,
 					forceParse: 0
 				});
-				
 			}); 
 
 			function beforeSubmit(){
-				var departmentInfoId = jQuery('#departmentInfoId').val();
-				jQuery('#mainForm\\:beginYearParam').val(jQuery('#beginYearParam').val());
-				jQuery('#mainForm\\:departmentInfoId').val(jQuery('#departmentInfoId').val());
-				jQuery('#mainForm\\:fundsSourceId').val(jQuery('#fundsSourceId').val());
+				jQuery('#mainForm\\:beginYearParam').val(jQuery('#budgetYear').val());
+				//jQuery('#mainForm\\:fundsSourceId').val(jQuery('#fundsSourceId').val());
+				jQuery('#mainForm\\:endTimeParam').val(jQuery('#endTime').val());
 				var departmentIds = jQuery('#departmentIds').val();
 				var ids = "";
 				if(departmentIds != null ){
@@ -307,7 +291,6 @@
 					ids = ids.substring(0,ids.length-1);
 				}
 				jQuery('#mainForm\\:departmentIds').val(ids);
-				console.log(jQuery('#beginYearParam').val()+'-----------'+jQuery('#departmentInfoId').val()+'-----------------'+jQuery('#fundsSourceId').val());
 			}
 		//]]>
 		</script>

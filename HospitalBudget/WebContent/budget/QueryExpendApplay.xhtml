@@ -50,7 +50,7 @@
 								</td>
 								<td valign="middle" width="70%">
 									<select id="depart" class="selectpicker">
-										<a:repeat value="#{queryExpendApplay.departList}" var="_var">
+										<a:repeat value="#{commonDaoHome.departmentInfoListByUserId}" var="_var">
 											<s:fragment rendered="#{queryExpendApplay.departId eq _var[0]}">
 												<option value="#{_var[0]}" selected="selected">#{_var[1]}</option>
 											</s:fragment>
