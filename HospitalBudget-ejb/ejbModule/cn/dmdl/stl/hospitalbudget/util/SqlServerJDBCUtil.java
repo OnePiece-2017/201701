@@ -10,7 +10,8 @@ import java.util.Date;
 
 public class SqlServerJDBCUtil {
 	private final static String DRIVER = "com.microsoft.sqlserver.jdbc.SQLServerDriver";        // 驱动
-    private final static String URL = "jdbc:sqlserver://10.193.7.229:1433;databaseName=HMMIS_BUDG";        // 连接地址
+//    private final static String URL = "jdbc:sqlserver://10.193.7.229:1433;databaseName=HMMIS_BUDG";        // 连接地址
+    private final static String URL = "jdbc:sqlserver://10.193.28.18:1433;databaseName=HMMIS_BUDG";        // 连接地址
     private final static String USERNAME = "budg";        // 账号
     private final static String PASSWORD = "budg!@#$";        // 密码        
    

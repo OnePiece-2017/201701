@@ -8,7 +8,8 @@
 	<param name="page" value="#{disburseStatisticalList.page}" />
 	<param name="keyword" value="#{disburseStatisticalList.keyword}" />
 	<param name="beginYearParam" value="#{disburseStatisticalList.beginYearParam}" />
-	<param name="endTime" value="#{disburseStatisticalList.endTime}" />
+	<param name="startTimeParam" value="#{disburseStatisticalList.startTime}" />
+	<param name="endTimeParam" value="#{disburseStatisticalList.endTime}" />
 	<param name="fundsSourceId" value="#{disburseStatisticalList.fundsSourceId}" />
 	<param name="departmentIds" value="#{disburseStatisticalList.departmentIds}" />
 	<param name="projectName" value="#{disburseStatisticalList.projectName}" />
