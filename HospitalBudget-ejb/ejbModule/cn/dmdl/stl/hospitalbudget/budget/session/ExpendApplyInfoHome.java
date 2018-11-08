@@ -1604,14 +1604,14 @@ public class ExpendApplyInfoHome extends CriterionEntityHome<ExpendApplyInfo>{
 		if(projectType == 1){
 			sql.append(" select sum(eap.expend_money) from expend_apply_info eai  ");
 			sql.append(" LEFT JOIN expend_apply_project eap on eai.expend_apply_info_id=eap.expend_apply_info_id ");
-			sql.append(" where eai.expend_apply_status in (0,1,2) ");
+			sql.append(" where eai.expend_apply_status in (0,1,2,5) ");
 			sql.append(" and eap.project_id= ").append(projectId);
 			sql.append(" and eai.deleted = 0 ");
 			sql.append(" GROUP BY eap.project_id ");
 		}else{
 			sql.append(" select sum(eap.expend_money) from expend_apply_info eai  ");
 			sql.append(" LEFT JOIN expend_apply_project eap on eai.expend_apply_info_id=eap.expend_apply_info_id ");
-			sql.append(" where eai.expend_apply_status in (0,1,2) ");
+			sql.append(" where eai.expend_apply_status in (0,1,2,5) ");
 			sql.append(" and eap.generic_project_id= ").append(projectId);
 			sql.append(" and eai.deleted = 0 ");
 			sql.append(" GROUP BY eap.project_id ");
@@ -1640,7 +1640,7 @@ public class ExpendApplyInfoHome extends CriterionEntityHome<ExpendApplyInfo>{
 		if(projectType == 1){
 			sql.append(" select sum(eap.expend_money) from expend_apply_info eai  ");
 			sql.append(" LEFT JOIN expend_apply_project eap on eai.expend_apply_info_id=eap.expend_apply_info_id ");
-			sql.append(" where eai.expend_apply_status in (0,1) ");
+			sql.append(" where eai.expend_apply_status in (0,1,2,5) ");
 			sql.append(" and eap.project_id= ").append(projectId);
 			sql.append(" and eap.deleted=0 ");
 			sql.append(" and eai.expend_apply_info_id !=  ").append(eaiId);
@@ -1648,7 +1648,7 @@ public class ExpendApplyInfoHome extends CriterionEntityHome<ExpendApplyInfo>{
 		}else{
 			sql.append(" select sum(eap.expend_money) from expend_apply_info eai  ");
 			sql.append(" LEFT JOIN expend_apply_project eap on eai.expend_apply_info_id=eap.expend_apply_info_id ");
-			sql.append(" where eai.expend_apply_status in (0,1) ");
+			sql.append(" where eai.expend_apply_status in (0,1,2,5) ");
 			sql.append(" and eap.generic_project_id= ").append(projectId);
 			sql.append(" and eap.deleted=0 ");
 			sql.append(" and eai.expend_apply_info_id !=  ").append(eaiId);
@@ -1679,15 +1679,15 @@ public class ExpendApplyInfoHome extends CriterionEntityHome<ExpendApplyInfo>{
 		if(projectType == 1){
 			sql.append(" select sum(eap.expend_money) from expend_apply_info eai  ");
 			sql.append(" LEFT JOIN expend_apply_project eap on eai.expend_apply_info_id=eap.expend_apply_info_id ");
-			sql.append(" where  ");
-			sql.append(" eap.project_id= ").append(projectId);
+			sql.append(" where  eai.expend_apply_status in (0,1,2,5)");
+			sql.append(" and eap.project_id= ").append(projectId);
 			sql.append(" and eai.deleted = 0 ");
 			sql.append(" GROUP BY eap.project_id ");
 		}else{
 			sql.append(" select sum(eap.expend_money) from expend_apply_info eai  ");
 			sql.append(" LEFT JOIN expend_apply_project eap on eai.expend_apply_info_id=eap.expend_apply_info_id ");
-			sql.append(" where ");
-			sql.append(" eap.generic_project_id= ").append(projectId);
+			sql.append(" where eai.expend_apply_status in (0,1,2,5)");
+			sql.append(" and eap.generic_project_id= ").append(projectId);
 			sql.append(" and eai.deleted = 0 ");
 			sql.append(" GROUP BY eap.project_id ");
 		}
