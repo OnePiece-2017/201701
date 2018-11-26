@@ -181,9 +181,9 @@ public class ExpendApplyInfoHome extends CriterionEntityHome<ExpendApplyInfo>{
 						projectDetail[0] = obj[0];
 						BigDecimal bd1 = new BigDecimal(Double.parseDouble(obj[1].toString()));
 						projectDetail[1] = bd1.setScale(2, BigDecimal.ROUND_HALF_UP).toPlainString();
-						BigDecimal bd2 = new BigDecimal(Double.parseDouble(obj[2].toString()) + usedMoney);
+						BigDecimal bd2 = new BigDecimal(usedMoney);
 						projectDetail[2] = bd2.setScale(2, BigDecimal.ROUND_HALF_UP).toPlainString();
-						BigDecimal bd3 = new BigDecimal(Double.parseDouble(obj[3].toString()) + usedMoney);
+						BigDecimal bd3 = new BigDecimal(Double.parseDouble(obj[1].toString()) - usedMoney);
 						projectDetail[3] = bd3.setScale(2, BigDecimal.ROUND_HALF_UP).toPlainString();
 						BigDecimal bd4 = new BigDecimal(Double.parseDouble(obj[4].toString()));
 						projectDetail[4] = bd4.setScale(2, BigDecimal.ROUND_HALF_UP).toPlainString();
@@ -200,9 +200,9 @@ public class ExpendApplyInfoHome extends CriterionEntityHome<ExpendApplyInfo>{
 						projectDetail[0] = obj[8];
 						BigDecimal bd1 = new BigDecimal(Double.parseDouble(obj[9].toString()));
 						projectDetail[1] = bd1.setScale(2, BigDecimal.ROUND_HALF_UP).toPlainString();
-						BigDecimal bd2 = new BigDecimal(Double.parseDouble(obj[10].toString()) + usedMoney);
+						BigDecimal bd2 = new BigDecimal(usedMoney);
 						projectDetail[2] = bd2.setScale(2, BigDecimal.ROUND_HALF_UP).toPlainString();
-						BigDecimal bd3 = new BigDecimal(Double.parseDouble(obj[11].toString()) - usedMoney);
+						BigDecimal bd3 = new BigDecimal(Double.parseDouble(obj[9].toString()) - usedMoney);
 						projectDetail[3] = bd3.setScale(2, BigDecimal.ROUND_HALF_UP).toPlainString();
 						BigDecimal bd4 = new BigDecimal(Double.parseDouble(obj[12].toString()));
 						projectDetail[4] = bd4.setScale(2, BigDecimal.ROUND_HALF_UP).toPlainString();
@@ -608,8 +608,8 @@ public class ExpendApplyInfoHome extends CriterionEntityHome<ExpendApplyInfo>{
 			obj[2] = Double.parseDouble(project[2].toString())+money1 == 0 ? "0.00" : df.format(Double.parseDouble(project[2].toString()) +money1);
 			obj[3] = Double.parseDouble(project[3].toString())-money1 == 0 ? "0.00" : df.format(Double.parseDouble(project[3].toString()) - money1);*/
 			obj[1] = NumberUtil.transferNum(project[1]);
-			obj[2] = NumberUtil.transferNum(Double.parseDouble(project[2].toString())+money1);
-			obj[3] = NumberUtil.transferNum(Double.parseDouble(project[3].toString())-money1);
+			obj[2] = NumberUtil.transferNum(money1);
+			obj[3] = NumberUtil.transferNum(Double.parseDouble(project[1].toString())-money1);
 			obj[4] = "";
 			obj[5] = project[5];
 			obj[6] = "";
@@ -637,8 +637,8 @@ public class ExpendApplyInfoHome extends CriterionEntityHome<ExpendApplyInfo>{
 			obj[2] = Double.parseDouble(project[2].toString())+money1 == 0 ? "0.00" : df.format(Double.parseDouble(project[2].toString())+money1);
 			obj[3] = Double.parseDouble(project[3].toString())-money1 == 0 ? "0.00" : df.format(Double.parseDouble(project[3].toString())-money1);*/
 			obj[1] = NumberUtil.double2Str(project[1]);
-			obj[2] = NumberUtil.double2Str(Double.parseDouble(project[2].toString())+money1);
-			obj[3] = NumberUtil.double2Str(Double.parseDouble(project[3].toString())-money1);
+			obj[2] = NumberUtil.double2Str(money1);
+			obj[3] = NumberUtil.double2Str(Double.parseDouble(project[1].toString())-money1);
 			obj[4] = "";
 			obj[5] = project[5];
 			obj[6] = "";
