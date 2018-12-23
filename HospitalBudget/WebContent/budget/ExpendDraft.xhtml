@@ -125,6 +125,12 @@
 										<div class="generic-field edge-end field-formula-remark">
 											<span>金额计算依据及备注</span>
 										</div>
+										<div class="generic-field edge-end field-lastyear-budget">
+											<span>上一年预算(万元)</span>
+										</div>
+										<div class="generic-field edge-end field-lastyear-surplus">
+											<span>上一年剩余金额(元)</span>
+										</div>
 										<div class="generic-field edge-end field-the-status">
 											<span>状态</span>
 										</div>
@@ -158,6 +164,10 @@
 			</div>
 		<a:form>
 			<a:queue requestDelay="100" ignoreDupResponses="true" />
+			<a:jsFunction name="loadLastYearData"  data="#{expendDraftHome.lastyearData}" oncomplete="wireLastYearData(data);">
+				<!-- 目前参数与加载数据参数一样 -->
+				<a:actionparam name="gainOriginalData2args" assignTo="#{expendDraftHome.gainOriginalData2args}" />
+			</a:jsFunction>
 			<a:jsFunction name="gainOriginalData2trigger" action="#{expendDraftHome.gainOriginalData2action}" data="#{expendDraftHome.gainOriginalData2result}" oncomplete="gainOriginalData2callback(data);">
 				<a:actionparam name="gainOriginalData2args" assignTo="#{expendDraftHome.gainOriginalData2args}" />
 			</a:jsFunction>

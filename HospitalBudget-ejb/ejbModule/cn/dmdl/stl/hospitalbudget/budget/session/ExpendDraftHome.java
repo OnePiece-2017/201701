@@ -24,7 +24,16 @@ import cn.dmdl.stl.hospitalbudget.util.CommonToolLocal;
 import cn.dmdl.stl.hospitalbudget.util.DateTimeHelper;
 import cn.dmdl.stl.hospitalbudget.util.Helper;
 import cn.dmdl.stl.hospitalbudget.util.HospitalConstant;
+import cn.dmdl.stl.hospitalbudget.util.NumberUtil;
 
+/**
+ * @author HASEE
+ *
+ */
+/**
+ * @author HASEE
+ *
+ */
 @Name("expendDraftHome")
 public class ExpendDraftHome extends CriterionEntityHome<Object> {
 
@@ -150,6 +159,9 @@ public class ExpendDraftHome extends CriterionEntityHome<Object> {
 		return result;
 	}
 
+	/**
+	 * 加载可以编制的项目
+	 */
 	public void gainOriginalData2action() {
 		if (gainOriginalData2result != null) {
 			gainOriginalData2result.clear();
@@ -171,6 +183,11 @@ public class ExpendDraftHome extends CriterionEntityHome<Object> {
 		System.out.println(gainTamperData2result);
 	}
 
+	/**
+	 * 加载项目编制列表
+	 * @param args
+	 * @return
+	 */
 	@SuppressWarnings("unchecked")
 	public JSONArray pullNewGenericProject(String args) {
 		JSONArray result = new JSONArray();
@@ -476,6 +493,127 @@ public class ExpendDraftHome extends CriterionEntityHome<Object> {
 			wireProjectNature();
 			firstTime = false;
 		}
+	}
+	
+	/**
+	 * 加载前一年的数据
+	 * @return
+	 */
+	public JSONObject getLastyearData(){
+		JSONObject json = new JSONObject();
+		JSONObject args = JSONObject.fromObject(gainOriginalData2args);
+		String lastYear = (args.getInt("budgetYear") - 1) + "";
+		//组装常规项目的数据
+		Map<String, Double> routineBudgetMap = this.getRoutineProjectBudgetMoney(lastYear);
+		Map<String, Double> routineMoneyUsedMap = this.getRoutineProjectUsedMoney(lastYear);
+		JSONObject routineJson = new JSONObject();
+		for(String key : routineBudgetMap.keySet()){
+			JSONObject tempJson = new JSONObject();
+			tempJson.element("last_year_budget", routineBudgetMap.get(key)/10000);
+			double usedMoney = 0;
+			if(routineMoneyUsedMap.containsKey(key)){
+				usedMoney = routineMoneyUsedMap.get(key);
+			}
+			tempJson.element("last_year_surplus", NumberUtil.double2Str(routineBudgetMap.get(key) - usedMoney));
+			routineJson.element(key, tempJson);
+		}
+		//组装项目的数据
+		Map<String, Double> genericBudgetMap = this.getGenericProjectBudgetMoney(lastYear);
+		Map<String, Double> genericMoneyUsedMap = this.getGenericProjectUsedMoney(lastYear);
+		JSONObject genericJson = new JSONObject();
+		for(String key : genericBudgetMap.keySet()){
+			JSONObject tempJson = new JSONObject();
+			tempJson.element("last_year_budget", genericBudgetMap.get(key)/10000);
+			double usedMoney = 0;
+			if(genericMoneyUsedMap.containsKey(key)){
+				usedMoney = genericMoneyUsedMap.get(key);
+			}
+			tempJson.element("last_year_surplus", NumberUtil.double2Str(genericBudgetMap.get(key) - usedMoney));
+			genericJson.element(key, tempJson);
+		}
+		
+		json.element("routine_project", routineJson);
+		json.element("generic_project", genericJson);
+		
+		return json;
+	}
+	
+	/**
+	 * 获取常规项目某一年的预算金额
+	 * @param year
+	 * @return
+	 */
+	public Map<String, Double> getRoutineProjectBudgetMoney(String year){
+		Map<String, Double> map = new HashMap<String, Double>();
+		StringBuffer sql = new StringBuffer();
+		sql.append("SELECT p.the_id,epi.budget_amount from hospital_budget.normal_expend_plan_info epi ");
+		sql.append("INNER JOIN hospital_budget.routine_project p ON epi.project_id = p.the_id ");
+		sql.append("WHERE epi.`year` = '" + year + "' ");
+		List<Object[]> list = getEntityManager().createNativeQuery(sql.toString()).getResultList();
+		for(Object[] arr : list){
+			map.put(arr[0].toString(), Double.parseDouble(arr[1].toString()));
+		}
+		return map;
+	}
+	
+	/**
+	 * 获取项目某一年的预算金额
+	 * @param year
+	 * @return
+	 */
+	public Map<String, Double> getGenericProjectBudgetMoney(String year){
+		Map<String, Double> map = new HashMap<String, Double>();
+		StringBuffer sql = new StringBuffer();
+		sql.append("SELECT p.the_id,epi.budget_amount from hospital_budget.normal_expend_plan_info epi ");
+		sql.append("INNER JOIN hospital_budget.generic_project p ON epi.generic_project_id = p.the_id ");
+		sql.append("WHERE epi.`year` = '" + year + "' ");
+		List<Object[]> list = getEntityManager().createNativeQuery(sql.toString()).getResultList();
+		for(Object[] arr : list){
+			map.put(arr[0].toString(), Double.parseDouble(arr[1].toString()));
+		}
+		return map;
+	}
+	
+	/**
+	 * 获取常规项目某一年的已使用金额
+	 * @param year
+	 * @return
+	 */
+	public Map<String, Double> getRoutineProjectUsedMoney(String year){
+		Map<String, Double> map = new HashMap<String, Double>();
+		StringBuffer sql = new StringBuffer();
+		sql.append("select p.the_id,sum(ap.expend_money) from hospital_budget.expend_apply_info ai  ");
+		sql.append("INNER JOIN hospital_budget.expend_apply_project ap ON ai.expend_apply_info_id = ap.expend_apply_info_id ");
+		sql.append("INNER JOIN hospital_budget.routine_project p on ap.project_id = p.the_id ");
+		sql.append("WHERE ai.deleted = 0 AND ai.expend_apply_status in (" + HospitalConstant.getExpendApplyValidStatus() + ") ");
+		sql.append("AND ai.`year` = '" + year + "' ");
+		sql.append("GROUP BY p.the_id ");
+		List<Object[]> list = getEntityManager().createNativeQuery(sql.toString()).getResultList();
+		for(Object[] arr : list){
+			map.put(arr[0].toString(), Double.parseDouble(arr[1].toString()));
+		}
+		return map;
+	}
+	
+	/**
+	 * 获取项目某一年的已使用金额
+	 * @param year
+	 * @return
+	 */
+	public Map<String, Double> getGenericProjectUsedMoney(String year){
+		Map<String, Double> map = new HashMap<String, Double>();
+		StringBuffer sql = new StringBuffer();
+		sql.append("select p.the_id,sum(ap.expend_money) from hospital_budget.expend_apply_info ai  ");
+		sql.append("INNER JOIN hospital_budget.expend_apply_project ap ON ai.expend_apply_info_id = ap.expend_apply_info_id ");
+		sql.append("INNER JOIN hospital_budget.generic_project p on ap.generic_project_id = p.the_id ");
+		sql.append("WHERE ai.deleted = 0 AND ai.expend_apply_status in (" + HospitalConstant.getExpendApplyValidStatus() + ") ");
+		sql.append("AND ai.`year` = '" + year + "' ");
+		sql.append("GROUP BY p.the_id ");
+		List<Object[]> list = getEntityManager().createNativeQuery(sql.toString()).getResultList();
+		for(Object[] arr : list){
+			map.put(arr[0].toString(), Double.parseDouble(arr[1].toString()));
+		}
+		return map;
 	}
 
 	public List<Object[]> getBudgetYearList() {

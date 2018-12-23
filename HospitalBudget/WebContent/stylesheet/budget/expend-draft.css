@@ -125,7 +125,7 @@ ul {
 
 .data-container .item-outer {
 	border: 1px dotted rgba(119, 133, 212, 0.37);
-	width: 1458px;
+	width: 1500px;
 	height: 40px;
 	border-radius: 4px;
 	cursor: pointer;
@@ -142,7 +142,7 @@ ul {
 
 .data-container .item-inner {
 	border: 1px solid #9db4e1;
-	width: 1452px;
+	width: 1494px;
 	height: 34px;
 	border-radius: 4px;
 	margin-top: 2px;
@@ -204,7 +204,7 @@ ul {
 }
 
 .data-container .item-inner .field-project-name {
-	width: 310px;
+	width: 290px;
 	/* background: #05d380; */
 }
 
@@ -213,25 +213,25 @@ ul {
 }
 
 .data-container .item-inner .field-project-name span {
-	width: 300px;
+	width: 280px;
 }
 
 .data-container .item-inner .field-project-nature {
-	width: 100px;
+	width: 80px;
 	/* background: #a0acbf; */
 }
 
 .data-container .item-inner .field-project-nature span {
-	width: 90px;
+	width: 70px;
 }
 
 .data-container .item-inner .field-funds-source {
-	width: 130px;
+	width: 80px;
 	/* background: #ed349c; */
 }
 
 .data-container .item-inner .field-funds-source span {
-	width: 120px;
+	width: 70px;
 }
 
 .data-container .item-inner .field-department-name {
@@ -294,6 +294,24 @@ ul {
 	margin-left: 1px;
 	overflow: hidden;
 	/* background: #fad5cf; */
+}
+
+.data-container .item-inner .field-lastyear-budget {
+	width: 160px;
+	/* background: #c4b16f; */
+}
+
+.data-container .item-inner .field-lastyear-budget span {
+	width: 150px;
+}
+
+.data-container .item-inner .field-lastyear-surplus {
+	width: 160px;
+	/* background: #c4b16f; */
+}
+
+.data-container .item-inner .field-lastyear-surplus span {
+	width: 150px;
 }
 
 .data-container .item-inner .field-the-status {

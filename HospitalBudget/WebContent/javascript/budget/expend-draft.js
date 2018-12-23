@@ -14,7 +14,8 @@ jQuery(document).ready(function() {
 	jQuery('#fundsSourceId').val(jQuery('#fundsSourceIdHidden').val());
 	jQuery('#fundsSourceId').selectpicker('render');
 
-	jQuery('#budgetYear, #fundsSourceId, #departmentInfoId').change(triggerRenewDataContainer);
+//	jQuery('#budgetYear, #fundsSourceId, #departmentInfoId').change(triggerRenewDataContainer);
+	jQuery('#budgetYear, #fundsSourceId, #departmentInfoId').change(initPage);
 
 	jQuery('.draft-table-head .btn-reminder-service').click(function() {
 		showLayer();
@@ -51,7 +52,8 @@ jQuery(document).ready(function() {
 	});*/
 
 	refreshVisualPannel();// 立即刷新
-	triggerRenewDataContainer();// 触发更新数据容器函数
+//	triggerRenewDataContainer();// 触发更新数据容器函数
+	initPage();// 加载页面
 	computeTotalAmount();// 实时计算总金额
 	computeParentAmount();// 实时计算父级金额
 });
@@ -74,6 +76,23 @@ function assembleArguments() {
 	});
 }
 
+/**
+ * 页面刷新的入口函数
+ */
+function initPage(){
+	//获取去年的数据情况
+	loadLastYearData(assembleArguments());
+}
+
+var lastYearJson = {}; 
+function wireLastYearData(data){
+	lastYearJson = data;
+	triggerRenewDataContainer();
+}
+
+/**
+ * 获取编制数据的入口函数
+ */
 function triggerRenewDataContainer() {
 	showLayer();
 	jQuery('.draft-table-body .data-container').empty();// 1、清空数据容器
@@ -141,6 +160,37 @@ function parseProject(projectArray, namespace, projectNature) {
 				html += '			</div>';
 				html += '			<div class="generic-field edge-end field-formula-remark">';
 				html += '				<span>' + (hasSub ? '' : '<textarea id="' + (namespace + '_formulaRemark_' + node['id']) + '" class="form-control"></textarea>') + '</span>';
+				html += '			</div>';
+				html += '			<div class="generic-field edge-end field-lastyear-budget">';
+				var tempId = node['id'];
+				if(namespace == "routine"){
+					if(lastYearJson.routine_project[tempId]){
+						html += '				<span>' + lastYearJson.routine_project[tempId].last_year_budget + '</span>';
+					}else{
+						html += '				<span>--</span>';
+					}
+				}else if(namespace == "generic"){
+					if(lastYearJson.generic_project[tempId]){
+						html += '				<span>' + lastYearJson.generic_project[tempId].last_year_budget + '</span>';
+					}else{
+						html += '				<span>--</span>';
+					}
+				}
+				html += '			</div>';
+				html += '			<div class="generic-field edge-end field-lastyear-surplus">';
+				if(namespace == "routine"){
+					if(lastYearJson.routine_project[tempId]){
+						html += '				<span>' + lastYearJson.routine_project[tempId].last_year_surplus + '</span>';
+					}else{
+						html += '				<span>--</span>';
+					}
+				}else if(namespace == "generic"){
+					if(lastYearJson.generic_project[tempId]){
+						html += '				<span>' + lastYearJson.generic_project[tempId].last_year_surplus + '</span>';
+					}else{
+						html += '				<span>--</span>';
+					}
+				}
 				html += '			</div>';
 				html += '			<div class="generic-field edge-end field-the-status">';
 				html += '				<span></span>';

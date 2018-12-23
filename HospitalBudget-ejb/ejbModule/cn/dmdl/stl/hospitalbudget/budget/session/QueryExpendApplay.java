@@ -32,6 +32,7 @@ import org.jboss.seam.annotations.In;
 import org.jboss.seam.annotations.Name;
 
 import cn.dmdl.stl.hospitalbudget.common.session.CriterionNativeQuery;
+import cn.dmdl.stl.hospitalbudget.util.CommonDaoUtil;
 import cn.dmdl.stl.hospitalbudget.util.SessionToken;
 
 @Name("queryExpendApplay")
@@ -84,7 +85,8 @@ public class QueryExpendApplay extends CriterionNativeQuery<Object[]> {
 	@Override
 	@SuppressWarnings("unchecked")
 	protected Query createQuery(){
-		boolean privateRole = false;//角色不属于财务主任（领导的）
+/*		//封装后注释此部分
+ * 		boolean privateRole = false;//角色不属于财务主任（领导的）
 		String roleSql = "select role_info.role_info_id,user_info.department_info_id,ydi.the_value from user_info LEFT JOIN role_info on role_info.role_info_id=user_info.role_info_id LEFT JOIN ys_department_info ydi on "
 				+ "user_info.department_info_id=ydi.the_id where user_info.user_info_id=" + sessionToken.getUserInfoId();
 		
@@ -93,7 +95,11 @@ public class QueryExpendApplay extends CriterionNativeQuery<Object[]> {
 		
 		if(Integer.valueOf(roleId) != 1 && Integer.valueOf(roleId) != 2){
 			privateRole = true;
-		}
+		}*/
+		
+		boolean allDepartmentDataFlag = CommonDaoUtil.hasAllDepartmentDataFlag(sessionToken.getUserInfoId());
+		boolean localDepartmentDataFlag = CommonDaoUtil.hasLocalDepartmentDataFlag(sessionToken.getUserInfoId());
+		
 		StringBuffer sql = new StringBuffer();
 		sql.append(" SELECT ");
 		sql.append(" eai.expend_apply_info_id, ");//0申请单id
@@ -124,11 +130,12 @@ public class QueryExpendApplay extends CriterionNativeQuery<Object[]> {
 		sql.append(" LEFT JOIN ys_department_info ydi2 on ydi2.the_id=gp.department_info_id ");
 		sql.append(" LEFT JOIN expend_confirm_info eci on eai.expend_apply_info_id=eci.expend_apply_info_id ");
 		sql.append(" where eap.deleted=0  and eai.deleted=0 and ecp.deleted=0 and eci.confirm_status=1 ");
-		if(privateRole){
-			sql.append(" and eai.insert_user= ").append(sessionToken.getUserInfoId());
-		}
-		if(Integer.valueOf(roleId) == 4){
-			sql.append(" and eai.insert_user= ").append(sessionToken.getDepartmentInfoId());
+		if(!allDepartmentDataFlag){//不具备全科数据权限
+			if(localDepartmentDataFlag){//具备本科室的查询权限
+				sql.append(" and ui.department_info_id= ").append(sessionToken.getDepartmentInfoId());
+			}else{//普通用户查自己的
+				sql.append(" and eai.insert_user= ").append(sessionToken.getUserInfoId());
+			}
 		}
 		if(null != projectName && !projectName.trim().equals("")){
 			sql.append(" and (up.the_value like '%").append(projectName).append("%' or gp.the_value like '%").append(projectName).append("%')");
@@ -136,7 +143,7 @@ public class QueryExpendApplay extends CriterionNativeQuery<Object[]> {
 		if(null != fundsSourceId && fundsSourceId != -1){
 			sql.append(" and (up.funds_source_id= ").append(fundsSourceId).append(" or gp.funds_source_id=").append(fundsSourceId).append(")");
 		}
-		if(null != departId && departId != -1){
+		if(null != departId && departId != -1){//TODO 这段可能业务有问题
 			sql.append(" and (up.department_info_id=").append(departId).append(" or gp.department_info_id=").append(departId).append(")");
 		}
 		if(null != expendTime && !expendTime.equals("")){
@@ -158,7 +165,7 @@ public class QueryExpendApplay extends CriterionNativeQuery<Object[]> {
 	
 	
 	/**
-	 * 获取科室
+	 * 按照权限获取科室
 	 */
 	@SuppressWarnings("unchecked")
 	private void wireDepartmentInfo() {
@@ -460,7 +467,7 @@ public class QueryExpendApplay extends CriterionNativeQuery<Object[]> {
 	 */
 	@SuppressWarnings("unchecked")
 	public List<Object[]> queryExportData(String projectName,Integer sourceId,Integer departId,String time,String applyEndTime){
-		boolean privateRole = false;//角色不属于财务主任（领导的）
+/*		boolean privateRole = false;//角色不属于财务主任（领导的）
 		String roleSql = "select role_info.role_info_id,user_info.department_info_id,ydi.the_value from user_info LEFT JOIN role_info on role_info.role_info_id=user_info.role_info_id LEFT JOIN ys_department_info ydi on "
 				+ "user_info.department_info_id=ydi.the_id where user_info.user_info_id=" + sessionToken.getUserInfoId();
 		
@@ -469,7 +476,10 @@ public class QueryExpendApplay extends CriterionNativeQuery<Object[]> {
 		
 		if(Integer.valueOf(roleId) != 1 && Integer.valueOf(roleId) != 2){
 			privateRole = true;
-		}
+		}*/
+		boolean allDepartmentDataFlag = CommonDaoUtil.hasAllDepartmentDataFlag(sessionToken.getUserInfoId());
+		boolean localDepartmentDataFlag = CommonDaoUtil.hasLocalDepartmentDataFlag(sessionToken.getUserInfoId());
+	
 		//查询导出数据
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 		StringBuffer routinSql = new StringBuffer();
@@ -507,8 +517,12 @@ public class QueryExpendApplay extends CriterionNativeQuery<Object[]> {
 		sql.append("select * from (");
 		sql.append(routinSql);
 		sql.append(") as test where 1=1 ");
-		if(privateRole){
-			sql.append(" and test.insert_user= ").append(sessionToken.getUserInfoId());
+		if(!allDepartmentDataFlag){//不具备全科数据权限
+			if(localDepartmentDataFlag){//具备本科室的查询权限
+				sql.append(" and (rp.department_info_id=").append(sessionToken.getDepartmentInfoId()).append(" or gp.department_info_id=").append(sessionToken.getDepartmentInfoId()).append(")");
+			}else{//普通用户查自己的
+				sql.append(" and test.insert_user= ").append(sessionToken.getUserInfoId());
+			}
 		}
 		if(null != projectName && !"".equals(projectName)){
 			sql.append(" and (test.rp_name like '%").append(projectName).append("%' or test.rp_name like '%").append(projectName).append("%')");
