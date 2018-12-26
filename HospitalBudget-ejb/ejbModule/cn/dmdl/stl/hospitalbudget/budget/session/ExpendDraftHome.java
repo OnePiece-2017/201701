@@ -405,7 +405,7 @@ public class ExpendDraftHome extends CriterionEntityHome<Object> {
 					commonTool.updateIntermediate("ys_expand_draft", columnToValue, "ys_expand_draft_id = " + expandDraftId);// 理论上只应有一条匹配记录
 				} else {
 					synchronized (Helper.getInstance()) {
-						commonTool.insertIntermediate("ys_expand_draft", new String[] { projectIdField, "year", "project_amount", "project_source", "formula_remark", "attachment", "top_level_project_id", "with_last_year_num", "with_last_year_percent", "insert_time", "insert_user", "status" , "project_nature"}, new Object[] { data.get("projectId"), data.get("budgetYear"), data.get("projectAmount"), projectSource, formulaRemark, attachment, backtrackTopId(projectType, projectId), 0.1, 0.2, DateTimeHelper.dateToStr(new Date(), DateTimeHelper.PATTERN_DATE_TIME), sessionToken.getUserInfoId(), buildDataAction != BUILD_DATA_ACTION_SAVE ? 1 : 0 , data.get("projectNature")});
+						commonTool.insertIntermediate("ys_expand_draft", new String[] { projectIdField, "year", "project_amount", "project_source", "formula_remark", "attachment", "top_level_project_id", "with_last_year_num", "with_last_year_percent", "insert_time", "insert_user", "status" , "project_nature"}, new Object[] { data.get("projectId"), data.get("budgetYear"), data.get("projectAmount"), projectSource, formulaRemark, attachment, backtrackTopId(projectType, projectId), 0, 0, DateTimeHelper.dateToStr(new Date(), DateTimeHelper.PATTERN_DATE_TIME), sessionToken.getUserInfoId(), buildDataAction != BUILD_DATA_ACTION_SAVE ? 1 : 0 , data.get("projectNature")});
 						expandDraftId = commonTool.selectIntermediate("ys_expand_draft", new String[] { "max(ys_expand_draft_id)" }, null).get(0);
 					}
 				}

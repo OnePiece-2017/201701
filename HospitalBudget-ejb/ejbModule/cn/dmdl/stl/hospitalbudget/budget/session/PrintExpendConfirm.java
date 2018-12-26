@@ -71,7 +71,7 @@ public class PrintExpendConfirm extends CriterionEntityHome<Object>{
 		double money =Double.parseDouble(expendApplyInfo[1].toString());  
         BigDecimal numberOfMoney = new BigDecimal(money);  
         String s = NumberToCN.number2CNMontrayUnit(numberOfMoney);
-        expendApplyInfo[1] = NumberUtil.double2Str(expendApplyInfo[1]);
+        expendApplyInfo[1] = NumberUtil.formatDouble2(expendApplyInfo[1]);
 		expendApplyInfo[9] = s;
 		expendApplyInfo[1] = NumberUtil.transferNum(expendApplyInfo[1]);
 	}

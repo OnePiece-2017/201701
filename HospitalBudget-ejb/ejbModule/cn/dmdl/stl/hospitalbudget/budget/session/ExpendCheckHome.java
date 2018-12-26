@@ -39,6 +39,7 @@ import cn.dmdl.stl.hospitalbudget.util.Assit;
 import cn.dmdl.stl.hospitalbudget.util.CommonDaoUtil;
 import cn.dmdl.stl.hospitalbudget.util.DataSourceManager;
 import cn.dmdl.stl.hospitalbudget.util.HospitalConstant;
+import cn.dmdl.stl.hospitalbudget.util.NumberUtil;
 
 @Name("expendCheckHome")
 public class ExpendCheckHome extends CriterionEntityHome<Object>{
@@ -58,7 +59,14 @@ public class ExpendCheckHome extends CriterionEntityHome<Object>{
 	 * @return
 	 */
 	public JSONObject getDraftInfo(){
+		//获取项目性质
 		Map<String, String> projectNatureMap = CommonDaoUtil.getProjectNatureMap();
+		//获取去年项目的预算金额
+		ExpendDraftHome expendDraftHome = new ExpendDraftHome();
+		String lastYear = (Integer.parseInt(year) - 1) + "";
+		Map<String, Double> lastYearRoutineMap = expendDraftHome.getRoutineProjectBudgetMoney(lastYear);
+		Map<String, Double> lastYearGenericMap = expendDraftHome.getGenericProjectBudgetMoney(lastYear);
+		
 		JSONObject draftInfojson = new JSONObject();
 		StringBuilder sql = new StringBuilder();
 		sql.append("select ed.ys_expand_draft_id, ");
@@ -68,8 +76,9 @@ public class ExpendCheckHome extends CriterionEntityHome<Object>{
 		sql.append("ed.project_source, ");
 		sql.append("ed.project_nature, ");
 		sql.append("ed.project_amount, ");
-		sql.append("ed.with_last_year_num, ");
-		sql.append("ed.with_last_year_percent, ");
+		//表里的逻辑不准，并且实时变化，按照实时计算，不查此字段
+//		sql.append("ed.with_last_year_num, ");
+//		sql.append("ed.with_last_year_percent, ");
 		sql.append("ed.formula_remark, ");
 		sql.append("ed.attachment, ");
 		sql.append("ed.draft_type, ");
@@ -94,8 +103,9 @@ public class ExpendCheckHome extends CriterionEntityHome<Object>{
 		sql.append("ed.project_source, ");
 		sql.append("ed.project_nature, ");
 		sql.append("ed.project_amount, ");
-		sql.append("ed.with_last_year_num, ");
-		sql.append("ed.with_last_year_percent, ");
+		//表里的逻辑不准，并且实时变化，按照实时计算，不查此字段
+//		sql.append("ed.with_last_year_num, ");
+//		sql.append("ed.with_last_year_percent, ");
 		sql.append("ed.formula_remark, ");
 		sql.append("ed.attachment, ");
 		sql.append("ed.draft_type, ");
@@ -130,8 +140,10 @@ public class ExpendCheckHome extends CriterionEntityHome<Object>{
 				json.element("project_nature", projectNatureMap.get(resultSet.getString("project_nature")));
 				json.element("project_source", URLDecoder.decode(resultSet.getString("project_source"), "utf-8"));
 				json.element("project_amount", resultSet.getDouble("project_amount")/10000);
-				json.element("with_last_year_num", resultSet.getDouble("with_last_year_num"));
-				json.element("with_last_year_percent", resultSet.getDouble("with_last_year_percent"));
+//				json.element("with_last_year_num", resultSet.getDouble("with_last_year_num"));
+//				json.element("with_last_year_percent", resultSet.getDouble("with_last_year_percent"));
+				json.element("with_last_year_num", "--");
+				json.element("with_last_year_percent", "--");
 				json.element("formula_remark", URLDecoder.decode(resultSet.getString("formula_remark"), "utf-8"));
 				json.element("attachment", resultSet.getString("attachment"));
 				String draftTypeName = "";
@@ -143,14 +155,31 @@ public class ExpendCheckHome extends CriterionEntityHome<Object>{
 				json.element("draft_type", resultSet.getInt("draft_type"));
 				json.element("draft_type_name", draftTypeName);
 				json.element("status", resultSet.getInt("status"));
-				if(resultSet.getInt("is_usual") == 1){
-					json.element("project_id", "10" + resultSet.getInt("project_id"));//为了多级表格展示处理
+				if(resultSet.getInt("is_usual") == 1){//常规项目
+					String projectId = resultSet.getString("project_id");
+					json.element("project_id", "10" + projectId);//为了多级表格展示处理
 					json.element("the_pid", "10" + resultSet.getInt("the_pid"));
 					json.element("top_level_project_id", "r" + resultSet.getInt("top_level_project_id"));
-				}else{
-					json.element("project_id", "20" + resultSet.getInt("project_id"));
+					//从map里取出去年的预算
+					if(lastYearRoutineMap.containsKey(projectId)){
+						double lastYearBudget = lastYearRoutineMap.get(projectId);
+						double budgetDifference = resultSet.getDouble("project_amount") - lastYearBudget;
+						json.element("with_last_year_num", budgetDifference);
+						json.element("with_last_year_percent", NumberUtil.double2Str(budgetDifference/lastYearBudget*100));
+					}
+					
+				}else{//项目
+					String projectId = resultSet.getString("project_id");
+					json.element("project_id", "20" + projectId);
 					json.element("the_pid", "20" + resultSet.getInt("the_pid"));
 					json.element("top_level_project_id", "g" + resultSet.getInt("top_level_project_id"));
+					//从map里取出去年的预算
+					if(lastYearGenericMap.containsKey(projectId)){
+						double lastYearBudget = lastYearGenericMap.get(projectId);
+						double budgetDifference = resultSet.getDouble("project_amount") - lastYearBudget;
+						json.element("with_last_year_num", budgetDifference);
+						json.element("with_last_year_percent", NumberUtil.double2Str(budgetDifference/lastYearBudget*100));
+					}
 				}
 				if(resultSet.getInt("the_pid") == 0){
 					json.element("is_root", 1);
@@ -814,7 +843,7 @@ public class ExpendCheckHome extends CriterionEntityHome<Object>{
 				35 * 200);
 		colIndex++;
 		
-		JSONArray draftInfoArray = new JSONArray();
+		/*JSONArray draftInfoArray = new JSONArray();
 		StringBuilder sql = new StringBuilder();
 		sql.append("select ed.ys_expand_draft_id, ");
 		sql.append("rp.the_value as project_name, ");
@@ -910,7 +939,10 @@ public class ExpendCheckHome extends CriterionEntityHome<Object>{
 			e.printStackTrace();
 		}finally{
 			DataSourceManager.close(connection, preparedStatement, resultSet);
-		}
+		}*/
+		
+		JSONObject result = this.getDraftInfo();
+		JSONArray draftInfoArray = result.getJSONArray("draft_info");
 		
 		
 		for(int i = 0;i < draftInfoArray.size(); i++){

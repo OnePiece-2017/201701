@@ -637,9 +637,9 @@ public class ExpendApplyInfoHome extends CriterionEntityHome<ExpendApplyInfo>{
 			/*obj[1] =  Double.parseDouble(project[1].toString()) == 0 ? "0.00" : df.format(Double.parseDouble(project[1].toString()));
 			obj[2] = Double.parseDouble(project[2].toString())+money1 == 0 ? "0.00" : df.format(Double.parseDouble(project[2].toString())+money1);
 			obj[3] = Double.parseDouble(project[3].toString())-money1 == 0 ? "0.00" : df.format(Double.parseDouble(project[3].toString())-money1);*/
-			obj[1] = NumberUtil.double2Str(project[1]);
-			obj[2] = NumberUtil.double2Str(money1);
-			obj[3] = NumberUtil.double2Str(Double.parseDouble(project[1].toString())-money1);
+			obj[1] = NumberUtil.formatDouble2(project[1]);
+			obj[2] = NumberUtil.formatDouble2(money1);
+			obj[3] = NumberUtil.formatDouble2(Double.parseDouble(project[1].toString())-money1);
 			obj[4] = "";
 			obj[5] = project[5];
 			obj[6] = "";
