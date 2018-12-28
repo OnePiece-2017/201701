@@ -16,6 +16,7 @@ import org.jboss.seam.annotations.Name;
 import cn.dmdl.stl.hospitalbudget.common.session.CriterionEntityHome;
 import cn.dmdl.stl.hospitalbudget.util.CommonDaoUtil;
 import cn.dmdl.stl.hospitalbudget.util.DataSourceManager;
+import cn.dmdl.stl.hospitalbudget.util.NumberUtil;
 
 @Name("ysExpendCollectionInfoHome")
 public class YsExpendCollectionInfoHome extends CriterionEntityHome<Object> {
@@ -35,8 +36,17 @@ public class YsExpendCollectionInfoHome extends CriterionEntityHome<Object> {
 	@SuppressWarnings("unchecked")
 	public JSONObject getCollectionExpendInfo(){
 		Map<String, String> projectNatureMap = CommonDaoUtil.getProjectNatureMap();
-		//获取明细数据
+		//先获取年份
 		StringBuilder sql = new StringBuilder();
+		sql.append("select bcd.year from hospital_budget.ys_budget_collection_dept bcd ");
+		sql.append("WHERE bcd.budget_collection_dept_id = ").append(expendCollectionDeptId).append(" ");
+		String lastYear = "2016";
+		List<Object> dataList = getEntityManager().createNativeQuery(sql.toString()).getResultList();
+		if(dataList.size() > 0){
+			lastYear = (Integer.parseInt(dataList.get(0).toString()) - 1) + "";
+		}
+		//获取明细数据
+		sql.delete(0, sql.length());
 		sql.append("select rp.the_value as project_name, ");
 		sql.append("1 as is_usual, ");
 		sql.append("ici.project_source, ");
@@ -76,7 +86,10 @@ public class YsExpendCollectionInfoHome extends CriterionEntityHome<Object> {
 		sql.append("WHERE bcd.budget_collection_dept_id = ").append(expendCollectionDeptId).append(" ");
 		sql.insert(0, "select * from (").append(") t order by t.top_level_project_id,t.bottom_level ");
 		List<Object[]> incomeCollectionInfoList = getEntityManager().createNativeQuery(sql.toString()).getResultList();
-		//TODO 获取上一年的预算数据
+		//获取上一年的预算数据
+		ExpendDraftHome expendDraftHome = new ExpendDraftHome();
+		Map<String, Double> lastYearRoutineMap = expendDraftHome.getRoutineProjectBudgetMoney(lastYear);
+		Map<String, Double> lastYearGenericMap = expendDraftHome.getGenericProjectBudgetMoney(lastYear);
 		
 		JSONObject collectionInfo = new JSONObject();
 		try{
@@ -85,7 +98,28 @@ public class YsExpendCollectionInfoHome extends CriterionEntityHome<Object> {
 			for(Object[] object : incomeCollectionInfoList){
 				JSONObject json = new JSONObject();
 				json.element("project_name", object[0]);
-				json.element("is_usual", object[1]);
+				int is_usual = Integer.parseInt(object[1].toString());
+				json.element("is_usual", is_usual);
+				json.element("with_last_year_num", "--");
+				json.element("with_last_year_percent", "--");
+				if(is_usual == 1){//常规项目
+					String projectId = object[5].toString();
+					if(lastYearRoutineMap.containsKey(projectId)){
+						double lastYearBudget = lastYearRoutineMap.get(projectId);
+						double budgetDifference = Double.parseDouble(object[3].toString()) - lastYearBudget;
+						json.element("with_last_year_num", budgetDifference);
+						json.element("with_last_year_percent", NumberUtil.double2Str(budgetDifference/lastYearBudget*100));
+					}
+					
+				}else{//项目
+					String projectId = object[5].toString();
+					if(lastYearGenericMap.containsKey(projectId)){
+						double lastYearBudget = lastYearGenericMap.get(projectId);
+						double budgetDifference = Double.parseDouble(object[3].toString()) - lastYearBudget;
+						json.element("with_last_year_num", budgetDifference);
+						json.element("with_last_year_percent", NumberUtil.double2Str(budgetDifference/lastYearBudget*100));
+					}
+				}
 				json.element("project_source", URLDecoder.decode(object[2].toString(), "utf-8"));
 				json.element("project_amount", Double.parseDouble(object[3].toString())/10000);
 				json.element("formula_remark", URLDecoder.decode(object[4].toString(), "utf-8"));
