@@ -8,6 +8,8 @@ import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+import cn.dmdl.stl.hospitalbudget.boot.ConfigureCache;
+
 public class SqlServerJDBCUtil {
 	private final static String DRIVER = "com.microsoft.sqlserver.jdbc.SQLServerDriver";        // 驱动
 //    private final static String URL = "jdbc:sqlserver://10.193.7.229:1433;databaseName=HMMIS_BUDG";        // 连接地址
@@ -71,8 +73,8 @@ public class SqlServerJDBCUtil {
     */
    public static void calculateOldBudg(String budgCode,Double frozenMoney){
 	   String sql = "update HMMIS_BUDG.dbo.budg_type_dict set budg_year_frozen = "+frozenMoney
-			   +" where budg_code="+budgCode;
-	   String querySql = "select * from HMMIS_BUDG.dbo.budg_type_dict where budg_code =" +budgCode;
+			   +" where budg_code="+budgCode  + " and budg_hospital_code = '" + ConfigureCache.getValue("hospital.source") + "' ";
+	   String querySql = "select * from HMMIS_BUDG.dbo.budg_type_dict where budg_code =" +budgCode + " and budg_hospital_code = '" + ConfigureCache.getValue("hospital.source") + "' ";
 	   Connection conn = GetConnection();
 	   PreparedStatement ps = null;
 	   ResultSet rs = null;
@@ -99,7 +101,7 @@ public class SqlServerJDBCUtil {
     */
    public static void checkReturn(String billCode,Double frozenMoney){
 	   String sql = "update HMMIS_BUDG.dbo.budg_type_dict set budg_year_frozen = "+frozenMoney
-			   +" where budg_code=?";
+			   +" where budg_code=?" + " and budg_hospital_code = '" + ConfigureCache.getValue("hospital.source") + "' ";
 	   String projectSql = "update HMMIS_BUDG.dbo.budg_application4expenditure set state=0 ,state_date=GETDATE() "+
 				"where bill_code=?";
 	   String querySql = "select budg_code from HMMIS_BUDG.dbo.budg_application4expenditure where bill_code =?";
@@ -157,7 +159,7 @@ public class SqlServerJDBCUtil {
 			 }
 			//钱修改
 			String sql = "update HMMIS_BUDG.dbo.budg_type_dict set budg_year_out_money = (budg_year_out_money + ? ),budg_year_frozen=(budg_year_frozen-?)  where "+
-					   " budg_code = ?";
+					   " budg_code = ?" + " and budg_hospital_code = '" + ConfigureCache.getValue("hospital.source") + "' ";
 			ps = conn.prepareStatement(sql);
 			ps.setDouble(1, expendMoney);
 			ps.setDouble(2, expendMoney);
@@ -178,7 +180,7 @@ public class SqlServerJDBCUtil {
 		try{
 			//钱修改
 			String sql = "update HMMIS_BUDG.dbo.budg_type_dict set budg_year_out_money = (budg_year_out_money + ? ),budg_year_frozen=(budg_year_frozen-?)  where "+
-					   " budg_code = ?";
+					   " budg_code = ?" + " and budg_hospital_code = '" + ConfigureCache.getValue("hospital.source") + "' ";
 			ps = conn.prepareStatement(sql);
 			ps.setDouble(1, expendMoney);
 			ps.setDouble(2, expendMoney);
@@ -218,7 +220,7 @@ public class SqlServerJDBCUtil {
 			 }
 			//钱修改
 			String sql = "update HMMIS_BUDG.dbo.budg_type_dict set budg_year_frozen=(budg_year_frozen-?)  where "+
-					   " budg_code = ?";
+					   " budg_code = ?" + " and budg_hospital_code = '" + ConfigureCache.getValue("hospital.source") + "' ";
 			ps = conn.prepareStatement(sql);
 			ps.setDouble(1, expendMoney);
 			ps.setString(2, budgCode);
@@ -238,7 +240,7 @@ public class SqlServerJDBCUtil {
 		try{
 			//钱修改
 			String sql = "update HMMIS_BUDG.dbo.budg_type_dict set budg_year_frozen=(budg_year_frozen-?)  where "+
-					   " budg_code = ?";
+					   " budg_code = ?" + " and budg_hospital_code = '" + ConfigureCache.getValue("hospital.source") + "' ";
 			ps = conn.prepareStatement(sql);
 			ps.setDouble(1, expendMoney);
 			ps.setString(2, nepi);

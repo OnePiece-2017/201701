@@ -957,17 +957,17 @@ public class YsBudgetCollectionDeptHome extends CriterionEntityHome<Object> {
 		//获取支出预算部门
 		Map<Integer, List<Object[]>> deptMap = new HashMap<Integer,List<Object[]>>(); 
 		StringBuilder expendSql = new StringBuilder();
-		expendSql.append("select bcd.budget_collection_dept_id, ");
-		expendSql.append("bcd.`year`, ");
-		expendSql.append("di.`the_value` as dept_name, ");
-		expendSql.append("IF(ici.bottom_level = 1,ici.project_amount,0) as total_amount, ");
-		expendSql.append("bcd.`status`, ");
-		expendSql.append("bcd.dept_id, ");
-		expendSql.append("ici.project_source,");
-		expendSql.append("ici.formula_remark,");
-		expendSql.append("ici.generic_project_id,");
-		expendSql.append("gp.the_value as generic_name,");
-		expendSql.append("ici.routine_project_id,");
+		expendSql.append("select bcd.budget_collection_dept_id, ");//0
+		expendSql.append("bcd.`year`, ");//1
+		expendSql.append("di.`the_value` as dept_name, ");//2
+		expendSql.append("IF(ici.bottom_level = 1,ici.project_amount,0) as total_amount, ");//3
+		expendSql.append("bcd.`status`, ");//4
+		expendSql.append("bcd.dept_id, ");//5
+		expendSql.append("ici.project_source,");//6
+		expendSql.append("ici.formula_remark,");//7
+		expendSql.append("ici.generic_project_id,");//8
+		expendSql.append("gp.the_value as generic_name,");//9
+		expendSql.append("ici.routine_project_id,");//10
 		expendSql.append("rp.the_value as routine_name,ici.project_nature ");
 		expendSql.append("FROM hospital_budget.ys_budget_collection_dept bcd ");
 		expendSql.append("INNER JOIN hospital_budget.ys_expend_collection_info ici on bcd.budget_collection_dept_id = ici.budget_collection_dept_id ");
@@ -1027,7 +1027,7 @@ public class YsBudgetCollectionDeptHome extends CriterionEntityHome<Object> {
 			obj[11] = theObj[11];
 			for(Object[] lastObj : lastList){
 				if(((null != theObj[8] && null != lastObj[8] && Integer.valueOf(theObj[8].toString()).intValue() == Integer.valueOf(lastObj[8].toString())) 
-						|| (null != theObj[9] && null != lastObj[9] && Integer.valueOf(theObj[9].toString()).intValue() == Integer.valueOf(lastObj[9].toString()))) 
+						|| (null != theObj[10] && null != lastObj[10] && Integer.valueOf(theObj[10].toString()).intValue() == Integer.valueOf(lastObj[10].toString()))) 
 						&& Integer.valueOf(theObj[5].toString()).intValue() == Integer.valueOf(lastObj[5].toString()).intValue()){
 					obj[12] = lastObj[3];
 					obj[13] = Float.parseFloat(obj[12].toString()) - Float.parseFloat(obj[3].toString());

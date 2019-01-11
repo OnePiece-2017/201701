@@ -7,4 +7,5 @@
 	 <param name="from" />
 	<param name="year" value="#{ysBudgetCollectionDeptHome.year}"/>
 	<param name="deptIds" value="#{ysBudgetCollectionDeptHome.deptIds}"/>
+	<param name="draftType" value="#{ysBudgetCollectionDeptHome.draftTypeStr}"/>
 </page>

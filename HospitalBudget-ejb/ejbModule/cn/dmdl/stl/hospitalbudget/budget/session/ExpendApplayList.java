@@ -7,7 +7,6 @@ import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -32,6 +31,7 @@ import org.apache.poi.ss.util.RegionUtil;
 import org.jboss.seam.annotations.In;
 import org.jboss.seam.annotations.Name;
 
+import cn.dmdl.stl.hospitalbudget.boot.ConfigureCache;
 import cn.dmdl.stl.hospitalbudget.budget.entity.ExpendApplyInfo;
 import cn.dmdl.stl.hospitalbudget.budget.entity.ExpendApplyProject;
 import cn.dmdl.stl.hospitalbudget.budget.entity.ExpendConfirmInfo;
@@ -39,6 +39,7 @@ import cn.dmdl.stl.hospitalbudget.budget.entity.ExpendConfirmProject;
 import cn.dmdl.stl.hospitalbudget.budget.entity.RoutineProject;
 import cn.dmdl.stl.hospitalbudget.budget.entity.YsExpandApplyProcessLog;
 import cn.dmdl.stl.hospitalbudget.common.session.CriterionNativeQuery;
+import cn.dmdl.stl.hospitalbudget.util.CommonDaoUtil;
 import cn.dmdl.stl.hospitalbudget.util.MysqlJDBCUtil;
 import cn.dmdl.stl.hospitalbudget.util.NumberUtil;
 import cn.dmdl.stl.hospitalbudget.util.SessionToken;
@@ -83,10 +84,12 @@ public class ExpendApplayList extends CriterionNativeQuery<Object[]> {
 		statusList = initStatusList();
 		
 		//从新耗材系统获取支出数据
-		this.syncNewConsumables();
+/*		this.syncNewConsumables();
 		
-		//在老耗材系统获取支出数据
-		this.syncOldConsumables();
+		if("1".equals(ConfigureCache.getValue("hospital.source"))){//只有总院的项目加载老耗材系统
+			//在老耗材系统获取支出数据  
+			this.syncOldConsumables();
+		}*/
 		
 	}
 	
@@ -290,7 +293,8 @@ public class ExpendApplayList extends CriterionNativeQuery<Object[]> {
 				+ "from HMMIS_BUDG.dbo.budg_application4expenditure a,"
 				+ "HMMIS_BUDG.dbo.budg_type_dict b "
 				+ "where a.budg_code=b.budg_code "
-				+ "and a.is_sync=0";
+				+ "and a.is_sync=0 "
+				+ "and a.budg_hospital_code = '" + ConfigureCache.getValue("hospital.source") +  "' ";
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 		String updateSql = "update HMMIS_BUDG.dbo.budg_application4expenditure set is_sync=1 where bill_code=? ";
 		List<String> codeList = new ArrayList<String>();
@@ -336,7 +340,7 @@ public class ExpendApplayList extends CriterionNativeQuery<Object[]> {
 				expendApplyInfo.setReciveCompany(reciveCompany);
 				expendApplyInfo.setInvoiceNum(invoiceNum);
 				expendApplyInfo.setInsertUser(userId);
-				expendApplyInfo.setInsertTime(venDate);
+				expendApplyInfo.setInsertTime(new java.util.Date());
 				expendApplyInfo.setDeleted(false);
 				expendApplyInfo.setSummary((invoiceNum != null ? invoiceNum.split(",").length + "" : "1"));
 				expendApplyInfo.setReimbursementer(oper);
@@ -441,7 +445,7 @@ public class ExpendApplayList extends CriterionNativeQuery<Object[]> {
 					}
 				}
 				 String froensql = "update HMMIS_BUDG.dbo.budg_type_dict set budg_year_frozen = "+getExpendInfoMoney(projectType,updateProjuectId)
-						   +" where budg_code='" + budgCode + "'";
+						   +" where budg_code='" + budgCode + "' and budg_hospital_code = '" + ConfigureCache.getValue("hospital.source") + "' ";
 				 ps = conn.prepareStatement(froensql);
 				 ps.executeUpdate();
 			}
@@ -463,7 +467,7 @@ public class ExpendApplayList extends CriterionNativeQuery<Object[]> {
 	@Override
 	@SuppressWarnings("unchecked")
 	protected Query createQuery(){
-		boolean privateRole = false;//角色不属于财务 和主任（领导的）
+/*		boolean privateRole = false;//角色不属于财务 和主任（领导的）
 		String roleSql = "select role_info.role_info_id,user_info.department_info_id,ydi.the_value from user_info LEFT JOIN role_info on role_info.role_info_id=user_info.role_info_id LEFT JOIN ys_department_info ydi on "
 				+ "user_info.department_info_id=ydi.the_id where user_info.user_info_id=" + sessionToken.getUserInfoId();
 		
@@ -473,7 +477,10 @@ public class ExpendApplayList extends CriterionNativeQuery<Object[]> {
 		if(Integer.valueOf(roleId) != 1 && Integer.valueOf(roleId) != 2){
 			applyUser = sessionToken.getUserInfoId();
 			privateRole = true;
-		}
+		}*/
+		boolean allDepartmentDataFlag = CommonDaoUtil.hasAllDepartmentDataFlag(sessionToken.getUserInfoId());
+		boolean localDepartmentDataFlag = CommonDaoUtil.hasLocalDepartmentDataFlag(sessionToken.getUserInfoId());
+	
 		StringBuffer sql = new StringBuffer();
 		sql.append(" SELECT ");
 		sql.append(" eai.expend_apply_info_id, ");//0申请单id
@@ -498,11 +505,13 @@ public class ExpendApplayList extends CriterionNativeQuery<Object[]> {
 		sql.append(" LEFT JOIN routine_project rp on rp.the_id=eap.project_id ");
 		sql.append(" where eai.deleted=0 ");
 		
-		if(privateRole){
-			sql.append(" and eai.insert_user= ").append(sessionToken.getUserInfoId());
-		}
-		if(Integer.valueOf(roleId) == 4){
-			sql.append(" and ui.department_info_id= ").append(sessionToken.getDepartmentInfoId());
+		if(!allDepartmentDataFlag){//不具备全科数据权限
+			if(localDepartmentDataFlag){//具备本科室的查询权限
+				sql.append(" and ui.department_info_id= ").append(sessionToken.getDepartmentInfoId());
+			}else{//普通用户查自己的
+				sql.append(" and eai.insert_user= ").append(sessionToken.getUserInfoId());
+				applyUser = sessionToken.getUserInfoId();
+			}
 		}
 		if(null != departmentId && departmentId != -1){
 			sql.append(" and ui.department_info_id= ").append(departmentId);
@@ -996,7 +1005,7 @@ public class ExpendApplayList extends CriterionNativeQuery<Object[]> {
 	 */
 	@SuppressWarnings("unchecked")
 	public List<Object[]> queryExportData(Integer departmentId,Integer applyUser,String applyTime,String applyEndTime,String searchKey,Integer status,String projectName){
-		boolean privateRole = false;//角色不属于财务 和主任（领导的）
+/*		boolean privateRole = false;//角色不属于财务 和主任（领导的）
 		String roleSql = "select role_info.role_info_id,user_info.department_info_id,ydi.the_value from user_info LEFT JOIN role_info on role_info.role_info_id=user_info.role_info_id LEFT JOIN ys_department_info ydi on "
 				+ "user_info.department_info_id=ydi.the_id where user_info.user_info_id=" + sessionToken.getUserInfoId();
 		
@@ -1006,7 +1015,11 @@ public class ExpendApplayList extends CriterionNativeQuery<Object[]> {
 		if(Integer.valueOf(roleId) != 1 && Integer.valueOf(roleId) != 2){
 			applyUser = sessionToken.getUserInfoId();
 			privateRole = true;
-		}
+		}*/
+		boolean allDepartmentDataFlag = CommonDaoUtil.hasAllDepartmentDataFlag(sessionToken.getUserInfoId());
+		boolean localDepartmentDataFlag = CommonDaoUtil.hasLocalDepartmentDataFlag(sessionToken.getUserInfoId());
+	
+		
 		StringBuffer sql = new StringBuffer();
 		sql.append(" SELECT ");
 		sql.append(" eai.expend_apply_info_id, ");//0申请单id
@@ -1030,12 +1043,13 @@ public class ExpendApplayList extends CriterionNativeQuery<Object[]> {
 		sql.append(" LEFT JOIN generic_project gp on gp.the_id=eap.generic_project_id ");
 		sql.append(" LEFT JOIN routine_project rp on rp.the_id=eap.project_id ");
 		sql.append(" where eai.deleted=0 ");
-		
-		if(privateRole){
-			sql.append(" and eai.insert_user= ").append(sessionToken.getUserInfoId());
-		}
-		if(Integer.valueOf(roleId) == 4){
-			sql.append(" and ui.department_info_id= ").append(sessionToken.getDepartmentInfoId());
+		if(!allDepartmentDataFlag){//不具备全科数据权限
+			if(localDepartmentDataFlag){//具备本科室的查询权限
+				sql.append(" and ui.department_info_id= ").append(sessionToken.getDepartmentInfoId());
+			}else{//普通用户查自己的
+				sql.append(" and eai.insert_user= ").append(sessionToken.getUserInfoId());
+				applyUser = sessionToken.getUserInfoId();
+			}
 		}
 		if(null != departmentId && departmentId != -1){
 			sql.append(" and ui.department_info_id= ").append(departmentId);

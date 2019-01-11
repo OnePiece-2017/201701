@@ -1,0 +1,75 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:s="http://jboss.com/products/seam/taglib"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:rich="http://richfaces.org/rich"
+	template="layout/template.xhtml">
+<ui:define name="head">
+	<link rel="stylesheet" type="text/css" href="#{request.contextPath}/stylesheet/login.css" />
+</ui:define>
+<ui:define name="body">
+
+	   <h:form id="mainForm">
+			<div class="login">
+			    <div class="message">友谊医院预算系统</div>
+			    <div id="darkbannerwrap"></div>
+			    <div style="position: relative;">
+			    	<img src="#{request.contextPath}/images/username_login.png" class="login-icon"></img>
+					<h:inputText id="username" value="#{credentials.username}" />
+			    </div>
+				<!-- <input name="username" placeholder="用户名" required="" type="text"> -->
+				<hr class="hr15"></hr>
+				<div style="position: relative;">
+					<img src="#{request.contextPath}/images/password_login.png" class="login-icon"></img>
+					<h:inputSecret id="password" value="#{credentials.password}" />
+				</div>
+				<!-- <input name="password" placeholder="密码" required="" type="password"> -->
+				<hr class="hr15"></hr>
+				<h:commandButton id="submit" value="登录" onclick="return beforeSubmit();"  style="width:100%;" action="#{authenticator.login}" styleClass="btn btn-info"/>
+				<!-- <input value="登录" style="width:100%;" type="submit"> -->
+				<hr class="hr20"></hr>
+				<!-- 帮助 <a onClick="alert('请联系管理员')">忘记密码</a> -->
+			</div>
+		</h:form>
+
+		<div class="copyright">© 2017Copyright by 友谊医院</div>
+		<script type="text/javascript" src="#{request.contextPath}/toolkit/utils.js" charset="UTF-8" />
+		<script type="text/javascript">
+		//<![CDATA[
+			jQuery(document).ready(function() {
+/* 			    ___textRestrictById('mainForm:username', 255);
+			    ___textRestrictById('mainForm:password', 255);
+				
+				var message = '#{sessionToken.message}';
+				___dynamic_function = function() {
+					jQuery('#mainForm\\:password').focus();
+				};
+				if (message != '') {
+					___msg('温馨提示', message, {closed: ___dynamic_function});
+				}
+				var forTest = false;
+				if (forTest) {
+					jQuery('#mainForm\\:username').val('zhangjie');
+					jQuery('#mainForm\\:submit').click();
+				} */
+			});
+			
+			//提交表单前
+			function beforeSubmit() {
+				var username = jQuery('#mainForm\\:username').val();
+				var username = jQuery('#mainForm\\:username').val();
+				if (username == null || username == '') {
+					___dynamic_function = function() {
+						jQuery('#mainForm\\:username').focus();
+					};
+					___msg('温馨提示', '请输入用户名！', {closed: ___dynamic_function});
+					return false;
+				}
+			}
+		//]]>
+		</script>
+	</ui:define>
+</ui:composition>

@@ -70,6 +70,7 @@
 									<s:link  styleClass="btn btn-primary mr15" view="/budget/YsBudgetCollectionDeptList.xhtml" action="#{ysBudgetCollectionDeptHome.expExcel()}" >导出
 	                       				<f:param name="year" value="#{ysBudgetCollectionDeptHome.year}"/>
 	                       				<f:param name="deptIds" value="#{ysBudgetCollectionDeptHome.deptIds}"/>
+	                       				<f:param name="draftType" value="#{ysBudgetCollectionDeptHome.draftTypeStr}"/>
 	                        		</s:link>
                         		</rich:panel>
                         		<a:form >
@@ -191,7 +192,8 @@
 			    if(deptIds){
 			    	deptIds = deptIds.toString(); 
 				}
-			    expExcel(year, deptIds);
+			    var draftType = jQuery("#draftType").val();
+			    expExcel(year, deptIds, draftType);
 			}
 			//装载页面
 			function wirePage(data){

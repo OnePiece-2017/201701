@@ -318,18 +318,20 @@ public class RoutineProjectHome extends CriterionEntityHome<RoutineProject> {
 
 		joinTransaction();
 		// 处理一级项目-清理旧数据
-		getEntityManager().createNativeQuery("delete from routine_project_compiler where project_id = " + instance.getTheId()).executeUpdate();
-		getEntityManager().createNativeQuery("delete from routine_project_executor where project_id = " + instance.getTheId()).executeUpdate();
+//		getEntityManager().createNativeQuery("delete from routine_project_compiler where project_id = " + instance.getTheId()).executeUpdate();
+//		getEntityManager().createNativeQuery("delete from routine_project_executor where project_id = " + instance.getTheId()).executeUpdate();
 		// 处理二级项目-清理旧数据
 		List<Object[]> nexusList = getEntityManager().createNativeQuery("select the_id, the_pid from routine_project").getResultList();
 		List<Object> subProjectIdList = new ArrayList<Object>();
 		findSubProjectIds(nexusList, subProjectIdList, instance.getTheId());// 填充子项目id列表
 		String subProjectIds = subProjectIdList.toString().substring(1, subProjectIdList.toString().length() - 1);// 处理id列表
 		if (subProjectIds != null && !"".equals(subProjectIds)) {
-			getEntityManager().createNativeQuery("delete from routine_project where the_id in (" + subProjectIds + ")").executeUpdate();
-			getEntityManager().createNativeQuery("delete from routine_project_executor where project_id in (" + subProjectIds + ")").executeUpdate();
+			getEntityManager().createNativeQuery("update from routine_project set deleted = 1 where the_id in (" + subProjectIds + ")").executeUpdate();
+//			getEntityManager().createNativeQuery("delete from routine_project where the_id in (" + subProjectIds + ")").executeUpdate();
+//			getEntityManager().createNativeQuery("delete from routine_project_executor where project_id in (" + subProjectIds + ")").executeUpdate();
 		}
-		getEntityManager().remove(instance);
+		instance.setDeleted(true);
+//		getEntityManager().remove(instance);
 		getEntityManager().flush();
 		raiseAfterTransactionSuccessEvent();
 		return "removed";

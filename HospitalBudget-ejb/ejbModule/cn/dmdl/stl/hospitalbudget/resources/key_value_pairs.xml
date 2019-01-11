@@ -102,8 +102,15 @@
 	<item key="context.root" for="1" enabled="true">
 		<value>/HospitalBudget</value>
 	</item>
-	<item key="context.root" for="3" enabled="true">
+	<item key="context.root" for="2" enabled="true">
 		<value>/</value>
 	</item>
-
+	
+	<!-- 医院的地址，友谊医院为1，通州医院是2 -->
+	<item key="hospital.source" for="1" enabled="true">
+		<value>1</value>
+	</item>
+	<item key="hospital.source" for="2" enabled="true">
+		<value>2</value>
+	</item>
 </key_value_pairs>
