@@ -121,7 +121,7 @@ public class YsBudgetCollectionDeptHome extends CriterionEntityHome<Object> {
 				totalIncome += thisYearTotalAmount;
 				if(lastYearIncomeAmountMap.containsKey(incomeObjArr[5].toString())){
 					double lastYearTotalAmount = lastYearIncomeAmountMap.get(incomeObjArr[5].toString());
-					incomeJson.element("with_last_year_num", thisYearTotalAmount - lastYearTotalAmount);
+					incomeJson.element("with_last_year_num", (thisYearTotalAmount - lastYearTotalAmount)/10000);
 					incomeJson.element("with_last_year_percent", Assit.formatDouble2((thisYearTotalAmount - lastYearTotalAmount)/lastYearTotalAmount*100) + "%");
 				}
 			}
@@ -197,7 +197,7 @@ public class YsBudgetCollectionDeptHome extends CriterionEntityHome<Object> {
 				totalExpend += thisYearTotalAmount;
 				if(lastYearExpendAmountMap.containsKey(expendObjArr[5].toString())){
 					double lastYearTotalAmount = lastYearExpendAmountMap.get(expendObjArr[5].toString());
-					expendJson.element("with_last_year_num", thisYearTotalAmount - lastYearTotalAmount);
+					expendJson.element("with_last_year_num", (thisYearTotalAmount - lastYearTotalAmount)/10000);
 					expendJson.element("with_last_year_percent", Assit.formatDouble2((thisYearTotalAmount - lastYearTotalAmount)/lastYearTotalAmount*100) + "%");
 				}
 			}
@@ -1029,9 +1029,12 @@ public class YsBudgetCollectionDeptHome extends CriterionEntityHome<Object> {
 				if(((null != theObj[8] && null != lastObj[8] && Integer.valueOf(theObj[8].toString()).intValue() == Integer.valueOf(lastObj[8].toString())) 
 						|| (null != theObj[10] && null != lastObj[10] && Integer.valueOf(theObj[10].toString()).intValue() == Integer.valueOf(lastObj[10].toString()))) 
 						&& Integer.valueOf(theObj[5].toString()).intValue() == Integer.valueOf(lastObj[5].toString()).intValue()){
+					//去年的预算
 					obj[12] = lastObj[3];
-					obj[13] = Float.parseFloat(obj[12].toString()) - Float.parseFloat(obj[3].toString());
-					obj[14] = df.format(Float.parseFloat(obj[13].toString()) / Float.parseFloat(obj[3].toString()));
+					//今年减去去年的预算同比增减金额
+					obj[13] = (Float.parseFloat(obj[3].toString()) - Float.parseFloat(obj[12].toString()))/10000;
+					//今年减去去年的预算同比增减率
+					obj[14] = df.format((Float.parseFloat(obj[3].toString()) - Float.parseFloat(obj[12].toString())) / Float.parseFloat(obj[12].toString())*100);
 				}
 			}
 			obj[15] =  theObj[12];

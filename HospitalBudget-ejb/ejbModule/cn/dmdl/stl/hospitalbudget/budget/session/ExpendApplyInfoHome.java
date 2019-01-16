@@ -27,13 +27,9 @@ import cn.dmdl.stl.hospitalbudget.budget.entity.GenericProject;
 import cn.dmdl.stl.hospitalbudget.budget.entity.NormalExpendPlantInfo;
 import cn.dmdl.stl.hospitalbudget.budget.entity.ProcessStepInfo;
 import cn.dmdl.stl.hospitalbudget.budget.entity.RoutineProject;
-import cn.dmdl.stl.hospitalbudget.budget.entity.TaskOrder;
-import cn.dmdl.stl.hospitalbudget.budget.entity.TaskUser;
 import cn.dmdl.stl.hospitalbudget.budget.entity.YsExpandApplyProcessLog;
 import cn.dmdl.stl.hospitalbudget.common.session.CriterionEntityHome;
 import cn.dmdl.stl.hospitalbudget.hospital.entity.YsDepartmentInfo;
-import cn.dmdl.stl.hospitalbudget.hospital.entity.YsProjectNature;
-import cn.dmdl.stl.hospitalbudget.util.Assit;
 import cn.dmdl.stl.hospitalbudget.util.HospitalConstant;
 import cn.dmdl.stl.hospitalbudget.util.NumberUtil;
 import cn.dmdl.stl.hospitalbudget.util.SqlServerJDBCUtil;
@@ -159,13 +155,15 @@ public class ExpendApplyInfoHome extends CriterionEntityHome<ExpendApplyInfo>{
 			projectSql.append(" eap.expend_money as expend_money2, ");//12
 			projectSql.append(" eap.generic_project_id, ");//13
 			projectSql.append(" fs2.the_value as source_name2, ");//14
-			projectSql.append(" 2,eap.attachment,nepi.normal_expend_plan_id  ");//15
+			projectSql.append(" 2,");//15
+			projectSql.append(" eap.attachment, ");//16
+			projectSql.append(" nepi.normal_expend_plan_id, ");//17
+			projectSql.append(" eai.year ");//18
 			projectSql.append(" FROM expend_apply_project eap ");
 			projectSql.append(" LEFT JOIN expend_apply_info eai ON eap.expend_apply_info_id = eai.expend_apply_info_id ");
 			projectSql.append(" LEFT JOIN routine_project up on up.the_id=eap.project_id ");
 			projectSql.append(" LEFT JOIN normal_expend_plan_info expi on  expi.project_id=eap.project_id and expi.`year` = eai.`year` ");
 			projectSql.append(" LEFT JOIN ys_funds_source fs on up.funds_source_id=fs.the_id ");
-			
 			projectSql.append(" LEFT JOIN generic_project gp ON gp.the_id = eap.generic_project_id ");
 			projectSql.append(" LEFT JOIN normal_expend_plan_info nepi ON nepi.generic_project_id = eap.generic_project_id AND nepi.`year` = eai.`year` ");
 			projectSql.append(" LEFT JOIN ys_funds_source fs2 ON gp.funds_source_id = fs2.the_id ");
@@ -178,7 +176,7 @@ public class ExpendApplyInfoHome extends CriterionEntityHome<ExpendApplyInfo>{
 				for(Object[] obj : list){
 					Object[] projectDetail = new Object[11];
 					if(null != obj[5] && null == obj[13]){
-						double usedMoney = getExpendInfoMoneyOfEdit(1,Integer.valueOf(obj[5].toString()),expendApplyInfoId);
+						double usedMoney = getExpendInfoMoneyOfEdit(1,Integer.valueOf(obj[5].toString()),expendApplyInfoId, Integer.parseInt(obj[18].toString()));
 						projectDetail[0] = obj[0];
 						BigDecimal bd1 = new BigDecimal(Double.parseDouble(obj[1].toString()));
 						projectDetail[1] = bd1.setScale(2, BigDecimal.ROUND_HALF_UP).toPlainString();
@@ -197,7 +195,7 @@ public class ExpendApplyInfoHome extends CriterionEntityHome<ExpendApplyInfo>{
 						projectDetail[10] = obj[17];
 						expendList.add(projectDetail);
 					}else{
-						double usedMoney = getExpendInfoMoneyOfEdit(2,Integer.valueOf(obj[13].toString()),expendApplyInfoId);
+						double usedMoney = getExpendInfoMoneyOfEdit(2,Integer.valueOf(obj[13].toString()),expendApplyInfoId, Integer.parseInt(obj[18].toString()));
 						projectDetail[0] = obj[8];
 						BigDecimal bd1 = new BigDecimal(Double.parseDouble(obj[9].toString()));
 						projectDetail[1] = bd1.setScale(2, BigDecimal.ROUND_HALF_UP).toPlainString();
@@ -462,7 +460,7 @@ public class ExpendApplyInfoHome extends CriterionEntityHome<ExpendApplyInfo>{
 		}
 		contractJson.element("is_audit", false);
 		contractList = new ArrayList<Object[]>();
-		double money = getExpendAllMoney(projectType,projectId);
+		double money = getExpendAllMoney(projectType,projectId,year);
 		if(null != projectId && -1 != projectId){
 			if(projectType == 1){
 				StringBuffer sql = new StringBuffer();
@@ -476,6 +474,7 @@ public class ExpendApplyInfoHome extends CriterionEntityHome<ExpendApplyInfo>{
 				sql.append(" LEFT JOIN routine_project rp ON nepi.project_id = rp.the_id ");
 				sql.append(" LEFT JOIN ys_funds_source fs on rp.funds_source_id=fs.the_id ");
 				sql.append(" WHERE nepi.project_id= ").append(projectId);
+				sql.append(" and nepi.year = '").append(year).append("' ");
 				List<Object[]> list = getEntityManager().createNativeQuery(sql.toString()).getResultList();
 				if(list.size() > 0){
 					Object[] obj = list.get(0);
@@ -516,6 +515,7 @@ public class ExpendApplyInfoHome extends CriterionEntityHome<ExpendApplyInfo>{
 				sql.append(" LEFT JOIN generic_project rp ON nepi.generic_project_id = rp.the_id ");
 				sql.append(" LEFT JOIN ys_funds_source fs on rp.funds_source_id=fs.the_id ");
 				sql.append(" WHERE nepi.generic_project_id= ").append(projectId);
+				sql.append(" and nepi.year = '").append(year).append("' ");
 				List<Object[]> list = getEntityManager().createNativeQuery(sql.toString()).getResultList();
 				if(list.size() > 0){
 					Object[] obj = list.get(0);
@@ -588,7 +588,7 @@ public class ExpendApplyInfoHome extends CriterionEntityHome<ExpendApplyInfo>{
 			expendList = new ArrayList<Object[]>();
 		}
 		StringBuffer sql = new StringBuffer();
-		double money1 = getExpendInfoMoney(projectType,projectId);
+		double money1 = getExpendAllMoney(projectType,projectId,year);
 		if(projectType == 1){
 			sql.append(" SELECT ");
 			sql.append(" up.the_value, ");
@@ -600,6 +600,7 @@ public class ExpendApplyInfoHome extends CriterionEntityHome<ExpendApplyInfo>{
 			sql.append(" LEFT JOIN normal_expend_plan_info nepi ON up.the_id = nepi.project_id ");
 			sql.append(" LEFT JOIN ys_funds_source fs on up.funds_source_id=fs.the_id ");
 			sql.append(" WHERE up.the_id = ").append(projectId);
+			sql.append(" AND nepi.year = ").append(year);
 			List<Object[]> list = getEntityManager().createNativeQuery("select * from (" + sql.toString() + ") as test").getResultList();
 			Object[] project = list.get(0);
 			DecimalFormat df = new DecimalFormat("#.00");
@@ -629,6 +630,7 @@ public class ExpendApplyInfoHome extends CriterionEntityHome<ExpendApplyInfo>{
 			sql.append(" LEFT JOIN normal_expend_plan_info nepi ON up.the_id = nepi.generic_project_id ");
 			sql.append(" LEFT JOIN ys_funds_source fs on up.funds_source_id=fs.the_id ");
 			sql.append(" WHERE up.the_id = ").append(projectId);
+			sql.append(" AND nepi.year = ").append(year);
 			List<Object[]> list = getEntityManager().createNativeQuery("select * from (" + sql.toString() + ") as test").getResultList();
 			Object[] project = list.get(0);
 			DecimalFormat df = new DecimalFormat("#.00");
@@ -891,7 +893,7 @@ public class ExpendApplyInfoHome extends CriterionEntityHome<ExpendApplyInfo>{
 		for(String haocai : haocaiIds){
 			NormalExpendPlantInfo nepi = getEntityManager().find(NormalExpendPlantInfo.class, Integer.valueOf(haocai));
 			SqlServerJDBCUtil.calculateOldBudg(haocai,
-					getExpendInfoMoney(nepi.getProjectId() == null ? 2:1,nepi.getProjectId() == null ? nepi.getGenericProjectId():nepi.getProjectId()));
+					getExpendAllMoney(nepi.getProjectId() == null ? 2:1,nepi.getProjectId() == null ? nepi.getGenericProjectId():nepi.getProjectId(), Integer.parseInt(expendApplyInfo.getYear())));
 		}
 		if (saveResult != null) {
 			saveResult.clear();
@@ -1177,7 +1179,7 @@ public class ExpendApplyInfoHome extends CriterionEntityHome<ExpendApplyInfo>{
 		for(String haocai : haocaiIds){
 			NormalExpendPlantInfo nepi = getEntityManager().find(NormalExpendPlantInfo.class, Integer.valueOf(haocai));
 			SqlServerJDBCUtil.calculateOldBudg(haocai,
-					getExpendInfoMoney(nepi.getProjectId() == null ? 2:1,nepi.getProjectId() == null ? nepi.getGenericProjectId():nepi.getProjectId()));
+					getExpendAllMoney(nepi.getProjectId() == null ? 2:1,nepi.getProjectId() == null ? nepi.getGenericProjectId():nepi.getProjectId(), Integer.parseInt(expendApplyInfo.getYear())));
 		}
 		getEntityManager().flush();
 		raiseAfterTransactionSuccessEvent();
@@ -1580,9 +1582,9 @@ public class ExpendApplyInfoHome extends CriterionEntityHome<ExpendApplyInfo>{
 					List<Object[]> proList = getEntityManager().createNativeQuery(sql).getResultList();
 					if(null != proList && proList.size() > 0){
 						if(null != proList.get(0)[0]){
-							frozenMoney = getExpendInfoMoney(1,Integer.valueOf(proList.get(0)[0].toString()));
+							frozenMoney = getExpendAllMoney(1,Integer.valueOf(proList.get(0)[0].toString()),Integer.parseInt(expendApplyInfo.getYear()));
 						}else{
-							frozenMoney = getExpendInfoMoney(2,Integer.valueOf(proList.get(0)[1].toString()));
+							frozenMoney = getExpendAllMoney(2,Integer.valueOf(proList.get(0)[1].toString()),Integer.parseInt(expendApplyInfo.getYear()));
 						}
 					}
 					SqlServerJDBCUtil.checkReturn(expendApplyInfo.getExpendApplyCode(), frozenMoney);
@@ -1599,7 +1601,8 @@ public class ExpendApplyInfoHome extends CriterionEntityHome<ExpendApplyInfo>{
 	 * @param projectId
 	 * @return
 	 */
-	public Double getExpendInfoMoney(int projectType,int projectId){
+/*	与getExpendAllMoney方法重复
+ * public Double getExpendInfoMoney(int projectType,int projectId){
 		double money = 0d;
 		StringBuffer sql = new StringBuffer();
 		if(projectType == 1){
@@ -1626,7 +1629,7 @@ public class ExpendApplyInfoHome extends CriterionEntityHome<ExpendApplyInfo>{
 			}
 		}
 		return money;
-	}
+	}*/
 	
 	
 	/**
@@ -1635,7 +1638,7 @@ public class ExpendApplyInfoHome extends CriterionEntityHome<ExpendApplyInfo>{
 	 * @param projectId
 	 * @return
 	 */
-	public Double getExpendInfoMoneyOfEdit(int projectType,int projectId,int eaiId){
+	public Double getExpendInfoMoneyOfEdit(int projectType,int projectId,int eaiId, int year){
 		double money = 0d;
 		StringBuffer sql = new StringBuffer();
 		if(projectType == 1){
@@ -1643,6 +1646,7 @@ public class ExpendApplyInfoHome extends CriterionEntityHome<ExpendApplyInfo>{
 			sql.append(" LEFT JOIN expend_apply_project eap on eai.expend_apply_info_id=eap.expend_apply_info_id ");
 			sql.append(" where eai.expend_apply_status in (" + HospitalConstant.getExpendApplyValidStatus() + ") ");
 			sql.append(" and eap.project_id= ").append(projectId);
+			sql.append(" and eai.year = ").append(year);
 			sql.append(" and eap.deleted=0 ");
 			sql.append(" and eai.expend_apply_info_id !=  ").append(eaiId);
 			sql.append(" GROUP BY eap.project_id ");
@@ -1651,6 +1655,7 @@ public class ExpendApplyInfoHome extends CriterionEntityHome<ExpendApplyInfo>{
 			sql.append(" LEFT JOIN expend_apply_project eap on eai.expend_apply_info_id=eap.expend_apply_info_id ");
 			sql.append(" where eai.expend_apply_status in (" + HospitalConstant.getExpendApplyValidStatus() + ") ");
 			sql.append(" and eap.generic_project_id= ").append(projectId);
+			sql.append(" and eai.year = ").append(year);
 			sql.append(" and eap.deleted=0 ");
 			sql.append(" and eai.expend_apply_info_id !=  ").append(eaiId);
 			sql.append(" GROUP BY eap.project_id ");
@@ -1674,7 +1679,7 @@ public class ExpendApplyInfoHome extends CriterionEntityHome<ExpendApplyInfo>{
 	 * @param projectId
 	 * @return
 	 */
-	public Double getExpendAllMoney(int projectType,int projectId){
+	public Double getExpendAllMoney(int projectType,int projectId, int year){
 		double money = 0d;
 		StringBuffer sql = new StringBuffer();
 		if(projectType == 1){
@@ -1682,6 +1687,7 @@ public class ExpendApplyInfoHome extends CriterionEntityHome<ExpendApplyInfo>{
 			sql.append(" LEFT JOIN expend_apply_project eap on eai.expend_apply_info_id=eap.expend_apply_info_id ");
 			sql.append(" where  eai.expend_apply_status in (" + HospitalConstant.getExpendApplyValidStatus() + ")");
 			sql.append(" and eap.project_id= ").append(projectId);
+			sql.append(" and eai.year = ").append(year);
 			sql.append(" and eai.deleted = 0 ");
 			sql.append(" GROUP BY eap.project_id ");
 		}else{
@@ -1689,6 +1695,7 @@ public class ExpendApplyInfoHome extends CriterionEntityHome<ExpendApplyInfo>{
 			sql.append(" LEFT JOIN expend_apply_project eap on eai.expend_apply_info_id=eap.expend_apply_info_id ");
 			sql.append(" where eai.expend_apply_status in (" + HospitalConstant.getExpendApplyValidStatus() + ")");
 			sql.append(" and eap.generic_project_id= ").append(projectId);
+			sql.append(" and eai.year = ").append(year);
 			sql.append(" and eai.deleted = 0 ");
 			sql.append(" GROUP BY eap.project_id ");
 		}

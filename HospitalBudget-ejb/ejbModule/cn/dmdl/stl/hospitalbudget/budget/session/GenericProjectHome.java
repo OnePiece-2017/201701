@@ -20,7 +20,12 @@ import cn.dmdl.stl.hospitalbudget.budget.entity.GenericProjectExecutor;
 import cn.dmdl.stl.hospitalbudget.common.session.CriterionEntityHome;
 import cn.dmdl.stl.hospitalbudget.hospital.entity.YsDepartmentInfo;
 import cn.dmdl.stl.hospitalbudget.hospital.entity.YsFundsSource;
+import cn.dmdl.stl.hospitalbudget.util.HospitalConstant;
 
+/**
+ * @author HASEE
+ *
+ */
 @Name("genericProjectHome")
 public class GenericProjectHome extends CriterionEntityHome<GenericProject> {
 
@@ -38,6 +43,7 @@ public class GenericProjectHome extends CriterionEntityHome<GenericProject> {
 	private JSONObject subprojectInfoJson;// 子项目（后台-->前台）
 	private String startYear;
 	private Integer isAudit;
+	private Integer theState;
 
 	@Override
 	public String persist() {
@@ -58,8 +64,13 @@ public class GenericProjectHome extends CriterionEntityHome<GenericProject> {
 		instance.setTheLevel(1);// 级别为1
 		instance.setBottomLevel(true);// 假定最底级
 		instance.setStartYear(startYear);
-		if(isAudit == 1){
+		if(isAudit == 1){//是否为审计项目
 			instance.setAudit(true);
+		}
+		if(theState == 1){//是否 关闭
+			instance.setTheState(HospitalConstant.PROJECT_IS_CLOSE);
+		}else{
+			instance.setTheState(HospitalConstant.PROJECT_IS_OPEN);
 		}
 		instance.setInsertTime(new Date());
 		instance.setInsertUser(sessionToken.getUserInfoId());
@@ -112,6 +123,11 @@ public class GenericProjectHome extends CriterionEntityHome<GenericProject> {
 				if(isAudit == 1){
 					instance2nd.setAudit(true);
 				}
+				if(theState == 1){//是否 关闭
+					instance2nd.setTheState(HospitalConstant.PROJECT_IS_CLOSE);
+				}else{
+					instance2nd.setTheState(HospitalConstant.PROJECT_IS_OPEN);
+				}
 				instance2nd.setInsertTime(new Date());
 				instance2nd.setInsertUser(sessionToken.getUserInfoId());
 				getEntityManager().persist(instance2nd);
@@ -158,6 +174,11 @@ public class GenericProjectHome extends CriterionEntityHome<GenericProject> {
 				instance3rdPlus.setTopLevelProjectId(instance.getTheId());// 绑定顶级项目id
 				if(isAudit == 1){
 					instance3rdPlus.setAudit(true);
+				}
+				if(theState == 1){//是否 关闭
+					instance3rdPlus.setTheState(HospitalConstant.PROJECT_IS_CLOSE);
+				}else{
+					instance3rdPlus.setTheState(HospitalConstant.PROJECT_IS_OPEN);
 				}
 				if (subprojectInfoOne.containsKey("is_new") || null == mergeIdSet) {
 					instance3rdPlus.setInsertTime(new Date());
@@ -235,6 +256,11 @@ public class GenericProjectHome extends CriterionEntityHome<GenericProject> {
 		if(isAudit == 1){
 			instance.setAudit(true);
 		}
+		if(theState == 1){//是否 关闭
+			instance.setTheState(HospitalConstant.PROJECT_IS_CLOSE);
+		}else{
+			instance.setTheState(HospitalConstant.PROJECT_IS_OPEN);
+		}
 		instance.setUpdateTime(new Date());
 		instance.setUpdateUser(sessionToken.getUserInfoId());
 		getEntityManager().merge(instance);
@@ -281,6 +307,11 @@ public class GenericProjectHome extends CriterionEntityHome<GenericProject> {
 				instance2nd.setUpdateUser(sessionToken.getUserInfoId());
 				if(isAudit == 1){
 					instance2nd.setAudit(true);
+				}
+				if(theState == 1){//是否 关闭
+					instance2nd.setTheState(HospitalConstant.PROJECT_IS_CLOSE);
+				}else{
+					instance2nd.setTheState(HospitalConstant.PROJECT_IS_OPEN);
 				}
 				if (subprojectInfoOne.containsKey("is_new")) {
 					instance2nd.setInsertTime(new Date());
@@ -580,6 +611,9 @@ public class GenericProjectHome extends CriterionEntityHome<GenericProject> {
 			if(instance.isAudit()){
 				isAudit = 1;
 			}
+			if(null != instance.getTheState() && instance.getTheState() == HospitalConstant.PROJECT_IS_CLOSE){
+				theState = 1;
+			}
 			if (isManaged()) {
 				// 加载一级项目编制人
 				List<Object> budgetPersonCompilerIdsList = getEntityManager().createNativeQuery("select IFNULL(GROUP_CONCAT(user_info_id), '') as result from generic_project_compiler where project_id = " + instance.getTheId()).getResultList();
@@ -728,5 +762,15 @@ public class GenericProjectHome extends CriterionEntityHome<GenericProject> {
 	public void setIsAudit(Integer isAudit) {
 		this.isAudit = isAudit;
 	}
+
+	public Integer getTheState() {
+		return theState;
+	}
+
+	public void setTheState(Integer theState) {
+		this.theState = theState;
+	}
+	
+	
 
 }

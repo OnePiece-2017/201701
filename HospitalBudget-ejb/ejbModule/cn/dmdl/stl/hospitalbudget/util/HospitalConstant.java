@@ -49,6 +49,9 @@ public class HospitalConstant {
 	public final static int EXPEND_APPLY_STATUS_CONFIRMREJECT = 4;//确认驳回
 	public final static int EXPEND_APPLY_STATUS_CONFIRMCOMPLETE = 5;//确认完成
 	
+	//项目状态
+	public final static int PROJECT_IS_OPEN = 1;//打开
+	public final static int PROJECT_IS_CLOSE = 2;//关闭
 	/**
 	 * 获取有效状态的支出申请状态，用户筛选已使用金额的支出单有哪些
 	 * @return

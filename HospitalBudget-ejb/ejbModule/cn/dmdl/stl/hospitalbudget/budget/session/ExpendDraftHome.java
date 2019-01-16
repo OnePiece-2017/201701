@@ -195,6 +195,7 @@ public class ExpendDraftHome extends CriterionEntityHome<Object> {
 		Map<Integer, List<Integer>> nexusMap = new HashMap<Integer, List<Integer>>();// 上下级关系集合
 		final Map<Integer, GenericProject> valueMap = new HashMap<Integer, GenericProject>();// 值集合
 		StringBuffer dataSql = new StringBuffer("select data from GenericProject data where deleted = 0");
+		dataSql.append(" and theState = ").append(HospitalConstant.PROJECT_IS_OPEN);// 打开状态的项目
 		dataSql.append(" and projectType = 2");// 支出预算
 		dataSql.append(" and topLevelProjectId in (select projectId from GenericProjectCompiler where userInfoId = " + sessionToken.getUserInfoId() + ")");
 		boolean refuse = true;
@@ -272,6 +273,7 @@ public class ExpendDraftHome extends CriterionEntityHome<Object> {
 		Map<Integer, List<Integer>> nexusMap = new HashMap<Integer, List<Integer>>();// 上下级关系集合
 		final Map<Integer, RoutineProject> valueMap = new HashMap<Integer, RoutineProject>();// 值集合
 		StringBuffer dataSql = new StringBuffer("select data from RoutineProject data where deleted = 0");
+		dataSql.append(" and theState = ").append(HospitalConstant.PROJECT_IS_OPEN);// 打开状态的项目
 		dataSql.append(" and projectType = 2");// 支出预算
 		dataSql.append(" and topLevelProjectId in (select projectId from RoutineProjectCompiler where userInfoId = " + sessionToken.getUserInfoId() + ")");
 		boolean refuse = true;

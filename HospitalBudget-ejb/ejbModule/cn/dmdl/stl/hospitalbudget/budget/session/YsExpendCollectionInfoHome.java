@@ -107,7 +107,7 @@ public class YsExpendCollectionInfoHome extends CriterionEntityHome<Object> {
 					if(lastYearRoutineMap.containsKey(projectId)){
 						double lastYearBudget = lastYearRoutineMap.get(projectId);
 						double budgetDifference = Double.parseDouble(object[3].toString()) - lastYearBudget;
-						json.element("with_last_year_num", budgetDifference);
+						json.element("with_last_year_num", budgetDifference/10000);
 						json.element("with_last_year_percent", NumberUtil.double2Str(budgetDifference/lastYearBudget*100));
 					}
 					

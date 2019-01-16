@@ -15,6 +15,7 @@
 		<link rel="stylesheet" type="text/css" href="#{request.contextPath}/sg-messagebox/css/sg-messagebox.css" />
 		<link rel="stylesheet" type="text/css" href="#{request.contextPath}/sg-reminder/css/sg-reminder.css" />
 		<link rel="stylesheet" type="text/css" href="#{request.contextPath}/sg-inputbox/css/sg-inputbox.css" />
+		<link rel="stylesheet" type="text/css" href="#{request.contextPath}/icheck/skins/square/blue.css" />
 		<style type="text/css">
 			#node-subproject {
 				width: 100%;
@@ -311,6 +312,23 @@
 							</td>
 						</tr>
 						<tr>
+							<td width="50%">
+								<div class="pb20">
+									<table>
+										<tr>
+											<td valign="middle">
+												<span class="field-name mb10">是否关闭</span>
+											</td>
+											<td valign="middle">
+												<input type="checkbox" class="icheck" id="the_state"></input>
+											</td>
+											<h:inputHidden id="theStateHidden" value="#{routineProjectHome.theState}" />
+										</tr>
+									</table>
+								</div>
+							</td>
+						</tr>
+						<tr>
 							<td colspan="2">
 								<div class="pb20">
 									<table>
@@ -480,6 +498,7 @@
 		<script type="text/javascript" src="#{request.contextPath}/sg-messagebox/js/sg-messagebox.js" />
 		<script type="text/javascript" src="#{request.contextPath}/sg-reminder/js/sg-reminder.js" />
 		<script type="text/javascript" src="#{request.contextPath}/sg-inputbox/js/sg-inputbox.js" />
+		<script type="text/javascript" src="#{request.contextPath}/icheck/js/icheck.min.js" charset="UTF-8" />
 		<script type="text/javascript">
 		//<![CDATA[
 			var g_personJson = #{routineProjectHome.personJson};
@@ -553,6 +572,17 @@
 				    threshold : 1024,
 				    notify : true
 				});
+
+				jQuery('.icheck').iCheck({
+					checkboxClass: 'icheckbox_square-blue',
+					radioClass: 'iradio_square-blue',
+					increaseArea: '20%'
+				});
+
+				var theState = jQuery('#mainForm\\:theStateHidden').val();
+				if(theState == 1){
+					jQuery('#the_state').iCheck('check');
+				}
 			});
 			
 			function setSubprojectInteractive(show) {
@@ -929,6 +959,13 @@
 					return false;
 				}
 				jQuery('#mainForm\\:fundsSourceIdHidden').val(fundsSourceId);
+
+				//是否关闭
+				if(jQuery("#the_state").is(":checked")){
+					jQuery('#mainForm\\:theStateHidden').val(1);
+				}else{
+					jQuery('#mainForm\\:theStateHidden').val(0);
+				}
 			
 				jQuery('#mainForm\\:subprojectInfoHidden').val(JSON.stringify(g_subproject_all));
 			}

@@ -373,6 +373,23 @@
 							</td>
 						</tr>
 						<tr>
+							<td width="50%">
+								<div class="pb20">
+									<table>
+										<tr>
+											<td valign="middle">
+												<span class="field-name mb10">是否关闭</span>
+											</td>
+											<td valign="middle">
+												<input type="checkbox" class="icheck" id="the_state"></input>
+											</td>
+											<h:inputHidden id="theStateHidden" value="#{genericProjectHome.theState}" />
+										</tr>
+									</table>
+								</div>
+							</td>
+						</tr>
+						<tr>
 							<td colspan="2">
 								<div class="pb20">
 									<table>
@@ -651,6 +668,11 @@
 				var isAudit = jQuery('#mainForm\\:isAuditHidden').val();
 				if(isAudit == 1){
 					jQuery('#is_audit').iCheck('check');
+				}
+
+				var theState = jQuery('#mainForm\\:theStateHidden').val();
+				if(theState == 1){
+					jQuery('#the_state').iCheck('check');
 				}
 			});
 			
@@ -1131,12 +1153,20 @@
 				}
 				jQuery('#mainForm\\:startYearHidden').val(startYear);
 
+				//审计
 				if(jQuery("#is_audit").is(":checked")){
 					jQuery('#mainForm\\:isAuditHidden').val(1);
 				}else{
 					jQuery('#mainForm\\:isAuditHidden').val(0);
 				}
-			
+
+				//是否关闭
+				if(jQuery("#the_state").is(":checked")){
+					jQuery('#mainForm\\:theStateHidden').val(1);
+				}else{
+					jQuery('#mainForm\\:theStateHidden').val(0);
+				}
+				
 				var budgetAmount = jQuery('#mainForm\\:budgetAmount').val();
 				___dynamic_function = function() {
 					jQuery('#mainForm\\:budgetAmount').focus();

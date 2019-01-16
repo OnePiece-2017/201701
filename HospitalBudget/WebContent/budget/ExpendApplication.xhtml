@@ -733,6 +733,7 @@
 				<a:actionparam name="projectType" assignTo="#{expendApplyInfoHome.projectType}" />
 				<a:actionparam name="departmentId" assignTo="#{expendApplyInfoHome.departmentId}" />
 				<a:actionparam name="fundsSourceId" assignTo="#{expendApplyInfoHome.fundsSourceId}" />
+				<a:actionparam name="year" assignTo="#{expendApplyInfoHome.year}" />
 			</a:jsFunction>
 			<a:jsFunction name="save" action="#{expendApplyInfoHome.save}" data="#{expendApplyInfoHome.saveResult}" oncomplete="saveComplete(data)"  reRender="formnum">
 				<a:actionparam name="year" assignTo="#{expendApplyInfoHome.year}" />
@@ -784,6 +785,7 @@
 				<a:actionparam name="projectId" assignTo="#{expendApplyInfoHome.projectId}" />
 				<a:actionparam name="projectType" assignTo="#{expendApplyInfoHome.projectType}" />
 				<a:actionparam name="projectJson" assignTo="#{expendApplyInfoHome.projectJson}" />
+				<a:actionparam name="year" assignTo="#{expendApplyInfoHome.year}" />
 			</a:jsFunction>
 		</a:form>
 		
@@ -817,6 +819,8 @@
 				var register = "#{expendApplyInfoHome.register}";
 				var expendIdEdit = jQuery("#mainForm\\:expendApplyIdEdit").val();
 				if(expendIdEdit != "0"){
+					//编辑时不允许重新选择年份
+					jQuery("#budgetYear").prop('disabled', true);
 					jQuery("#user").selectpicker("val",applyUser);
 					if(register != "0"){
 						jQuery("#register").selectpicker("val",register);
@@ -868,7 +872,8 @@
 				var fundsSource = jQuery("#fundsSource").val();
 				var projectId = jQuery("#projectId").val();
 				var projectType = jQuery("#projectType").val();
-				selectProject(projectId,projectType,depart,fundsSource);
+				var year = jQuery("#budgetYear").val();
+				selectProject(projectId,projectType,depart,fundsSource,year);
 			}
 			//选择项目回调
 			function changeProjectComplete(data){
@@ -1205,13 +1210,14 @@
 				var projectId = jQuery("#projectId").val();
 				var projectType = jQuery("#projectType").val();
 				var contractId = jQuery("#contractSel").val();
+				var year = jQuery("#budgetYear").val();
 				if(jQuery(".contractTr").is(":visible") && !contractId){
 					___msg('温馨提示', "审计项目请选择一个合同！");
 					flag = false;
 					return;
 				} 
 				var json = getJson();
-				addProject(projectId,projectType,json);
+				addProject(projectId,projectType,json,year);
 			}
 			function addProjectComplete(){
 				jQuery(".form_datetime_second").datetimepicker({
