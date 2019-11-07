@@ -81,7 +81,17 @@
 											<option value="#{_var[0]}">#{_var[1]}</option>
 										</a:repeat>
 									</select>
-							</div>
+								</div>
+							</td>
+							<td>
+								<div class="fl" style="width: 100%;">
+					                <div style="float: left; text-align: center; line-height: 36px; width: 85px;">
+										<span>项目名称</span>
+									</div>
+					                 <div class="form-group">
+										<h:inputText id="projectName" type="text" value="#{disburseStatisticalList.projectName}" placeholder="项目名称" name="projectName" styleClass=" keyword search-key" style="width: 200x;"/> 
+									</div> 
+								</div>
 							</td>
 <!-- 							<td width="40%">
 								<div class="fl bs-funds-source">
@@ -126,24 +136,18 @@
 								</div>
 							</td>
 							<td>
-								<div class="fl" style="width: 100%;">
-					                <div style="float: left; text-align: center; line-height: 36px; width: 85px;">
-										<span>项目名称</span>
-									</div>
-					                 <div class="form-group">
-										<h:inputText id="projectName" type="text" value="#{disburseStatisticalList.projectName}" placeholder="项目名称" name="projectName" styleClass=" keyword search-key" style="width: 200x;"/> 
-									</div> 
-								</div>
-							</td>
-							<td>
 								<div class="fl" style="margin-top: -16px; margin-left:10px;">
 									<h:commandButton styleClass="btn btn-primary mr15" action="/budget/DisburseStatisticalList.xhtml" onclick="return beforeSubmit();" value="搜索" >
 									</h:commandButton>
 									<!-- <h:commandButton styleClass="btn btn-primary mr15"  value="导出" /> -->
-									<s:link  styleClass="btn btn-primary mr15" view="/budget/DisburseStatisticalList.xhtml" action="#{disburseStatisticalList.expExcel()}" style="width: 62px;">导出
+									<s:link  styleClass="btn btn-primary mr15" view="/budget/DisburseStatisticalList.xhtml" action="#{disburseStatisticalList.expExcel()}" style="width: 50px;">导出
 			                			<f:param name="beginYearParam" value="#{disburseStatisticalList.beginYearParam}"/>
 			                			<f:param name="departmentIds" value="#{disburseStatisticalList.departmentIds}"/>
 			                			<f:param name="fundsSourceId" value="#{disburseStatisticalList.fundsSourceId}"/>
+			                		</s:link>
+			                		<s:link  styleClass="btn btn-primary mr15" view="/budget/DisburseStatisticalList.xhtml" action="#{disburseStatisticalList.expMonthExcel()}" style="width: 134px;">导出按月支出统计表
+			                			<f:param name="beginYearParam" value="#{disburseStatisticalList.beginYearParam}"/>
+			                			<f:param name="departmentIds" value="#{disburseStatisticalList.departmentIds}"/>
 			                		</s:link>
 								</div>
 							</td>
@@ -161,12 +165,13 @@
 		<div class="g-data-list-table" style="margin-top: 100px;">
 		    <table class="record table table-hover table-striped" width="100%" cellpadding="0" cellspacing="0">
 		        <tr>
-		            <th width="10%">ID</th>
-		            <th width="30%">项目名称</th>
+		            <th width="5%">项目ID</th>
+		            <th width="20%">项目名称</th>
 		            <th width="10%">科室</th>
 		            <th width="10%">项目类型</th>
-		            <th width="10%">预算金额</th>
-		            <th width="10%">已支出金额</th>
+		            <th width="15%">预算金额</th>
+		            <th width="15%">可使用金额</th>
+		            <th width="15%">已支出金额</th>
 		            <th width="10%">执行率</th>
 		        </tr>
 		        <a:repeat value="#{disburseStatisticalList.resultList}" var="_result" rowKeyVar="_row">
@@ -181,16 +186,19 @@
 			        		<h:outputText value="#{_result[2]}" />
 			        	</td>
 			        	<td>
-			        		<h:outputText value="#{_result[3]}" />
+			        		<h:outputText value="#{_result[3] == 1 ? '常规项目' : '项目'}" />
 			        	</td>
 			        	<td>
 			        		<h:outputText value="#{_result[4]}" />
 			        	</td>
 			        	<td>
-			        		<h:outputText value="#{_result[5]}" />
+			        		<h:outputText value="#{_result[5] == null ? _result[4] : _result[5]}" />
 			        	</td>
 			        	<td>
-			        		<h:outputText value="#{_result[6]}" />%
+			        		<h:outputText value="#{_result[6] == null ? '0.00' : _result[6]}" />
+			        	</td>
+			        	<td>
+			        		<h:outputText value="#{_result[7] == null ? '100.00' : _result[7]}" />%
 			        	</td>
 		        	</tr>
 		        </a:repeat>

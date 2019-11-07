@@ -84,8 +84,8 @@ public class ExpendApplayList extends CriterionNativeQuery<Object[]> {
 		statusList = initStatusList();
 		
 		//从新耗材系统获取支出数据
-/*		this.syncNewConsumables();
-		
+		this.syncNewConsumables();
+		/*新一年不再同步旧耗材系统数据 2019-01-21
 		if("1".equals(ConfigureCache.getValue("hospital.source"))){//只有总院的项目加载老耗材系统
 			//在老耗材系统获取支出数据  
 			this.syncOldConsumables();
@@ -288,13 +288,16 @@ public class ExpendApplayList extends CriterionNativeQuery<Object[]> {
 				+ "a.budg_year_money,"//年预算金额
 				+ "a.budg_year_out_money,"//已支出金额
 				+ "a.disbursable_money, "//可支出金额
+				+ "a.brif, "//备注
 				+ "b.budg_year,"//年度
 				+ "b.budg_code "//预算类型编码
 				+ "from HMMIS_BUDG.dbo.budg_application4expenditure a,"
 				+ "HMMIS_BUDG.dbo.budg_type_dict b "
 				+ "where a.budg_code=b.budg_code "
+				+ "and LEFT(CONVERT(varchar(100), a.iow_date, 112),4)=b.budg_year "
 				+ "and a.is_sync=0 "
 				+ "and a.budg_hospital_code = '" + ConfigureCache.getValue("hospital.source") +  "' ";
+		System.out.println("中间库数据同步 : " + sql);
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 		String updateSql = "update HMMIS_BUDG.dbo.budg_application4expenditure set is_sync=1 where bill_code=? ";
 		List<String> codeList = new ArrayList<String>();
@@ -312,6 +315,7 @@ public class ExpendApplayList extends CriterionNativeQuery<Object[]> {
 //				Double budg_year_out_money = rs.getDouble("budg_year_out_money");//已支出
 //				Double disbursable_money = rs.getDouble("disbursable_money");//可支出
 				String year = rs.getString("budg_year");//预算nian
+				String comment = rs.getString("brif");
 				String userSql = "select a.user_info_id from user_info a LEFT JOIN user_info_extend b "
 						+ " on b.user_info_extend_id=a.user_info_extend_id "
 						+ " where b.fullname ='"+oper+"'";
@@ -350,11 +354,12 @@ public class ExpendApplayList extends CriterionNativeQuery<Object[]> {
 				expendApplyInfo.setDeleted(false);
 				expendApplyInfo.setTotalMoney(totalMoney);
 				expendApplyInfo.setApplyTime(venDate);
+				expendApplyInfo.setComment(comment);
 				expendApplyInfo.setExplendSource(2);
 				getEntityManager().persist(expendApplyInfo);
 				
 				String nepiSql = "select normal_expend_plan_id,project_id,generic_project_id,budget_amount_surplus "
-						+ " from normal_expend_plan_info where normal_expend_plan_id=" + budgCode;
+						+ " from normal_expend_plan_info where `year`=" + year + " and project_id=" + budgCode;
 				List<Object[]> nepiList= getEntityManager().createNativeQuery(nepiSql).getResultList();
 				
 				//查询流程
@@ -445,7 +450,7 @@ public class ExpendApplayList extends CriterionNativeQuery<Object[]> {
 					}
 				}
 				 String froensql = "update HMMIS_BUDG.dbo.budg_type_dict set budg_year_frozen = "+getExpendInfoMoney(projectType,updateProjuectId)
-						   +" where budg_code='" + budgCode + "' and budg_hospital_code = '" + ConfigureCache.getValue("hospital.source") + "' ";
+						   +" where budg_code='" + budgCode + "' and budg_hospital_code = '" + ConfigureCache.getValue("hospital.source") + "' and budg_year=" + year + " ";
 				 ps = conn.prepareStatement(froensql);
 				 ps.executeUpdate();
 			}

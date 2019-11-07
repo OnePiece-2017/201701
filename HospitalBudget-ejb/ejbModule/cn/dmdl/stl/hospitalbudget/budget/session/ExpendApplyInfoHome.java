@@ -290,7 +290,7 @@ public class ExpendApplyInfoHome extends CriterionEntityHome<ExpendApplyInfo>{
 	public List<Object[]> getBudgetYearList() {
 		List<Object[]> list = new ArrayList<Object[]>();
 		Calendar calendar = Calendar.getInstance();
-		calendar.add(Calendar.YEAR, -1);
+//		calendar.add(Calendar.YEAR, -1);
 		for (int i = 0; i < 3; i++) {
 			list.add(new Object[] { calendar.get(Calendar.YEAR), calendar.get(Calendar.YEAR) + "年" });
 			calendar.add(Calendar.YEAR, +1);

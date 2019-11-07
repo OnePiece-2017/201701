@@ -41,7 +41,7 @@ public class HospitalConstant {
 	//项目审计状态
 	public final static int PROJECT_IS_AUDIT_FINISH = 1;//已审计
 	
-	//项目审计状态
+	//支出申请
 	public final static int EXPEND_APPLY_STATUS_PENDING = 0;//待处理
 	public final static int EXPEND_APPLY_STATUS_AUDITING = 1;//审核中
 	public final static int EXPEND_APPLY_STATUS_AUDITCOMPLETE = 2;//已审核
