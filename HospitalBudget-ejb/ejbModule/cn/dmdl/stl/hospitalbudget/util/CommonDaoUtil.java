@@ -11,6 +11,7 @@ import java.util.Map;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 
+
 public class CommonDaoUtil {
 	
 	/**
@@ -61,5 +62,52 @@ public class CommonDaoUtil {
 		}
 		return projectNatureArr;
 	}
-
+	
+	/**
+	 * 判断角色是否有本科室的数据权限
+	 */
+	public static boolean hasLocalDepartmentDataFlag(Integer userId){
+		Connection connection = DataSourceManager.open(DataSourceManager.BY_JDBC_DEFAULT);
+		PreparedStatement preparedStatement = null;
+		ResultSet resultSet = null;
+		try {
+			preparedStatement = connection.prepareStatement("select ri.department_data_flag from hospital_budget.user_info ui INNER JOIN hospital_budget.role_info ri ON ui.role_info_id = ri.role_info_id where ui.user_info_id = ?");
+			preparedStatement.setInt(1, userId);
+			resultSet = preparedStatement.executeQuery();
+			while(resultSet.next()){
+				if(resultSet.getInt("department_data_flag") == 1){//具备本科数据权限
+					return true;
+				}
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} finally{
+			DataSourceManager.close(connection, preparedStatement, resultSet);
+		}
+		return false;
+	}
+	
+	/**
+	 * 判断角色是否有所有科室的数据权限
+	 */
+	public static boolean hasAllDepartmentDataFlag(Integer userId){
+		Connection connection = DataSourceManager.open(DataSourceManager.BY_JDBC_DEFAULT);
+		PreparedStatement preparedStatement = null;
+		ResultSet resultSet = null;
+		try {
+			preparedStatement = connection.prepareStatement("select ri.role_info_id from hospital_budget.user_info ui INNER JOIN hospital_budget.role_info ri ON ui.role_info_id = ri.role_info_id where ui.user_info_id = ?");
+			preparedStatement.setInt(1, userId);
+			resultSet = preparedStatement.executeQuery();
+			while(resultSet.next()){
+				if(resultSet.getInt("role_info_id") == 1 || resultSet.getInt("role_info_id") == 2){//具备全科数据权限  暂时写死，1是系统管理员 2是财务主任
+					return true;
+				}
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} finally{
+			DataSourceManager.close(connection, preparedStatement, resultSet);
+		}
+		return false;
+	}
 }

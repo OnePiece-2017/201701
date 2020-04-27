@@ -84,7 +84,7 @@ public class ExpendApplayList extends CriterionNativeQuery<Object[]> {
 		statusList = initStatusList();
 		
 		//从新耗材系统获取支出数据
-		this.syncNewConsumables();
+//		this.syncNewConsumables();
 		/*新一年不再同步旧耗材系统数据 2019-01-21
 		if("1".equals(ConfigureCache.getValue("hospital.source"))){//只有总院的项目加载老耗材系统
 			//在老耗材系统获取支出数据  

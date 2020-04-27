@@ -154,6 +154,7 @@ public class QueryExpendApplay extends CriterionNativeQuery<Object[]> {
 		}
 		sql.append(" order by eai.insert_time desc,eai.expend_apply_code desc");
 		sql.insert(0, "select * from (").append(") as recordset");
+		System.out.println(sql.toString());
 		setEjbql(sql.toString());
 		return super.createQuery();
 	}

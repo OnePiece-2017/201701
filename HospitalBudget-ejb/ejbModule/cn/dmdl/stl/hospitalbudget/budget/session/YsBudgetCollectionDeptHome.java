@@ -349,6 +349,7 @@ public class YsBudgetCollectionDeptHome extends CriterionEntityHome<Object> {
 				}
 				if(existFlag){//已经存在
 					preparedStatement = connection.prepareStatement("update hospital_budget.normal_expend_plan_info t SET t.budget_amount = ?,t.budget_amount_surplus=t.budget_amount_surplus + ?,t.update_user=?,t.update_time=NOW() where t.normal_expend_plan_id = ?");
+					//这一块预算调整的逻辑是调整后金额？
 					preparedStatement.setDouble(1, resultSet.getDouble("project_amount"));
 					double amountChange = resultSet.getDouble("project_amount") - budgetAmountOld;
 					preparedStatement.setDouble(2, amountChange);

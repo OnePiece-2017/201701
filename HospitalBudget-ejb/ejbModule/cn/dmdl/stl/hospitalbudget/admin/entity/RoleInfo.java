@@ -32,6 +32,7 @@ public class RoleInfo implements java.io.Serializable {
 	private String roleName;
 	private SystemTheme systemTheme;
 	private String description;
+	private boolean departmentDataFlag;
 	private Date insertTime;
 	private Integer insertUser;
 	private Date updateTime;
@@ -82,6 +83,16 @@ public class RoleInfo implements java.io.Serializable {
 		this.description = description;
 	}
 
+	@Column(name = "department_data_flag", nullable = false)
+	public boolean isDepartmentDataFlag() {
+		return departmentDataFlag;
+	}
+
+	public void setDepartmentDataFlag(boolean departmentDataFlag) {
+		this.departmentDataFlag = departmentDataFlag;
+	}
+
+	
 	@Temporal(TemporalType.TIMESTAMP)
 	@Column(name = "insert_time", length = 19)
 	public Date getInsertTime() {

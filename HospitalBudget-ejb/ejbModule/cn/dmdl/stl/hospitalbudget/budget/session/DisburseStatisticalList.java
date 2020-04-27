@@ -511,7 +511,7 @@ public class DisburseStatisticalList extends CriterionNativeQuery<Object[]> {
 			
 			addPercentCol = row1.createCell(col);
 			addPercentCol.setCellType(HSSFCell.CELL_TYPE_STRING);
-			addPercentCol.setCellValue(null == obj[7] ? "100.00" : obj[7].toString());
+			addPercentCol.setCellValue(null == obj[7] ? "0.00" : obj[7].toString());
 			addPercentCol.setCellStyle(colStyle);
 			addPercentCol.getSheet().setColumnWidth(
 					addPercentCol.getColumnIndex(), 35 * 200);
@@ -840,7 +840,7 @@ public class DisburseStatisticalList extends CriterionNativeQuery<Object[]> {
 			//执行率
 			addPercentCol = row1.createCell(col);
 			addPercentCol.setCellType(HSSFCell.CELL_TYPE_STRING);
-			addPercentCol.setCellValue(null == obj[7] ? "100.00" : obj[7].toString());
+			addPercentCol.setCellValue(null == obj[7] ? "0.00" : obj[7].toString());
 			addPercentCol.setCellStyle(colStyle);
 			addPercentCol.getSheet().setColumnWidth(
 					addPercentCol.getColumnIndex(), 35 * 200);

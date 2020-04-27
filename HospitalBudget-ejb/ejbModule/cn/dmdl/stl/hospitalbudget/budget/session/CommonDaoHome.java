@@ -122,7 +122,7 @@ public class CommonDaoHome extends CriterionEntityHome<Object>{
 	@SuppressWarnings("unchecked")
 	public List<Object[]> getDepartmentInfoListByUserId() {
 		Integer departmentInfoId = sessionToken.getDepartmentInfoId();
-		if(null == departmentInfoId){
+		if(null == departmentInfoId || sessionToken.getRoleInfoId() == 1 || sessionToken.getRoleInfoId() == 2){//管理员和财务主任看全部，暂时写死
 			return this.getDepartmentInfoList();
 		}else{
 			List<Object[]> list = new ArrayList<Object[]>();
